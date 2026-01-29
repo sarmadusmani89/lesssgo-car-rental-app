@@ -1,0 +1,122 @@
+.header {
+    /* height: 64px; Removed fixed height to allow padding to dictate size */
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1400px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 100px;
+    padding: 0.5rem 0rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.header:hover {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.05);
+}
+
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--primary);
+    letter-spacing: -1.5px;
+    text-transform: lowercase;
+}
+
+.logoIcon {
+    color: var(--accent);
+}
+
+.desktopNav {
+    display: flex;
+    gap: 2rem;
+}
+
+.desktopNav a {
+    font-weight: 600;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.desktopNav a:hover {
+    color: var(--primary);
+}
+
+.desktopNav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.desktopNav a:hover::after {
+    width: 12px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.searchBtn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--muted-foreground);
+    transition: all 0.2s;
+}
+
+.searchBtn:hover {
+    background: var(--secondary);
+    color: var(--primary);
+}
+
+.mobileMenu {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .header {
+        width: 95%;
+        padding: 0 0.75rem 0 1.5rem;
+    }
+
+    .desktopNav {
+        display: none;
+    }
+
+    .mobileMenu {
+        display: block;
+    }
+}

@@ -1,40 +1,62 @@
-# Professional Car Rental
+# Professional Car Rental Platform
 
-This project consists of a NestJS backend and a Next.js frontend.
+A modern, full-stack car rental platform designed for a premium user experience.
 
-## Getting Started with Docker (Recommended)
+## 🌟 Overview
 
-The easiest way to get the project running is using Docker Compose. This will start the backend, frontend, and a PostgreSQL database.
+This project is a monorepo-style structure containing a **Next.js Frontend** and a **NestJS Backend**. It is designed with clean architecture, scalability, and premium design principles in mind.
 
-### Prerequisites
+-   **Frontend:** `frontend/` - Next.js 14, TypeScript, CSS Modules.
+-   **Backend:** `backend/` - NestJS, Prisma, PostgreSQL.
 
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
+## 🚀 Quick Start (Docker)
 
-### Installation & Setup
+The easiest way to run the entire stack is with Docker Compose.
 
-1. **Clone the repository** (if you haven't already):
-   ```bash
-   git clone <repository-url>
-   cd professional-car-rental
-   ```
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd professional-car-rental
+    ```
 
-2. **Run with Docker Compose**:
-   ```bash
-   docker-compose up --build
-   ```
+2.  **Run with Docker Compose:**
+    ```bash
+    docker-compose up --build
+    ```
 
-3. **Access the application**:
-   - **Frontend**: [http://localhost:3000](http://localhost:3000)
-   - **Backend API**: [http://localhost:3001](http://localhost:3001)
+3.  **Access the application:**
+    -   **Frontend:** [http://localhost:3000](http://localhost:3000)
+    -   **Backend API:** [http://localhost:3001](http://localhost:3001)
 
-### Environment Variables
+## 🔧 Manual Setup
 
-The `docker-compose.yml` file comes with default environment variables for development. If you need to change them, you can modify the `environment` section in `docker-compose.yml`.
+If you prefer running services individually:
 
-## Manual Setup
+### Backend
+```bash
+cd backend
+npm install
+# Configure .env
+npx prisma migrate dev
+npm run start:dev
+```
 
-If you prefer not to use Docker, follow the instructions in the respective directories:
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-- [Backend README](./backend/README.md)
-- [Frontend README](./frontend/README.md)
+## 🏗️ Architecture
+
+-   **Frontend:** Component-based architecture with separated concerns (UI, Features, Layouts).
+-   **Backend:** Modular architecture ensuring loose coupling and high cohesion.
+
+## 🤝 Contribution
+
+1.  Fork the repository.
+2.  Create a feature branch (`git checkout -b feature/amazing-feature`).
+3.  Commit your changes.
+4.  Push to the branch.
+5.  Open a Pull Request.

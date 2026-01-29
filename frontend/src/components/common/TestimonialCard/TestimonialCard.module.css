@@ -1,0 +1,63 @@
+.card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100%;
+    transition: all 0.3s ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.05);
+    border-color: rgba(37, 99, 235, 0.1);
+}
+
+.stars {
+    color: #fbbf24;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.quote {
+    font-size: 1.125rem;
+    color: #475569;
+    line-height: 1.6;
+    flex: 1;
+    font-weight: 500;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.userInfo h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.125rem;
+}
+
+.userInfo span {
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 500;
+}

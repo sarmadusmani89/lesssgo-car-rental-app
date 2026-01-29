@@ -1,0 +1,99 @@
+.newsletter {
+    background: #020617;
+    /* Deep Navy to match footer feel */
+    padding: 80px 0 0;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.newsletterContent {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 3rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4rem;
+}
+
+.textSection {
+    flex: 1;
+}
+
+.textSection h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+.textSection p {
+    color: #94a3b8;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.formSection {
+    flex: 1;
+    max-width: 500px;
+}
+
+.inputWrapper {
+    display: flex;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 0 1.5rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+.input::placeholder {
+    color: #64748b;
+}
+
+.submitBtn {
+    background: #2563eb;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.submitBtn:hover {
+    background: #1d4ed8;
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+}
+
+@media (max-width: 1024px) {
+    .newsletterContent {
+        flex-direction: column;
+        text-align: center;
+        padding: 3rem 2rem;
+        gap: 2rem;
+    }
+
+    .formSection {
+        width: 100%;
+    }
+}

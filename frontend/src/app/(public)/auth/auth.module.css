@@ -1,0 +1,259 @@
+.authPage {
+    min-height: 100vh;
+    background: #020617;
+    position: relative;
+    overflow: hidden;
+}
+
+.authPage::before {
+    content: '';
+    position: absolute;
+    width: 1000px;
+    height: 1000px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+    top: -500px;
+    right: -500px;
+    z-index: 0;
+}
+
+.authPage::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.05) 0%, transparent 70%);
+    bottom: -300px;
+    left: -300px;
+    z-index: 0;
+}
+
+.authContainer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    background: white;
+    overflow: hidden;
+}
+
+.sideSection {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 6rem;
+    color: white;
+    border-bottom-right-radius: 80px;
+    overflow: hidden;
+}
+
+.sideImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.sideImage img {
+    object-fit: cover;
+    opacity: 0.6;
+}
+
+.sideOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, #020617 0%, rgba(2, 6, 23, 0.2) 100%);
+}
+
+.sideContent {
+    position: relative;
+    z-index: 10;
+}
+
+.sideContent h2 {
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -2px;
+}
+
+.sideContent p {
+    font-size: 1.125rem;
+    color: #94a3b8;
+    max-width: 400px;
+}
+
+.formSection {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 3rem 3rem;
+    background: white;
+}
+
+.authCard {
+    width: 100%;
+    max-width: 380px;
+}
+
+.authCard h2 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 0.5rem;
+    letter-spacing: -1.5px;
+}
+
+.authCard p {
+    color: var(--muted-foreground);
+    margin-bottom: 2.5rem;
+    font-size: 0.9375rem;
+}
+
+.inputGroup {
+    margin-bottom: 1.25rem;
+}
+
+.rememberRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+}
+
+.rememberRow a {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.rememberMe {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #64748b;
+    user-select: none;
+}
+
+.rememberMe input {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+}
+
+.inputGroup label {
+    font-size: 0.8125rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted-foreground);
+    display: block;
+}
+
+.inputWrapper {
+    position: relative;
+}
+
+.inputWrapper svg {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted-foreground);
+    transition: all 0.3s ease;
+}
+
+.inputWrapper input {
+    width: 100%;
+    padding: 1rem 1.25rem 1rem 3.5rem;
+    background: #f8fafc;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.inputWrapper input:focus {
+    background: white;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
+    outline: none;
+}
+
+.inputWrapper input:focus+svg {
+    color: var(--accent);
+}
+
+.footerText {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+}
+
+.footerText a {
+    color: var(--accent);
+    font-weight: 800;
+}
+
+.error,
+.success {
+    padding: 1rem;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fee2e2;
+}
+
+.success {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #dcfce7;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 1024px) {
+    .authContainer {
+        flex-direction: column;
+        height: auto;
+        max-width: 500px;
+    }
+
+    .sideSection {
+        display: none;
+    }
+
+    .authPage {
+        padding: 4rem 1.5rem;
+    }
+}
