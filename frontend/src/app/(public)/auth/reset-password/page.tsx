@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
@@ -15,7 +15,7 @@ type ResetFormInputs = {
     password: string;
 };
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const token = searchParams.get('token');
@@ -51,12 +51,7 @@ export default function ResetPasswordPage() {
     };
 
     return (
-        <AuthSplitLayout
-            imageSrc="/images/auth-side.png"
-            imageAlt="Security"
-            heading={<>Secure your <br /> <span className="gradient-text">Account.</span></>}
-            subheading="Manage your access with industry-standard security."
-        >
+        <>
             <h2>{token ? 'Set New Password' : 'Reset Password'}</h2>
             <p>{token ? 'Enter your new secure password below' : 'Enter your email to receive a reset link'}</p>
 
@@ -117,6 +112,25 @@ export default function ResetPasswordPage() {
             <p className={styles.footerText}>
                 Remember your password? <Link href="/auth/login">Back to Sign in</Link>
             </p>
+        </>
+    );
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <AuthSplitLayout
+            imageSrc="/images/auth-side.png"
+            imageAlt="Security"
+            heading={<>Secure your <br /> <span className="gradient-text">Account.</span></>}
+            subheading="Manage your access with industry-standard security."
+        >
+            <Suspense fallback={
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+                    <Loader2 className={styles.spin} />
+                </div>
+            }>
+                <ResetPasswordContent />
+            </Suspense>
         </AuthSplitLayout>
     );
 }
