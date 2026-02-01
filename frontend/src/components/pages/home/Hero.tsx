@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Play, ChevronDown, Search } from 'lucide-react';
-import styles from '@/app/(public)/(home)/page.module.css';
+import styles from '../../../app/(public)/(home)/page.module.css';
 
 export default function Hero() {
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -45,7 +45,7 @@ export default function Hero() {
                 <div className={styles.heroContent}>
                     <div className={`${styles.heroText} animate-fade-in`}>
                         <h1>
-                            Elevate Your <br />
+                            Elevate Your's <br />
                             <span className="gradient-text">Journey</span>
                         </h1>
                         <p>

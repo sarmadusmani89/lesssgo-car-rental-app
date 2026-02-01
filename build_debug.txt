@@ -1,0 +1,21 @@
+time="2026-02-01T00:06:30+05:00" level=warning msg="The \"SMTP_PASS\" variable is not set. Defaulting to a blank string."
+time="2026-02-01T00:06:30+05:00" level=warning msg="The \"SMTP_USER\" variable is not set. Defaulting to a blank string."
+time="2026-02-01T00:06:30+05:00" level=warning msg="C:\\Users\\usman\\OneDrive\\Desktop\\lesssgo-car-rental-app\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+time="2026-02-01T00:06:31+05:00" level=warning msg="No services to build"
+ Container lesssgo-car-rental-app-db-1 Running 
+ Container lesssgo-car-rental-app-backend-1 Recreate 
+ Container lesssgo-car-rental-app-backend-1 Recreated 
+ Container lesssgo-car-rental-app-db-1 Waiting 
+ Container lesssgo-car-rental-app-db-1 Healthy 
+ Container lesssgo-car-rental-app-backend-1 Starting 
+ Container lesssgo-car-rental-app-backend-1 Started 
+time="2026-02-01T00:06:37+05:00" level=warning msg="No services to build"
+ Container lesssgo-car-rental-app-frontend-run-0efc45ab6fc3 Creating 
+ Container lesssgo-car-rental-app-frontend-run-0efc45ab6fc3 Created 
+sh: next: not found
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.8.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+npm notice To update run: npm install -g npm@11.8.0
+npm notice
+
