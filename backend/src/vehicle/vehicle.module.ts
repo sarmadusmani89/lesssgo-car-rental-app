@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { VehicleService } from './vehicle.service';
 import { VehicleController } from './vehicle.controller';
-import { PrismaModule } from '../prisma/prisma.module';
+import { Vehicle } from './entities/vehicle.entity';
 
 @Module({
-    imports: [PrismaModule],
-    controllers: [VehicleController],
-    providers: [VehicleService],
+  imports: [TypeOrmModule.forFeature([Vehicle])],
+  controllers: [VehicleController],
+  providers: [VehicleService],
 })
-export class VehicleModule { }
+export class VehicleModule {}

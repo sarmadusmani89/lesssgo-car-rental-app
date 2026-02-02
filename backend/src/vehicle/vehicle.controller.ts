@@ -1,39 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { CreateVehicleDto } from './dto/create-vehicle.dto';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
-@ApiTags('Vehicles')
-@Controller('vehicles')
+@Controller('vehicle')
 export class VehicleController {
-    constructor(private readonly vehicleService: VehicleService) { }
+  constructor(private readonly vehicleService: VehicleService) {}
 
-    @Post()
-    @ApiOperation({ summary: 'Create a new vehicle' })
-    create(@Body() createVehicleDto: any) {
-        return this.vehicleService.create(createVehicleDto);
-    }
+  @Post()
+  create(@Body() createVehicleDto: CreateVehicleDto) {
+    return this.vehicleService.create(createVehicleDto);
+  }
 
-    @Get()
-    @ApiOperation({ summary: 'Get all vehicles' })
-    findAll() {
-        return this.vehicleService.findAll();
-    }
+  @Get()
+  findAll() {
+    return this.vehicleService.findAll();
+  }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Get vehicle by ID' })
-    findOne(@Param('id') id: string) {
-        return this.vehicleService.findOne(id);
-    }
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.vehicleService.findOne(id);
+  }
 
-    @Patch(':id')
-    @ApiOperation({ summary: 'Update vehicle' })
-    update(@Param('id') id: string, @Body() updateVehicleDto: any) {
-        return this.vehicleService.update(id, updateVehicleDto);
-    }
+  @Put(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateVehicleDto: UpdateVehicleDto) {
+    return this.vehicleService.update(id, updateVehicleDto);
+  }
 
-    @Delete(':id')
-    @ApiOperation({ summary: 'Delete vehicle' })
-    remove(@Param('id') id: string) {
-        return this.vehicleService.remove(id);
-    }
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.vehicleService.remove(id);
+  }
 }

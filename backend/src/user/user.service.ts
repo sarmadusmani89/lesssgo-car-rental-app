@@ -1,31 +1,43 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { User, Prisma } from '@prisma/client';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
+import { User } from './user.entity';
 
 @Injectable()
-export class UserService {
-    constructor(private prisma: PrismaService) { }
+export class UsersService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
-    async findOne(where: Prisma.UserWhereInput): Promise<User | null> {
-        return this.prisma.user.findFirst({
-            where,
-        });
-    }
+  async create(userData: Partial<User> & { password: string }): Promise<User> {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const user = this.userRepository.create({
+      ...userData,
+      password: hashedPassword,
+    });
+    return this.userRepository.save(user);
+  }
 
-    async create(data: Prisma.UserCreateInput): Promise<User> {
-        return this.prisma.user.create({
-            data,
-        });
-    }
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find();
+  }
 
-    async update(params: {
-        where: Prisma.UserWhereUniqueInput;
-        data: Prisma.UserUpdateInput;
-    }): Promise<User> {
-        const { where, data } = params;
-        return this.prisma.user.update({
-            data,
-            where,
-        });
-    }
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new Error('User not found');
+    return user;
+  }
+
+  async update(id: number, data: Partial<User>): Promise<User> {
+    const user = await this.findOne(id);
+    Object.assign(user, data);
+    return this.userRepository.save(user);
+  }
+
+  async remove(id: number): Promise<void> {
+    const user = await this.findOne(id);
+    await this.userRepository.remove(user);
+  }
 }

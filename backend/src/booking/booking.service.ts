@@ -1,50 +1,46 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { EmailService } from '../email/email.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Booking } from './entities/booking.entity';
+import { CreateBookingDto } from './dto/create-booking.dto';
+import { UpdateBookingDto } from './dto/update-booking.dto';
 
 @Injectable()
 export class BookingService {
-    constructor(
-        private prisma: PrismaService,
-        private emailService: EmailService,
-    ) { }
+  constructor(
+    @InjectRepository(Booking)
+    private readonly bookingRepo: Repository<Booking>,
+  ) {}
 
-    async findAll() {
-        return this.prisma.booking.findMany({
-            include: { user: true, vehicle: true },
-        });
-    }
+  create(createBookingDto: CreateBookingDto) {
+    const booking = this.bookingRepo.create(createBookingDto);
+    return this.bookingRepo.save(booking);
+  }
 
-    async findByUserId(userId: string) {
-        return this.prisma.booking.findMany({
-            where: { userId },
-            include: { vehicle: true },
-        });
-    }
+  findAll() {
+    return this.bookingRepo.find({
+      relations: ['user', 'vehicle', 'payments'],
+      order: { startDate: 'DESC' },
+    });
+  }
 
-    async create(data: any) {
-        const booking = await this.prisma.booking.create({
-            data,
-            include: { user: true, vehicle: true },
-        });
+  async findOne(id: number) {
+    const booking = await this.bookingRepo.findOne({
+      where: { id },
+      relations: ['user', 'vehicle', 'payments'],
+    });
+    if (!booking) throw new NotFoundException('Booking not found');
+    return booking;
+  }
 
-        if (booking.user?.email) {
-            await this.emailService.sendBookingConfirmation(booking.user.email, {
-                vehicleName: booking.vehicle.name,
-                startDate: booking.startDate.toDateString(),
-                endDate: booking.endDate.toDateString(),
-                totalPrice: booking.totalPrice,
-            });
-        }
+  async update(id: number, updateBookingDto: UpdateBookingDto) {
+    const booking = await this.findOne(id);
+    Object.assign(booking, updateBookingDto);
+    return this.bookingRepo.save(booking);
+  }
 
-        return booking;
-    }
-
-    async update(id: string, data: any) {
-        return this.prisma.booking.update({ where: { id }, data });
-    }
-
-    async remove(id: string) {
-        return this.prisma.booking.delete({ where: { id } });
-    }
+  async remove(id: number) {
+    const booking = await this.findOne(id);
+    return this.bookingRepo.remove(booking);
+  }
 }

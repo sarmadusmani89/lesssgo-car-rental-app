@@ -1,27 +1,40 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Vehicle } from './entities/vehicle.entity';
+import { CreateVehicleDto } from './dto/create-vehicle.dto';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
 @Injectable()
 export class VehicleService {
-    constructor(private prisma: PrismaService) { }
+  constructor(
+    @InjectRepository(Vehicle)
+    private readonly vehicleRepo: Repository<Vehicle>,
+  ) {}
 
-    async findAll() {
-        return this.prisma.vehicle.findMany();
-    }
+  create(createVehicleDto: CreateVehicleDto) {
+    const vehicle = this.vehicleRepo.create(createVehicleDto);
+    return this.vehicleRepo.save(vehicle);
+  }
 
-    async findOne(id: string) {
-        return this.prisma.vehicle.findUnique({ where: { id } });
-    }
+  findAll() {
+    return this.vehicleRepo.find();
+  }
 
-    async create(data: any) {
-        return this.prisma.vehicle.create({ data });
-    }
+  async findOne(id: number) {
+    const vehicle = await this.vehicleRepo.findOneBy({ id });
+    if (!vehicle) throw new NotFoundException('Vehicle not found');
+    return vehicle;
+  }
 
-    async update(id: string, data: any) {
-        return this.prisma.vehicle.update({ where: { id }, data });
-    }
+  async update(id: number, updateVehicleDto: UpdateVehicleDto) {
+    const vehicle = await this.findOne(id);
+    Object.assign(vehicle, updateVehicleDto);
+    return this.vehicleRepo.save(vehicle);
+  }
 
-    async remove(id: string) {
-        return this.prisma.vehicle.delete({ where: { id } });
-    }
+  async remove(id: number) {
+    const vehicle = await this.findOne(id);
+    return this.vehicleRepo.remove(vehicle);
+  }
 }

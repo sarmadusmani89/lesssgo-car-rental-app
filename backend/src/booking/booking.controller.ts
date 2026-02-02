@@ -1,39 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe } from '@nestjs/common';
 import { BookingService } from './booking.service';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { CreateBookingDto } from './dto/create-booking.dto';
+import { UpdateBookingDto } from './dto/update-booking.dto';
 
-@ApiTags('Bookings')
-@Controller('bookings')
+@Controller('booking')
 export class BookingController {
-    constructor(private readonly bookingService: BookingService) { }
+  constructor(private readonly bookingService: BookingService) {}
 
-    @Post()
-    @ApiOperation({ summary: 'Create a new booking' })
-    create(@Body() createBookingDto: any) {
-        return this.bookingService.create(createBookingDto);
-    }
+  @Post()
+  create(@Body() createBookingDto: CreateBookingDto) {
+    return this.bookingService.create(createBookingDto);
+  }
 
-    @Get()
-    @ApiOperation({ summary: 'Get all bookings (Admin)' })
-    findAll() {
-        return this.bookingService.findAll();
-    }
+  @Get()
+  findAll() {
+    return this.bookingService.findAll();
+  }
 
-    @Get('user/:userId')
-    @ApiOperation({ summary: 'Get bookings for a specific user' })
-    findByUserId(@Param('userId') userId: string) {
-        return this.bookingService.findByUserId(userId);
-    }
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.bookingService.findOne(id);
+  }
 
-    @Patch(':id')
-    @ApiOperation({ summary: 'Update booking status' })
-    update(@Param('id') id: string, @Body() updateBookingDto: any) {
-        return this.bookingService.update(id, updateBookingDto);
-    }
+  @Put(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateBookingDto: UpdateBookingDto) {
+    return this.bookingService.update(id, updateBookingDto);
+  }
 
-    @Delete(':id')
-    @ApiOperation({ summary: 'Cancel/Delete booking' })
-    remove(@Param('id') id: string) {
-        return this.bookingService.remove(id);
-    }
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.bookingService.remove(id);
+  }
 }

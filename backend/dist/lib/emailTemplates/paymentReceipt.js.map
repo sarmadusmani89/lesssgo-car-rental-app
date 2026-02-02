@@ -1,0 +1,1 @@
+{"version":3,"file":"paymentReceipt.js","sourceRoot":"","sources":["../../../src/lib/emailTemplates/paymentReceipt.ts"],"names":[],"mappings":";;AAAA,wDAWC;AAXD,SAAgB,sBAAsB,CAAC,IAItC;IACC,OAAO;;eAEM,IAAI,CAAC,IAAI;sBACF,IAAI,CAAC,MAAM;qBACZ,IAAI,CAAC,SAAS;GAChC,CAAC;AACJ,CAAC"}

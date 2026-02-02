@@ -1,26 +1,21 @@
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-COPY package*.json ./
-COPY prisma ./prisma/
-
-RUN npm install
-
-COPY . .
-
-RUN npx prisma generate
-RUN npm run build
-
+# Use Node 20 Alpine image
 FROM node:20-alpine
 
+# Set working directory
 WORKDIR /app
 
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install --force
 
+# Copy the rest of the project
+COPY . .
+
+# Build the NestJS app
+RUN npm run build
+
+# Expose port 3001 (NestJS)
 EXPOSE 3001
 
+# Start the app
 CMD ["npm", "run", "start:prod"]

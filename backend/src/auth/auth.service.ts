@@ -1,116 +1,103 @@
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../user/user.service';
+import { UsersService } from '../user/user.service';
 import { EmailService } from '../email/email.service';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private userService: UserService,
-        private jwtService: JwtService,
-        private emailService: EmailService,
-    ) { }
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private emailService: EmailService,
+  ) {}
 
-    async signup(email: string, pass: string, name: string) {
-        const existingUser = await this.userService.findOne({ email });
-        if (existingUser) {
-            throw new ConflictException('Email already exists');
-        }
-
-        const hashedPassword = await bcrypt.hash(pass, 10);
-        const verificationToken = uuidv4();
-
-        const user = await this.userService.create({
-            email,
-            password: hashedPassword,
-            name,
-            verificationToken,
-        });
-
-        await this.emailService.sendVerificationEmail(email, verificationToken);
-
-        return { message: 'Signup successful. Please verify your email.' };
+  async signup(email: string, password: string, name: string) {
+    const users = await this.usersService.findAll();
+    if (users.find(u => u.email === email)) {
+      throw new ConflictException('Email already exists');
     }
 
-    async login(email: string, pass: string) {
-        const user = await this.userService.findOne({ email });
-        if (!user) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
+    const [firstName, ...rest] = name.split(' ');
+    const lastName = rest.join(' ') || '';
 
-        const isMatch = await bcrypt.compare(pass, user.password);
-        if (!isMatch) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
+    const verificationToken = uuidv4();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        if (!user.isVerified) {
-            throw new UnauthorizedException('Please verify your email first');
-        }
+    await this.usersService.create({
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+      isVerified: false,
+      verificationToken,
+    });
 
-        const payload = { sub: user.id, email: user.email };
-        return {
-            access_token: await this.jwtService.signAsync(payload),
-            user: {
-                id: user.id,
-                email: user.email,
-                name: user.name,
-            },
-        };
+    await this.emailService.sendVerificationEmail(email, verificationToken);
+    return { message: 'Signup successful. Please verify your email.' };
+  }
+
+  async login(email: string, password: string) {
+    const user = (await this.usersService.findAll()).find(u => u.email === email);
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) throw new UnauthorizedException('Invalid credentials');
+
+    if (!user.isVerified) {
+      throw new UnauthorizedException('Please verify your email first');
     }
 
-    async verifyEmail(token: string) {
-        const user = await this.userService.findOne({ verificationToken: token });
-        if (!user) {
-            throw new UnauthorizedException('Invalid verification token');
-        }
+    const payload = { sub: user.id, email: user.email };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+      user,
+    };
+  }
 
-        await this.userService.update({
-            where: { id: user.id },
-            data: { isVerified: true, verificationToken: null },
-        });
+  async verifyEmail(token: string) {
+    const user = (await this.usersService.findAll()).find(u => u.verificationToken === token);
+    if (!user) throw new UnauthorizedException('Invalid verification token');
 
-        return { message: 'Email verified successfully' };
+    await this.usersService.update(user.id, {
+      isVerified: true,
+      verificationToken: null,
+    });
+
+    return { message: 'Email verified successfully' };
+  }
+
+  async forgotPassword(email: string) {
+    const user = (await this.usersService.findAll()).find(u => u.email === email);
+    if (!user) return { message: 'If the email exists, a reset link has been sent' };
+
+    const resetToken = uuidv4();
+    const resetTokenExp = new Date();
+    resetTokenExp.setHours(resetTokenExp.getHours() + 1);
+
+    await this.usersService.update(user.id, {
+      resetToken,
+      resetTokenExp,
+    });
+
+    await this.emailService.sendPasswordResetEmail(email, resetToken);
+    return { message: 'If the email exists, a reset link has been sent' };
+  }
+
+  async resetPassword(token: string, password: string) {
+    const user = (await this.usersService.findAll()).find(u => u.resetToken === token);
+    if (!user || !user.resetTokenExp || user.resetTokenExp < new Date()) {
+      throw new UnauthorizedException('Invalid or expired reset token');
     }
 
-    async forgotPassword(email: string) {
-        const user = await this.userService.findOne({ email });
-        if (!user) {
-            // Don't leak user existence
-            return { message: 'If the email exists, a reset link has been sent' };
-        }
+    const hashed = await bcrypt.hash(password, 10);
+    await this.usersService.update(user.id, {
+      password: hashed,
+      resetToken: null,
+      resetTokenExp: null,
+    });
 
-        const resetToken = uuidv4();
-        const resetTokenExp = new Date();
-        resetTokenExp.setHours(resetTokenExp.getHours() + 1);
-
-        await this.userService.update({
-            where: { id: user.id },
-            data: { resetToken, resetTokenExp },
-        });
-
-        await this.emailService.sendPasswordResetEmail(email, resetToken);
-
-        return { message: 'If the email exists, a reset link has been sent' };
-    }
-
-    async resetPassword(token: string, pass: string) {
-        const user = await this.userService.findOne({ resetToken: token });
-        if (!user || !user.resetTokenExp || user.resetTokenExp < new Date()) {
-            throw new UnauthorizedException('Invalid or expired reset token');
-        }
-
-        const hashedPassword = await bcrypt.hash(pass, 10);
-        await this.userService.update({
-            where: { id: user.id },
-            data: {
-                password: hashedPassword,
-                resetToken: null,
-                resetTokenExp: null,
-            },
-        });
-
-        return { message: 'Password reset successful' };
-    }
+    return { message: 'Password reset successful' };
+  }
 }

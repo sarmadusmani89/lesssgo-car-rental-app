@@ -1,25 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PrismaModule } from './prisma/prisma.module';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { EmailModule } from './email/email.module';
-import { VehicleModule } from './vehicle/vehicle.module';
-import { BookingModule } from './booking/booking.module';
-import { DashboardModule } from './dashboard/dashboard.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './user/user.module';
+import { User } from './user/user.entity';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   imports: [
-    PrismaModule,
-    AuthModule,
-    UserModule,
-    EmailModule,
-    VehicleModule,
-    BookingModule,
-    DashboardModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DATABASE_URL, // Uses your DATABASE_URL directly
+      entities: [User],
+      synchronize: true, // set to false in production
+    }),
+    UsersModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
