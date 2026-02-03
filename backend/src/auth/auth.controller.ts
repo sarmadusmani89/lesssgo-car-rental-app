@@ -33,4 +33,9 @@ export class AuthController {
   reset(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto.token, resetPasswordDto.password);
   }
+
+  @Get('verify-reset-token')
+  verifyToken(@Query('token') token: string) {
+    return this.authService.verifyResetToken(token);
+  }
 }

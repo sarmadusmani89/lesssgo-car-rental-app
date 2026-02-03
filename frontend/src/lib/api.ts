@@ -13,6 +13,7 @@ export const authApi = {
     logout: () => api.post('/auth/logout').then(res => res.data),
     forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }).then(res => res.data),
     resetPassword: (data: any) => api.post('/auth/reset-password', data).then(res => res.data),
+    verifyResetToken: (token: string) => api.get(`/auth/verify-reset-token?token=${token}`).then(res => res.data),
 };
 
 export const dashboardApi = {

@@ -69,8 +69,15 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
+    console.log(`[ForgotPassword] Request for email: ${email}`);
     const user = (await this.usersService.findAll()).find(u => u.email === email);
-    if (!user) return { message: 'If the email exists, a reset link has been sent' };
+
+    if (!user) {
+      console.log(`[ForgotPassword] User not found for email: ${email}`);
+      return { message: 'If the email exists, a reset link has been sent' };
+    }
+
+    console.log(`[ForgotPassword] User found: ${user.id}`);
 
     const resetToken = uuidv4();
     const resetTokenExp = new Date();
@@ -81,7 +88,15 @@ export class AuthService {
       resetTokenExp,
     });
 
-    await this.emailService.sendPasswordResetEmail(email, resetToken);
+    try {
+      console.log(`[ForgotPassword] Sending email to: ${email} with token: ${resetToken}`);
+      await this.emailService.sendPasswordResetEmail(email, resetToken);
+      console.log(`[ForgotPassword] Email sent successfully.`);
+    } catch (error) {
+      console.error(`[ForgotPassword] Failed to send email:`, error);
+      // We still return success to not leak info, but logging error is crucial for us
+    }
+
     return { message: 'If the email exists, a reset link has been sent' };
   }
 
@@ -99,5 +114,13 @@ export class AuthService {
     });
 
     return { message: 'Password reset successful' };
+  }
+
+  async verifyResetToken(token: string) {
+    const user = (await this.usersService.findAll()).find(u => u.resetToken === token);
+    if (!user || !user.resetTokenExp || user.resetTokenExp < new Date()) {
+      throw new UnauthorizedException('Invalid or expired reset token');
+    }
+    return { valid: true };
   }
 }
