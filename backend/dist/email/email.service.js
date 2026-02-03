@@ -45,12 +45,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmailService = void 0;
 const common_1 = require("@nestjs/common");
 const nodemailer = __importStar(require("nodemailer"));
+const verificationEmail_1 = require("../lib/emailTemplates/verificationEmail");
+const passwordReset_1 = require("../lib/emailTemplates/passwordReset");
 let EmailService = class EmailService {
     constructor() {
         this.transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
             port: Number(process.env.SMTP_PORT),
-            secure: false,
+            secure: false, // true for 465, false for other ports
             auth: {
                 user: process.env.SMTP_USER,
                 pass: process.env.SMTP_PASSWORD,
@@ -58,24 +60,28 @@ let EmailService = class EmailService {
         });
     }
     async sendVerificationEmail(email, token) {
+        const verificationLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
+        const htmlContent = (0, verificationEmail_1.generateVerificationEmail)(verificationLink);
         await this.transporter.sendMail({
-            from: process.env.SMTP_FROM_EMAIL,
+            from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
             to: email,
-            subject: 'Verify your email',
-            text: `Verify using token: ${token}`,
+            subject: '✅ Verify your email - LesssGo',
+            html: htmlContent,
         });
     }
     async sendPasswordResetEmail(email, token) {
+        const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}`;
+        const htmlContent = (0, passwordReset_1.generatePasswordResetEmail)(resetLink);
         await this.transporter.sendMail({
-            from: process.env.SMTP_FROM_EMAIL,
+            from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
             to: email,
-            subject: 'Reset password',
-            text: `Reset token: ${token}`,
+            subject: '🔐 Reset your password - LesssGo',
+            html: htmlContent,
         });
     }
     async sendEmail(to, subject, html) {
         await this.transporter.sendMail({
-            from: process.env.SMTP_FROM_EMAIL,
+            from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
             to,
             subject,
             html,

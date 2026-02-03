@@ -1,5 +1,8 @@
-export const generateVerificationEmail = (verificationLink: string) => {
-  return `
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateVerificationEmail = void 0;
+const generateVerificationEmail = (verificationLink) => {
+    return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,3 +75,5 @@ export const generateVerificationEmail = (verificationLink: string) => {
 </html>
   `;
 };
+exports.generateVerificationEmail = generateVerificationEmail;
+//# sourceMappingURL=verificationEmail.js.map

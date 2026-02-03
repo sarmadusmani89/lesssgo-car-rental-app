@@ -24,9 +24,9 @@ export class EmailService {
     const htmlContent = generateVerificationEmail(verificationLink);
 
     await this.transporter.sendMail({
-      from: process.env.SMTP_FROM_EMAIL || `"Car Rental" <${process.env.SMTP_USER}>`,
+      from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: '✅ Verify your email - Car Rental',
+      subject: '✅ Verify your email - LesssGo',
       html: htmlContent,
     });
   }
@@ -36,16 +36,16 @@ export class EmailService {
     const htmlContent = generatePasswordResetEmail(resetLink);
 
     await this.transporter.sendMail({
-      from: process.env.SMTP_FROM_EMAIL || `"Car Rental" <${process.env.SMTP_USER}>`,
+      from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: '🔐 Reset your password - Car Rental',
+      subject: '🔐 Reset your password - LesssGo',
       html: htmlContent,
     });
   }
 
   async sendEmail(to: string, subject: string, html: string) {
     await this.transporter.sendMail({
-      from: process.env.SMTP_FROM_EMAIL || `"Car Rental" <${process.env.SMTP_USER}>`,
+      from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html,

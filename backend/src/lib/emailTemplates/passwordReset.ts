@@ -1,5 +1,5 @@
 export const generatePasswordResetEmail = (resetLink: string) => {
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +23,7 @@ export const generatePasswordResetEmail = (resetLink: string) => {
           <tr>
             <td style="padding: 40px 30px;">
               <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #333333;">
-                We received a request to reset the password for your <strong>Car Rental</strong> account.
+                We received a request to reset the password for your <strong>LesssGo</strong> account.
               </p>
               <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #333333;">
                 Click the button below to create a new password. This link will expire in <strong>1 hour</strong> for security reasons.
@@ -59,7 +59,7 @@ export const generatePasswordResetEmail = (resetLink: string) => {
           <tr>
             <td style="background-color: #f8f9fa; padding: 30px; text-align: center;">
               <p style="margin: 0 0 10px; font-size: 14px; color: #666666;">
-                &copy; ${new Date().getFullYear()} Car Rental. All rights reserved.
+                &copy; ${new Date().getFullYear()} LesssGo. All rights reserved.
               </p>
               <p style="margin: 0; font-size: 12px; color: #999999;">
                 Premium vehicle rentals at your fingertips
