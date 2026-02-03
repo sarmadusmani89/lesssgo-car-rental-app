@@ -5,35 +5,73 @@ services:
     image: postgres:16-alpine
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Sarmad@
-      POSTGRES_DB: car_rental
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Sarmad@}
+      POSTGRES_DB: ${POSTGRES_DB:-car_rental}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - car_rental_net
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     restart: always
     ports:
       - "3001:3001"
     environment:
-      DATABASE_URL: postgresql://postgres:Sarmad%40@db:5432/car_rental?schema=public
-      JWT_SECRET: your_jwt_secret_here
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-Sarmad@}@db:5432/${POSTGRES_DB:-car_rental}?schema=public
+      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_here}
+      SMTP_HOST: ${SMTP_HOST:-smtp.mailtrap.io}
+      SMTP_PORT: ${SMTP_PORT:-2525}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      FRONTEND_URL: http://localhost:3000
       PORT: 3001
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - car_rental_net
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     restart: always
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/next.config.mjs:/app/next.config.mjs
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/tailwind.config.ts:/app/tailwind.config.ts
+      - ./frontend/postcss.config.mjs:/app/postcss.config.mjs
+    command: sh -c "npm install && npm run dev"
     environment:
+      NODE_ENV: development
       NEXT_PUBLIC_API_URL: http://localhost:3001
+      # Internal URL for SSR (if needed by Next.js apps to talk to backend inside Docker)
+      BACKEND_INTERNAL_URL: http://backend:3001
     depends_on:
       - backend
+    networks:
+      - car_rental_net
 
 volumes:
   postgres_data:
+
+
+networks:
+  car_rental_net:
+    driver: bridge

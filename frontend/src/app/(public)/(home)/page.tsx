@@ -6,7 +6,7 @@ import FeaturedCars from '@/components/pages/home/FeaturedCars';
 
 export default function Home() {
     return (
-        <div className={styles.main}>
+        <div className={styles.home}>
             <Hero />
             <Benefits />
             <Testimonials />

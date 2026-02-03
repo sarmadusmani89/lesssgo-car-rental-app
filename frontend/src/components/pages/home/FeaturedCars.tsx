@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import styles from '@/app/(public)/(home)/page.module.css';
-import CarCard from './CarCard';
+import styles from '../../../app/(public)/(home)/page.module.css';
+import CarCard from '../../common/CarCard';
 
 export default function FeaturedCars() {
     const featuredCars = [

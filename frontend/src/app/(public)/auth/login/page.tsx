@@ -4,19 +4,25 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { api } from '@/lib/api';
+import api from '@/lib/api';
 import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
-import { z } from 'zod';
+
 
 type LoginFormInputs = {
     email: string;
     password: string;
     rememberMe: boolean;
 };
-import AuthInput from '@/components/auth/AuthInput';
-import AuthSplitLayout from '@/components/auth/AuthSplitLayout';
+
+interface LoginResponse {
+    access_token: string;
+    user: any;
+}
+
+import AuthInput from '@/components/pages/auth/AuthInput';
+import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
 
 
 export default function LoginPage() {
@@ -32,8 +38,8 @@ export default function LoginPage() {
         // setError(''); // Removed local error state
 
         try {
-            const res = await api.post('/auth/login', data);
-            localStorage.setItem('token', res.access_token);
+            const res = await api.post<LoginResponse>('/auth/login', data);
+            localStorage.setItem('token', res.data.access_token);
             router.push('/');
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || 'Login failed';

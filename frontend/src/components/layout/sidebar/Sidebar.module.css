@@ -1,0 +1,73 @@
+/* Sidebar container */
+.sidebar {
+    @apply fixed top-0 left-0 h-screen w-64
+    bg-white/80 backdrop-blur-md
+    border-r border-gray-200/50
+    hidden md:flex flex-col justify-between
+    shadow-sm z-20;
+}
+
+/* Title */
+.titleWrapper {
+    @apply p-6;
+}
+
+.title {
+    @apply text-2xl font-bold italic
+    bg-gradient-to-r from-blue-600 to-indigo-600
+    bg-clip-text text-transparent;
+}
+
+/* Navigation */
+.nav {
+    @apply px-4 py-2 space-y-1;
+}
+
+/* Link base */
+.link {
+    @apply flex items-center gap-3
+    px-4 py-3 rounded-xl
+    transition-all duration-200;
+}
+
+/* Active link */
+.linkActive {
+    @apply bg-blue-600 text-white
+    shadow-lg shadow-blue-500/30
+    translate-x-1;
+}
+
+/* Inactive link */
+.linkInactive {
+    @apply text-gray-600
+    hover:bg-gray-50
+    hover:text-blue-600
+    hover:pl-5;
+}
+
+/* Icon */
+.icon {
+    @apply transition-colors;
+}
+
+.iconActive {
+    @apply text-white;
+}
+
+.iconInactive {
+    @apply text-gray-400;
+}
+
+/* Logout */
+.logoutWrapper {
+    @apply px-4 py-4;
+}
+
+.logoutButton {
+    @apply flex items-center gap-3 w-full
+    px-4 py-3 rounded-xl
+    text-gray-600
+    hover:bg-gray-50
+    hover:text-blue-600
+    transition-all duration-200;
+}

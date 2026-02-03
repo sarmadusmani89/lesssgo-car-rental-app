@@ -4,17 +4,22 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { api } from '@/lib/api';
+import api from '@/lib/api';
 import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Mail, Lock, User, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import AuthInput from '@/components/auth/AuthInput';
-import AuthSplitLayout from '@/components/auth/AuthSplitLayout';
+import AuthInput from '@/components/pages/auth/AuthInput';
+import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
 
 interface SignupFormInputs {
     name: string;
     email: string;
     password: string;
+}
+
+interface BackendResponse {
+    message: string;
+    error?: string;
 }
 
 export default function SignupPage() {
@@ -30,8 +35,8 @@ export default function SignupPage() {
         setSuccess('');
 
         try {
-            const res = await api.post('/auth/signup', data);
-            setSuccess(res.message);
+            const res = await api.post<BackendResponse>('/auth/signup', data);
+            setSuccess(res.data.message);
         } catch (err: any) {
             const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Signup failed';
             setError(errorMessage);
