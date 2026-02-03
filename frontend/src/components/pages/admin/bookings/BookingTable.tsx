@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-export type BookingStatus = "pending" | "confirmed" | "cancelled";
-export type PaymentStatus = "paid" | "unpaid";
+export type BookingStatus = "pending" | "confirmed" | "completed" | "cancelled";
+export type PaymentStatus = "paid" | "unpaid" | "refunded";
 
 
 type Props = {
@@ -25,8 +25,9 @@ export interface Booking {
   status: BookingStatus;
   paymentStatus: PaymentStatus;
 }
-const statusOptions = ["Pending", "Confirmed", "Completed", "Cancelled"];
-const paymentOptions = ["Paid", "Unpaid"];
+const statusOptions = ["pending", "confirmed", "completed", "cancelled"];
+const paymentOptions = ["paid", "unpaid", "refunded"];
+
 
 export default function BookingsTable({
   bookings,
@@ -78,7 +79,7 @@ export default function BookingsTable({
           <option value="">All Status</option>
           {statusOptions.map((s) => (
             <option key={s} value={s}>
-              {s}
+              {s.charAt(0).toUpperCase() + s.slice(1)}
             </option>
           ))}
         </select>
@@ -91,10 +92,11 @@ export default function BookingsTable({
           <option value="">All Payments</option>
           {paymentOptions.map((p) => (
             <option key={p} value={p}>
-              {p}
+              {p.charAt(0).toUpperCase() + p.slice(1)}
             </option>
           ))}
         </select>
+
 
         <input
           type="date"
@@ -150,9 +152,10 @@ export default function BookingsTable({
                     >
                       {statusOptions.map((s) => (
                         <option key={s} value={s}>
-                          {s}
+                          {s.charAt(0).toUpperCase() + s.slice(1)}
                         </option>
                       ))}
+
                     </select>
                   ) : (
                     <span>{b.status}</span>

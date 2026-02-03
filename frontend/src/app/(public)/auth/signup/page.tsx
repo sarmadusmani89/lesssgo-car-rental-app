@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Mail, Lock, User, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, User, Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
 
@@ -65,7 +65,7 @@ export default function SignupPage() {
 
             {success && (
                 <div className={styles.success}>
-                    <CheckCircle2 size={18} />
+                    <Sparkles size={18} />
                     {success}
                 </div>
             )}

@@ -11,7 +11,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private emailService: EmailService,
-  ) {}
+  ) { }
 
   async signup(email: string, password: string, name: string) {
     const users = await this.usersService.findAll();
@@ -49,7 +49,7 @@ export class AuthService {
       throw new UnauthorizedException('Please verify your email first');
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, role: user.role };
     return {
       access_token: await this.jwtService.signAsync(payload),
       user,

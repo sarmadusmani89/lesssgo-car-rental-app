@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
-
+import { toast } from 'sonner';
 
 type LoginFormInputs = {
     email: string;
@@ -24,14 +24,34 @@ interface LoginResponse {
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
 
-
-export default function LoginPage() {
+function LoginContent() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginFormInputs>();
 
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const verifyToken = searchParams.get('verifyToken');
+
+    useEffect(() => {
+        if (verifyToken) {
+            const verifyEmail = async () => {
+                try {
+                    const res = await api.get(`/auth/verify?token=${verifyToken}`);
+                    toast.success(res.data.message || 'Email verified successfully! You can now log in.');
+                    // Replace URL to clean up the token after verification
+                    router.replace('/auth/login');
+                } catch (err: any) {
+                    const errorMessage = err.response?.data?.message || 'Verification failed or link expired.';
+                    toast.error(errorMessage);
+                    // Replace URL even on failure to avoid re-triggering with an invalid token
+                    router.replace('/auth/login');
+                }
+            };
+            verifyEmail();
+        }
+    }, [verifyToken, router]);
 
     const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
         setLoading(true);
@@ -39,8 +59,22 @@ export default function LoginPage() {
 
         try {
             const res = await api.post<LoginResponse>('/auth/login', data);
+
+            // Store token and user data in cookies (for Middleware)
+            const expires = new Date(Date.now() + 86400000).toUTCString(); // 1 day
+            document.cookie = `token=${res.data.access_token}; path=/; expires=${expires}; SameSite=Lax`;
+            document.cookie = `role=${res.data.user.role}; path=/; expires=${expires}; SameSite=Lax`;
+
+            // Store user data in localStorage for UI
             localStorage.setItem('token', res.data.access_token);
-            router.push('/');
+            localStorage.setItem('user', JSON.stringify(res.data.user));
+
+            // Role-based redirection
+            if (res.data.user.role === 'admin') {
+                router.push('/admin/bookings');
+            } else {
+                router.push('/dashboard');
+            }
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || 'Login failed';
             setError(errorMessage);
@@ -108,3 +142,16 @@ export default function LoginPage() {
         </AuthSplitLayout>
     );
 }
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Loader2 className="animate-spin text-blue-600" size={48} />
+            </div>
+        }>
+            <LoginContent />
+        </Suspense>
+    );
+}
+

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Lock, Mail, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Lock, Mail, Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
 
@@ -64,7 +64,7 @@ function ResetPasswordContent() {
 
             {success && (
                 <div className={styles.success}>
-                    <CheckCircle2 size={18} />
+                    <Sparkles size={18} />
                     {success}
                 </div>
             )}

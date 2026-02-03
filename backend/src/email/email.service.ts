@@ -20,7 +20,7 @@ export class EmailService {
   }
 
   async sendVerificationEmail(email: string, token: string) {
-    const verificationLink = `${process.env.FRONTEND_URL}/auth/verify-email?token=${token}`;
+    const verificationLink = `${process.env.FRONTEND_URL}/auth/login?verifyToken=${token}`;
     const htmlContent = generateVerificationEmail(verificationLink);
 
     await this.transporter.sendMail({

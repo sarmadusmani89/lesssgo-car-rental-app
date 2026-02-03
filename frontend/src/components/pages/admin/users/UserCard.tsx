@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Mail, Shield, CheckCircle2 } from 'lucide-react';
+import { Mail, Shield, Sparkles } from 'lucide-react';
 
 interface UserCardProps {
     index: number;
@@ -27,7 +27,7 @@ export default function UserCard({ index }: UserCardProps) {
                     </div>
                 </div>
 
-                <CheckCircle2 size={18} className="text-emerald-500" />
+                <Sparkles size={18} className="text-emerald-500" />
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t border-slate-50">

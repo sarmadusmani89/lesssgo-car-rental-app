@@ -1,11 +1,14 @@
+import { BookingStatus, PaymentStatus } from "./BookingTable";
+
 type Props = {
   search: string;
   setSearch: (s: string) => void;
-  status: string;
-  setStatus: (s: string) => void;
-  payment: string;
-  setPayment: (p: string) => void;
+  status: BookingStatus | "";
+  setStatus: (s: BookingStatus | "") => void;
+  payment: PaymentStatus | "";
+  setPayment: (p: PaymentStatus | "") => void;
 };
+
 
 export default function BookingFilters({
   search,
@@ -27,7 +30,7 @@ export default function BookingFilters({
 
       <select
         value={status}
-        onChange={(e) => setStatus(e.target.value)}
+        onChange={(e) => setStatus(e.target.value as BookingStatus | "")}
         className="border px-3 py-2 rounded"
       >
         <option value="">All Status</option>
@@ -39,7 +42,7 @@ export default function BookingFilters({
 
       <select
         value={payment}
-        onChange={(e) => setPayment(e.target.value)}
+        onChange={(e) => setPayment(e.target.value as PaymentStatus | "")}
         className="border px-3 py-2 rounded"
       >
         <option value="">All Payments</option>

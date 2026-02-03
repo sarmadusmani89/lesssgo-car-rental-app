@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Search, Calendar, Car, CheckCircle } from 'lucide-react';
+import { Search, Calendar, Car, Sparkles } from 'lucide-react';
 import styles from './how-it-works.module.css';
 
 export default function HowItWorksPage() {
@@ -20,7 +20,7 @@ export default function HowItWorksPage() {
             description: 'Complete your booking with our secure payment system. Receive instant confirmation and digital documents.',
         },
         {
-            icon: CheckCircle,
+            icon: Sparkles,
             title: 'Drive Away',
             description: 'Pick up your car at the scheduled time. Enjoy your journey with 24/7 roadside assistance included.',
         },
