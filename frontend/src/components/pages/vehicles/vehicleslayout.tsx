@@ -5,18 +5,51 @@ import CarCard from '@/components/ui/CarCard';
 
 interface Vehicle {
   id: number;
+  brand: string;
   name: string;
   image: string;
-  pricePerDay: number;
+  price: string;
+  monthly: string;
   location: string;
   type: string;
+  badge: string;
+  badgeClass: string;
+  hp: string;
+  fuel: string;
+  transmission: string;
 }
 
 const allVehicles: Vehicle[] = [
-  { id: 1, name: 'Tesla Model X', image: '/images/tesla1.jpg', pricePerDay: 200, location: 'Karachi', type: 'SUV' },
-  { id: 2, name: 'BMW i8', image: '/images/bmw1.jpg', pricePerDay: 180, location: 'Lahore', type: 'Coupe' },
-  { id: 3, name: 'Audi R8', image: '/images/audi1.jpg', pricePerDay: 220, location: 'Islamabad', type: 'Coupe' },
-  { id: 4, name: 'Mercedes GLE', image: '/images/mercedes1.jpg', pricePerDay: 210, location: 'Karachi', type: 'SUV' },
+  {
+    id: 1,
+    brand: 'TESLA',
+    name: 'Model X',
+    image: '/images/tesla1.jpg',
+    price: '200',
+    monthly: '5,000',
+    location: 'Karachi',
+    type: 'SUV',
+    badge: 'Electric',
+    badgeClass: '',
+    hp: '670 HP',
+    fuel: 'Electric',
+    transmission: 'Auto'
+  },
+  {
+    id: 2,
+    brand: 'BMW',
+    name: 'i8',
+    image: '/images/bmw1.jpg',
+    price: '180',
+    monthly: '4,500',
+    location: 'Lahore',
+    type: 'Coupe',
+    badge: 'Hybrid',
+    badgeClass: '',
+    hp: '369 HP',
+    fuel: 'Hybrid',
+    transmission: 'Auto'
+  },
 ];
 
 export default function VehiclesLayout() {
@@ -87,12 +120,7 @@ export default function VehiclesLayout() {
             filteredVehicles.map((vehicle) => (
               <CarCard
                 key={vehicle.id}
-                id={vehicle.id}
-                name={vehicle.name}
-                image={vehicle.image}
-                pricePerDay={vehicle.pricePerDay}
-                location={vehicle.location}
-                type={vehicle.type}
+                {...vehicle}
               />
             ))
           ) : (
