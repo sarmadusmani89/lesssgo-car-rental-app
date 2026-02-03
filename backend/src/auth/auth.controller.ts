@@ -1,18 +1,22 @@
 import { Controller, Post, Body, Get, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { SignupDto } from './dto/signup.dto';
+import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('signup')
-  signup(@Body() body: { email: string; password: string; name: string }) {
-    return this.authService.signup(body.email, body.password, body.name);
+  signup(@Body() signupDto: SignupDto) {
+    return this.authService.signup(signupDto.email, signupDto.password, signupDto.name);
   }
 
   @Post('login')
-  login(@Body() body: { email: string; password: string }) {
-    return this.authService.login(body.email, body.password);
+  login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto.email, loginDto.password);
   }
 
   @Get('verify')
@@ -21,12 +25,12 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  forgot(@Body() body: { email: string }) {
-    return this.authService.forgotPassword(body.email);
+  forgot(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(forgotPasswordDto.email);
   }
 
   @Post('reset-password')
-  reset(@Body() body: { token: string; password: string }) {
-    return this.authService.resetPassword(body.token, body.password);
+  reset(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(resetPasswordDto.token, resetPasswordDto.password);
   }
 }

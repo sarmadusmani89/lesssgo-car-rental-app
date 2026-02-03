@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
-const booking_entity_1 = require("../booking/entities/booking.entity");
+const booking_entity_1 = require("../../booking/entities/booking.entity");
 let User = class User {
 };
 exports.User = User;
@@ -64,7 +64,7 @@ __decorate([
     __metadata("design:type", Object)
 ], User.prototype, "resetTokenExp", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => booking_entity_1.Booking, booking => booking.user),
+    (0, typeorm_1.OneToMany)(() => booking_entity_1.Booking, (booking) => booking.user),
     __metadata("design:type", Array)
 ], User.prototype, "bookings", void 0);
 __decorate([

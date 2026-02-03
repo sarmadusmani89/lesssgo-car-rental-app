@@ -50,15 +50,15 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const bcrypt = __importStar(require("bcryptjs"));
-const user_entity_1 = require("./user.entity");
+const user_entity_1 = require("./entities/user.entity");
 let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
-    async create(userData) {
-        const hashedPassword = await bcrypt.hash(userData.password, 10);
+    async create(createUserDto) {
+        const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
         const user = this.userRepository.create({
-            ...userData,
+            ...createUserDto,
             password: hashedPassword,
         });
         return this.userRepository.save(user);
@@ -72,9 +72,9 @@ let UsersService = class UsersService {
             throw new Error('User not found');
         return user;
     }
-    async update(id, data) {
+    async update(id, updateUserDto) {
         const user = await this.findOne(id);
-        Object.assign(user, data);
+        Object.assign(user, updateUserDto);
         return this.userRepository.save(user);
     }
     async remove(id) {

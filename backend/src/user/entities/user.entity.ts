@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Booking } from '../booking/entities/booking.entity';
+import { Booking } from '../../booking/entities/booking.entity';
 
 export type UserRole = 'user' | 'admin';
 
@@ -50,7 +50,7 @@ export class User {
   resetTokenExp!: Date | null;
 
   // ✅ REQUIRED RELATION
-  @OneToMany(() => Booking, booking => booking.user)
+  @OneToMany(() => Booking, (booking: Booking) => booking.user)
   bookings!: Booking[];
 
   @CreateDateColumn({ type: 'timestamp' })

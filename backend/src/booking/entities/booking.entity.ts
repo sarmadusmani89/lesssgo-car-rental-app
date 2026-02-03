@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index, OneToMany } from 'typeorm';
 import { Vehicle } from '../../vehicle/entities/vehicle.entity';
-import { User } from '../../user/user.entity';
+import { User } from '../../user/entities/user.entity';
 import { Payment } from '../../payment/entities/payment.entity';
 
 export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
@@ -16,7 +16,7 @@ export class Booking {
   id!: number;
 
   // Relations
-  @ManyToOne(() => User, (user) => user.bookings)
+  @ManyToOne(() => User, (user: User) => user.bookings)
   @JoinColumn({ name: 'userId' })
   user!: User;
 
@@ -36,11 +36,13 @@ export class Booking {
   @Column({ type: 'date' })
   endDate!: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, transformer: {
-  to: (value: number) => value,
-  from: (value: string) => parseFloat(value),
-}})
-totalAmount!: number;
+  @Column({
+    type: 'decimal', precision: 10, scale: 2, transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    }
+  })
+  totalAmount!: number;
 
   @Column({ type: 'enum', enum: ['pending', 'confirmed', 'cancelled', 'completed'], default: 'pending' })
   status!: BookingStatus;

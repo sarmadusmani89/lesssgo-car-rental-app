@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../user/user.entity';
+import { User } from '../user/entities/user.entity';
 import { Booking } from '../booking/entities/booking.entity';
 import { Payment } from '../payment/entities/payment.entity';
+import { AdminStatsDto, UserStatsDto } from './dto/stats-response.dto';
 
 @Injectable()
 export class DashboardService {
@@ -16,7 +17,7 @@ export class DashboardService {
     private readonly paymentRepo: Repository<Payment>,
   ) { }
 
-  async getAdminStats() {
+  async getAdminStats(): Promise<AdminStatsDto> {
     const usersCount = await this.userRepo.count();
     const bookingsCount = await this.bookingRepo.count();
     const payments = await this.paymentRepo.find();
@@ -29,7 +30,7 @@ export class DashboardService {
     };
   }
 
-  async getUserStats(userId: number) {
+  async getUserStats(userId: number): Promise<UserStatsDto> {
     const bookings = await this.bookingRepo.find({ where: { userId } });
     const totalSpent = bookings.reduce((acc: number, b: Booking) => acc + Number(b.totalAmount), 0);
 

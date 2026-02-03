@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Booking = void 0;
 const typeorm_1 = require("typeorm");
 const vehicle_entity_1 = require("../../vehicle/entities/vehicle.entity");
-const user_entity_1 = require("../../user/user.entity");
+const user_entity_1 = require("../../user/entities/user.entity");
 const payment_entity_1 = require("../../payment/entities/payment.entity");
 let Booking = class Booking {
 };
@@ -48,10 +48,12 @@ __decorate([
     __metadata("design:type", String)
 ], Booking.prototype, "endDate", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, transformer: {
+    (0, typeorm_1.Column)({
+        type: 'decimal', precision: 10, scale: 2, transformer: {
             to: (value) => value,
             from: (value) => parseFloat(value),
-        } }),
+        }
+    }),
     __metadata("design:type", Number)
 ], Booking.prototype, "totalAmount", void 0);
 __decorate([
