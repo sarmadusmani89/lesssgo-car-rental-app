@@ -1,65 +1,81 @@
 'use client';
 
 import { useState } from 'react';
-import { Lock } from 'lucide-react';
+import { Lock, Loader2 } from 'lucide-react';
+import AuthInput from '@/components/pages/auth/AuthInput';
+import api from '@/lib/api';
+import { toast } from 'sonner';
 
 export default function ChangePassword() {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [passwords, setPasswords] = useState({
+    newPassword: '',
+    confirmPassword: '',
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (newPassword !== confirmPassword) {
-      alert('New password and confirm password do not match!');
+    if (passwords.newPassword !== passwords.confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
 
-    console.log('Password changed:', { currentPassword, newPassword });
-    alert('Password changed successfully!');
+    if (passwords.newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser) throw new Error('User not found');
+
+      const { id } = JSON.parse(storedUser);
+
+      await api.put(`/users/${id}`, {
+        password: passwords.newPassword,
+      });
+
+      toast.success('Password changed successfully');
+      setPasswords({ newPassword: '', confirmPassword: '' });
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to change password');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="p-6 bg-white shadow rounded-lg">
-      <h2 className="text-xl font-semibold mb-4">Change Password</h2>
+    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+      <h2 className="text-xl font-bold font-outfit mb-6">Change Password</h2>
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <label className="block text-gray-700 mb-1">Current Password</label>
-          <input
-            type="password"
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-          />
-        </div>
+        <AuthInput
+          label="New Password"
+          icon={Lock}
+          type="password"
+          value={passwords.newPassword}
+          onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
+        />
 
-        <div>
-          <label className="block text-gray-700 mb-1">New Password</label>
-          <input
-            type="password"
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-        </div>
+        <AuthInput
+          label="Confirm Password"
+          icon={Lock}
+          type="password"
+          value={passwords.confirmPassword}
+          onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+        />
 
-        <div>
-          <label className="block text-gray-700 mb-1">Confirm Password</label>
-          <input
-            type="password"
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+        <div className="flex justify-end mt-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn btn-primary px-8"
+          >
+            {loading ? <Loader2 className="animate-spin" /> : 'Update Password'}
+          </button>
         </div>
-
-        <button
-          type="submit"
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Change Password
-        </button>
       </form>
     </div>
   );

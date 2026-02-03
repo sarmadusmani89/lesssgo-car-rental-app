@@ -10,7 +10,7 @@ export default function ProfileView({ user }: ProfileViewProps) {
     return (
         <div className="animate-slide-up">
             <h2 className="font-outfit text-2xl mb-6">My Profile</h2>
-            <div className="glass p-8 rounded-2xl max-w-2xl">
+            <div className="glass p-8 rounded-2xl w-full">
                 <div className="flex items-center gap-6 mb-8">
                     <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
                         <User size={40} />

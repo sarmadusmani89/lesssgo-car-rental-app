@@ -1,58 +1,90 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { User, Mail, Phone, Loader2 } from 'lucide-react';
+import AuthInput from '@/components/pages/auth/AuthInput';
+import api from '@/lib/api';
+import { toast } from 'sonner';
 
 export default function UpdateProfileForm() {
-  const [name, setName] = useState('John Doe');
-  const [email, setEmail] = useState('john@example.com');
-  const [phone, setPhone] = useState('+92 300 1234567');
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      // Combine name for display/edit
+      const full = `${parsed.firstName || ''} ${parsed.lastName || ''}`.trim();
+      setUser({ ...parsed, fullName: full });
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Updated Profile:', { name, email, phone });
-    alert('Profile updated successfully!');
+    setLoading(true);
+
+    try {
+      const { id, fullName, email } = user;
+
+      // Split name logic
+      const nameParts = fullName.trim().split(' ');
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      await api.put(`/users/${id}`, {
+        firstName,
+        lastName,
+        email,
+      });
+
+      // Update localStorage with new split values
+      const updatedUser = { ...user, firstName, lastName };
+      delete updatedUser.fullName; // Don't store derived prop
+
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      window.dispatchEvent(new Event('storage'));
+
+      toast.success('Profile updated successfully');
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setLoading(false);
+    }
   };
 
+  if (!user) return null;
+
   return (
-    <div className="p-6 bg-white shadow rounded-lg">
-      <h2 className="text-xl font-semibold mb-4">Update Profile</h2>
+    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+      <h2 className="text-xl font-bold font-outfit mb-6">Update Information</h2>
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <label className="block text-gray-700 mb-1">Name</label>
-          <input
-            type="text"
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
+        <AuthInput
+          label="Full Name"
+          icon={User}
+          value={user.fullName || ''}
+          onChange={(e) => setUser({ ...user, fullName: e.target.value })}
+        />
 
-        <div>
-          <label className="block text-gray-700 mb-1">Email</label>
-          <input
-            type="email"
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+        <AuthInput
+          label="Email Address"
+          icon={Mail}
+          type="email"
+          value={user.email || ''}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
+        />
 
-        <div>
-          <label className="block text-gray-700 mb-1">Phone</label>
-          <input
-            type="tel"
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </div>
+        {/* Phone not in backend yet, skipping or just UI */}
 
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Update Profile
-        </button>
+        <div className="flex justify-end mt-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn btn-primary px-8"
+          >
+            {loading ? <Loader2 className="animate-spin" /> : 'Save Changes'}
+          </button>
+        </div>
       </form>
     </div>
   );
