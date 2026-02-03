@@ -10,10 +10,10 @@ export class ContactService {
         const { name, email, subject, message } = createContactDto;
 
         // Send email to admin/support team
-        await this.emailService.sendEmail({
-            to: 'support@lesssgo.com',
-            subject: `Contact Form: ${subject}`,
-            html: `
+        await this.emailService.sendEmail(
+            'support@lesssgo.com',
+            `Contact Form: ${subject}`,
+            `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #2563eb;">New Contact Form Submission</h2>
                     <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
@@ -31,13 +31,13 @@ export class ContactService {
                     </p>
                 </div>
             `,
-        });
+        );
 
         // Send confirmation email to user
-        await this.emailService.sendEmail({
-            to: email,
-            subject: 'We received your message - Lesssgo',
-            html: `
+        await this.emailService.sendEmail(
+            email,
+            'We received your message - Lesssgo',
+            `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2 style="color: #2563eb;">Thank You for Contacting Us!</h2>
                     <p>Hi ${name},</p>
@@ -55,7 +55,7 @@ export class ContactService {
                     </p>
                 </div>
             `,
-        });
+        );
 
         return { message: 'Contact message sent successfully' };
     }
