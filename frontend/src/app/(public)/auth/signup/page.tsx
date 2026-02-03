@@ -2,31 +2,35 @@
 
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
+import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Mail, Lock, User, Loader2, AlertCircle, Sparkles } from 'lucide-react';
+import { Mail, Lock, User, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
-import styles from '@/app/(public)/auth/auth.module.css';
 
-interface SignupFormInputs {
+// Define the form inputs
+type SignupFormInputs = {
     name: string;
     email: string;
     password: string;
-}
+};
 
+// Define the backend response interface
 interface BackendResponse {
     message: string;
-    error?: string;
+    user?: any;
+    token?: string;
+    [key: string]: any;
 }
 
 function SignupContent() {
-    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const router = useRouter();
 
     const { register, handleSubmit, formState: { errors } } = useForm<SignupFormInputs>();
 
@@ -37,7 +41,11 @@ function SignupContent() {
 
         try {
             const res = await api.post<BackendResponse>('/auth/signup', data);
+
+            // Show success toast instead of inline? Or both. User asked for error toast.
+            // Let's stick to inline success for now as it redirects.
             setSuccess(res.data.message);
+            toast.success('Account created successfully!');
 
             // Redirect to login after 2 seconds
             setTimeout(() => {
@@ -45,36 +53,27 @@ function SignupContent() {
             }, 2000);
         } catch (err: any) {
             const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Signup failed';
-            setError(errorMessage);
+
+            // specific check for conflict or "User already exist" message
+            if (err.response?.status === 409 || errorMessage.toLowerCase().includes('already exist')) {
+                toast.error(errorMessage);
+            } else {
+                setError(errorMessage);
+            }
         } finally {
             setLoading(false);
         }
     };
 
     return (
-
         <AuthSplitLayout
             imageSrc="/images/auth-side.png"
-            imageAlt="Join"
-            heading={<>Join the <br /> <span className="gradient-text">Exclusive.</span></>}
-            subheading="Enter the world of high-performance rentals and bespoke services."
+            imageAlt="Identity"
+            heading={<>The Key to <br /> <span className="gradient-text">Excellence.</span></>}
+            subheading="Join our premium fleet and experience the difference."
         >
-            <h2>Join Us</h2>
-            <p>Create your Lesssgo profile today.</p>
-
-            {error && (
-                <div className={styles.error}>
-                    <AlertCircle size={18} />
-                    {error}
-                </div>
-            )}
-
-            {success && (
-                <div className={styles.success}>
-                    <Sparkles size={18} />
-                    {success}
-                </div>
-            )}
+            <h2>Create Account</h2>
+            <p>Sign up to get started.</p>
 
             {!success && (
                 <form onSubmit={handleSubmit(onSubmit)}>
@@ -83,7 +82,10 @@ function SignupContent() {
                         icon={User}
                         type="text"
                         placeholder="John Doe"
-                        {...register('name', { required: 'Name is required' })}
+                        {...register('name', {
+                            required: 'Name is required',
+                            maxLength: { value: 50, message: 'Name cannot exceed 50 characters' }
+                        })}
                         wrapperClassName={errors.name ? styles.inputError : ''}
                     />
                     {errors.name && <span className={styles.errorText}>{errors.name.message}</span>}
@@ -95,6 +97,7 @@ function SignupContent() {
                         placeholder="your@email.com"
                         {...register('email', {
                             required: 'Email is required',
+                            maxLength: { value: 100, message: 'Email cannot exceed 100 characters' },
                             pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
                         })}
                         wrapperClassName={errors.email ? styles.inputError : ''}
@@ -106,10 +109,15 @@ function SignupContent() {
                         icon={Lock}
                         type="password"
                         placeholder="••••••••"
-                        {...register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min length is 6' } })}
+                        {...register('password', {
+                            required: 'Password is required',
+                            minLength: { value: 6, message: 'Min length is 6' },
+                            maxLength: { value: 50, message: 'Password cannot exceed 50 characters' }
+                        })}
                         wrapperClassName={errors.password ? styles.inputError : ''}
                     />
                     {errors.password && <span className={styles.errorText}>{errors.password.message}</span>}
+
 
                     <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
                         {loading ? <Loader2 className={styles.spin} /> : 'Create Account'}

@@ -64,6 +64,7 @@ export default function UpdateProfileForm() {
           icon={User}
           value={user.fullName || ''}
           onChange={(e) => setUser({ ...user, fullName: e.target.value })}
+          maxLength={50}
         />
 
         <AuthInput
@@ -72,6 +73,7 @@ export default function UpdateProfileForm() {
           type="email"
           value={user.email || ''}
           onChange={(e) => setUser({ ...user, email: e.target.value })}
+          maxLength={100}
         />
 
         {/* Phone not in backend yet, skipping or just UI */}

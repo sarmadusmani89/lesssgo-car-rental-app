@@ -57,6 +57,7 @@ export default function ChangePassword() {
           type="password"
           value={passwords.newPassword}
           onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
+          maxLength={50}
         />
 
         <AuthInput
@@ -65,6 +66,7 @@ export default function ChangePassword() {
           type="password"
           value={passwords.confirmPassword}
           onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+          maxLength={50}
         />
 
         <div className="flex justify-end mt-4">
