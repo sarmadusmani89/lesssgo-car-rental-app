@@ -16,11 +16,11 @@ export default function ClientUserWrapper({ children }: WrapperProps) {
       {/* Sidebar */}
       <div className="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between bg-white shadow z-20">
         <Sidebar
-          title="User Panel"
+          title="Dashboard"
           links={[
-            { name: 'My Bookings', href: '/user/bookings', icon: <Calendar size={20} /> },
-            { name: 'Booking Details', href: '/user/bookingdetailspage', icon: <User size={20} /> },
-            { name: 'Settings', href: '/user/settings', icon: <Settings size={20} /> },
+            { name: 'My Bookings', href: '/dashboard/bookings', icon: <Calendar size={20} /> },
+            { name: 'Booking Details', href: '/dashboard/bookingdetailspage', icon: <User size={20} /> },
+            { name: 'Settings', href: '/dashboard/settings', icon: <Settings size={20} /> },
           ]}
           className="flex-1"
         />
