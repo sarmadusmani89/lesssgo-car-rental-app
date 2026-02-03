@@ -42,7 +42,7 @@ export default function BookingActions({ booking, onViewDetails, onEdit, onCance
           >
             Edit Booking
           </button>
-          {booking.status !== "Cancelled" && (
+          {booking.status !== "cancelled" && (
             <button
               className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
               onClick={() => {

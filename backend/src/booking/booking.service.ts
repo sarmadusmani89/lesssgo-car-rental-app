@@ -43,4 +43,12 @@ export class BookingService {
     const booking = await this.findOne(id);
     return this.bookingRepo.remove(booking);
   }
+
+  async findByUser(userId: number) {
+    return this.bookingRepo.find({
+      where: { user: { id: userId } },
+      relations: ['user', 'car', 'payments'],
+      order: { startDate: 'DESC' },
+    });
+  }
 }

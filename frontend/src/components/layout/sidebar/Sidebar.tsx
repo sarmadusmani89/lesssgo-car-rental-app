@@ -15,15 +15,29 @@ interface SidebarProps {
     title: string;
     links: SidebarLink[];
     className?: string;
+    activeTab?: string;
+    onNavigate?: (href: string) => void;
 }
 
-export default function Sidebar({ title, links, className = '' }: SidebarProps) {
+export default function Sidebar({ title, links, className = '', activeTab, onNavigate }: SidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
 
     const handleLogout = () => {
-        // clear auth tokens here if needed
-        router.push('/login');
+        // Clear auth tokens
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = 'role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+
+        router.push('/auth/login');
+    };
+
+    const handleLinkClick = (e: React.MouseEvent, href: string) => {
+        if (onNavigate) {
+            e.preventDefault();
+            onNavigate(href);
+        }
     };
 
     return (
@@ -36,20 +50,19 @@ export default function Sidebar({ title, links, className = '' }: SidebarProps) 
 
                 <nav className={styles.nav}>
                     {links.map((link) => {
-                        const isActive = pathname === link.href;
+                        const isActive = activeTab ? activeTab === link.href : pathname === link.href;
 
                         return (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className={`group ${styles.link} ${
-                                    isActive ? styles.linkActive : styles.linkInactive
-                                }`}
+                                onClick={(e) => handleLinkClick(e, link.href)}
+                                className={`group ${styles.link} ${isActive ? styles.linkActive : styles.linkInactive
+                                    }`}
                             >
                                 <span
-                                    className={`${styles.icon} ${
-                                        isActive ? styles.iconActive : styles.iconInactive
-                                    } group-hover:text-blue-500`}
+                                    className={`${styles.icon} ${isActive ? styles.iconActive : `${styles.iconInactive} group-hover:text-blue-500`
+                                        }`}
                                 >
                                     {link.icon}
                                 </span>

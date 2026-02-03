@@ -73,7 +73,7 @@ function LoginContent() {
             if (res.data.user.role === 'admin') {
                 router.push('/admin/bookings');
             } else {
-                router.push('/dashboard');
+                router.push('/dashboard/profile');
             }
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || 'Login failed';

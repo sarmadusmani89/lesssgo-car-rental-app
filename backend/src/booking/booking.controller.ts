@@ -5,7 +5,7 @@ import { UpdateBookingDto } from './dto/update-booking.dto';
 
 @Controller('booking')
 export class BookingController {
-  constructor(private readonly bookingService: BookingService) {}
+  constructor(private readonly bookingService: BookingService) { }
 
   @Post()
   create(@Body() createBookingDto: CreateBookingDto) {
@@ -30,5 +30,10 @@ export class BookingController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.bookingService.remove(id);
+  }
+
+  @Get('user/:userId')
+  findByUser(@Param('userId', ParseIntPipe) userId: number) {
+    return this.bookingService.findByUser(userId);
   }
 }

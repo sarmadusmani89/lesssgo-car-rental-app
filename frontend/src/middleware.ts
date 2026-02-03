@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/auth/login', request.url));
         }
         if (role !== 'admin') {
-            return NextResponse.redirect(new URL('/dashboard', request.url));
+            return NextResponse.redirect(new URL('/dashboard/profile', request.url));
         }
     }
 
@@ -29,7 +29,7 @@ export function middleware(request: NextRequest) {
             if (role === 'admin') {
                 return NextResponse.redirect(new URL('/admin/bookings', request.url));
             } else {
-                return NextResponse.redirect(new URL('/dashboard', request.url));
+                return NextResponse.redirect(new URL('/dashboard/profile', request.url));
             }
         }
     }
