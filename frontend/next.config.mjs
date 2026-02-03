@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,           // Recommended for catching potential bugs
   swcMinify: true,                 // Use Next.js SWC compiler for faster builds
+  output: 'standalone',            // Enable standalone output for Docker
   experimental: {
     appDir: true,                  // Enable the app directory if using App Router
   },
