@@ -56,7 +56,7 @@ function SignupContent() {
 
             // specific check for conflict or "User already exist" message
             if (err.response?.status === 409 || errorMessage.toLowerCase().includes('already exist')) {
-                toast.error(errorMessage);
+                toast.error('This email is already registered. Please sign in instead.');
             } else {
                 setError(errorMessage);
             }

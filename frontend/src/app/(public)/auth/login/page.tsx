@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 import styles from '../auth.module.css';
@@ -60,6 +59,8 @@ function LoginContent() {
         try {
             const res = await api.post<LoginResponse>('/auth/login', data);
 
+            toast.success('Welcome back! You have successfully logged in.');
+
             // Store token and user data in cookies (for Middleware)
             const expires = new Date(Date.now() + 86400000).toUTCString(); // 1 day
             document.cookie = `token=${res.data.access_token}; path=/; expires=${expires}; SameSite=Lax`;
@@ -111,17 +112,15 @@ function LoginContent() {
                 />
                 {errors.email && <span className={styles.errorText}>{errors.email.message}</span>}
 
-                <div className={styles.inputGroup}>
-                    <div className={styles.inputWrapper}>
-                        <Lock size={18} />
-                        <input
-                            type="password"
-                            placeholder="••••••••"
-                            {...register('password', { required: 'Password is required' })}
-                        />
-                    </div>
-                    {errors.password && <span className={styles.errorText}>{errors.password.message}</span>}
-                </div>
+                <AuthInput
+                    label="Password"
+                    icon={Lock}
+                    type="password"
+                    placeholder="••••••••"
+                    {...register('password', { required: 'Password is required' })}
+                    wrapperClassName={errors.password ? styles.inputError : ''}
+                />
+                {errors.password && <span className={styles.errorText}>{errors.password.message}</span>}
 
                 <div className={styles.rememberRow}>
                     <label className={styles.rememberMe}>
@@ -154,4 +153,3 @@ export default function LoginPage() {
         </Suspense>
     );
 }
-

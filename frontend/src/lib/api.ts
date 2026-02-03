@@ -11,6 +11,8 @@ export const authApi = {
     login: (data: any) => api.post('/auth/login', data).then(res => res.data),
     register: (data: any) => api.post('/auth/register', data).then(res => res.data),
     logout: () => api.post('/auth/logout').then(res => res.data),
+    forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }).then(res => res.data),
+    resetPassword: (data: any) => api.post('/auth/reset-password', data).then(res => res.data),
 };
 
 export const dashboardApi = {
