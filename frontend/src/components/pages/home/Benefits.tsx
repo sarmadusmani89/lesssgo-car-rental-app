@@ -7,7 +7,7 @@ const features = [
     {
         icon: Shield,
         title: "Pristine Condition",
-        description: "Meticulously maintained and sanitized vehicles ensuring a showroom experience every time."
+        description: "Meticulously maintained and sanitized cars ensuring a showroom experience every time."
     },
     {
         icon: Star,
@@ -22,7 +22,7 @@ const features = [
     {
         icon: MapPin,
         title: "White-Glove Delivery",
-        description: "We deliver and pick up your vehicle at your home, hotel, or private airport terminal."
+        description: "We deliver and pick up your car at your home, hotel, or private airport terminal."
     },
     {
         icon: Calendar,

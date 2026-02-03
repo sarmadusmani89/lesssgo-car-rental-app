@@ -90,7 +90,7 @@ export default function FeaturedCars() {
             <div className="container">
                 <div className={styles.sectionHeaderCentered}>
                     <h2 className={styles.sectionTitle}>Featured Cars</h2>
-                    <p className={styles.sectionSubtitle}>Discover our hand-picked selection of high-performance vehicles.</p>
+                    <p className={styles.sectionSubtitle}>Discover our hand-picked selection of high-performance cars.</p>
                 </div>
 
                 <div className={styles.carGrid}>
@@ -101,7 +101,7 @@ export default function FeaturedCars() {
 
                 <div style={{ textAlign: 'center', marginTop: '5rem' }}>
                     <Link href="/cars" className="btn btn-outline btn-lg">
-                        View All Vehicles <ArrowRight size={20} />
+                        View All Cars <ArrowRight size={20} />
                     </Link>
                 </div>
             </div>

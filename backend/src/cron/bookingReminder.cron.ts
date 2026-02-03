@@ -26,18 +26,18 @@ export class BookingReminderCron {
         startDate: start.toISOString().split('T')[0], // Assuming date string format from entity
         status: 'confirmed'
       },
-      relations: ['user', 'vehicle'],
+      relations: ['user', 'car'],
     });
 
     for (const booking of bookings) {
-      if (!booking.user || !booking.vehicle) continue;
+      if (!booking.user || !booking.car) continue;
 
       await this.emailService.sendEmail(
         booking.user.email,
         "Booking Reminder",
         bookingReminderTemplate(
           booking.user.firstName ?? "User",
-          booking.vehicle.name ?? "Vehicle",
+          booking.car.name ?? "Car",
           new Date(booking.startDate).toDateString()
         )
       );

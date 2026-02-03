@@ -1,0 +1,151 @@
+.container {
+    min-height: 100vh;
+}
+
+.hero {
+    padding: 6rem 0 4rem;
+    text-align: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.subtitle {
+    font-size: 1.125rem;
+    color: var(--muted-foreground);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+.content {
+    padding: 5rem 0;
+}
+
+.category {
+    margin-bottom: 4rem;
+}
+
+.categoryTitle {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    color: var(--primary);
+    padding-bottom: 0.75rem;
+    border-bottom: 3px solid var(--accent);
+    display: inline-block;
+}
+
+.faqList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 900px;
+}
+
+.faqItem {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faqItem:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.faqQuestion {
+    width: 100%;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    text-align: left;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--primary);
+    cursor: pointer;
+    border: none;
+    background: none;
+    transition: all 0.3s ease;
+}
+
+.faqQuestion:hover {
+    color: var(--accent);
+}
+
+.faqQuestion span {
+    flex: 1;
+}
+
+.chevron {
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    color: var(--accent);
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+.faqAnswer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.faqAnswerOpen {
+    max-height: 500px;
+    padding: 0 1.5rem 1.5rem;
+}
+
+.faqAnswer p {
+    color: var(--muted-foreground);
+    line-height: 1.7;
+    font-size: 1rem;
+}
+
+.cta {
+    padding: 5rem 0;
+    text-align: center;
+    background: var(--muted);
+}
+
+.cta h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+.cta p {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+    color: var(--muted-foreground);
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .categoryTitle {
+        font-size: 1.5rem;
+    }
+
+    .faqQuestion {
+        font-size: 1rem;
+        padding: 1.25rem;
+    }
+
+    .faqAnswerOpen {
+        padding: 0 1.25rem 1.25rem;
+    }
+}

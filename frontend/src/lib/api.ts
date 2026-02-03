@@ -18,9 +18,9 @@ export const dashboardApi = {
     getUserStats: (userId: string) => api.get(`/dashboard/user/${userId}`).then(res => res.data),
 };
 
-export const vehicleApi = {
-    list: () => api.get('/vehicle').then(res => res.data),
-    getOne: (id: string) => api.get(`/vehicle/${id}`).then(res => res.data),
+export const carApi = {
+    list: () => api.get('/car').then(res => res.data),
+    getOne: (id: string) => api.get(`/car/${id}`).then(res => res.data),
 };
 
 export const bookingApi = {

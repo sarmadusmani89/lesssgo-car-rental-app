@@ -3,12 +3,12 @@
 import { Suspense, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { api } from '@/lib/api';
+import api from '@/lib/api';
 import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Lock, Mail, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
-import AuthInput from '@/components/auth/AuthInput';
-import AuthSplitLayout from '@/components/auth/AuthSplitLayout';
+import AuthInput from '@/components/pages/auth/AuthInput';
+import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
 
 type ResetFormInputs = {
     email: string;
@@ -35,12 +35,12 @@ function ResetPasswordContent() {
             if (token) {
                 // Reset Password Mode
                 const res = await api.post('/auth/reset-password', { token, password: data.password });
-                setSuccess(res.message || 'Password reset successful');
+                setSuccess(res.data.message || 'Password reset successful');
                 setTimeout(() => router.push('/auth/login'), 3000);
             } else {
                 // Forgot Password Mode
                 const res = await api.post('/auth/forgot-password', { email: data.email });
-                setSuccess(res.message);
+                setSuccess(res.data.message);
             }
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || (token ? 'Reset failed' : 'Something went wrong. Please try again.');

@@ -6,7 +6,7 @@ export class CreateBookingDto {
   userId!: number;
 
   @IsNumber()
-  vehicleId!: number;
+  carId!: number;
 
   @IsDateString()
   startDate!: string;

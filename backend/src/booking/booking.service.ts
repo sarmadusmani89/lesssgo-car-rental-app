@@ -10,7 +10,7 @@ export class BookingService {
   constructor(
     @InjectRepository(Booking)
     private readonly bookingRepo: Repository<Booking>,
-  ) {}
+  ) { }
 
   create(createBookingDto: CreateBookingDto) {
     const booking = this.bookingRepo.create(createBookingDto);
@@ -19,7 +19,7 @@ export class BookingService {
 
   findAll() {
     return this.bookingRepo.find({
-      relations: ['user', 'vehicle', 'payments'],
+      relations: ['user', 'car', 'payments'],
       order: { startDate: 'DESC' },
     });
   }
@@ -27,7 +27,7 @@ export class BookingService {
   async findOne(id: number) {
     const booking = await this.bookingRepo.findOne({
       where: { id },
-      relations: ['user', 'vehicle', 'payments'],
+      relations: ['user', 'car', 'payments'],
     });
     if (!booking) throw new NotFoundException('Booking not found');
     return booking;

@@ -4,7 +4,7 @@ export default function BookingStatusTimeline() {
   const steps = [
     { title: 'Booking Confirmed', status: 'completed', date: '2026-02-01' },
     { title: 'Payment Received', status: 'completed', date: '2026-02-01' },
-    { title: 'Vehicle Assigned', status: 'active', date: '2026-02-03' },
+    { title: 'Car Assigned', status: 'active', date: '2026-02-03' },
     { title: 'Trip Started', status: 'upcoming', date: '2026-02-05' },
     { title: 'Trip Completed', status: 'upcoming', date: '2026-02-06' },
   ];
@@ -16,13 +16,12 @@ export default function BookingStatusTimeline() {
         {steps.map((step, index) => (
           <div key={index} className="flex items-center gap-4">
             <div
-              className={`w-4 h-4 rounded-full ${
-                step.status === 'completed'
+              className={`w-4 h-4 rounded-full ${step.status === 'completed'
                   ? 'bg-green-500'
                   : step.status === 'active'
-                  ? 'bg-blue-500'
-                  : 'bg-gray-300'
-              }`}
+                    ? 'bg-blue-500'
+                    : 'bg-gray-300'
+                }`}
             ></div>
             <div>
               <p className="font-medium">{step.title}</p>

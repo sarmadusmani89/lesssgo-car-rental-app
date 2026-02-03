@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index, OneToMany } from 'typeorm';
-import { Vehicle } from '../../vehicle/entities/vehicle.entity';
+import { Car } from '../../car/entities/car.entity';
 import { User } from '../../user/entities/user.entity';
 import { Payment } from '../../payment/entities/payment.entity';
 
@@ -9,8 +9,8 @@ export type PaymentMethod = 'cash' | 'card' | 'online';
 
 @Entity('booking')
 @Index('idx_userId', ['userId'])
-@Index('idx_vehicleId', ['vehicleId'])
-@Index('idx_vehicle_dates', ['vehicleId', 'startDate', 'endDate'])
+@Index('idx_carId', ['carId'])
+@Index('idx_car_dates', ['carId', 'startDate', 'endDate'])
 export class Booking {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -23,12 +23,12 @@ export class Booking {
   @Column()
   userId!: number;
 
-  @ManyToOne(() => Vehicle, (vehicle) => vehicle.bookings)
-  @JoinColumn({ name: 'vehicleId' })
-  vehicle!: Vehicle;
+  @ManyToOne(() => Car, (car) => car.bookings)
+  @JoinColumn({ name: 'carId' })
+  car!: Car;
 
   @Column()
-  vehicleId!: number;
+  carId!: number;
 
   @Column({ type: 'date' })
   startDate!: string;

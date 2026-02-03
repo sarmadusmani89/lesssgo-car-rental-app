@@ -20,7 +20,7 @@ export default function CTA() {
                 <div className={styles.ctaContent}>
                     <div className={styles.ctaText}>
                         <h2 className={styles.ctaTitle}>Can't Find What You're Looking For?</h2>
-                        <p className={styles.ctaDescription}>Let our specialists help you find your perfect vehicle. We have access to exclusive inventory and can source any luxury car you desire.</p>
+                        <p className={styles.ctaDescription}>Let our specialists help you find your perfect car. We have access to exclusive inventory and can source any luxury car you desire.</p>
                     </div>
 
                     <div className={styles.ctaButtons}>

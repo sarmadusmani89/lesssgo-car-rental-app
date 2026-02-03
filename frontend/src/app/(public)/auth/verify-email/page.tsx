@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { api } from '@/lib/api';
+import api from '@/lib/api';
 import styles from '../auth.module.css';
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react';
 
@@ -18,7 +18,7 @@ function VerifyEmailContent() {
             api.get(`/auth/verify?token=${token}`)
                 .then((res: any) => {
                     setStatus('success');
-                    setMessage(res.message || 'Email verified successfully');
+                    setMessage(res.data.message || 'Email verified successfully');
                 })
                 .catch((err: any) => {
                     setStatus('error');

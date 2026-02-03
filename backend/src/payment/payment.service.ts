@@ -10,7 +10,7 @@ export class PaymentService {
   constructor(
     @InjectRepository(Payment)
     private readonly paymentRepo: Repository<Payment>,
-  ) {}
+  ) { }
 
   create(createPaymentDto: CreatePaymentDto) {
     const payment = this.paymentRepo.create(createPaymentDto);
@@ -19,7 +19,7 @@ export class PaymentService {
 
   findAll() {
     return this.paymentRepo.find({
-      relations: ['booking', 'booking.user', 'booking.vehicle'],
+      relations: ['booking', 'booking.user', 'booking.car'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -27,7 +27,7 @@ export class PaymentService {
   async findOne(id: number) {
     const payment = await this.paymentRepo.findOne({
       where: { id },
-      relations: ['booking', 'booking.user', 'booking.vehicle'],
+      relations: ['booking', 'booking.user', 'booking.car'],
     });
     if (!payment) throw new NotFoundException('Payment not found');
     return payment;

@@ -15,7 +15,7 @@ export default function AdminLayout({
       userName="Admin User"
       links={[
         { name: 'Dashboard', href: '/admin/dashboard', icon: <LayoutDashboard size={20} /> },
-        { name: 'Vehicles', href: '/admin/vehicles', icon: <Car size={20} /> },
+        { name: 'Cars', href: '/admin/cars', icon: <Car size={20} /> },
         { name: 'Users', href: '/admin/users', icon: <Users size={20} /> },
         { name: 'Bookings', href: '/admin/bookings', icon: <Calendar size={20} /> },
         { name: 'Settings', href: '/admin/settings', icon: <Settings size={20} /> },
