@@ -26,7 +26,7 @@ export class EmailService {
     await this.transporter.sendMail({
       from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: '✅ Verify your email - LesssGo',
+      subject: 'Verify your email - LesssGo',
       html: htmlContent,
     });
   }
@@ -38,7 +38,7 @@ export class EmailService {
     await this.transporter.sendMail({
       from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: '🔐 Reset your password - LesssGo',
+      subject: 'Reset your password - LesssGo',
       html: htmlContent,
     });
   }

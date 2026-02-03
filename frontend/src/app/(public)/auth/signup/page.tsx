@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
-import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Mail, Lock, User, Loader2, AlertCircle, Sparkles } from 'lucide-react';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
+import styles from '@/app/(public)/auth/auth.module.css';
 
 interface SignupFormInputs {
     name: string;
@@ -22,7 +22,8 @@ interface BackendResponse {
     error?: string;
 }
 
-export default function SignupPage() {
+function SignupContent() {
+    const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -37,6 +38,11 @@ export default function SignupPage() {
         try {
             const res = await api.post<BackendResponse>('/auth/signup', data);
             setSuccess(res.data.message);
+
+            // Redirect to login after 2 seconds
+            setTimeout(() => {
+                router.push('/auth/login');
+            }, 2000);
         } catch (err: any) {
             const errorMessage = err.response?.data?.error || err.response?.data?.message || 'Signup failed';
             setError(errorMessage);
@@ -115,5 +121,17 @@ export default function SignupPage() {
                 Already a member? <Link href="/auth/login">Sign in</Link>
             </p>
         </AuthSplitLayout>
+    );
+}
+
+export default function SignupPage() {
+    return (
+        <Suspense fallback={
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Loader2 className="animate-spin text-blue-600" size={48} />
+            </div>
+        }>
+            <SignupContent />
+        </Suspense>
     );
 }

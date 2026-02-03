@@ -23,13 +23,13 @@ export class AuthService {
     const lastName = rest.join(' ') || '';
 
     const verificationToken = uuidv4();
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     await this.usersService.create({
       email,
-      password: hashedPassword,
+      password: password, // usersService.create will handle hashing
       firstName,
       lastName,
+      role: 'user', // Ensure default role is 'user'
       isVerified: false,
       verificationToken,
     });

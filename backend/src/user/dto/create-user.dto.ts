@@ -25,4 +25,8 @@ export class CreateUserDto {
 
     @IsOptional()
     resetTokenExp?: Date | null;
+
+    @IsOptional()
+    @IsString()
+    role?: string;
 }
