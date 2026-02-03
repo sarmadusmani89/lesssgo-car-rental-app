@@ -1,13 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,           // Recommended for catching potential bugs
-  swcMinify: true,                 // Use Next.js SWC compiler for faster builds
+  reactStrictMode: true,
   output: 'standalone',            // Enable standalone output for Docker
-  experimental: {
-    appDir: true,                  // Enable the app directory if using App Router
-  },
   images: {
-    domains: ['localhost', 'yourdomain.com'], // Add domains for <Image> optimization
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: 'yourdomain.com',
+      },
+    ],
   },
   env: {
     // Add your environment variables here
