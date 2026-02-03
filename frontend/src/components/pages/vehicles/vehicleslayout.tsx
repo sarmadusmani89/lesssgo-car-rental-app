@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import CarCard from '@/components/common/CarCard';
+import CarCard from '@/components/ui/CarCard';
 
 interface Vehicle {
   id: number;

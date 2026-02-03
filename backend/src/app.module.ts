@@ -1,20 +1,36 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './user/user.module';
-import { User } from './user/user.entity';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+import { AuthModule } from './auth/auth.module';
+import { BookingModule } from './booking/booking.module';
+import { VehicleModule } from './vehicle/vehicle.module';
+import { PaymentModule } from './payment/payment.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { EmailModule } from './email/email.module';
+import { CronModule } from './cron/cron.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.DATABASE_URL, // Uses your DATABASE_URL directly
-      entities: [User],
-      synchronize: true, // set to false in production
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get<string>('DATABASE_URL'),
+        autoLoadEntities: true,
+        synchronize: configService.get<string>('NODE_ENV') !== 'production',
+      }),
     }),
+    AuthModule,
     UsersModule,
+    BookingModule,
+    VehicleModule,
+    PaymentModule,
+    DashboardModule,
+    EmailModule,
+    CronModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,0 +1,1 @@
+{"version":3,"file":"bookingConfirmation.js","sourceRoot":"","sources":["../../../src/lib/emailTemplates/bookingConfirmation.ts"],"names":[],"mappings":";;AAAA,kEAaC;AAbD,SAAgB,2BAA2B,CAAC,IAK3C;IACC,OAAO;;eAEM,IAAI,CAAC,IAAI;+BACO,IAAI,CAAC,SAAS;kBAC3B,IAAI,CAAC,OAAO;eACf,IAAI,CAAC,IAAI;GACrB,CAAC;AACJ,CAAC"}

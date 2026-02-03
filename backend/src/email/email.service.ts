@@ -34,4 +34,13 @@ export class EmailService {
       text: `Reset token: ${token}`,
     });
   }
+
+  async sendEmail(to: string, subject: string, html: string) {
+    await this.transporter.sendMail({
+      from: process.env.SMTP_FROM_EMAIL,
+      to,
+      subject,
+      html,
+    });
+  }
 }
