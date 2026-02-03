@@ -15,8 +15,11 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const { role, ...rest } = createUserDto;
+
     const user = this.userRepository.create({
-      ...createUserDto,
+      ...rest,
+      role: role as any, // Cast to any to satisfy DeepPartial<UserRole> constraint logic
       password: hashedPassword,
     });
     return this.userRepository.save(user);

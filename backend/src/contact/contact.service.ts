@@ -30,7 +30,7 @@ export class ContactService {
                         This message was sent from the Lesssgo contact form.
                     </p>
                 </div>
-            `,
+            `
         );
 
         // Send confirmation email to user
@@ -54,7 +54,7 @@ export class ContactService {
                         This is an automated confirmation email. Please do not reply to this message.
                     </p>
                 </div>
-            `,
+            `
         );
 
         return { message: 'Contact message sent successfully' };
