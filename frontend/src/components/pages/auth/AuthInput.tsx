@@ -27,10 +27,10 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
+                            className={styles.toggleBtn}
                             tabIndex={-1} // Prevent tabbing to this button for smoother form flow
                         >
-                            {showPassword ? <EyeOff size={18} className="text-gray-400" /> : <Eye size={18} className="text-gray-400" />}
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     )}
                 </div>
