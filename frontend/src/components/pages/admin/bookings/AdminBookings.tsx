@@ -33,7 +33,7 @@ export default function AdminBookings() {
                             <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-sm font-medium">
                                 <th className="px-6 py-4">Booking ID</th>
                                 <th className="px-6 py-4">Customer</th>
-                                <th className="px-6 py-4">Vehicle</th>
+                                <th className="px-6 py-4">Car</th>
                                 <th className="px-6 py-4">Status</th>
                                 <th className="px-6 py-4">Dates</th>
                                 <th className="px-6 py-4">Amount</th>

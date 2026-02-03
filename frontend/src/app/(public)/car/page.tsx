@@ -1,16 +1,16 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import ImageGalleryWithLightbox from '@/components/pages/vehicle/imagegallerywithlightbox';
-import VehicleSpecifications from '@/components/pages/vehicle/vehiclespecification';
-import PricingDisplay from '@/components/pages/vehicle/pricingdisplay';
-import DateRangePicker from '@/components/pages/vehicle/daterangepicker';
-import RealTimeAvailabilityCheck from '@/components/pages/vehicle/realtimeavailibilitycheck';
-import TotalCostCalculation from '@/components/pages/vehicle/totalcostcalculation';
-import BookNowCTAButton from '@/components/pages/vehicle/booknowctabutton';
+import ImageGalleryWithLightbox from '@/components/pages/car/imagegallerywithlightbox';
+import CarSpecifications from '@/components/pages/car/carspecification';
+import PricingDisplay from '@/components/pages/car/pricingdisplay';
+import DateRangePicker from '@/components/pages/car/daterangepicker';
+import RealTimeAvailabilityCheck from '@/components/pages/car/realtimeavailibilitycheck';
+import TotalCostCalculation from '@/components/pages/car/totalcostcalculation';
+import BookNowCTAButton from '@/components/pages/car/booknowctabutton';
 
-// Sample vehicle data (in real app fetch from API)
-const vehicles = [
+// Sample car data (in real app fetch from API)
+const cars = [
   {
     id: '1',
     name: 'Tesla Model X',
@@ -27,23 +27,23 @@ const vehicles = [
   },
 ];
 
-export default function VehiclePage() {
+export default function CarPage() {
   const searchParams = useSearchParams();
-  const vehicleId = searchParams.get('id');
-  const vehicle = vehicles.find((v) => v.id === vehicleId);
+  const carId = searchParams.get('id');
+  const car = cars.find((v) => v.id === carId);
 
-  if (!vehicle) return <p className="p-8">Vehicle not found</p>;
+  if (!car) return <p className="p-8">Car not found</p>;
 
   return (
     <div className="p-8 space-y-6">
-      <h1 className="text-2xl font-bold">{vehicle.name}</h1>
-      <ImageGalleryWithLightbox images={vehicle.images} />
-      <VehicleSpecifications specs={vehicle.specs} />
-      <PricingDisplay pricePerDay={vehicle.pricePerDay} />
+      <h1 className="text-2xl font-bold">{car.name}</h1>
+      <ImageGalleryWithLightbox images={car.images} />
+      <CarSpecifications specs={car.specs} />
+      <PricingDisplay pricePerDay={car.pricePerDay} />
       <DateRangePicker />
-      <RealTimeAvailabilityCheck vehicleId={vehicle.id} />
-      <TotalCostCalculation pricePerDay={vehicle.pricePerDay} />
-      <BookNowCTAButton vehicleId={vehicle.id} />
+      <RealTimeAvailabilityCheck carId={car.id} />
+      <TotalCostCalculation pricePerDay={car.pricePerDay} />
+      <BookNowCTAButton carId={car.id} />
     </div>
   );
 }

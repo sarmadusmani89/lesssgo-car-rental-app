@@ -1,4 +1,4 @@
-import { PrismaClient, Role, VehicleStatus, BookingStatus } from '@prisma/client';
+import { PrismaClient, Role, CarStatus, BookingStatus } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
@@ -30,8 +30,8 @@ async function main() {
         },
     });
 
-    // Create Vehicles
-    const vehicles = [
+    // Create Cars
+    const cars = [
         {
             name: 'Tesla Model 3',
             brand: 'Tesla',
@@ -40,7 +40,7 @@ async function main() {
             fuelCapacity: 0,
             pricePerDay: 150,
             imageUrl: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800',
-            status: VehicleStatus.AVAILABLE,
+            status: CarStatus.AVAILABLE,
         },
         {
             name: 'Range Rover Sport',
@@ -50,7 +50,7 @@ async function main() {
             fuelCapacity: 80,
             pricePerDay: 250,
             imageUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800',
-            status: VehicleStatus.AVAILABLE,
+            status: CarStatus.AVAILABLE,
         },
         {
             name: 'Audi R8',
@@ -60,24 +60,24 @@ async function main() {
             fuelCapacity: 75,
             pricePerDay: 400,
             imageUrl: 'https://images.unsplash.com/photo-1603584173870-7f3ca976571a?auto=format&fit=crop&q=80&w=800',
-            status: VehicleStatus.RENTED,
+            status: CarStatus.RENTED,
         },
     ];
 
-    for (const v of vehicles) {
-        await prisma.vehicle.create({ data: v });
+    for (const v of cars) {
+        await prisma.car.create({ data: v });
     }
 
     // Create a Booking
-    const vehicle = await prisma.vehicle.findFirst({ where: { status: VehicleStatus.RENTED } });
-    if (vehicle) {
+    const car = await prisma.car.findFirst({ where: { status: CarStatus.RENTED } });
+    if (car) {
         await prisma.booking.create({
             data: {
                 userId: user.id,
-                vehicleId: vehicle.id,
+                carId: car.id,
                 startDate: new Date(),
                 endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-                totalPrice: vehicle.pricePerDay * 7,
+                totalPrice: car.pricePerDay * 7,
                 status: BookingStatus.CONFIRMED,
             },
         });

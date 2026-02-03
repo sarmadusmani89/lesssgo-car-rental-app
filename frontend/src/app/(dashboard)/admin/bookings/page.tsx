@@ -12,7 +12,7 @@ const initialBookings: Booking[] = [
     id: 1,
     bookingId: "BK-001",
     customerName: "Ali Khan",
-    vehicleName: "Honda Civic",
+    carName: "Honda Civic",
     startDate: "2026-02-01",
     endDate: "2026-02-05",
     totalPrice: 240,
@@ -23,7 +23,7 @@ const initialBookings: Booking[] = [
     id: 2,
     bookingId: "BK-002",
     customerName: "Ahmed Raza",
-    vehicleName: "Toyota Corolla",
+    carName: "Toyota Corolla",
     startDate: "2026-02-10",
     endDate: "2026-02-12",
     totalPrice: 120,
@@ -79,7 +79,15 @@ export default function AdminBookings() {
       />
 
       {/* ✅ BookingTable props now fully type safe */}
-      <BookingTable bookings={paginated} onStatusChange={onStatusChange} />
+      <BookingTable
+        bookings={paginated}
+        onViewDetails={() => { }}
+        onUpdate={(b) => onStatusChange(b.id, b.status)}
+        onCancel={() => { }}
+        page={page}
+        setPage={setPage}
+        totalPages={Math.ceil(filtered.length / BOOKINGS_PER_PAGE)}
+      />
 
       {/* Pagination */}
       <div className="flex justify-end gap-2">

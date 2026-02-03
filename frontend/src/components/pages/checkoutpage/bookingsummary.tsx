@@ -6,7 +6,7 @@ export default function BookingSummary() {
       <h2 className="text-lg font-semibold">Booking Summary</h2>
 
       <div className="flex justify-between text-gray-700">
-        <span>Vehicle</span>
+        <span>Car</span>
         <span>Tesla Model X</span>
       </div>
 

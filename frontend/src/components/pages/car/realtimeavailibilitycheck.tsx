@@ -3,10 +3,10 @@
 import { useState } from 'react';
 
 interface Props {
-  vehicleId: string;
+  carId: string;
 }
 
-export default function RealTimeAvailabilityCheck({ vehicleId }: Props) {
+export default function RealTimeAvailabilityCheck({ carId }: Props) {
   const [available, setAvailable] = useState<boolean | null>(null);
 
   const checkAvailability = () => {

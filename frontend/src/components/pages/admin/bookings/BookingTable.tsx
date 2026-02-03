@@ -18,7 +18,7 @@ export interface Booking {
   id: number;              // Unique numeric ID
   bookingId: string;       // e.g., "BK-001"
   customerName: string;
-  vehicleName: string;
+  carName: string;
   startDate: string;
   endDate: string;
   totalPrice: number;
@@ -117,7 +117,7 @@ export default function BookingsTable({
             <tr className="bg-gray-100 text-left">
               <th className="p-3 border">Booking ID</th>
               <th className="p-3 border">Customer</th>
-              <th className="p-3 border">Vehicle</th>
+              <th className="p-3 border">Car</th>
               <th className="p-3 border">Payment</th>
               <th className="p-3 border">Status</th>
               <th className="p-3 border">Start Date</th>
@@ -137,7 +137,7 @@ export default function BookingsTable({
               <tr key={b.id} className="hover:bg-gray-50 transition">
                 <td className="border p-3">{b.bookingId}</td>
                 <td className="border p-3">{b.customerName}</td>
-                <td className="border p-3">{b.vehicleName}</td>
+                <td className="border p-3">{b.carName}</td>
                 <td className="border p-3">{b.paymentStatus}</td>
                 <td className="border p-3">
                   {editingBookingId === b.id ? (

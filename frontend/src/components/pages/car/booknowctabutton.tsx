@@ -1,12 +1,12 @@
 'use client';
 
 interface Props {
-  vehicleId: string;
+  carId: string;
 }
 
-export default function BookNowCTAButton({ vehicleId }: Props) {
+export default function BookNowCTAButton({ carId }: Props) {
   const handleBooking = () => {
-    alert(`Booking initiated for vehicle ${vehicleId}`);
+    alert(`Booking initiated for car ${carId}`);
   };
 
   return (
