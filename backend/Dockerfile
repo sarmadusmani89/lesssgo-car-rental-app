@@ -9,7 +9,8 @@ RUN npm install
 COPY . .
 
 # Build the NestJS app
-RUN npx prisma generate
+# We need a dummy DATABASE_URL for prisma generate to work (it doesn't connect but checks presence)
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" npx prisma generate
 RUN npm run build
 
 # Stage 2: Runtime
