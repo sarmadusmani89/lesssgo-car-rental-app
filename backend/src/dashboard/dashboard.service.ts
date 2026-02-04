@@ -26,11 +26,20 @@ export class DashboardService {
     });
 
     // Calculate monthly revenue based on range
-    const monthsBack = range === '1y' ? 12 : 6;
-    const startDate = new Date();
-    startDate.setMonth(startDate.getMonth() - (monthsBack - 1));
-    startDate.setDate(1); // Start from the 1st of that month
-    startDate.setHours(0, 0, 0, 0);
+    let startDate = new Date();
+    let monthsBack = 6;
+
+    if (range === '1y') {
+      startDate = new Date(new Date().getFullYear(), 0, 1); // Jan 1st of current year
+      startDate.setHours(0, 0, 0, 0);
+      // Calculate months from Jan to now (0-indexed) + 1
+      monthsBack = new Date().getMonth() + 1;
+    } else {
+      // Last 6 months (rolling)
+      startDate.setMonth(startDate.getMonth() - 5); // Go back 5 months to include current month = 6 months total
+      startDate.setDate(1);
+      startDate.setHours(0, 0, 0, 0);
+    }
 
     const monthlyPayments = await this.prisma.payment.findMany({
       where: {
@@ -48,12 +57,43 @@ export class DashboardService {
     // Group by Month
     const monthlyRevenueMap = new Map<string, number>();
 
-    // Initialize months with 0
+    // Initialize months
     for (let i = 0; i < monthsBack; i++) {
       const d = new Date();
-      d.setMonth(d.getMonth() - i);
-      const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' }); // e.g., "Jan 2026"
-      monthlyRevenueMap.set(monthYear, 0);
+      if (range === '1y') {
+        // For this year, start from Jan
+        d.setMonth(new Date().getFullYear() === d.getFullYear() ? i : 0); // Logic simpler: just recreate date
+        const yearDate = new Date(new Date().getFullYear(), i, 1);
+        if (yearDate > new Date()) break; // Don't show future months if logic allows
+
+        const monthYear = yearDate.toLocaleString('default', { month: 'short', year: 'numeric' });
+        monthlyRevenueMap.set(monthYear, 0);
+      } else {
+        // For last 6 months, go back from current
+        d.setMonth(d.getMonth() - i);
+        const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+        monthlyRevenueMap.set(monthYear, 0);
+      }
+    }
+
+    // Re-do initialization logic to be cleaner and consistent for both
+    monthlyRevenueMap.clear();
+
+    if (range === '1y') {
+      const currentYear = new Date().getFullYear();
+      const currentMonth = new Date().getMonth();
+      for (let i = 0; i <= currentMonth; i++) {
+        const d = new Date(currentYear, i, 1);
+        const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+        monthlyRevenueMap.set(monthYear, 0);
+      }
+    } else {
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i);
+        const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+        monthlyRevenueMap.set(monthYear, 0);
+      }
     }
 
     monthlyPayments.forEach(payment => {
@@ -63,8 +103,11 @@ export class DashboardService {
       }
     });
 
-    // Convert map to array and reverse to show oldest to newest
-    const monthlyRevenue = Array.from(monthlyRevenueMap, ([name, total]) => ({ name, total })).reverse();
+    // Convert map to array. Map preserves insertion order, so for '1y' it's Jan->Now. For '6m' it relies on loop order.
+    // The previous loop for 6m was: i=5 (oldest) down to 0 (newest).
+    // The '1y' loop is i=0 (Jan) to current.
+    // So both are ordered oldest to newest.
+    const monthlyRevenue = Array.from(monthlyRevenueMap, ([name, total]) => ({ name, total }));
 
     return {
       users: usersCount,

@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import api from '@/lib/api';
 import { Loader2 } from 'lucide-react';
-import CompleteBookingInformation from '@/components/pages/user/bookingdetailspage/completebookinginformation';
-import CarDetailsWithImages from '@/components/pages/user/bookingdetailspage/cardetailswithimages';
-import PaymentStatusAndMethod from '@/components/pages/user/bookingdetailspage/paymentstatusandmethod';
-import BookingStatusTimeline from '@/components/pages/user/bookingdetailspage/bookingstatustimeline';
+import CompleteBookingInformation from '@/components/pages/user/bookingdetailspage/CompleteBookingInformation';
+import CarDetailsWithImages from '@/components/pages/user/bookingdetailspage/CarDetailsWithImages';
+import PaymentStatusAndMethod from '@/components/pages/user/bookingdetailspage/PaymentStatusAndMethod';
+import BookingStatusTimeline from '@/components/pages/user/bookingdetailspage/BookingStatusTimeline';
 
 export default function BookingDetailsPage() {
   const { id } = useParams();

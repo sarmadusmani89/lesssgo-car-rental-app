@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import BookingSummary from '@/components/pages/checkoutpage/bookingsummary';
-import CustomerInformationForm from '@/components/pages/checkoutpage/customerinformationform';
-import PaymentMethodSelection from '@/components/pages/checkoutpage/paymentmethodselection';
-import TermsAndConditionsCheckbox from '@/components/pages/checkoutpage/termsandconditioncheckbox';
-import ConfirmBookingButton from '@/components/pages/checkoutpage/confirmbookingbutton';
+import BookingSummary from '@/components/pages/checkout/BookingSummary';
+import CustomerInformationForm from '@/components/pages/checkout/CustomerInformationForm';
+import PaymentMethodSelection from '@/components/pages/checkout/PaymentMethodSelection';
+import TermsAndConditionsCheckbox from '@/components/pages/checkout/TermsAndConditionCheckbox';
+import ConfirmBookingButton from '@/components/pages/checkout/ConfirmBookingButton';
+import CheckoutHeader from '@/components/pages/checkout/CheckoutHeader';
+import CheckoutSupport from '@/components/pages/checkout/CheckoutSupport';
+import LoadingStatesDuringPayment from '@/components/pages/checkout/LoadingStatesDuringPayment';
 import api from '@/lib/api';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, ShieldCheck } from 'lucide-react';
-import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
@@ -156,20 +158,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="bg-gray-50 min-h-screen pb-32">
-      <div className="bg-white border-b border-gray-100 mb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <Link href={`/car?id=${carId}`} className="inline-flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-blue-600 transition-colors mb-6">
-            <ArrowLeft size={14} className="mr-2" />
-            Back to vehicle
-          </Link>
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 font-outfit uppercase tracking-tighter leading-none">
-            Complete your <span className="text-blue-600">Reservation</span>
-          </h1>
-          <p className="text-gray-400 mt-3 text-sm font-bold uppercase tracking-[0.3em]">
-            Exquisite <span className="text-blue-600/50">Professional Registry</span>
-          </p>
-        </div>
-      </div>
+      <CheckoutHeader carId={carId} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
@@ -195,10 +184,7 @@ export default function CheckoutPage() {
 
             <div className="xl:block">
               {loading ? (
-                <div className="bg-white p-10 rounded-[2.5rem] flex flex-col items-center gap-4 border border-blue-100 shadow-blue-50 shadow-2xl">
-                  <Loader2 className="animate-spin text-blue-600" size={32} />
-                  <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Securing your reservation...</p>
-                </div>
+                <LoadingStatesDuringPayment />
               ) : (
                 <ConfirmBookingButton
                   disabled={!isFormValid}
@@ -216,17 +202,7 @@ export default function CheckoutPage() {
                 <BookingSummary car={car} startDate={startDate} endDate={endDate} />
               </div>
 
-              <div className="p-8 bg-blue-600 rounded-[2.5rem] text-white shadow-xl shadow-blue-200 overflow-hidden relative group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 transition-transform duration-700 group-hover:scale-150" />
-                <div className="relative z-10">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60 mb-2">Registry Support</p>
-                  <h4 className="text-xl font-black font-outfit mb-4 uppercase leading-tight">Need assistance?</h4>
-                  <p className="text-white/80 text-sm font-medium leading-relaxed mb-6 italic">
-                    "Safe and secure payments powered by Stripe."
-                  </p>
-                  <p className="text-white font-black uppercase tracking-widest text-xs">Support 24/7 Available</p>
-                </div>
-              </div>
+              <CheckoutSupport />
             </div>
           </div>
         </div>

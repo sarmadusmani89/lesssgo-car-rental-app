@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 import { Plus, Search, Loader2, X } from "lucide-react";
 import { Car } from "./type";
-import CarTable from "./cartable";
-import CarForm from "./carform";
+import CarTable from "./CarTable";
+import CarForm from "./CarForm";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import AvailabilityCalendar from "@/components/pages/admin/dashboard/AvailabilityCalendar";
-import DeleteConfirmationModal from "./delete-confirmation-modal";
+import DeleteConfirmationModal from "./DeleteConfirmationModal";
 
 export default function AdminCars() {
     const [cars, setCars] = useState<Car[]>([]);

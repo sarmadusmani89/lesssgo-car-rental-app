@@ -7,6 +7,7 @@ interface SettingItem {
     title: string;
     desc: string;
     icon: React.ElementType;
+    onClick?: () => void;
 }
 
 interface SettingSectionProps {
@@ -38,6 +39,7 @@ export default function SettingSection({
                         title={item.title}
                         desc={item.desc}
                         icon={item.icon}
+                        onClick={item.onClick}
                     />
                 ))}
             </div>

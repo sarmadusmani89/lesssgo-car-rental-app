@@ -9,6 +9,8 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { EmailModule } from './email/email.module';
 import { CronModule } from './cron/cron.module';
 import { ContactModule } from './contact/contact.module';
+import { SettingsModule } from './settings/settings.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
 import { PrismaService } from './lib/prisma.service';
 
 @Module({
@@ -23,6 +25,8 @@ import { PrismaService } from './lib/prisma.service';
     EmailModule,
     CronModule,
     ContactModule,
+    SettingsModule,
+    NewsletterModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

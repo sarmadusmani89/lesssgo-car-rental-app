@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import ProfileView from '@/components/dashboard/ProfileView';
-import UpdateProfileForm from '@/components/pages/user/profile/updateprofileform';
-import ChangePassword from '@/components/pages/user/profile/changepassword';
+import UpdateProfileForm from '@/components/pages/user/profile/UpdateProfileForm';
+import ChangePassword from '@/components/pages/user/profile/ChangePassword';
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);

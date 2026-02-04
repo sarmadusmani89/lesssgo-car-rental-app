@@ -2,13 +2,13 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useParams } from 'next/navigation';
-import ImageGalleryWithLightbox from '@/components/pages/car/imagegallerywithlightbox';
-import CarSpecifications from '@/components/pages/car/carspecification';
-import PricingDisplay from '@/components/pages/car/pricingdisplay';
-import RealTimeAvailabilityCheck from '@/components/pages/car/realtimeavailibilitycheck';
-import TotalCostCalculation from '@/components/pages/car/totalcostcalculation';
-import BookNowCTAButton from '@/components/pages/car/booknowctabutton';
-import UnifiedBookingCalendar from '@/components/pages/car/unifiedbookingcalendar';
+import ImageGalleryWithLightbox from '@/components/pages/car/ImageGalleryWithLightbox';
+import CarSpecifications from '@/components/pages/car/CarSpecification';
+import PricingDisplay from '@/components/pages/car/PricingDisplay';
+import RealTimeAvailabilityCheck from '@/components/pages/car/RealtimeAvailabilityCheck';
+import TotalCostCalculation from '@/components/pages/car/TotalCostCalculation';
+import BookNowCTAButton from '@/components/pages/car/BookNowCtaButton';
+import UnifiedBookingCalendar from '@/components/pages/car/UnifiedBookingCalendar';
 import api from '@/lib/api';
 import { Loader2, ShieldCheck, Zap, Info } from 'lucide-react';
 

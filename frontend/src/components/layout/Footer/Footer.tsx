@@ -1,8 +1,44 @@
 import Link from 'next/link';
+import { useState } from 'react';
+import { toast } from 'sonner'; // Changed from react-hot-toast to sonner
+import api from '@/lib/api'; // New import for API utility
 import styles from './Footer.module.css';
-import { Car, Instagram, Twitter, Facebook, Mail, MapPin, Phone } from 'lucide-react';
+import { Instagram, Twitter, Facebook, Linkedin, Mail, MapPin, Phone, ArrowRight } from 'lucide-react'; // Updated lucide-react imports
 
 export default function Footer() {
+    const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubscribe = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            // Replace with your actual API endpoint for newsletter subscription
+            const response = await fetch('/api/subscribe-newsletter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success(data.message || 'Subscribed successfully!');
+                setEmail(''); // Clear email input on success
+            } else {
+                toast.error(data.message || 'Failed to subscribe. Please try again.');
+            }
+        } catch (error) {
+            console.error('Subscription error:', error);
+            toast.error('An unexpected error occurred. Please try again later.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <footer className={styles.footer}>
             <div className={`container ${styles.grid}`}>
@@ -17,6 +53,34 @@ export default function Footer() {
                         <Link href="#" className={styles.socialIcon}><Twitter size={20} /></Link>
                         <Link href="#" className={styles.socialIcon}><Facebook size={20} /></Link>
                     </div>
+                </div>
+
+                {/* Newsletter */}
+                <div className="space-y-6">
+                    <h3 className="text-lg font-bold">Newsletter</h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">
+                        Subscribe to our newsletter for latest updates and offers.
+                    </p>
+                    <form onSubmit={handleSubscribe} className="space-y-3">
+                        <div className="relative">
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter your email"
+                                className="w-full bg-slate-800 border border-slate-700 rounded-lg py-3 px-4 pl-10 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-outfit"
+                                required
+                            />
+                            <Mail className="w-5 h-5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
+                        >
+                            {loading ? 'Subscribing...' : 'Subscribe Now'}
+                        </button>
+                    </form>
                 </div>
 
                 <div>

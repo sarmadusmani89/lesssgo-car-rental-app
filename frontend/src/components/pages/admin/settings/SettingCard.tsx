@@ -6,11 +6,15 @@ interface SettingCardProps {
     title: string;
     desc: string;
     icon: React.ElementType;
+    onClick?: () => void;
 }
 
-export default function SettingCard({ title, desc, icon: Icon }: SettingCardProps) {
+export default function SettingCard({ title, desc, icon: Icon, onClick }: SettingCardProps) {
     return (
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all cursor-pointer">
+        <div
+            onClick={onClick}
+            className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-all cursor-pointer"
+        >
             <div className="flex items-center gap-6">
                 <div className="p-4 rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 transition-all">
                     <Icon size={24} />

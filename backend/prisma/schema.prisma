@@ -118,3 +118,18 @@ model Review {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
 }
+
+model SystemSettings {
+  id                String   @id @default(uuid())
+  siteName          String   @default("Lesssgo Car Rental")
+  maintenanceMode   Boolean  @default(false)
+  currency          String   @default("USD")
+  passwordMinLength Int      @default(8)
+  updatedAt         DateTime @updatedAt
+}
+
+model NewsletterSubscriber {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  subscribedAt DateTime @default(now())
+}
