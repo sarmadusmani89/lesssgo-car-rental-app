@@ -11,9 +11,16 @@ import {
     ResponsiveContainer
 } from 'recharts';
 
-export default function RevenueChart({ stats }: { stats: any }) {
+import CustomSelect from '@/components/ui/CustomSelect';
+
+export default function RevenueChart({ stats, range, onRangeChange }: { stats: any, range: string, onRangeChange: (val: string) => void }) {
     // Fallback if no stats provided, although stats should be loaded by parent
     const data = stats?.monthlyRevenue || [];
+
+    const rangeOptions = [
+        { label: 'Last 6 Months', value: '6m' },
+        { label: 'This Year', value: '1y' },
+    ];
 
     if (data.length === 0) {
         return (
@@ -30,10 +37,12 @@ export default function RevenueChart({ stats }: { stats: any }) {
                     <h2 className="text-lg font-bold text-slate-900 font-outfit">Revenue Overview</h2>
                     <p className="text-sm text-slate-500">Monthly earnings performance</p>
                 </div>
-                <select className="bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-lg p-2 font-medium">
-                    <option>Last 6 Months</option>
-                    <option>This Year</option>
-                </select>
+                <CustomSelect
+                    options={rangeOptions}
+                    value={range}
+                    onChange={onRangeChange}
+                    className="w-[160px]"
+                />
             </div>
 
             <div className="h-[300px] w-full">

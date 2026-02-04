@@ -6,7 +6,7 @@ import { AdminStatsDto, UserStatsDto } from './dto/stats-response.dto';
 export class DashboardService {
   constructor(private readonly prisma: PrismaService) { }
 
-  async getAdminStats() {
+  async getAdminStats(range: string = '6m') {
     const usersCount = await this.prisma.user.count();
     const bookingsCount = await this.prisma.booking.count();
 
@@ -25,16 +25,18 @@ export class DashboardService {
       }
     });
 
-    // Calculate monthly revenue for the last 6 months
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-    sixMonthsAgo.setDate(1); // Start from the 1st of that month
+    // Calculate monthly revenue based on range
+    const monthsBack = range === '1y' ? 12 : 6;
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - (monthsBack - 1));
+    startDate.setDate(1); // Start from the 1st of that month
+    startDate.setHours(0, 0, 0, 0);
 
     const monthlyPayments = await this.prisma.payment.findMany({
       where: {
         status: 'PAID',
         createdAt: {
-          gte: sixMonthsAgo,
+          gte: startDate,
         },
       },
       select: {
@@ -46,8 +48,8 @@ export class DashboardService {
     // Group by Month
     const monthlyRevenueMap = new Map<string, number>();
 
-    // Initialize last 6 months with 0
-    for (let i = 0; i < 6; i++) {
+    // Initialize months with 0
+    for (let i = 0; i < monthsBack; i++) {
       const d = new Date();
       d.setMonth(d.getMonth() - i);
       const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' }); // e.g., "Jan 2026"

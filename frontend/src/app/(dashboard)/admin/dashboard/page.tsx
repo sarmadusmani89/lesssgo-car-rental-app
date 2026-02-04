@@ -10,11 +10,13 @@ import RecentBookingsTable from "@/components/pages/admin/dashboard/BookingsTabl
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [range, setRange] = useState('6m');
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await api.get('/dashboard/admin');
+        setLoading(true);
+        const res = await api.get(`/dashboard/admin?range=${range}`);
         setStats(res.data);
       } catch (error) {
         console.error('Failed to fetch admin stats:', error);
@@ -23,7 +25,7 @@ export default function AdminDashboard() {
       }
     };
     fetchStats();
-  }, []);
+  }, [range]);
 
   if (loading) {
     return (
@@ -40,7 +42,7 @@ export default function AdminDashboard() {
       <MetricsCards stats={stats} />
 
       <div className="grid grid-cols-1 gap-6">
-        <RevenueChart stats={stats} />
+        <RevenueChart stats={stats} range={range} onRangeChange={setRange} />
       </div>
 
       <RecentBookingsTable bookings={stats.recentBookings} />

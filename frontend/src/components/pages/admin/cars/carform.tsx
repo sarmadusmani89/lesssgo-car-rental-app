@@ -8,6 +8,7 @@ import { Car } from "./type";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { X, Loader2, Image as ImageIcon, Upload, ChevronDown, Check } from "lucide-react";
+import CustomSelect from '@/components/ui/CustomSelect';
 
 const carSchema = z.object({
   name: z.string().min(2, "Name is too short"),
@@ -165,13 +166,15 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Transmission</label>
-                <select
-                  {...register("transmission")}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition bg-white"
-                >
-                  <option value="Automatic">Automatic</option>
-                  <option value="Manual">Manual</option>
-                </select>
+                <CustomSelect
+                  options={[
+                    { label: 'Automatic', value: 'Automatic' },
+                    { label: 'Manual', value: 'Manual' }
+                  ]}
+                  value={watch("transmission")}
+                  onChange={(val) => setValue("transmission", val)}
+                  className="w-full bg-white"
+                />
               </div>
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Fuel (L) <span className="text-red-500">*</span></label>

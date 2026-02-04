@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 
 @Controller('dashboard')
@@ -6,8 +6,8 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) { }
 
   @Get('admin')
-  getAdminStats() {
-    return this.dashboardService.getAdminStats();
+  getAdminStats(@Query('range') range: string) {
+    return this.dashboardService.getAdminStats(range);
   }
 
   @Get('user/:userId')

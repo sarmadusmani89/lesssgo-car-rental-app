@@ -1,13 +1,13 @@
 // app/admin/bookings/BookingActions.tsx
 "use client";
 import React from "react";
-import { Booking } from "./BookingTable";
+import { Booking, BookingStatus } from "../../../../types/booking";
 
 type Props = {
   booking: Booking;
   onViewDetails: (booking: Booking) => void;
   onEdit: (booking: Booking) => void;
-  onCancel: (id: number) => void;
+  onCancel: (id: string) => void;
 };
 
 export default function BookingActions({ booking, onViewDetails, onEdit, onCancel }: Props) {
@@ -42,7 +42,7 @@ export default function BookingActions({ booking, onViewDetails, onEdit, onCance
           >
             Edit Booking
           </button>
-          {booking.status !== "cancelled" && (
+          {booking.status !== BookingStatus.CANCELLED && (
             <button
               className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
               onClick={() => {
