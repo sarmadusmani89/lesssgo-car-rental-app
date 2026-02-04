@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import BookingSummary from '@/components/pages/checkout/BookingSummary';
 import CustomerInformationForm from '@/components/pages/checkout/CustomerInformationForm';
@@ -14,7 +14,8 @@ import api from '@/lib/api';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
-export default function CheckoutPage() {
+// Internal component with the logic
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -208,5 +209,20 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen w-full items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-indigo-600 mx-auto" />
+          <p className="mt-2 text-sm text-gray-500">Loading checkout...</p>
+        </div>
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }
