@@ -7,6 +7,7 @@ import { LogOut } from 'lucide-react';
 interface DashboardLayoutProps {
     children: React.ReactNode;
     sidebarTitle: string;
+    topbarTitle?: string;
     userName?: string;
     links: Array<{
         name: string;
