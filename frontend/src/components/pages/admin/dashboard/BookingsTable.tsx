@@ -39,8 +39,8 @@ export default function RecentBookingsTable({ bookings }: { bookings: any[] }) {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${b.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' :
-                                                b.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700' :
-                                                    'bg-yellow-100 text-yellow-700'
+                                            b.status === 'COMPLETED' ? 'bg-blue-100 text-blue-700' :
+                                                'bg-yellow-100 text-yellow-700'
                                             }`}>
                                             {b.status}
                                         </span>
@@ -48,7 +48,7 @@ export default function RecentBookingsTable({ bookings }: { bookings: any[] }) {
                                     <td className="px-6 py-4 font-semibold text-gray-900">${b.totalAmount}</td>
                                     <td className="px-6 py-4 text-right">
                                         <Link
-                                            href={`/dashboard/bookings/${b.id}`}
+                                            href={`/admin/bookings/${b.id}`}
                                             className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-700 font-medium"
                                         >
                                             <Eye size={16} />

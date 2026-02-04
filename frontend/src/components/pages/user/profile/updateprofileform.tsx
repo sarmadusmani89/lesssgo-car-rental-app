@@ -53,6 +53,7 @@ export default function UpdateProfileForm() {
         <AuthInput
           label="Full Name"
           icon={User}
+          required
           value={user.name || ''}
           onChange={(e) => setUser({ ...user, name: e.target.value })}
           maxLength={50}
@@ -62,6 +63,7 @@ export default function UpdateProfileForm() {
           label="Email Address"
           icon={Mail}
           type="email"
+          required
           value={user.email || ''}
           onChange={(e) => setUser({ ...user, email: e.target.value })}
           maxLength={100}

@@ -82,6 +82,7 @@ function SignupContent() {
                         icon={User}
                         type="text"
                         placeholder="John Doe"
+                        required
                         {...register('name', {
                             required: 'Name is required',
                             maxLength: { value: 50, message: 'Name cannot exceed 50 characters' }
@@ -95,6 +96,7 @@ function SignupContent() {
                         icon={Mail}
                         type="email"
                         placeholder="your@email.com"
+                        required
                         {...register('email', {
                             required: 'Email is required',
                             maxLength: { value: 100, message: 'Email cannot exceed 100 characters' },
@@ -109,6 +111,7 @@ function SignupContent() {
                         icon={Lock}
                         type="password"
                         placeholder="••••••••"
+                        required
                         {...register('password', {
                             required: 'Password is required',
                             minLength: { value: 6, message: 'Min length is 6' },

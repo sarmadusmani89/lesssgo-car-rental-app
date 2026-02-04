@@ -81,7 +81,7 @@ export default function AdminBookings() {
       {/* ✅ BookingTable props now fully type safe */}
       <BookingTable
         bookings={paginated}
-        onViewDetails={() => { }}
+        onViewDetails={(b) => router.push(`/admin/bookings/${b.id}`)}
         onUpdate={(b) => onStatusChange(b.id, b.status)}
         onCancel={() => { }}
         page={page}

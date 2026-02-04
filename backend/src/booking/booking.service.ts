@@ -43,9 +43,61 @@ export class BookingService {
       throw new ConflictException('Car is already booked for the selected dates');
     }
 
-    return this.prisma.booking.create({
+    const booking = await this.prisma.booking.create({
       data: createBookingDto,
+      include: { car: true }
     });
+
+    // Send email notifications for CASH bookings
+    if (createBookingDto.paymentMethod === 'CASH') {
+      try {
+        const { customerName, customerEmail, car, startDate, endDate, totalAmount } = booking;
+        const start = new Date(startDate).toLocaleDateString();
+        const end = new Date(endDate).toLocaleDateString();
+
+        const userHtml = `
+          <div style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2 style="color: #2563eb;">Booking Confirmed!</h2>
+            <p>Hi ${customerName},</p>
+            <p>Thank you for choosing <strong>LesssGo</strong>! Your reservation is confirmed.</p>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
+              <p><strong>Period:</strong> ${start} to ${end}</p>
+              <p><strong>Total Investment:</strong> $${totalAmount}</p>
+              <p><strong>Payment Method:</strong> Cash on Pickup</p>
+            </div>
+            <p>Please bring a valid ID and license during pickup.</p>
+          </div>
+        `;
+
+        const adminHtml = `
+          <div style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2 style="color: #2563eb;">New Cash Booking Alert</h2>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <h3>Customer Details</h3>
+              <p><strong>Name:</strong> ${customerName}</p>
+              <p><strong>Email:</strong> ${customerEmail}</p>
+              <p><strong>Phone:</strong> ${createBookingDto.customerPhone}</p>
+              
+              <h3>Reservation Details</h3>
+              <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
+              <p><strong>Period:</strong> ${start} to ${end}</p>
+              <p><strong>Total:</strong> $${totalAmount}</p>
+            </div>
+          </div>
+        `;
+
+        const { sendEmail } = await import('../lib/sendEmail');
+        await Promise.all([
+          sendEmail(customerEmail, 'Booking Confirmation - LesssGo', userHtml),
+          sendEmail(process.env.SMTP_USER!, 'New Booking Received', adminHtml)
+        ]);
+      } catch (err) {
+        console.error('Failed to send booking emails:', err);
+      }
+    }
+
+    return booking;
   }
 
   findAll() {

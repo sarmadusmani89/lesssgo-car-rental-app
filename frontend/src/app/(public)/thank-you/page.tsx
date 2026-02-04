@@ -25,24 +25,24 @@ function ThankYouContent() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 py-20">
-            <div className="max-w-2xl w-full bg-white rounded-[3rem] shadow-2xl shadow-blue-100/50 border border-gray-100 overflow-hidden relative">
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 pt-40 pb-20 print:bg-white print:pt-0 print:block">
+            <div className="max-w-2xl w-full bg-white rounded-[3rem] shadow-2xl shadow-blue-100/50 border border-gray-100 overflow-hidden relative print:shadow-none print:border-gray-200 print:mx-auto">
                 {/* Accent line */}
-                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-indigo-600" />
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-indigo-600 print:hidden" />
 
                 <div className="p-12 text-center">
-                    <div className="inline-flex items-center justify-center w-24 h-24 bg-green-50 text-green-500 rounded-full mb-8 shadow-inner">
+                    <div className="inline-flex items-center justify-center w-24 h-24 bg-green-50 text-green-500 rounded-full mb-8 shadow-inner print:bg-transparent">
                         <CheckCircle2 size={48} />
                     </div>
 
                     <h1 className="text-4xl font-black text-gray-900 font-outfit uppercase tracking-tight mb-4">
                         Reservation <span className="text-blue-600">Confirmed!</span>
                     </h1>
-                    <p className="text-gray-500 font-medium text-lg mb-12">
+                    <p className="text-gray-500 font-medium text-lg mb-12 print:mb-6">
                         Your professional rental is ready. We've sent the confirmation details to your email.
                     </p>
 
-                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100 text-left space-y-6">
+                    <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100 text-left space-y-6 print:bg-white">
                         <div className="flex items-center justify-between pb-6 border-b border-gray-200/50">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600">
@@ -97,7 +97,7 @@ function ThankYouContent() {
                         </div>
                     </div>
 
-                    <div className="mt-12 flex flex-col sm:flex-row gap-4">
+                    <div className="mt-12 flex flex-col sm:flex-row gap-4 print:hidden">
                         <button
                             onClick={() => window.print()}
                             className="flex-1 py-4 bg-gray-900 text-white rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-black transition-colors flex items-center justify-center gap-3"
@@ -116,7 +116,7 @@ function ThankYouContent() {
                 </div>
             </div>
 
-            <p className="mt-8 text-gray-400 text-xs font-bold uppercase tracking-[0.3em]">
+            <p className="mt-8 text-gray-400 text-xs font-bold uppercase tracking-[0.3em] print:hidden">
                 Exquisite Fleet <span className="text-blue-600/50">Professional Services</span>
             </p>
         </div>

@@ -40,7 +40,7 @@ export class PaymentService {
             price_data: {
               currency: 'usd',
               product_data: {
-                name: `${booking.car.brand} ${booking.car.name}`,
+                name: booking.car.name,
                 description: `Car Rental from ${booking.startDate.toISOString().split('T')[0]} to ${booking.endDate.toISOString().split('T')[0]}`,
                 images: booking.car.imageUrl ? [booking.car.imageUrl] : [],
               },
@@ -55,6 +55,12 @@ export class PaymentService {
         metadata: {
           bookingId: booking.id,
           userId: booking.userId,
+        },
+        payment_intent_data: {
+          metadata: {
+            bookingId: booking.id,
+            userId: booking.userId,
+          },
         },
       });
 
@@ -128,20 +134,68 @@ export class PaymentService {
       throw new InternalServerErrorException(`Webhook Error: ${err.message}`);
     }
 
-    if (event.type === 'payment_intent.succeeded') {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      const bookingId = paymentIntent.metadata.bookingId;
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object as Stripe.Checkout.Session;
+      const bookingId = session.metadata?.bookingId;
 
-      await this.prisma.$transaction([
+      if (!bookingId) {
+        console.error('No bookingId found in session metadata');
+        return { received: true };
+      }
+
+      const [_, updatedBooking] = await this.prisma.$transaction([
         this.prisma.payment.updateMany({
-          where: { stripePaymentIntentId: paymentIntent.id },
-          data: { status: 'PAID' },
+          where: { bookingId: bookingId as string },
+          data: { status: 'PAID', stripePaymentIntentId: session.payment_intent as string },
         }),
         this.prisma.booking.update({
-          where: { id: bookingId },
+          where: { id: bookingId as string },
           data: { paymentStatus: 'PAID', status: 'CONFIRMED' },
+          include: { car: true }
         }),
       ]);
+
+      // Send confirmation emails for successful payment
+      try {
+        const { customerName, customerEmail, car, startDate, endDate, totalAmount } = updatedBooking;
+        const start = new Date(startDate).toLocaleDateString();
+        const end = new Date(endDate).toLocaleDateString();
+
+        const userHtml = `
+          <div style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2 style="color: #2563eb;">Payment Received - Booking Confirmed!</h2>
+            <p>Hi ${customerName},</p>
+            <p>Your payment was successful and your reservation is now fully confirmed.</p>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
+              <p><strong>Period:</strong> ${start} to ${end}</p>
+              <p><strong>Total Paid:</strong> $${totalAmount}</p>
+              <p><strong>Status:</strong> Paid via Stripe</p>
+            </div>
+            <p>We look forward to seeing you!</p>
+          </div>
+        `;
+
+        const adminHtml = `
+          <div style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2 style="color: #2563eb;">Payment Success Alert</h2>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p><strong>Booking ID:</strong> ${updatedBooking.id}</p>
+              <p><strong>Customer:</strong> ${customerName} (${customerEmail})</p>
+              <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
+              <p><strong>Total Paid:</strong> $${totalAmount}</p>
+            </div>
+          </div>
+        `;
+
+        const { sendEmail } = await import('../lib/sendEmail');
+        await Promise.all([
+          sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml),
+          sendEmail(process.env.SMTP_USER!, 'Payment Success Notification', adminHtml)
+        ]);
+      } catch (err) {
+        console.error('Failed to send payment success emails:', err);
+      }
     }
 
     return { received: true };

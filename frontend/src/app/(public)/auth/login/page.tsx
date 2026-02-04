@@ -121,6 +121,7 @@ function LoginContent() {
                     icon={Mail}
                     type="email"
                     placeholder="your@email.com"
+                    required
                     {...register('email', { required: 'Email is required' })}
                     wrapperClassName={errors.email ? styles.inputError : ''}
                 />
@@ -131,6 +132,7 @@ function LoginContent() {
                     icon={Lock}
                     type="password"
                     placeholder="••••••••"
+                    required
                     {...register('password', { required: 'Password is required' })}
                     wrapperClassName={errors.password ? styles.inputError : ''}
                 />

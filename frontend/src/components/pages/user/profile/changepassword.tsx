@@ -55,6 +55,7 @@ export default function ChangePassword() {
           label="New Password"
           icon={Lock}
           type="password"
+          required
           value={passwords.newPassword}
           onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
           maxLength={50}
@@ -64,6 +65,7 @@ export default function ChangePassword() {
           label="Confirm Password"
           icon={Lock}
           type="password"
+          required
           value={passwords.confirmPassword}
           onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
           maxLength={50}

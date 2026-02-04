@@ -22,11 +22,11 @@ export default function CheckoutPage() {
 
   const [car, setCar] = useState<any>(null);
   const [customerData, setCustomerData] = useState<any>({
-    firstName: '',
-    lastName: '',
+    fullName: '',
     email: '',
     phoneNumber: '',
   });
+  const [initialUserData, setInitialUserData] = useState<any>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>('stripe');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,20 +39,36 @@ export default function CheckoutPage() {
       return;
     }
 
-    const fetchCar = async () => {
+    const fetchData = async () => {
       try {
         setPageLoading(true);
-        const res = await api.get(`/car/${carId}`);
-        setCar(res.data);
+        // Fetch car
+        const carRes = await api.get(`/car/${carId}`);
+        setCar(carRes.data);
+
+        // Pre-fill user data from localStorage if logged in
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          try {
+            const userData = JSON.parse(storedUser);
+            setInitialUserData({
+              fullName: userData.name,
+              email: userData.email,
+              phoneNumber: userData.phoneNumber || '',
+            });
+          } catch (err) {
+            console.error("Failed to parse stored user data:", err);
+          }
+        }
       } catch (error) {
-        console.error("Failed to fetch car for checkout:", error);
-        toast.error("Failed to load vehicle details");
+        console.error("Failed to fetch data for checkout:", error);
+        toast.error("Failed to load reservation details");
       } finally {
         setPageLoading(false);
       }
     };
 
-    fetchCar();
+    fetchData();
   }, [carId]);
 
   const calculateDays = () => {
@@ -64,7 +80,10 @@ export default function CheckoutPage() {
     return days >= 0 ? days + 1 : 0; // Sync with car detail page (inclusive)
   };
 
-  const isFormValid = customerData.firstName && customerData.lastName && customerData.email && acceptedTerms && startDate && endDate;
+  const days = calculateDays();
+  const totalAmount = car ? car.pricePerDay * days : 0;
+
+  const isFormValid = customerData.fullName && customerData.email && acceptedTerms && startDate && endDate;
 
   const handleConfirmBooking = async () => {
     if (!isFormValid) {
@@ -75,17 +94,25 @@ export default function CheckoutPage() {
     try {
       setLoading(true);
 
-      const days = calculateDays();
-      const totalAmount = car.pricePerDay * days;
-
       // 1. Create the booking FIRST
+      const storedUser = localStorage.getItem('user');
+      const userId = storedUser ? JSON.parse(storedUser).id : null;
+
+      if (!userId) {
+        toast.error("Please log in to complete your booking.");
+        router.push('/auth/login?redirect=' + window.location.pathname + window.location.search);
+        return;
+      }
+
       const bookingData = {
+        userId,
         carId,
         startDate: new Date(startDate).toISOString(),
         endDate: new Date(endDate).toISOString(),
-        totalPrice: totalAmount,
+        totalAmount,
         status: 'PENDING',
-        customerName: `${customerData.firstName} ${customerData.lastName}`,
+        paymentStatus: 'PENDING',
+        customerName: customerData.fullName,
         customerEmail: customerData.email,
         customerPhone: customerData.phoneNumber || '',
         paymentMethod: paymentMethod === 'stripe' ? 'ONLINE' : 'CASH',
@@ -148,7 +175,10 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
           <div className="xl:col-span-8 space-y-10">
             <div>
-              <CustomerInformationForm onChange={(data: any) => setCustomerData({ ...customerData, ...data })} />
+              <CustomerInformationForm
+                initialData={initialUserData}
+                onChange={(data: any) => setCustomerData(data)}
+              />
               <div className="mt-10">
                 <PaymentMethodSelection
                   selected={paymentMethod}
@@ -173,6 +203,8 @@ export default function CheckoutPage() {
                 <ConfirmBookingButton
                   disabled={!isFormValid}
                   onConfirm={handleConfirmBooking}
+                  paymentMethod={paymentMethod}
+                  total={totalAmount}
                 />
               )}
             </div>

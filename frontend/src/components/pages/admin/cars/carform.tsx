@@ -130,7 +130,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
           {/* Basic Info */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Car Name</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Car Name <span className="text-red-500">*</span></label>
               <input
                 {...register("name")}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
@@ -140,7 +140,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Brand</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Brand <span className="text-red-500">*</span></label>
               <input
                 {...register("brand")}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
@@ -150,7 +150,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Category / Type</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Category / Type <span className="text-red-500">*</span></label>
               <input
                 {...register("type")}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
@@ -174,7 +174,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Fuel (L)</label>
+                <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Fuel (L) <span className="text-red-500">*</span></label>
                 <input
                   type="number"
                   {...register("fuelCapacity", { valueAsNumber: true })}
@@ -184,7 +184,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Price Per Day ($)</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Price Per Day ($) <span className="text-red-500">*</span></label>
               <input
                 type="number"
                 {...register("pricePerDay", { valueAsNumber: true })}
@@ -194,7 +194,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Horsepower (HP)</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Horsepower (HP) <span className="text-red-500">*</span></label>
               <input
                 type="number"
                 {...register("hp", { valueAsNumber: true })}
@@ -264,7 +264,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Car Image</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Car Image <span className="text-red-500">*</span></label>
             <div className="mt-2 flex items-center gap-6">
               {imagePreview ? (
                 <div className="relative w-40 h-24 rounded-2xl overflow-hidden border-2 border-blue-500 group">
@@ -293,7 +293,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Description</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Description <span className="text-gray-400 font-normal italic lowercase ml-1">(optional)</span></label>
             <textarea
               {...register("description")}
               rows={3}

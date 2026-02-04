@@ -66,6 +66,7 @@ export default function ForgotPasswordForm() {
                     icon={Mail}
                     type="email"
                     placeholder="name@example.com"
+                    required
                     {...register('email', {
                         required: 'Email is required',
                         pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }

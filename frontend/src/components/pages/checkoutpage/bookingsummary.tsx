@@ -13,35 +13,38 @@ export default function BookingSummary({ car, startDate, endDate }: Props) {
     const end = new Date(endDate);
     const diff = end.getTime() - start.getTime();
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days > 0 ? days : 1; // Default to 1 day if same day
+    return days >= 0 ? days + 1 : 0; // Include both start and end day (Sync with CheckoutPage)
   };
 
   const days = getDays();
   const total = car ? car.pricePerDay * days : 0;
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '...';
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}/${month}/${year}`;
+  };
 
   return (
     <div className="bg-white rounded-[2.5rem] p-8 space-y-8">
       <h2 className="text-xl font-black font-outfit text-gray-900 border-b pb-6 border-gray-100 uppercase tracking-tight">Booking Summary</h2>
 
       <div className="space-y-6">
-        <div className="flex justify-between items-start">
-          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">Vehicle Selection</span>
-          <div className="text-right">
-            <p className="font-black text-gray-900 tracking-tight">{car ? car.brand : '...'}</p>
-            <p className="font-bold text-blue-600 tracking-tight -mt-1">{car ? car.name : '...'}</p>
-          </div>
+        <div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2">Vehicle Selection</span>
+          <p className="font-black text-gray-900 tracking-tight uppercase text-lg">
+            {car ? car.name : '...'}
+          </p>
         </div>
 
-        <div className="flex justify-between items-start">
-          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">Rental Period</span>
-          <div className="text-right">
-            <p className="font-bold text-gray-900 text-sm">
-              {startDate ? new Date(startDate).toLocaleDateString() : '...'}
-            </p>
-            <p className="font-bold text-gray-900 text-sm">
-              {endDate ? new Date(endDate).toLocaleDateString() : '...'}
-            </p>
-          </div>
+        <div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2">Rental Period</span>
+          <p className="font-bold text-gray-900 text-sm">
+            From {formatDate(startDate)} To {formatDate(endDate)}
+          </p>
         </div>
 
         <div className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">

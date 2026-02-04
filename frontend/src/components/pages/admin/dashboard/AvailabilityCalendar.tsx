@@ -75,6 +75,13 @@ export default function AvailabilityCalendar({ carId, carName }: Props) {
         setViewDate(new Date(currentYear, currentMonth - 1, 1));
     };
 
+    const isPast = (date: Date) => {
+        if (!date) return false;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return date < today;
+    };
+
     const isToday = (date: Date) => {
         if (!date) return false;
         const today = new Date();
@@ -138,24 +145,28 @@ export default function AvailabilityCalendar({ carId, carName }: Props) {
 
                     const booked = isBooked(date);
                     const today = isToday(date);
+                    const past = isPast(date);
 
                     return (
                         <div
                             key={date.toISOString()}
                             title={date.toLocaleDateString()}
                             className={`aspect-square flex flex-col items-center justify-center rounded-2xl text-[13px] font-bold transition-all relative group
-                                ${booked
-                                    ? "bg-red-50 text-red-500 border border-red-100/30"
-                                    : "bg-green-50/50 text-green-600 border border-green-100/30 hover:bg-green-100/50 hover:border-green-200"
+                                ${past
+                                    ? "bg-gray-50 text-gray-300 border border-gray-100 opacity-50"
+                                    : booked
+                                        ? "bg-red-50 text-red-500 border border-red-100/30"
+                                        : "bg-green-50/50 text-green-600 border border-green-100/30 hover:bg-green-100/50 hover:border-green-200"
                                 } 
                                 ${today ? 'ring-2 ring-blue-600 ring-offset-2 scale-105 z-10' : ''}
                                 cursor-default
                             `}
                         >
                             <span className={today ? 'text-blue-600' : ''}>{date.getDate()}</span>
-                            {booked ? (
+                            {!past && booked && (
                                 <div className="absolute bottom-2 w-1 h-1 bg-red-400 rounded-full" />
-                            ) : (
+                            )}
+                            {!past && !booked && (
                                 <div className="absolute bottom-2 w-1 h-1 bg-green-300 rounded-full opacity-0 group-hover:opacity-100" />
                             )}
                         </div>

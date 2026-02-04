@@ -43,7 +43,7 @@ export default function ContactForm() {
         <div className={styles.formSection}>
             <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
                 <div className={styles.formGroup}>
-                    <label htmlFor="name">Full Name</label>
+                    <label htmlFor="name">Full Name <span className="text-red-500">*</span></label>
                     <input
                         id="name"
                         type="text"
@@ -54,7 +54,7 @@ export default function ContactForm() {
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="email">Email Address</label>
+                    <label htmlFor="email">Email Address <span className="text-red-500">*</span></label>
                     <input
                         id="email"
                         type="email"
@@ -71,7 +71,7 @@ export default function ContactForm() {
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="subject">Subject</label>
+                    <label htmlFor="subject">Subject <span className="text-red-500">*</span></label>
                     <input
                         id="subject"
                         type="text"
@@ -82,7 +82,7 @@ export default function ContactForm() {
                 </div>
 
                 <div className={styles.formGroup}>
-                    <label htmlFor="message">Message</label>
+                    <label htmlFor="message">Message <span className="text-red-500">*</span></label>
                     <textarea
                         id="message"
                         rows={6}

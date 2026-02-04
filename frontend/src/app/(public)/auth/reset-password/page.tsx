@@ -107,6 +107,7 @@ function ResetPasswordContent() {
                     icon={Lock}
                     type="password"
                     placeholder="••••••••"
+                    required
                     {...register('password', {
                         required: 'Password is required',
                         minLength: { value: 6, message: 'Min length is 6' }
@@ -120,6 +121,7 @@ function ResetPasswordContent() {
                     icon={Lock}
                     type="password"
                     placeholder="••••••••"
+                    required
                     {...register('confirmPassword', {
                         required: 'Please confirm your password',
                         validate: (val: string) => {
