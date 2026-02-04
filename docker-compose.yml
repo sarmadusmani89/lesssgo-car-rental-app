@@ -24,6 +24,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
     restart: always
     ports:
       - "3001:3001"
@@ -47,6 +49,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    env_file:
+      - ./frontend/.env # Load from backend/.env
     restart: always
     ports:
       - "3000:3000"
