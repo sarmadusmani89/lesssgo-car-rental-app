@@ -21,9 +21,9 @@ export default function ViewDetailsModal({ booking, onClose }: Props) {
         </button>
         <h2 className="text-xl font-bold mb-4">Booking Details</h2>
         <div className="space-y-2 text-gray-700">
-          <p><span className="font-semibold">Booking ID:</span> {booking.bookingId}</p>
+          <p><span className="font-semibold">Booking ID:</span> {booking.id}</p>
           <p><span className="font-semibold">Customer:</span> {booking.customerName}</p>
-          <p><span className="font-semibold">Vehicle:</span> {booking.carName}</p>
+          <p><span className="font-semibold">Vehicle:</span> {booking.car?.name || 'N/A'}</p>
           <p><span className="font-semibold">Status:</span> {booking.status}</p>
           <p><span className="font-semibold">Payment:</span> {booking.paymentStatus}</p>
           <p><span className="font-semibold">Amount:</span> ${booking.totalAmount}</p>
