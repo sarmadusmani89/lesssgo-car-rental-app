@@ -27,7 +27,9 @@ export default function RecentBookingsTable({ bookings }: { bookings: any[] }) {
                         {bookings?.length > 0 ? (
                             bookings.map((b) => (
                                 <tr key={b.id} className="hover:bg-gray-50 transition-colors">
-                                    <td className="px-6 py-4 font-medium text-gray-900">#{b.id.toString().slice(-6).toUpperCase()}</td>
+                                    <td className="px-6 py-4 font-mono font-bold text-slate-400">
+                                        #{b.id.toString().slice(-8).toUpperCase()}
+                                    </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
                                             <span className="font-medium text-gray-900">{b.user?.name || b.customerName}</span>
@@ -35,7 +37,14 @@ export default function RecentBookingsTable({ bookings }: { bookings: any[] }) {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="font-medium text-gray-900">{b.car?.brand} {b.car?.name}</span>
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter leading-tight">
+                                                {b.car?.brand}
+                                            </span>
+                                            <span className="text-sm font-bold text-slate-700 uppercase leading-tight">
+                                                {b.car?.name}
+                                            </span>
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${b.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' :

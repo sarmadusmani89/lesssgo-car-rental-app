@@ -22,27 +22,24 @@ export default function ClientUserWrapper({ children }: WrapperProps) {
             { name: 'Booking Details', href: '/dashboard/bookingdetailspage', icon: <User size={20} /> },
             { name: 'Settings', href: '/dashboard/settings', icon: <Settings size={20} /> },
           ]}
-          className="flex-1"
-        />
+    <div className={`flex min-h-screen bg-slate-50 font-outfit ${isSidebarOpen ? 'overflow-hidden' : ''}`}>
+          {/* Sidebar for user */}
+          <Sidebar
+            title="My ACCOUNT"
+            links={userLinks}
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+          />
 
-        {/* Logout */}
-        <div className="px-4 py-4">
-          <button
-            onClick={() => (window.location.href = '/login')}
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition"
-          >
-            <LogOut size={20} className="text-gray-400 group-hover:text-blue-500" />
-            <span className="font-medium">Logout</span>
-          </button>
+          {/* Main content */}
+          <div className="flex-1 flex flex-col min-w-0 md:ml-64">
+            {/* Only one Topbar */}
+            <Topbar
+              user={{ name: 'User Name' }}
+              onMenuClick={() => setIsSidebarOpen(true)}
+            />
+            <main className="flex-1 p-4 md:p-8 overflow-y-auto">{children}</main>
+          </div>
         </div>
-      </div>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0" style={{ marginLeft: sidebarWidth }}>
-        {/* Only one Topbar */}
-        <Topbar title="User Dashboard" user={{ name: 'User Name' }} />
-        <main className="flex-1 p-8 overflow-y-auto">{children}</main>
-      </div>
-    </div>
-  );
+        );
 }

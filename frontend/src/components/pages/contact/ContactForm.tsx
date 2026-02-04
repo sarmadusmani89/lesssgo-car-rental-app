@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Send } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import styles from '@/app/(public)/contact/contact.module.css';
 
 interface ContactFormData {
@@ -95,18 +96,16 @@ export default function ContactForm() {
                     {errors.message && <span className={styles.error}>{errors.message.message}</span>}
                 </div>
 
-                <button
+                <Button
                     type="submit"
+                    isLoading={isSubmitting}
                     disabled={isSubmitting}
-                    className={`btn btn-primary btn-lg ${styles.submitBtn}`}
+                    size="lg"
+                    className={styles.submitBtn}
                 >
-                    {isSubmitting ? 'Sending...' : (
-                        <>
-                            Send Message
-                            <Send size={20} />
-                        </>
-                    )}
-                </button>
+                    Send Message
+                    <Send size={20} className="ml-2" />
+                </Button>
             </form>
         </div>
     );

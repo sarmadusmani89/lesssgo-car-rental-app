@@ -6,22 +6,26 @@ export class SettingsService {
     constructor(private prisma: PrismaService) { }
 
     async getSettings() {
-        const settings = await this.prisma.systemSettings.findFirst();
+        // Try to find the first settings record
+        let settings = await this.prisma.systemSettings.findFirst();
+
+        // If no settings exist, create default
         if (!settings) {
-            return this.prisma.systemSettings.create({
+            settings = await this.prisma.systemSettings.create({
                 data: {
                     siteName: 'Lesssgo Car Rental',
-                    currency: 'USD',
                     maintenanceMode: false,
-                    passwordMinLength: 8,
+                    currency: 'USD',
                 },
             });
         }
+
         return settings;
     }
 
     async updateSettings(data: any) {
         const settings = await this.getSettings();
+
         return this.prisma.systemSettings.update({
             where: { id: settings.id },
             data,

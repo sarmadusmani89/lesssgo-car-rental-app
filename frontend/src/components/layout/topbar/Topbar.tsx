@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { Bell, Search, User } from 'lucide-react';
+import { Bell, User, Menu } from 'lucide-react';
 import styles from './Topbar.module.css';
 
 interface TopbarProps {
@@ -13,9 +13,10 @@ interface TopbarProps {
         image?: string;
     };
     title?: string;
+    onMenuClick?: () => void;
 }
 
-export default function Topbar({ user, title }: TopbarProps) {
+export default function Topbar({ user, title, onMenuClick }: TopbarProps) {
     const [showDropdown, setShowDropdown] = useState(false);
     const router = useRouter();
 
@@ -32,25 +33,18 @@ export default function Topbar({ user, title }: TopbarProps) {
     return (
         <header className={styles.topbar}>
             {/* Left */}
-            <div>
-                <h1 className={styles.title}>{title || 'Dashboard'}</h1>
+            <div className="flex items-center gap-4">
+                <button
+                    className={styles.mobileMenuBtn}
+                    onClick={onMenuClick}
+                >
+                    <Menu size={20} />
+                </button>
+                <h1 className={styles.title}>{title}</h1>
             </div>
 
             {/* Right */}
             <div className={styles.right}>
-                {/* Search */}
-                <div className={`${styles.searchWrapper} group`}>
-                    <Search
-                        size={20}
-                        className={`${styles.searchIcon} group-focus-within:text-blue-500`}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Search anything..."
-                        className={styles.searchInput}
-                    />
-                </div>
-
                 {/* Notifications */}
                 {/* Notifications - Hidden for now
                 <button className={styles.notificationBtn}>

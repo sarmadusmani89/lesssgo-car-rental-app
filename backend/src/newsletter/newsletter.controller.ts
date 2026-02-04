@@ -1,5 +1,9 @@
-import { Controller, Post, Get, Body, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Get, Body, BadRequestException, UseGuards } from '@nestjs/common';
 import { NewsletterService } from './newsletter.service';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('newsletter')
 export class NewsletterController {
@@ -14,6 +18,8 @@ export class NewsletterController {
     }
 
     @Get()
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
     async getSubscribers() {
         return this.newsletterService.getAllSubscribers();
     }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LogOut } from 'lucide-react';
+import { LogOut, X } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
 interface SidebarLink {
@@ -16,10 +16,12 @@ interface SidebarProps {
     links: SidebarLink[];
     className?: string;
     activeTab?: string;
+    isOpen?: boolean;
+    onClose?: () => void;
     onNavigate?: (href: string) => void;
 }
 
-export default function Sidebar({ title, links, className = '', activeTab, onNavigate }: SidebarProps) {
+export default function Sidebar({ title, links, className = '', activeTab, isOpen, onClose, onNavigate }: SidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
 
@@ -38,54 +40,70 @@ export default function Sidebar({ title, links, className = '', activeTab, onNav
             e.preventDefault();
             onNavigate(href);
         }
+        if (onClose) onClose();
     };
 
     return (
-        <aside className={`${styles.sidebar} ${className}`}>
-            {/* Top section */}
-            <div>
-                <div className={styles.titleWrapper}>
-                    <h2 className={styles.title}>{title}</h2>
-                </div>
+        <>
+            {/* Overlay for mobile */}
+            <div
+                className={`${styles.overlay} ${isOpen ? styles.overlayVisible : styles.overlayHidden}`}
+                onClick={onClose}
+            />
 
-                <nav className={styles.nav}>
-                    {links.map((link) => {
-                        const isActive = activeTab ? activeTab === link.href : pathname === link.href;
+            <aside className={`${styles.sidebar} ${isOpen ? styles.sidebarOpen : styles.sidebarClosed} ${className}`}>
+                {/* Mobile Close Button */}
+                <button
+                    onClick={onClose}
+                    className={styles.closeBtn}
+                >
+                    <X size={20} />
+                </button>
+                {/* Top section */}
+                <div>
+                    <div className={styles.titleWrapper}>
+                        <h2 className={styles.title}>{title}</h2>
+                    </div>
 
-                        return (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                onClick={(e) => handleLinkClick(e, link.href)}
-                                className={`group ${styles.link} ${isActive ? styles.linkActive : styles.linkInactive
-                                    }`}
-                            >
-                                <span
-                                    className={`${styles.icon} ${isActive ? styles.iconActive : `${styles.iconInactive} group-hover:text-blue-500`
+                    <nav className={styles.nav}>
+                        {links.map((link) => {
+                            const isActive = activeTab ? activeTab === link.href : pathname === link.href;
+
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    onClick={(e) => handleLinkClick(e, link.href)}
+                                    className={`group ${styles.link} ${isActive ? styles.linkActive : styles.linkInactive
                                         }`}
                                 >
-                                    {link.icon}
-                                </span>
-                                <span className="font-medium">{link.name}</span>
-                            </Link>
-                        );
-                    })}
-                </nav>
-            </div>
+                                    <span
+                                        className={`${styles.icon} ${isActive ? styles.iconActive : `${styles.iconInactive} group-hover:text-blue-500`
+                                            }`}
+                                    >
+                                        {link.icon}
+                                    </span>
+                                    <span className="font-medium">{link.name}</span>
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                </div>
 
-            {/* Logout */}
-            <div className={styles.logoutWrapper}>
-                <button
-                    onClick={handleLogout}
-                    className={`group ${styles.logoutButton}`}
-                >
-                    <LogOut
-                        size={20}
-                        className="text-gray-400 group-hover:text-blue-500"
-                    />
-                    <span className="font-medium">Logout</span>
-                </button>
-            </div>
-        </aside>
+                {/* Logout */}
+                <div className={styles.logoutWrapper}>
+                    <button
+                        onClick={handleLogout}
+                        className={`group ${styles.logoutButton}`}
+                    >
+                        <LogOut
+                            size={20}
+                            className="text-gray-400 group-hover:text-blue-500"
+                        />
+                        <span className="font-medium">Logout</span>
+                    </button>
+                </div>
+            </aside>
+        </>
     );
 }

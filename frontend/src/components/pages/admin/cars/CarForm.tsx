@@ -9,12 +9,13 @@ import api from "@/lib/api";
 import { toast } from "sonner";
 import { X, Loader2, Image as ImageIcon, Upload, ChevronDown, Check } from "lucide-react";
 import CustomSelect from '@/components/ui/CustomSelect';
+import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS } from "./constants";
 
 const carSchema = z.object({
   name: z.string().min(2, "Name is too short"),
-  brand: z.string().min(2, "Brand is too short"),
-  type: z.string().min(2, "Type is required (e.g. Sedan, SUV)"),
-  transmission: z.string().min(2, "Transmission is required"),
+  brand: z.string().min(1, "Brand is required"),
+  type: z.string().min(1, "Category is required"),
+  transmission: z.string().min(1, "Transmission is required"),
   fuelCapacity: z.number().min(1, "Fuel capacity must be positive"),
   pricePerDay: z.number().min(1, "Price must be positive"),
   hp: z.number().min(50, "HP must be reasonable (min 50)"),
@@ -57,12 +58,19 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
   });
 
   const currentStatus = watch("status");
+  const currentBrand = watch("brand");
+  const currentCategory = watch("type");
+  const currentTransmission = watch("transmission");
 
   const statusOptions = [
     { value: "AVAILABLE", label: "Available" },
     { value: "MAINTENANCE", label: "Maintenance" },
     { value: "RENTED", label: "Rented" }
   ];
+
+  const brandOptions = VEHICLE_BRANDS.map(brand => ({ label: brand, value: brand }));
+  const categoryOptions = VEHICLE_CATEGORIES.map(cat => ({ label: cat, value: cat }));
+  const transmissionOptions = VEHICLE_TRANSMISSIONS.map(trans => ({ label: trans, value: trans }));
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -131,31 +139,35 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
           {/* Basic Info */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Car Name <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Car Model Name <span className="text-red-500">*</span></label>
               <input
                 {...register("name")}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
-                placeholder="e.g. Civic Turbo"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition font-medium"
+                placeholder="e.g. 911 GT3 RS"
               />
               {errors.name && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.name.message}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Brand <span className="text-red-500">*</span></label>
-              <input
-                {...register("brand")}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
-                placeholder="e.g. Honda"
+              <CustomSelect
+                options={brandOptions}
+                value={currentBrand}
+                onChange={(val) => setValue("brand", val)}
+                className="w-full bg-white"
+                placeholder="Select Brand"
               />
               {errors.brand && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.brand.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Category / Type <span className="text-red-500">*</span></label>
-              <input
-                {...register("type")}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
-                placeholder="e.g. Sedan, SUV, Sport"
+              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Category <span className="text-red-500">*</span></label>
+              <CustomSelect
+                options={categoryOptions}
+                value={currentCategory}
+                onChange={(val) => setValue("type", val)}
+                className="w-full bg-white"
+                placeholder="Select Category"
               />
               {errors.type && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.type.message}</p>}
             </div>
@@ -167,11 +179,8 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Transmission</label>
                 <CustomSelect
-                  options={[
-                    { label: 'Automatic', value: 'Automatic' },
-                    { label: 'Manual', value: 'Manual' }
-                  ]}
-                  value={watch("transmission")}
+                  options={transmissionOptions}
+                  value={currentTransmission}
                   onChange={(val) => setValue("transmission", val)}
                   className="w-full bg-white"
                 />

@@ -1,9 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner'; // Changed from react-hot-toast to sonner
 import api from '@/lib/api'; // New import for API utility
 import styles from './Footer.module.css';
-import { Instagram, Twitter, Facebook, Linkedin, Mail, MapPin, Phone, ArrowRight } from 'lucide-react'; // Updated lucide-react imports
+import { Instagram, Twitter, Facebook, Linkedin, Mail, MapPin, Phone, ArrowRight, Car } from 'lucide-react'; // Updated lucide-react imports
 
 export default function Footer() {
     const [email, setEmail] = useState('');
@@ -55,33 +57,6 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Newsletter */}
-                <div className="space-y-6">
-                    <h3 className="text-lg font-bold">Newsletter</h3>
-                    <p className="text-gray-400 text-sm leading-relaxed">
-                        Subscribe to our newsletter for latest updates and offers.
-                    </p>
-                    <form onSubmit={handleSubscribe} className="space-y-3">
-                        <div className="relative">
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Enter your email"
-                                className="w-full bg-slate-800 border border-slate-700 rounded-lg py-3 px-4 pl-10 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-outfit"
-                                required
-                            />
-                            <Mail className="w-5 h-5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
-                        >
-                            {loading ? 'Subscribing...' : 'Subscribe Now'}
-                        </button>
-                    </form>
-                </div>
 
                 <div>
                     <h3>Quick Links</h3>

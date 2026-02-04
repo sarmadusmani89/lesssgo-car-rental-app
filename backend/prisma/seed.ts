@@ -1,10 +1,10 @@
-import { PrismaClient, Role, CarStatus, BookingStatus, PaymentStatus, PaymentMethod } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
     console.log('Seeding data...');
 
-    // Create Single Admin User
+    // 1. Create Single Admin User
     const admin = await prisma.user.upsert({
         where: { email: 'sarmadusmani598@gmail.com' },
         update: {},
@@ -17,48 +17,20 @@ async function main() {
         },
     });
 
-    // Create Cars
-    const cars = [
-        {
-            name: 'Tesla Model 3',
-            brand: 'Tesla',
-            type: 'Sedan',
-            transmission: 'Automatic',
-            fuelCapacity: 0,
-            pricePerDay: 150,
-            hp: 450,
-            imageUrl: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800',
-            description: 'Electric luxury sedan with autopilot',
-            status: CarStatus.AVAILABLE,
-        },
-        {
-            name: 'Range Rover Sport',
-            brand: 'Land Rover',
-            type: 'SUV',
-            transmission: 'Automatic',
-            fuelCapacity: 80,
-            pricePerDay: 250,
-            hp: 400,
-            imageUrl: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800',
-            description: 'Luxury SUV with premium features',
-            status: CarStatus.AVAILABLE,
-        },
-        {
-            name: 'Audi R8',
-            brand: 'Audi',
-            type: 'Luxury',
-            transmission: 'Automatic',
-            fuelCapacity: 75,
-            pricePerDay: 400,
-            hp: 600,
-            imageUrl: 'https://images.unsplash.com/photo-1603584173870-7f3ca976571a?auto=format&fit=crop&q=80&w=800',
-            description: 'High-performance sports car',
-            status: CarStatus.RENTED,
-        },
-    ];
+    console.log('Admin user created:', admin.email);
 
-    for (const v of cars) {
-        await prisma.car.create({ data: v });
+    // 2. Create Default System Settings
+    const settingsCount = await prisma.systemSettings.count();
+    if (settingsCount === 0) {
+        await prisma.systemSettings.create({
+            data: {
+                siteName: 'Lesssgo Car Rental',
+                maintenanceMode: false,
+                currency: 'USD',
+                passwordMinLength: 8,
+            },
+        });
+        console.log('Default system settings created.');
     }
 
     console.log('Seeding complete.');

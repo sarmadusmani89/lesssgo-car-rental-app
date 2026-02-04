@@ -15,7 +15,9 @@ export default function PaymentStatusAndMethod({ booking }: { booking: any }) {
         </div>
         <div className="flex items-center gap-2">
           <CreditCard size={20} className="text-blue-500" />
-          <span className="font-medium">Method: {booking.paymentMethod}</span>
+          <span className="font-medium">
+            Method: {booking.paymentMethod === 'ONLINE' ? 'Pay via Stripe' : booking.paymentMethod === 'CASH' ? 'Cash' : booking.paymentMethod}
+          </span>
         </div>
       </div>
     </div>

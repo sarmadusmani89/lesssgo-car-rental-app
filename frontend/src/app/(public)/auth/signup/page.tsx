@@ -8,6 +8,7 @@ import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Mail, Lock, User, Loader2, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import AuthSuccess from '@/components/pages/auth/AuthSuccess';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
 
@@ -75,30 +76,14 @@ function SignupContent() {
             subheading="Join our premium fleet and experience the difference."
         >
             {success ? (
-                <div className="flex flex-col items-center justify-center py-10 text-center animate-in fade-in slide-in-from-bottom-8 duration-700">
-                    <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mb-8 shadow-sm">
-                        <CheckCircle className="text-emerald-500" size={56} />
-                    </div>
-                    <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight italic">
-                        Success!
-                    </h2>
-                    <p className="text-slate-600 font-bold mb-1">
-                        Your account has been created successfully.
-                    </p>
-                    <p className="text-slate-500 font-medium max-w-sm mx-auto mb-10 leading-relaxed italic">
-                        Please check your inbox for a verification link to activate your premium access.
-                    </p>
-
-                    <div className="flex flex-col gap-4 w-full">
-                        <Link href="/auth/login" className="btn btn-primary btn-lg w-full flex items-center justify-center gap-2 py-4 shadow-lg hover:scale-[1.02] transition-transform">
-                            Continue to Sign In
-                        </Link>
-                        <p className="text-xs text-slate-400 font-bold flex items-center justify-center gap-2">
-                            <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></span>
-                            Redirecting automatically in a few seconds...
-                        </p>
-                    </div>
-                </div>
+                <AuthSuccess
+                    title="Success!"
+                    message="Your account has been created successfully."
+                    description="Please check your inbox for a verification link to activate your premium access."
+                    actionText="Continue to Sign In"
+                    actionHref="/auth/login"
+                    showAutoRedirect={true}
+                />
             ) : (
                 <>
                     <h2>Create Account</h2>
@@ -115,9 +100,8 @@ function SignupContent() {
                                 required: 'Name is required',
                                 maxLength: { value: 50, message: 'Name cannot exceed 50 characters' }
                             })}
-                            wrapperClassName={errors.name ? styles.inputError : ''}
+                            error={errors.name?.message}
                         />
-                        {errors.name && <span className={styles.errorText}>{errors.name.message}</span>}
 
                         <AuthInput
                             label="Email"
@@ -130,9 +114,8 @@ function SignupContent() {
                                 maxLength: { value: 100, message: 'Email cannot exceed 100 characters' },
                                 pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
                             })}
-                            wrapperClassName={errors.email ? styles.inputError : ''}
+                            error={errors.email?.message}
                         />
-                        {errors.email && <span className={styles.errorText}>{errors.email.message}</span>}
 
                         <AuthInput
                             label="Password"
@@ -145,9 +128,8 @@ function SignupContent() {
                                 minLength: { value: 6, message: 'Min length is 6' },
                                 maxLength: { value: 50, message: 'Password cannot exceed 50 characters' }
                             })}
-                            wrapperClassName={errors.password ? styles.inputError : ''}
+                            error={errors.password?.message}
                         />
-                        {errors.password && <span className={styles.errorText}>{errors.password.message}</span>}
 
 
                         <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>

@@ -14,14 +14,12 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         siteName: '',
-        currency: 'USD',
     });
 
     useEffect(() => {
         if (initialData) {
             setFormData({
                 siteName: initialData.siteName || '',
-                currency: initialData.currency || 'USD',
             });
         }
     }, [initialData]);
@@ -58,21 +56,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                 />
             </div>
 
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Currency Code
-                </label>
-                <select
-                    value={formData.currency}
-                    onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option value="USD">USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
-                    <option value="GBP">GBP (£)</option>
-                    <option value="PKR">PKR (Rs)</option>
-                </select>
-            </div>
+
 
             <div className="pt-4 flex justify-end">
                 <button

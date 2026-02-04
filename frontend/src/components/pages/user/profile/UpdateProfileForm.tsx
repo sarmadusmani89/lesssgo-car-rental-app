@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Mail, Phone, Loader2 } from 'lucide-react';
+import { User, Mail } from 'lucide-react';
 import AuthInput from '@/components/pages/auth/AuthInput';
+import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -72,13 +73,14 @@ export default function UpdateProfileForm() {
         {/* Phone not in backend yet, skipping or just UI */}
 
         <div className="flex justify-end mt-4">
-          <button
+          <Button
             type="submit"
+            isLoading={loading}
             disabled={loading}
-            className="btn btn-primary px-8"
+            className="px-8"
           >
-            {loading ? <Loader2 className="animate-spin" /> : 'Save Changes'}
-          </button>
+            Save Changes
+          </Button>
         </div>
       </form>
     </div>

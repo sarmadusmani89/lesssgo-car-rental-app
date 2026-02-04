@@ -10,7 +10,7 @@ export class NewsletterService {
             return await this.prisma.newsletterSubscriber.create({
                 data: { email },
             });
-        } catch (error) {
+        } catch (error: any) {
             if (error.code === 'P2002') {
                 throw new ConflictException('Email already subscribed');
             }

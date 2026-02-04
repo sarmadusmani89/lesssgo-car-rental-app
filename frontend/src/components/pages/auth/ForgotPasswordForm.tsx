@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Mail, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { authApi } from '@/lib/api';
 import AuthInput from '@/components/pages/auth/AuthInput';
+import AuthSuccess from '@/components/pages/auth/AuthSuccess';
 import styles from '@/app/(public)/auth/auth.module.css';
 
 type ForgotPasswordInputs = {
@@ -34,20 +35,16 @@ export default function ForgotPasswordForm() {
         }
     };
 
+
     if (success) {
         return (
-            <div className="text-center">
-                <div className="flex justify-center mb-4 text-green-500">
-                    <CheckCircle size={48} />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Check your email</h3>
-                <p className="text-gray-600 mb-6">
-                    {success}
-                </p>
-                <Link href="/auth/login" className="btn btn-primary btn-lg w-full">
-                    Return to Log in
-                </Link>
-            </div>
+            <AuthSuccess
+                title="Check your email"
+                message="Reset instructions sent."
+                description={success}
+                actionText="Return to Log in"
+                actionHref="/auth/login"
+            />
         );
     }
 
@@ -69,8 +66,10 @@ export default function ForgotPasswordForm() {
                     required
                     {...register('email', {
                         required: 'Email is required',
+                        maxLength: { value: 100, message: 'Max 100 characters' },
                         pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
                     })}
+                    maxLength={100}
                     wrapperClassName={errors.email ? styles.inputError : ''}
                 />
                 {errors.email && <span className={styles.errorText}>{errors.email.message}</span>}

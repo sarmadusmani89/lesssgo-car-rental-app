@@ -9,6 +9,7 @@ import {
     Calendar as CalendarIcon,
     ChevronDown
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useBookings } from '../../../../hooks/useBookings';
 import BookingTable from './BookingTable';
 import { BookingFilters } from './BookingFilters';
@@ -19,6 +20,7 @@ import { BookingStatus, PaymentStatus } from '../../../../types/booking';
 
 export default function AdminBookings() {
     const { bookings, isLoading, refreshBookings, updateBookingStatus } = useBookings();
+    const router = useRouter();
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<BookingStatus | 'ALL'>('ALL');
     const [paymentFilter, setPaymentFilter] = useState<PaymentStatus | 'ALL'>('ALL');
@@ -30,8 +32,10 @@ export default function AdminBookings() {
     // Filter Logic
     const filteredBookings = useMemo(() => {
         return bookings.filter(booking => {
+            const shortId = booking.id.slice(-8).toUpperCase();
             const matchesSearch =
                 booking.id.toLowerCase().includes(search.toLowerCase()) ||
+                shortId.includes(search.toUpperCase()) ||
                 booking.customerName.toLowerCase().includes(search.toLowerCase()) ||
                 booking.customerEmail.toLowerCase().includes(search.toLowerCase()) ||
                 booking.car?.name?.toLowerCase().includes(search.toLowerCase());
@@ -69,11 +73,43 @@ export default function AdminBookings() {
     };
 
     const handleViewDetails = (booking: any) => {
-        toast.info(`Viewing details for #${booking.id.slice(-8)} (Coming soon)`);
+        router.push(`/admin/bookings/${booking.id}`);
     };
 
     const handleExport = () => {
-        toast.success('Exporting bookings to CSV...');
+        if (filteredBookings.length === 0) {
+            toast.error('No bookings to export');
+            return;
+        }
+
+        const headers = ['Order ID', 'Short ID', 'Customer', 'Email', 'Car', 'Pick-up', 'Return', 'Amount', 'Status', 'Payment'];
+        const csvRows = filteredBookings.map(b => [
+            b.id,
+            b.id.slice(-8).toUpperCase(),
+            b.customerName,
+            b.customerEmail,
+            b.car?.name || 'N/A',
+            new Date(b.startDate).toLocaleDateString(),
+            new Date(b.endDate).toLocaleDateString(),
+            `$${b.totalAmount}`,
+            b.status,
+            b.paymentStatus
+        ]);
+
+        const csvContent = [headers, ...csvRows]
+            .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+            .join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `bookings_export_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast.success(`Exported ${filteredBookings.length} bookings successfully`);
     };
 
     if (isLoading && bookings.length === 0) {

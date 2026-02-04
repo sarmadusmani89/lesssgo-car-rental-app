@@ -1,4 +1,4 @@
-import { LucideIcon, Eye, EyeOff } from 'lucide-react';
+import { LucideIcon, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useState, forwardRef } from 'react';
 import styles from '@/app/(public)/auth/auth.module.css';
 
@@ -7,19 +7,20 @@ interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     icon: LucideIcon;
     wrapperClassName?: string;
     required?: boolean;
+    error?: string;
 }
 
 const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
-    ({ label, icon: Icon, wrapperClassName, type = 'text', required, ...props }, ref) => {
+    ({ label, icon: Icon, wrapperClassName, type = 'text', required, error, ...props }, ref) => {
         const [showPassword, setShowPassword] = useState(false);
         const isPassword = type === 'password';
 
         return (
-            <div className={styles.inputGroup}>
+            <div className={`${styles.inputGroup} ${error ? styles.inputGroupWithError : ''}`}>
                 <label>
                     {label} {required ? <span className="text-red-500">*</span> : <span className="text-gray-400 font-normal italic lowercase ml-1">(optional)</span>}
                 </label>
-                <div className={`${styles.inputWrapper} ${wrapperClassName || ''}`}>
+                <div className={`${styles.inputWrapper} ${error ? styles.inputError : ''} ${wrapperClassName || ''}`}>
                     <Icon size={18} />
                     <input
                         ref={ref}
@@ -31,12 +32,18 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
                             className={styles.toggleBtn}
-                            tabIndex={-1} // Prevent tabbing to this button for smoother form flow
+                            tabIndex={-1}
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     )}
                 </div>
+                {error && (
+                    <div className={styles.errorMessage}>
+                        <AlertCircle size={14} />
+                        <span>{error}</span>
+                    </div>
+                )}
             </div>
         );
     }

@@ -6,7 +6,7 @@ import AboutValues from '@/components/pages/about/AboutValues';
 
 export default function AboutPage() {
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} py-20 md:py-32`}>
             <AboutHero />
             <AboutStory />
             <AboutStats />

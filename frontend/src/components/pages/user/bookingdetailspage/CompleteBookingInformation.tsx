@@ -19,7 +19,9 @@ export default function CompleteBookingInformation({ booking }: { booking: any }
         </div>
         <div>
           <span className="font-medium text-gray-500">Booking ID:</span>
-          <span className="ml-2">{booking.id}</span>
+          <span className="ml-2 font-mono font-bold text-slate-400">
+            #{booking.id.toString().slice(-8).toUpperCase()}
+          </span>
         </div>
         <div>
           <span className="font-medium text-gray-500">Total Amount:</span>
@@ -33,7 +35,7 @@ export default function CompleteBookingInformation({ booking }: { booking: any }
         </div>
         <div>
           <span className="font-medium text-gray-500">Phone:</span>
-          <span className="ml-2">{booking.customerPhone}</span>
+          <span className="ml-2">{booking.customerPhone || 'N/A'}</span>
         </div>
       </div>
     </div>

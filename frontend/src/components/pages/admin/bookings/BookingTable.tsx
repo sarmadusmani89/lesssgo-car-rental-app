@@ -52,7 +52,7 @@ const BookingTable: React.FC<BookingTableProps> = ({ bookings, onStatusUpdate, o
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
                       <span className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                        #{booking.id.slice(-8)}
+                        #{booking.id.slice(-8).toUpperCase()}
                       </span>
                       <div className="flex items-center gap-1.5 text-xs text-slate-600 mt-1 font-bold italic">
                         <Calendar size={12} className="text-blue-500" />
@@ -75,9 +75,14 @@ const BookingTable: React.FC<BookingTableProps> = ({ bookings, onStatusUpdate, o
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <Car size={16} className="text-slate-400" />
-                      <span className="text-sm font-medium text-slate-700">
-                        {booking.car?.brand} {booking.car?.name}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter leading-tight">
+                          {booking.car?.brand}
+                        </span>
+                        <span className="text-sm font-bold text-slate-700 uppercase leading-tight">
+                          {booking.car?.name}
+                        </span>
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">

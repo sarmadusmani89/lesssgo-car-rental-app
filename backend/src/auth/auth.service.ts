@@ -34,7 +34,7 @@ export class AuthService {
     return { message: 'Signup successful. Please verify your email.' };
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string, rememberMe: boolean = false) {
     const user = await this.usersService.findByEmail(email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
@@ -47,7 +47,9 @@ export class AuthService {
 
     const payload = { sub: user.id, email: user.email, role: user.role };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync(payload, {
+        expiresIn: rememberMe ? '2d' : '1d',
+      }),
       user,
     };
   }

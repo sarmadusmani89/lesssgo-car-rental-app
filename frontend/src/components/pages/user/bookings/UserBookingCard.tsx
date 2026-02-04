@@ -1,4 +1,4 @@
-import { Calendar, Car, AlertCircle, Eye } from 'lucide-react';
+import { Calendar, AlertCircle, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface Booking {
@@ -37,25 +37,21 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
     // Helper to determine status color
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
-            case 'approved':
-            case 'active':
+            case 'confirmed':
             case 'completed':
-                return 'bg-green-100 text-green-800';
+            case 'active':
+            case 'approved':
+                return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
             case 'pending':
             case 'upcoming':
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-blue-50 text-blue-600 border border-blue-100';
             case 'cancelled':
             case 'rejected':
-                return 'bg-red-100 text-red-800';
+                return 'bg-rose-50 text-rose-600 border border-rose-100';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-slate-50 text-slate-600 border border-slate-100';
         }
     };
-
-    // Construct title
-    const title = typeof booking.car === 'object'
-        ? `${booking.car.brand} ${booking.car.name}`
-        : (booking.carName || booking.title || 'Car Rental');
 
     const status = booking.status || 'Pending';
     const isCompleted = status.toLowerCase() === 'completed';
@@ -69,47 +65,72 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
     const canCancel = !isCompleted && !isCancelled;
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 transition-all hover:shadow-md">
-            <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-                <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-lg font-bold text-gray-900">{title}</h3>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
+        <div className="bg-white rounded-2xl border border-slate-100 p-6 transition-all hover:shadow-xl hover:shadow-slate-200/50 group">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="flex-1 space-y-4">
+                    <div className="flex items-center gap-3">
+                        <div className="flex flex-col">
+                            <span className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                                #{booking.id.toString().slice(-8).toUpperCase()}
+                            </span>
+                            <div className="flex flex-col mt-1">
+                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-tight">
+                                    {booking.car?.brand || 'Vehicle'}
+                                </span>
+                                <h3 className="text-xl font-black text-slate-900 tracking-tight font-outfit uppercase leading-tight">
+                                    {booking.car?.name || 'Details'}
+                                </h3>
+                            </div>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusColor(status)}`}>
                             {status}
                         </span>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600 mt-3">
-                        <div className="flex items-center gap-1.5">
-                            <Calendar className="w-4 h-4 text-gray-400" />
-                            <span>
-                                {booking.startDate ? formatDate(booking.startDate) : 'TBD'} - {booking.endDate ? formatDate(booking.endDate) : 'TBD'}
+                    <div className="flex flex-wrap items-center gap-6 text-sm">
+                        <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
+                            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+                                <Calendar className="w-4 h-4" />
+                            </div>
+                            <span className="font-bold text-slate-600 italic">
+                                {booking.startDate ? formatDate(booking.startDate) : 'TBD'} — {booking.endDate ? formatDate(booking.endDate) : 'TBD'}
                             </span>
                         </div>
+
                         {booking.totalAmount && (
-                            <div className="font-semibold text-gray-900">
-                                ${booking.totalAmount}
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                                    <span className="font-bold text-xs">$</span>
+                                </div>
+                                <span className="text-xl font-black text-slate-900 font-outfit tracking-tighter">
+                                    ${booking.totalAmount}
+                                </span>
                             </div>
                         )}
                     </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex items-center gap-3 w-full md:w-auto">
                     <Link
                         href={`/dashboard/bookings/${booking.id}`}
-                        className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors flex items-center gap-2"
+                        className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm"
                     >
-                        <Eye size={16} />
-                        View Details
+                        <Eye size={18} />
+                        Details
                     </Link>
 
                     {canCancel && (
                         <button
                             onClick={() => onCancel(booking.id)}
                             disabled={cancellingId === booking.id}
-                            className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {cancellingId === booking.id ? 'Cancelling...' : 'Cancel Booking'}
+                            {cancellingId === booking.id ? (
+                                <Loader2 className="animate-spin" size={18} />
+                            ) : (
+                                <AlertCircle size={18} />
+                            )}
+                            Cancel
                         </button>
                     )}
                 </div>

@@ -117,7 +117,12 @@
 }
 
 .inputGroup {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+    transition: margin-bottom 0.3s ease;
+}
+
+.inputGroupWithError {
+    margin-bottom: 2.5rem;
 }
 
 .rememberRow {
@@ -200,18 +205,32 @@
     width: 100%;
     padding: 1rem 3rem 1rem 3.5rem;
     background: #f8fafc;
-    border: 1.5px solid transparent;
+    border: 1.5px solid #e2e8f0;
     border-radius: var(--radius);
     font-size: 1rem;
     font-weight: 500;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.inputError input {
+    border-color: #ef4444 !important;
+    background: #fffafa !important;
+}
+
+.inputError svg {
+    color: #ef4444 !important;
+}
+
 .inputWrapper input:focus {
     background: white;
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
     outline: none;
+}
+
+.inputError input:focus {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
 }
 
 .inputWrapper input:focus+svg {
@@ -256,6 +275,29 @@
 
 .spin {
     animation: spin 1s linear infinite;
+}
+
+.errorMessage {
+    color: #ef4444;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    animation: slideIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes spin {

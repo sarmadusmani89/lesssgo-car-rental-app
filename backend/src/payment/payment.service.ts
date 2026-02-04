@@ -181,36 +181,46 @@ export class PaymentService {
           const start = new Date(startDate).toLocaleDateString();
           const end = new Date(endDate).toLocaleDateString();
 
-          const userHtml = `
-            <div style="font-family: Arial, sans-serif; padding: 20px;">
-              <h2 style="color: #2563eb;">Payment Received - Booking Confirmed!</h2>
-              <p>Hi ${customerName},</p>
-              <p>Your payment was successful and your reservation is now fully confirmed.</p>
-              <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
-                <p><strong>Period:</strong> ${start} to ${end}</p>
-                <p><strong>Total Paid:</strong> $${totalAmount}</p>
-                <p><strong>Status:</strong> Paid via Stripe</p>
-              </div>
-              <p>We look forward to seeing you!</p>
-            </div>
-          `;
+          const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
+          const { paymentReceiptTemplate } = await import('../lib/emailTemplates/paymentReceipt');
 
-          const adminHtml = `
-            <div style="font-family: Arial, sans-serif; padding: 20px;">
-              <h2 style="color: #2563eb;">Payment Success Alert</h2>
-              <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-                <p><strong>Booking ID:</strong> ${updatedBooking.id}</p>
-                <p><strong>Customer:</strong> ${customerName} (${customerEmail})</p>
-                <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
-                <p><strong>Total Paid:</strong> $${totalAmount}</p>
-              </div>
-            </div>
-          `;
+          const confirmHtml = bookingConfirmationTemplate({
+            customerName,
+            bookingId: updatedBooking.id,
+            brand: car.brand,
+            vehicleName: car.name,
+            startDate: start,
+            endDate: end,
+            totalAmount,
+            paymentMethod: 'ONLINE',
+            isConfirmed: true,
+          });
+
+          const receiptHtml = paymentReceiptTemplate({
+            customerName,
+            amount: totalAmount,
+            bookingId: updatedBooking.id,
+            paymentMethod: 'Stripe Online',
+            transactionId: session.payment_intent as string,
+            date: new Date().toLocaleDateString(),
+          });
+
+          const adminHtml = bookingConfirmationTemplate({
+            customerName: 'Admin',
+            bookingId: updatedBooking.id,
+            brand: car.brand,
+            vehicleName: car.name,
+            startDate: start,
+            endDate: end,
+            totalAmount,
+            paymentMethod: 'ONLINE',
+            isConfirmed: true,
+          });
 
           const { sendEmail } = await import('../lib/sendEmail');
           await Promise.all([
-            sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml),
+            sendEmail(customerEmail, 'Booking Confirmed - LesssGo', confirmHtml),
+            sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml),
             sendEmail(process.env.SMTP_USER!, 'Payment Success Notification', adminHtml)
           ]);
           console.log('✅ Payment confirmation emails sent successfully');

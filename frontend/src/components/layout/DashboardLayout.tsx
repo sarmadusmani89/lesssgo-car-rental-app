@@ -7,7 +7,6 @@ import { LogOut } from 'lucide-react';
 interface DashboardLayoutProps {
     children: React.ReactNode;
     sidebarTitle: string;
-    topbarTitle: string;
     userName?: string;
     links: Array<{
         name: string;
@@ -19,7 +18,6 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({
     children,
     sidebarTitle,
-    topbarTitle,
     userName = 'User',
     links,
 }: DashboardLayoutProps) {
@@ -52,7 +50,7 @@ export default function DashboardLayout({
                 className="flex-1 flex flex-col min-w-0"
                 style={{ marginLeft: sidebarWidth }}
             >
-                <Topbar title={topbarTitle} user={{ name: userName }} />
+                <Topbar user={{ name: userName }} />
                 <main className="flex-1 p-8 overflow-y-auto">{children}</main>
             </div>
         </div>

@@ -13,7 +13,7 @@ export default function BookingSummary({ car, startDate, endDate }: Props) {
     const end = new Date(endDate);
     const diff = end.getTime() - start.getTime();
     const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days >= 0 ? days + 1 : 0; // Include both start and end day (Sync with CheckoutPage)
+    return days >= 0 ? days + 1 : 0; // Include both start and end day (Sync with Checkout page)
   };
 
   const days = getDays();
@@ -35,9 +35,14 @@ export default function BookingSummary({ car, startDate, endDate }: Props) {
       <div className="space-y-6">
         <div>
           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-2">Vehicle Selection</span>
-          <p className="font-black text-gray-900 tracking-tight uppercase text-lg">
-            {car ? car.name : '...'}
-          </p>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight mb-1">
+              {car?.brand || 'Premium'}
+            </span>
+            <p className="font-black text-slate-900 tracking-tight uppercase text-xl leading-tight">
+              {car?.name || 'Selection'}
+            </p>
+          </div>
         </div>
 
         <div>

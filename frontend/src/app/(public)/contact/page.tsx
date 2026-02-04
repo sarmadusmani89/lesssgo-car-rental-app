@@ -7,7 +7,7 @@ import ContactForm from '@/components/pages/contact/ContactForm';
 
 export default function ContactPage() {
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} py-20 md:py-32`}>
             <ContactHero />
 
             <section className={styles.content}>

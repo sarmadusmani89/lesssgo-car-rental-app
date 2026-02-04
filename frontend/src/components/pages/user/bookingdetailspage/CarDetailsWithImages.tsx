@@ -8,7 +8,10 @@ export default function CarDetailsWithImages({ car }: { car: any }) {
       <h2 className="text-xl font-semibold mb-4">Car Details</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <p className="font-bold text-lg">{car.brand} {car.name}</p>
+          <div className="flex flex-col">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{car.brand}</span>
+            <p className="font-black text-2xl text-slate-900 font-outfit uppercase -mt-1">{car.name}</p>
+          </div>
           <p className="text-gray-600 mt-1">Type: {car.type}</p>
           <p className="text-gray-600">Transmission: {car.transmission}</p>
           <p className="text-gray-600">Fuel Capacity: {car.fuelCapacity}L</p>

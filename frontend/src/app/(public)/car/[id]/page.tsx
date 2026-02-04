@@ -100,10 +100,15 @@ function CarContent() {
                                 <Zap size={12} className="fill-blue-600" />
                                 Advance Booking Required
                             </div>
-                            <h1 className="text-5xl md:text-7xl font-black text-gray-900 font-outfit uppercase tracking-tighter leading-none">
-                                <span className="text-blue-600">{car.name}</span>
-                            </h1>
-                            <p className="text-gray-400 text-sm font-bold uppercase tracking-[0.4em] pt-2">
+                            <div className="flex flex-col">
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-[0.4em] mb-3 leading-none">
+                                    {car.brand}
+                                </span>
+                                <h1 className="text-4xl md:text-7xl font-black text-slate-900 font-outfit uppercase tracking-tighter leading-none">
+                                    <span className="text-blue-600">{car.name}</span>
+                                </h1>
+                            </div>
+                            <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.5em] pt-4">
                                 Exquisite <span className="text-blue-600/50">{car.type}</span> Experience
                             </p>
                         </div>
@@ -141,16 +146,16 @@ function CarContent() {
                             }} />
                         </section>
 
-                        <section className="bg-white p-12 rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-100/30 relative overflow-hidden group">
+                        <section className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-100/30 relative overflow-hidden group">
                             <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50/50 rounded-full -mr-24 -mt-24 transition-transform duration-700 group-hover:scale-150" />
                             <div className="relative z-10">
-                                <div className="flex items-center gap-3 mb-8">
+                                <div className="flex items-center gap-3 mb-6 md:mb-8">
                                     <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center">
                                         <Info size={20} />
                                     </div>
-                                    <h3 className="text-2xl font-black font-outfit tracking-tight uppercase">Vehicle Description</h3>
+                                    <h3 className="text-xl md:text-2xl font-black font-outfit tracking-tight uppercase">Vehicle Description</h3>
                                 </div>
-                                <p className="text-gray-600 leading-relaxed text-lg font-medium">
+                                <p className="text-gray-600 leading-relaxed text-base md:text-lg font-medium">
                                     {car.description || `Experience pure performance and luxury with the ${car.brand} ${car.name}. This ${car.type} vehicle combines state-of-the-art engineering with unparalleled comfort for an unforgettable driving journey.`}
                                 </p>
                             </div>
@@ -173,15 +178,15 @@ function CarContent() {
 
                     {/* Right Column: Dynamic Summary (4 cols) */}
                     <div className="lg:col-span-4 lg:sticky lg:top-28 h-fit space-y-10">
-                        <article className="bg-white p-10 rounded-[3rem] shadow-2xl shadow-blue-100/30 border border-blue-50/50 relative overflow-hidden">
+                        <article className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl shadow-blue-100/30 border border-blue-50/50 relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-3 bg-blue-600" />
 
-                            <h3 className="text-xl font-black text-gray-900 font-outfit mb-10 tracking-tight uppercase flex items-center justify-between">
+                            <h3 className="text-lg md:text-xl font-black text-gray-900 font-outfit mb-8 md:mb-10 tracking-tight uppercase flex items-center justify-between">
                                 Reservation Summary
                                 <ShieldCheck size={20} className="text-green-500" />
                             </h3>
 
-                            <div className="space-y-10">
+                            <div className="space-y-8 md:space-y-10">
                                 <RealTimeAvailabilityCheck
                                     carId={car.id}
                                     startDate={dates.startDate}
@@ -202,7 +207,7 @@ function CarContent() {
                                 />
                             </div>
 
-                            <div className="mt-10 pt-10 border-t border-gray-100 flex flex-col gap-6">
+                            <div className="mt-8 md:mt-10 pt-8 md:pt-10 border-t border-gray-100 flex flex-col gap-6">
                                 <div className="flex items-center gap-4 text-gray-400">
                                     <div className="w-10 h-10 rounded-2xl bg-green-50 text-green-500 flex items-center justify-center shrink-0">
                                         <ShieldCheck size={20} />

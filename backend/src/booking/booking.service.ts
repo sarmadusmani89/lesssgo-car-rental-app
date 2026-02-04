@@ -75,39 +75,31 @@ export class BookingService {
         adminEmailSubject = 'New Online Booking - Payment Pending';
       }
 
-      const userHtml = `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2 style="color: #2563eb;">Booking ${paymentMethod === 'CASH' ? 'Confirmed' : 'Created'}!</h2>
-          <p>Hi ${customerName},</p>
-          <p>Thank you for choosing <strong>LesssGo</strong>! ${paymentMethod === 'CASH' ? 'Your reservation is confirmed.' : 'We have received your booking request.'}</p>
-          <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
-            <p><strong>Period:</strong> ${start} to ${end}</p>
-            <p><strong>Total Amount:</strong> $${totalAmount}</p>
-            ${paymentStatusMessage}
-          </div>
-          ${paymentMethod === 'CASH' ? '<p>Please bring a valid ID and license during pickup.</p>' : '<p>Please complete your payment to confirm this booking.</p>'}
-        </div>
-      `;
+      const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
 
-      const adminHtml = `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-          <h2 style="color: #2563eb;">${adminEmailSubject}</h2>
-          <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <h3>Customer Details</h3>
-            <p><strong>Name:</strong> ${customerName}</p>
-            <p><strong>Email:</strong> ${customerEmail}</p>
-            <p><strong>Phone:</strong> ${createBookingDto.customerPhone}</p>
-            
-            <h3>Reservation Details</h3>
-            <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
-            <p><strong>Period:</strong> ${start} to ${end}</p>
-            <p><strong>Total:</strong> $${totalAmount}</p>
-            <p><strong>Payment Method:</strong> ${paymentMethod}</p>
-            <p><strong>Booking ID:</strong> ${booking.id}</p>
-          </div>
-        </div>
-      `;
+      const userHtml = bookingConfirmationTemplate({
+        customerName,
+        bookingId: booking.id,
+        brand: car.brand,
+        vehicleName: car.name,
+        startDate: start,
+        endDate: end,
+        totalAmount,
+        paymentMethod,
+        isConfirmed: paymentMethod === 'CASH', // Cash is immediately confirmed
+      });
+
+      const adminHtml = bookingConfirmationTemplate({
+        customerName: 'Admin',
+        bookingId: booking.id,
+        brand: car.brand,
+        vehicleName: car.name,
+        startDate: start,
+        endDate: end,
+        totalAmount,
+        paymentMethod,
+        isConfirmed: paymentMethod === 'CASH',
+      });
 
       const { sendEmail } = await import('../lib/sendEmail');
       console.log(`Sending booking confirmation emails for ${paymentMethod} payment...`);

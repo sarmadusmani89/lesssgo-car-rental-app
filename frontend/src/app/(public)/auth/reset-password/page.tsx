@@ -7,6 +7,7 @@ import { authApi } from '@/lib/api'; // Using named import as per recent changes
 import styles from '@/app/(public)/auth/auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Lock, Loader2, AlertCircle, Sparkles, CheckCircle } from 'lucide-react';
+import AuthSuccess from '@/components/pages/auth/AuthSuccess';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
 import { toast } from 'sonner';
@@ -79,20 +80,16 @@ function ResetPasswordContent() {
 
     if (!tokenValid) return null; // Should have redirected
 
+
     if (success) {
         return (
-            <div className="text-center">
-                <div className="flex justify-center mb-4 text-green-500">
-                    <CheckCircle size={48} />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">Password Reset!</h3>
-                <p className="text-gray-600 mb-6">
-                    You can now log in with your new password.
-                </p>
-                <Link href="/auth/login" className="btn btn-primary btn-lg w-full">
-                    Return to Log in
-                </Link>
-            </div>
+            <AuthSuccess
+                title="Password Reset!"
+                message="Your password has been reset successfully."
+                description="You can now log in with your new secure password and access our premium fleet."
+                actionText="Return to Log in"
+                actionHref="/auth/login"
+            />
         );
     }
 
@@ -110,8 +107,10 @@ function ResetPasswordContent() {
                     required
                     {...register('password', {
                         required: 'Password is required',
-                        minLength: { value: 6, message: 'Min length is 6' }
+                        minLength: { value: 6, message: 'Min length is 6' },
+                        maxLength: { value: 50, message: 'Max 50 characters' }
                     })}
+                    maxLength={50}
                     wrapperClassName={errors.password ? styles.inputError : ''}
                 />
                 {errors.password && <span className={styles.errorText}>{errors.password.message}</span>}
@@ -124,12 +123,14 @@ function ResetPasswordContent() {
                     required
                     {...register('confirmPassword', {
                         required: 'Please confirm your password',
+                        maxLength: { value: 50, message: 'Max 50 characters' },
                         validate: (val: string) => {
                             if (watch('password') !== val) {
                                 return "Passwords do not match";
                             }
                         },
                     })}
+                    maxLength={50}
                     wrapperClassName={errors.confirmPassword ? styles.inputError : ''}
                 />
 

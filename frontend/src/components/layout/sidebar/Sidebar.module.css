@@ -1,10 +1,32 @@
 /* Sidebar container */
 .sidebar {
-    @apply fixed top-0 left-0 h-screen w-64
-    bg-white/80 backdrop-blur-md
-    border-r border-gray-200/50
-    hidden md:flex flex-col justify-between
-    shadow-sm z-20;
+    @apply fixed top-0 left-0 h-screen w-64 bg-white/95 backdrop-blur-xl border-r border-gray-200/50 flex flex-col justify-between shadow-2xl md:shadow-sm z-[60] transition-transform duration-300 ease-in-out;
+}
+
+.sidebarClosed {
+    @apply -translate-x-full md:translate-x-0;
+}
+
+.sidebarOpen {
+    @apply translate-x-0;
+}
+
+/* Mobile Overlay */
+.overlay {
+    @apply fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[55] md:hidden transition-opacity duration-300;
+}
+
+.overlayHidden {
+    @apply opacity-0 pointer-events-none;
+}
+
+.overlayVisible {
+    @apply opacity-100 pointer-events-auto;
+}
+
+/* Mobile Close Button */
+.closeBtn {
+    @apply absolute top-5 right-5 p-2 rounded-xl bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-600 md:hidden transition-all duration-200;
 }
 
 /* Title */
@@ -13,9 +35,7 @@
 }
 
 .title {
-    @apply text-2xl font-bold italic
-    bg-gradient-to-r from-blue-600 to-indigo-600
-    bg-clip-text text-transparent;
+    @apply text-2xl font-bold italic bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent;
 }
 
 /* Navigation */
@@ -25,24 +45,17 @@
 
 /* Link base */
 .link {
-    @apply flex items-center gap-3
-    px-4 py-3 rounded-xl
-    transition-all duration-200;
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200;
 }
 
 /* Active link */
 .linkActive {
-    @apply bg-blue-600 text-white
-    shadow-lg shadow-blue-500/30
-    translate-x-1;
+    @apply bg-blue-600 text-white shadow-lg shadow-blue-500/30 translate-x-1;
 }
 
 /* Inactive link */
 .linkInactive {
-    @apply text-gray-600
-    hover:bg-gray-50
-    hover:text-blue-600
-    hover:pl-5;
+    @apply text-gray-600 hover:bg-gray-50 hover:text-blue-600 hover:pl-5;
 }
 
 /* Icon */
@@ -64,10 +77,5 @@
 }
 
 .logoutButton {
-    @apply flex items-center gap-3 w-full
-    px-4 py-3 rounded-xl
-    text-gray-600
-    hover:bg-gray-50
-    hover:text-blue-600
-    transition-all duration-200;
+    @apply flex items-center gap-3 w-full px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-all duration-200;
 }

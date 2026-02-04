@@ -47,14 +47,15 @@ export default function UserSection() {
     };
 
     const handleDelete = async (id: string) => {
-        if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-            try {
-                await deleteUser(id);
-                toast.success('User deleted successfully');
-            } catch (err) {
-                toast.error('Failed to delete user');
-            }
-        }
+        toast.info('Delete functionality coming soon');
+        // if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+        //     try {
+        //         await deleteUser(id);
+        //         toast.success('User deleted successfully');
+        //     } catch (err) {
+        //         toast.error('Failed to delete user');
+        //     }
+        // }
     };
 
     const handleEdit = (user: any) => {

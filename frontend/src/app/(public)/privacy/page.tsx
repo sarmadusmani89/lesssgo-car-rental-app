@@ -4,7 +4,7 @@ import PrivacyContent from '@/components/pages/privacy/PrivacyContent';
 
 export default function PrivacyPage() {
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} py-20 md:py-32`}>
             <PrivacyHero />
             <PrivacyContent />
         </div>

@@ -29,9 +29,9 @@ export default function FeaturedCars() {
             try {
                 const res = await api.get('/car');
                 // Filter: Only display AVAILABLE cars
-                const availableCars = res.data.filter((car: CarData) =>
-                    car.status === 'AVAILABLE'
-                );
+                const availableCars = res.data
+                    .filter((car: CarData) => car.status === 'AVAILABLE')
+                    .slice(0, 6);
                 setCars(availableCars);
             } catch (error) {
                 console.error("Failed to fetch featured cars:", error);
@@ -51,8 +51,7 @@ export default function FeaturedCars() {
             price: car.pricePerDay.toString(),
             monthly: (car.pricePerDay * 30).toLocaleString('en-US', { maximumFractionDigits: 0 }),
             image: car.imageUrl || '/images/placeholder_car.png',
-            badge: 'Available',
-            badgeClass: styles.badgeNew,
+            status: car.status,
             hp: `${car.hp} HP`,
             type: car.type,
             fuel: `${car.fuelCapacity}L`,
@@ -86,7 +85,7 @@ export default function FeaturedCars() {
                 )}
 
                 <div style={{ textAlign: 'center', marginTop: '5rem' }}>
-                    <Link href="/vehicles" className="btn btn-outline btn-lg">
+                    <Link href="/cars" className="btn btn-outline btn-lg">
                         View All Cars <ArrowRight size={20} />
                     </Link>
                 </div>

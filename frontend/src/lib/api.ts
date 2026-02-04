@@ -16,6 +16,29 @@ api.interceptors.request.use((config) => {
     return Promise.reject(error);
 });
 
+// Response interceptor for handle 401
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            // Don't redirect if we're already on an auth page or the request is for auth
+            const isAuthRequest = error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/auth/signup');
+
+            if (typeof window !== 'undefined' && !isAuthRequest) {
+                // Clear all auth data
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                document.cookie = 'role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+
+                // Redirect to login
+                window.location.href = '/auth/login';
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 export const authApi = {
     login: (data: any) => api.post('/auth/login', data).then(res => res.data),
     register: (data: any) => api.post('/auth/register', data).then(res => res.data),
@@ -57,6 +80,10 @@ export const adminApi = {
     listBookings: () => api.get('/booking').then(res => res.data),
     updateBooking: (id: string, data: any) => api.put(`/booking/${id}`, data).then(res => res.data),
     deleteBooking: (id: string) => api.delete(`/booking/${id}`).then(res => res.data),
+};
+
+export const newsletterApi = {
+    subscribe: (email: string) => api.post('/newsletter/subscribe', { email }).then(res => res.data),
 };
 
 

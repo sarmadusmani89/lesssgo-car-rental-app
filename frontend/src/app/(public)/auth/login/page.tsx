@@ -57,26 +57,36 @@ function LoginContent() {
         // setError(''); // Removed local error state
 
         try {
-            const res = await api.post<LoginResponse>('/auth/login', data);
+            const res = await api.post<LoginResponse>('/auth/login', {
+                email: data.email,
+                password: data.password,
+                rememberMe: data.rememberMe
+            });
 
             toast.success('Welcome back! You have successfully logged in.');
-
-            // Store token and user data in cookies (for Middleware)
-            const expires = new Date(Date.now() + 86400000).toUTCString(); // 1 day
 
             // Extract role safely
             let rawRole = 'user';
             if (res.data.user && typeof res.data.user.role === 'string') {
                 rawRole = res.data.user.role;
             } else if (res.data.user && res.data.user.role) {
-                // Might be an object/enum if not stringIFIED, though Prisma returns string
                 rawRole = String(res.data.user.role);
             }
-
             const userRole = rawRole.toLowerCase();
 
-            document.cookie = `token=${res.data.access_token}; path=/; expires=${expires}; SameSite=Lax`;
-            document.cookie = `role=${userRole}; path=/; expires=${expires}; SameSite=Lax`;
+            // Handle Cookie Expiration for "Remember Me"
+            let cookieString = `token=${res.data.access_token}; path=/; SameSite=Lax`;
+            let roleCookieString = `role=${userRole}; path=/; SameSite=Lax`;
+
+            if (data.rememberMe) {
+                const expires = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toUTCString(); // 2 days
+                cookieString += `; expires=${expires}`;
+                roleCookieString += `; expires=${expires}`;
+            }
+            // If rememberMe is false, no 'expires' means it's a session cookie (deleted when browser closes)
+
+            document.cookie = cookieString;
+            document.cookie = roleCookieString;
 
             // Store user data in localStorage for UI
             localStorage.setItem('token', res.data.access_token);
@@ -85,7 +95,10 @@ function LoginContent() {
             console.log('Login successful, redirecting to:', userRole === 'admin' ? 'admin dashboard' : 'user dashboard');
 
             // Force hard redirect to ensure middleware picks up the new cookies
-            if (userRole === 'admin') {
+            const redirectTo = searchParams.get('redirect');
+            if (redirectTo) {
+                window.location.href = redirectTo;
+            } else if (userRole === 'admin') {
                 window.location.href = '/admin/dashboard';
             } else {
                 window.location.href = '/dashboard/profile';
@@ -122,10 +135,13 @@ function LoginContent() {
                     type="email"
                     placeholder="your@email.com"
                     required
-                    {...register('email', { required: 'Email is required' })}
-                    wrapperClassName={errors.email ? styles.inputError : ''}
+                    {...register('email', {
+                        required: 'Email is required',
+                        maxLength: { value: 100, message: 'Max 100 characters' }
+                    })}
+                    maxLength={100}
+                    error={errors.email?.message}
                 />
-                {errors.email && <span className={styles.errorText}>{errors.email.message}</span>}
 
                 <AuthInput
                     label="Password"
@@ -133,10 +149,13 @@ function LoginContent() {
                     type="password"
                     placeholder="••••••••"
                     required
-                    {...register('password', { required: 'Password is required' })}
-                    wrapperClassName={errors.password ? styles.inputError : ''}
+                    {...register('password', {
+                        required: 'Password is required',
+                        maxLength: { value: 50, message: 'Max 50 characters' }
+                    })}
+                    maxLength={50}
+                    error={errors.password?.message}
                 />
-                {errors.password && <span className={styles.errorText}>{errors.password.message}</span>}
 
                 <div className={styles.rememberRow}>
                     <label className={styles.rememberMe}>

@@ -5,7 +5,7 @@ import HowItWorksCTA from '@/components/pages/how-it-works/HowItWorksCTA';
 
 export default function HowItWorksPage() {
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} py-20 md:py-32`}>
             <HowItWorksHero />
             <HowItWorksSteps />
             <HowItWorksCTA />

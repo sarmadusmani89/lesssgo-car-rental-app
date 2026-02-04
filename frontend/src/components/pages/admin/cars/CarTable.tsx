@@ -61,11 +61,11 @@ export default function CarTable({
           {/* Car Info */}
           <div className="flex-1 space-y-3">
             <div>
-              <span className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{v.brand}</span>
-              <h3 className="text-xl font-bold text-gray-900 font-outfit leading-tight group-hover:text-blue-600 transition">
+              <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{v.brand}</span>
+              <h3 className="text-xl font-black text-slate-900 font-outfit uppercase tracking-tight leading-tight group-hover:text-blue-600 transition">
                 {v.name}
               </h3>
-              <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mt-1">{v.type}</p>
+              <p className="text-blue-600 font-bold text-[10px] uppercase tracking-widest mt-2 bg-blue-50 w-fit px-2 py-0.5 rounded-full">{v.type}</p>
             </div>
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">

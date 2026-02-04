@@ -10,8 +10,7 @@ interface CarProps {
     price: string;
     monthly: string;
     image: string;
-    badge: string;
-    badgeClass: string;
+    status: string;
     hp: string;
     fuel: string;
     transmission: string;
@@ -19,11 +18,14 @@ interface CarProps {
 }
 
 export default function CarCard(car: CarProps) {
+    const isAvailable = car.status === 'AVAILABLE';
+    const badgeText = isAvailable ? 'Instant Booking' : 'Reserved';
+
     return (
         <div className={styles.carCard}>
             <div className={styles.cardHead}>
-                <div className={`${styles.cardBadge} ${car.badgeClass}`}>
-                    {car.badge}
+                <div className={`${styles.cardBadge} ${isAvailable ? styles.badgePopular : styles.badgeSlate}`}>
+                    {badgeText}
                 </div>
                 <button className={styles.wishlistBtn}>
                     <Heart size={20} />

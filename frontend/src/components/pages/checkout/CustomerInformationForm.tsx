@@ -30,6 +30,16 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    // Australia phone validation (digits, +, spaces, dashes, parentheses)
+    if (name === 'phoneNumber') {
+      const validCharRegex = /^[\d\s+\-()]*$/;
+      if (!validCharRegex.test(value)) return;
+
+      // Block if length exceeds 15
+      if (value.length > 15) return;
+    }
+
     const updated = { ...formData, [name]: value };
     setFormData(updated);
     onChange(updated);
@@ -55,6 +65,7 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
               className={`${inputClasses} pl-12`}
               value={formData.fullName}
               onChange={handleChange}
+              maxLength={50}
             />
           </div>
         </div>
@@ -72,6 +83,7 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
               className={`${inputClasses} pl-12`}
               value={formData.email}
               onChange={handleChange}
+              maxLength={100}
             />
           </div>
         </div>
@@ -82,10 +94,12 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
             <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-colors" size={18} />
             <input
               name="phoneNumber"
-              placeholder="+1 (555) 000-0000"
+              type="tel"
+              placeholder="+61 400 000 000"
               className={`${inputClasses} pl-12`}
               value={formData.phoneNumber}
               onChange={handleChange}
+              maxLength={15}
             />
           </div>
         </div>

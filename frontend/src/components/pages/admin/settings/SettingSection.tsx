@@ -22,7 +22,7 @@ export default function SettingSection({
     items,
 }: SettingSectionProps) {
     return (
-        <div className="space-y-6 animate-in fade-in duration-500 max-w-4xl">
+        <div className="space-y-6 animate-in fade-in duration-500">
             {/* Header */}
             <div>
                 <h1 className="text-3xl font-bold text-slate-900 italic">
