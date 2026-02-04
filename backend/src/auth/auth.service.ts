@@ -14,22 +14,18 @@ export class AuthService {
   ) { }
 
   async signup(email: string, password: string, name: string) {
-    const users = await this.usersService.findAll();
-    if (users.find(u => u.email === email)) {
+    const existingUser = await this.usersService.findByEmail(email);
+    if (existingUser) {
       throw new ConflictException('Email already exists');
     }
-
-    const [firstName, ...rest] = name.split(' ');
-    const lastName = rest.join(' ') || '';
 
     const verificationToken = uuidv4();
 
     await this.usersService.create({
       email,
       password: password, // usersService.create will handle hashing
-      firstName,
-      lastName,
-      role: 'user', // Ensure default role is 'user'
+      name,
+      role: 'USER' as any, // Ensure default role is 'user'
       isVerified: false,
       verificationToken,
     });
@@ -39,7 +35,7 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const user = (await this.usersService.findAll()).find(u => u.email === email);
+    const user = await this.usersService.findByEmail(email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const ok = await bcrypt.compare(password, user.password);
@@ -57,7 +53,8 @@ export class AuthService {
   }
 
   async verifyEmail(token: string) {
-    const user = (await this.usersService.findAll()).find(u => u.verificationToken === token);
+    const users = await this.usersService.findAll();
+    const user = users.find(u => u.verificationToken === token);
     if (!user) throw new UnauthorizedException('Invalid verification token');
 
     await this.usersService.update(user.id, {
@@ -70,7 +67,7 @@ export class AuthService {
 
   async forgotPassword(email: string) {
     console.log(`[ForgotPassword] Request for email: ${email}`);
-    const user = (await this.usersService.findAll()).find(u => u.email === email);
+    const user = await this.usersService.findByEmail(email);
 
     if (!user) {
       console.log(`[ForgotPassword] User not found for email: ${email}`);
@@ -101,14 +98,14 @@ export class AuthService {
   }
 
   async resetPassword(token: string, password: string) {
-    const user = (await this.usersService.findAll()).find(u => u.resetToken === token);
+    const users = await this.usersService.findAll();
+    const user = users.find(u => u.resetToken === token);
     if (!user || !user.resetTokenExp || user.resetTokenExp < new Date()) {
       throw new UnauthorizedException('Invalid or expired reset token');
     }
 
-    const hashed = await bcrypt.hash(password, 10);
     await this.usersService.update(user.id, {
-      password: hashed,
+      password,
       resetToken: null,
       resetTokenExp: null,
     });
@@ -117,7 +114,8 @@ export class AuthService {
   }
 
   async verifyResetToken(token: string) {
-    const user = (await this.usersService.findAll()).find(u => u.resetToken === token);
+    const users = await this.usersService.findAll();
+    const user = users.find(u => u.resetToken === token);
     if (!user || !user.resetTokenExp || user.resetTokenExp < new Date()) {
       throw new UnauthorizedException('Invalid or expired reset token');
     }

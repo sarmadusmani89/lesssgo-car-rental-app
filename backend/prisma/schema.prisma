@@ -35,12 +35,12 @@ model Car {
   id            String    @id @default(uuid())
   name          String
   brand         String
-  type          String    // SUV, Sedan, etc.
-  transmission  String    // Automatic, Manual
-  fuelCapacity  Int       // in liters
+  type          String
+  transmission  String
+  fuelCapacity  Int
   pricePerDay   Float
   imageUrl      String?
-  description   String?
+  description   String?   @db.Text
   status        CarStatus @default(AVAILABLE)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -54,17 +54,26 @@ enum CarStatus {
 }
 
 model Booking {
-  id          String        @id @default(uuid())
-  userId      String
-  carId       String
-  startDate   DateTime
-  endDate     DateTime
-  totalPrice  Float
-  status      BookingStatus @default(PENDING)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  user        User          @relation(fields: [userId], references: [id])
-  car         Car           @relation(fields: [carId], references: [id])
+  id              String          @id @default(uuid())
+  userId          String
+  carId           String
+  startDate       DateTime
+  endDate         DateTime
+  totalAmount     Float
+  status          BookingStatus   @default(PENDING)
+  paymentStatus   PaymentStatus   @default(PENDING)
+  paymentMethod   PaymentMethod   @default(CASH)
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  user            User            @relation(fields: [userId], references: [id])
+  car             Car             @relation(fields: [carId], references: [id])
+  payments        Payment[]
+
+  @@index([userId])
+  @@index([carId])
 }
 
 enum BookingStatus {
@@ -72,6 +81,32 @@ enum BookingStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  ONLINE
+}
+
+model Payment {
+  id                     String              @id @default(uuid())
+  bookingId              String
+  amount                 Float
+  currency               String
+  paymentMethod          PaymentMethod       @default(ONLINE)
+  stripePaymentIntentId  String?
+  status                 PaymentStatus       @default(PENDING)
+  metadata               Json?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  booking                Booking             @relation(fields: [bookingId], references: [id])
 }
 
 model Review {

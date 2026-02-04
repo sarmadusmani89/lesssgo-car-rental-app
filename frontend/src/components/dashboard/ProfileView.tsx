@@ -16,11 +16,11 @@ export default function ProfileView({ user }: ProfileViewProps) {
                         <User size={40} />
                     </div>
                     <div>
-                        <h3 className="text-xl font-bold font-outfit">{user.firstName} {user.lastName}</h3>
+                        <h3 className="text-xl font-bold font-outfit">{user.name}</h3>
                         <p className="text-gray-500">{user.email}</p>
                         <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
                             <Shield size={12} />
-                            {user.role === 'admin' ? 'Administrator' : 'Verified Member'}
+                            {user.role?.toLowerCase() === 'admin' ? 'Administrator' : 'Verified Member'}
                         </div>
                     </div>
                 </div>
@@ -28,7 +28,7 @@ export default function ProfileView({ user }: ProfileViewProps) {
                 <div className="grid gap-6">
                     <div className="p-4 border border-gray-100 rounded-xl">
                         <label className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
-                        <div className="font-medium text-gray-900">{user.firstName} {user.lastName}</div>
+                        <div className="font-medium text-gray-900">{user.name}</div>
                     </div>
 
                     <div className="p-4 border border-gray-100 rounded-xl">

@@ -60,15 +60,15 @@ export default function BookingsView({ userId }: BookingsViewProps) {
                                         {booking.car?.brand} {booking.car?.model}
                                     </h3>
                                     <span className={`inline-block px-2 py-1 rounded text-xs font-bold mt-2 ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                                            booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                'bg-red-100 text-red-700'
+                                        booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                            'bg-red-100 text-red-700'
                                         }`}>
                                         {booking.status.toUpperCase()}
                                     </span>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-lg font-bold text-blue-600">${booking.totalPrice}</div>
-                                    <div className="text-xs text-gray-500">Total Price</div>
+                                    <div className="text-lg font-bold text-blue-600">${booking.totalAmount}</div>
+                                    <div className="text-xs text-gray-500">Total Amount</div>
                                 </div>
                             </div>
 

@@ -1,9 +1,9 @@
 import { IsNumber, IsString, IsEnum, IsOptional, IsObject } from 'class-validator';
-import { PaymentStatus, PaymentMethod } from '../entities/payment.entity';
+import { PaymentStatus, PaymentMethod } from '@prisma/client';
 
 export class CreatePaymentDto {
-  @IsNumber()
-  bookingId!: number;
+  @IsString()
+  bookingId!: string;
 
   @IsNumber()
   amount!: number;
@@ -11,14 +11,14 @@ export class CreatePaymentDto {
   @IsString()
   currency!: string;
 
-  @IsEnum(['cash', 'card', 'online'])
+  @IsEnum(PaymentMethod)
   paymentMethod!: PaymentMethod;
 
   @IsOptional()
   @IsString()
   stripePaymentIntentId?: string;
 
-  @IsEnum(['pending', 'succeeded', 'failed'])
+  @IsEnum(PaymentStatus)
   status!: PaymentStatus;
 
   @IsOptional()

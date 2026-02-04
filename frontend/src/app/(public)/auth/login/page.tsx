@@ -63,18 +63,32 @@ function LoginContent() {
 
             // Store token and user data in cookies (for Middleware)
             const expires = new Date(Date.now() + 86400000).toUTCString(); // 1 day
+
+            // Extract role safely
+            let rawRole = 'user';
+            if (res.data.user && typeof res.data.user.role === 'string') {
+                rawRole = res.data.user.role;
+            } else if (res.data.user && res.data.user.role) {
+                // Might be an object/enum if not stringIFIED, though Prisma returns string
+                rawRole = String(res.data.user.role);
+            }
+
+            const userRole = rawRole.toLowerCase();
+
             document.cookie = `token=${res.data.access_token}; path=/; expires=${expires}; SameSite=Lax`;
-            document.cookie = `role=${res.data.user.role}; path=/; expires=${expires}; SameSite=Lax`;
+            document.cookie = `role=${userRole}; path=/; expires=${expires}; SameSite=Lax`;
 
             // Store user data in localStorage for UI
             localStorage.setItem('token', res.data.access_token);
             localStorage.setItem('user', JSON.stringify(res.data.user));
 
-            // Role-based redirection
-            if (res.data.user.role === 'admin') {
-                router.push('/admin/bookings');
+            console.log('Login successful, redirecting to:', userRole === 'admin' ? 'admin dashboard' : 'user dashboard');
+
+            // Force hard redirect to ensure middleware picks up the new cookies
+            if (userRole === 'admin') {
+                window.location.href = '/admin/dashboard';
             } else {
-                router.push('/dashboard/profile');
+                window.location.href = '/dashboard/profile';
             }
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || 'Login failed';

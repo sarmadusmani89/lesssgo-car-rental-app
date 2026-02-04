@@ -1,46 +1,58 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Payment } from './entities/payment.entity';
+import { PrismaService } from '../lib/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 
 @Injectable()
 export class PaymentService {
-  constructor(
-    @InjectRepository(Payment)
-    private readonly paymentRepo: Repository<Payment>,
-  ) { }
+  constructor(private readonly prisma: PrismaService) { }
 
   create(createPaymentDto: CreatePaymentDto) {
-    const payment = this.paymentRepo.create(createPaymentDto);
-    return this.paymentRepo.save(payment);
-  }
-
-  findAll() {
-    return this.paymentRepo.find({
-      relations: ['booking', 'booking.user', 'booking.car'],
-      order: { createdAt: 'DESC' },
+    return this.prisma.payment.create({
+      data: createPaymentDto as any,
     });
   }
 
-  async findOne(id: number) {
-    const payment = await this.paymentRepo.findOne({
+  findAll() {
+    return this.prisma.payment.findMany({
+      include: {
+        booking: {
+          include: {
+            user: true,
+            car: true,
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async findOne(id: string) {
+    const payment = await this.prisma.payment.findUnique({
       where: { id },
-      relations: ['booking', 'booking.user', 'booking.car'],
+      include: {
+        booking: {
+          include: {
+            user: true,
+            car: true,
+          }
+        }
+      }
     });
     if (!payment) throw new NotFoundException('Payment not found');
     return payment;
   }
 
-  async update(id: number, updatePaymentDto: UpdatePaymentDto) {
-    const payment = await this.findOne(id);
-    Object.assign(payment, updatePaymentDto);
-    return this.paymentRepo.save(payment);
+  async update(id: string, updatePaymentDto: UpdatePaymentDto) {
+    await this.findOne(id);
+    return this.prisma.payment.update({
+      where: { id },
+      data: updatePaymentDto as any,
+    });
   }
 
-  async remove(id: number) {
-    const payment = await this.findOne(id);
-    return this.paymentRepo.remove(payment);
+  async remove(id: string) {
+    await this.findOne(id);
+    return this.prisma.payment.delete({ where: { id } });
   }
 }

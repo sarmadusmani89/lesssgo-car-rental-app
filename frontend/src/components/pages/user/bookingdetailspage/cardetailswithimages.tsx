@@ -1,27 +1,27 @@
 'use client';
 
-export default function CarDetailsWithImages() {
-  const images = ['/images/car1.jpg', '/images/car2.jpg', '/images/car3.jpg'];
+export default function CarDetailsWithImages({ car }: { car: any }) {
+  if (!car) return null;
 
   return (
     <div className="p-6 bg-white shadow rounded-lg">
       <h2 className="text-xl font-semibold mb-4">Car Details</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <p className="font-medium">Car: Tesla Model X</p>
-          <p className="text-gray-600">License Plate: XYZ-123</p>
-          <p className="text-gray-600">Type: SUV</p>
-          <p className="text-gray-600">Seats: 5</p>
+          <p className="font-bold text-lg">{car.brand} {car.name}</p>
+          <p className="text-gray-600 mt-1">Type: {car.type}</p>
+          <p className="text-gray-600">Transmission: {car.transmission}</p>
+          <p className="text-gray-600">Fuel Capacity: {car.fuelCapacity}L</p>
+          <p className="text-gray-600 font-medium text-blue-600 mt-2">${car.pricePerDay} / day</p>
         </div>
         <div className="flex gap-2 overflow-x-auto">
-          {images.map((src, i) => (
+          {car.imageUrl && (
             <img
-              key={i}
-              src={src}
-              alt={`Car Image ${i + 1}`}
-              className="w-32 h-20 object-cover rounded"
+              src={car.imageUrl}
+              alt={car.name}
+              className="w-full h-48 object-cover rounded-xl"
             />
-          ))}
+          )}
         </div>
       </div>
     </div>

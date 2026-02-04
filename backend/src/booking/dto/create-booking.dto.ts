@@ -1,12 +1,14 @@
 import { IsNumber, IsString, IsEnum, IsDateString } from 'class-validator';
-import { BookingStatus, PaymentStatus, PaymentMethod } from '../entities/booking.entity';
+export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED';
+export type PaymentMethod = 'CASH' | 'CARD' | 'ONLINE';
 
 export class CreateBookingDto {
-  @IsNumber()
-  userId!: number;
+  @IsString()
+  userId!: string;
 
-  @IsNumber()
-  carId!: number;
+  @IsString()
+  carId!: string;
 
   @IsDateString()
   startDate!: string;
@@ -17,13 +19,13 @@ export class CreateBookingDto {
   @IsNumber()
   totalAmount!: number;
 
-  @IsEnum(['pending', 'confirmed', 'cancelled', 'completed'])
+  @IsEnum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])
   status!: BookingStatus;
 
-  @IsEnum(['pending', 'paid', 'failed'])
+  @IsEnum(['PENDING', 'PAID', 'FAILED'])
   paymentStatus!: PaymentStatus;
 
-  @IsEnum(['cash', 'card', 'online'])
+  @IsEnum(['CASH', 'CARD', 'ONLINE'])
   paymentMethod!: PaymentMethod;
 
   @IsString()

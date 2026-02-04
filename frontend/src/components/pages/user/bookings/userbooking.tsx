@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { bookingApi } from '@/lib/api';
+import api, { bookingApi } from '@/lib/api';
 import UserBookingCard from './UserBookingCard';
 import { Loader2, CalendarX } from 'lucide-react';
 import { toast } from 'sonner';
@@ -18,9 +18,12 @@ export default function UserBookings() {
 
   const fetchBookings = async () => {
     try {
-      const data = await bookingApi.list();
-      // Assuming API returns an array of bookings
-      setBookings(Array.isArray(data) ? data : (data.data || []));
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser) return;
+      const user = JSON.parse(storedUser);
+
+      const res = await api.get(`/booking/user/${user.id}`);
+      setBookings(res.data || []);
     } catch (error) {
       console.error('Failed to fetch bookings:', error);
       toast.error('Failed to load your bookings.');

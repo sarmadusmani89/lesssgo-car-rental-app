@@ -5,7 +5,7 @@ export class AdminStatsDto {
 }
 
 export class UserStatsDto {
-    userId!: number;
+    userId!: string;
     bookings!: number;
     totalSpent!: number;
 }

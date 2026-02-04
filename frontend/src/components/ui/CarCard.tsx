@@ -4,7 +4,7 @@ import { ArrowRight, Heart, Gauge, Fuel, Cpu } from 'lucide-react';
 import styles from '@/app/(public)/(home)/page.module.css';
 
 interface CarProps {
-    id: number;
+    id: string;
     brand: string;
     name: string;
     price: string;
@@ -15,6 +15,7 @@ interface CarProps {
     hp: string;
     fuel: string;
     transmission: string;
+    type?: string;
 }
 
 export default function CarCard(car: CarProps) {

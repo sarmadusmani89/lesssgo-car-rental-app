@@ -123,14 +123,20 @@ function ResetPasswordContent() {
                     {...register('confirmPassword', {
                         required: 'Please confirm your password',
                         validate: (val: string) => {
-                            if (watch('password') != val) {
-                                return "Your passwords do no match";
+                            if (watch('password') !== val) {
+                                return "Passwords do not match";
                             }
                         },
                     })}
                     wrapperClassName={errors.confirmPassword ? styles.inputError : ''}
                 />
-                {errors.confirmPassword && <span className={styles.errorText}>{errors.confirmPassword.message}</span>}
+
+                {errors.confirmPassword && (
+                    <div className={`${styles.error} animate-in fade-in slide-in-from-top-2 duration-300 mt-2`}>
+                        <AlertCircle size={18} />
+                        <span>{errors.confirmPassword.message}</span>
+                    </div>
+                )}
 
                 <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
                     {loading ? <Loader2 className={styles.spin} /> : 'Reset Password'}

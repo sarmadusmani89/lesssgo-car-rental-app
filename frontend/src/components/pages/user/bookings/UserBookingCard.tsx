@@ -1,17 +1,17 @@
-import { Calendar, Car, AlertCircle } from 'lucide-react';
+import { Calendar, Car, AlertCircle, Eye } from 'lucide-react';
+import Link from 'next/link';
 
 interface Booking {
     id: number | string;
     car: {
         name: string;
-        make: string;
-        model: string;
+        brand: string;
         image?: string;
-    } | string; // Handle case where car might be just a string title or object
+    } | string;
     startDate: string;
     endDate: string;
     status: string;
-    totalPrice?: number;
+    totalAmount?: number;
 }
 
 interface UserBookingCardProps {
@@ -54,7 +54,7 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
 
     // Construct title
     const title = typeof booking.car === 'object'
-        ? `${booking.car.make} ${booking.car.model}`
+        ? `${booking.car.brand} ${booking.car.name}`
         : (booking.carName || booking.title || 'Car Rental');
 
     const status = booking.status || 'Pending';
@@ -86,16 +86,22 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
                                 {booking.startDate ? formatDate(booking.startDate) : 'TBD'} - {booking.endDate ? formatDate(booking.endDate) : 'TBD'}
                             </span>
                         </div>
-                        {booking.totalPrice && (
+                        {booking.totalAmount && (
                             <div className="font-semibold text-gray-900">
-                                ${booking.totalPrice}
+                                ${booking.totalAmount}
                             </div>
                         )}
                     </div>
                 </div>
 
                 <div className="flex gap-2">
-                    {/* Details button could go here if needed, keeping it simple as per request */}
+                    <Link
+                        href={`/dashboard/bookings/${booking.id}`}
+                        className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors flex items-center gap-2"
+                    >
+                        <Eye size={16} />
+                        View Details
+                    </Link>
 
                     {canCancel && (
                         <button

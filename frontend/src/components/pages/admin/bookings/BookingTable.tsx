@@ -21,7 +21,7 @@ export interface Booking {
   carName: string;
   startDate: string;
   endDate: string;
-  totalPrice: number;
+  totalAmount: number;
   status: BookingStatus;
   paymentStatus: PaymentStatus;
 }

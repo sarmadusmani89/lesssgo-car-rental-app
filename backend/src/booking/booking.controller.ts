@@ -18,22 +18,22 @@ export class BookingController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: string) {
     return this.bookingService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateBookingDto: UpdateBookingDto) {
+  update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
     return this.bookingService.update(id, updateBookingDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.bookingService.remove(id);
   }
 
   @Get('user/:userId')
-  findByUser(@Param('userId', ParseIntPipe) userId: number) {
+  findByUser(@Param('userId') userId: string) {
     return this.bookingService.findByUser(userId);
   }
 }

@@ -5,13 +5,17 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Play, ChevronDown, Search } from 'lucide-react';
 import styles from '../../../app/(public)/(home)/page.module.css';
+import { useRouter } from 'next/navigation'; // Import useRouter
 
 export default function Hero() {
+    const router = useRouter(); // Initialize useRouter
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [selections, setSelections] = useState({
         brand: '',
         category: '',
-        price: ''
+        price: '',
+        pickupDate: '',
+        returnDate: ''
     });
 
     const toggleDropdown = (key: string) => {
@@ -21,6 +25,15 @@ export default function Hero() {
     const handleSelect = (key: string, value: string) => {
         setSelections((prev: typeof selections) => ({ ...prev, [key]: value }));
         setActiveDropdown(null);
+    };
+
+    const handleSearch = () => {
+        const params = new URLSearchParams();
+        if (selections.brand) params.set('brand', selections.brand);
+        if (selections.category) params.set('type', selections.category);
+        if (selections.pickupDate) params.set('startDate', selections.pickupDate);
+        if (selections.returnDate) params.set('endDate', selections.returnDate);
+        router.push(`/cars?${params.toString()}`);
     };
 
     const dropdownOptions = {
@@ -70,18 +83,44 @@ export default function Hero() {
                         <h2 className={styles.widgetTitle}>Find Your Drive</h2>
 
                         <div className={styles.searchInputs}>
-                            {/* Brand Selection */}
+                            {/* Dates Selection */}
+                            <div className={styles.inputGroup}>
+                                <label>Pickup Date</label>
+                                <input
+                                    type="date"
+                                    className="bg-transparent border-none outline-none text-white text-sm"
+                                    value={selections.pickupDate}
+                                    onChange={(e) => setSelections({ ...selections, pickupDate: e.target.value })}
+                                />
+                            </div>
+
+                            <div className={styles.divider} />
+
+                            <div className={styles.inputGroup}>
+                                <label>Return Date</label>
+                                <input
+                                    type="date"
+                                    className="bg-transparent border-none outline-none text-white text-sm"
+                                    value={selections.returnDate}
+                                    onChange={(e) => setSelections({ ...selections, returnDate: e.target.value })}
+                                />
+                            </div>
+
+                            <div className={styles.divider} />
+
+                            {/* Brand Selection (Simplified for room) */}
                             <div className={styles.inputGroup}>
                                 <label>Brand</label>
                                 <div
                                     className={`${styles.selectWrapper} ${activeDropdown === 'brand' ? styles.active : ''}`}
                                     onClick={() => toggleDropdown('brand')}
                                 >
-                                    <span>{selections.brand || 'Select Brand'}</span>
+                                    <span>{selections.brand || 'All Brands'}</span>
                                     <ChevronDown size={16} />
 
                                     {activeDropdown === 'brand' && (
                                         <div className={styles.dropdownMenu}>
+                                            <div className={styles.dropdownItem} onClick={() => handleSelect('brand', '')}>All Brands</div>
                                             {dropdownOptions.brand.map(opt => (
                                                 <div
                                                     key={opt}
@@ -99,69 +138,7 @@ export default function Hero() {
                                 </div>
                             </div>
 
-                            <div className={styles.divider} />
-
-                            {/* Category Selection */}
-                            <div className={styles.inputGroup}>
-                                <label>Category</label>
-                                <div
-                                    className={`${styles.selectWrapper} ${activeDropdown === 'category' ? styles.active : ''}`}
-                                    onClick={() => toggleDropdown('category')}
-                                >
-                                    <span>{selections.category || 'Select Category'}</span>
-                                    <ChevronDown size={16} />
-
-                                    {activeDropdown === 'category' && (
-                                        <div className={styles.dropdownMenu}>
-                                            {dropdownOptions.category.map(opt => (
-                                                <div
-                                                    key={opt}
-                                                    className={`${styles.dropdownItem} ${selections.category === opt ? styles.selected : ''}`}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleSelect('category', opt);
-                                                    }}
-                                                >
-                                                    {opt}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className={styles.divider} />
-
-                            {/* Price Selection */}
-                            <div className={styles.inputGroup}>
-                                <label>Price</label>
-                                <div
-                                    className={`${styles.selectWrapper} ${activeDropdown === 'price' ? styles.active : ''}`}
-                                    onClick={() => toggleDropdown('price')}
-                                >
-                                    <span>{selections.price || 'Select Range'}</span>
-                                    <ChevronDown size={16} />
-
-                                    {activeDropdown === 'price' && (
-                                        <div className={styles.dropdownMenu}>
-                                            {dropdownOptions.price.map(opt => (
-                                                <div
-                                                    key={opt}
-                                                    className={`${styles.dropdownItem} ${selections.price === opt ? styles.selected : ''}`}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleSelect('price', opt);
-                                                    }}
-                                                >
-                                                    {opt}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            <button className={styles.searchButton}>
+                            <button onClick={handleSearch} className={styles.searchButton}>
                                 <Search size={24} />
                             </button>
                         </div>

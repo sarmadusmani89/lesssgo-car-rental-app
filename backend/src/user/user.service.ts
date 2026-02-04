@@ -1,51 +1,51 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { User } from './entities/user.entity';
+import { PrismaService } from '../lib/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-  ) { }
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const { role, ...rest } = createUserDto;
 
-    const user = this.userRepository.create({
-      ...rest,
-      role: role as any, // Cast to any to satisfy DeepPartial<UserRole> constraint logic
-      password: hashedPassword,
+    return this.prisma.user.create({
+      data: {
+        ...createUserDto,
+        password: hashedPassword,
+      },
     });
-    return this.userRepository.save(user);
   }
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+    return this.prisma.user.findMany();
   }
 
-  async findOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
+  async findOne(id: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error('User not found');
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const user = await this.findOne(id);
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: { email } });
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
-    Object.assign(user, updateUserDto);
-    return this.userRepository.save(user);
+
+    return this.prisma.user.update({
+      where: { id },
+      data: updateUserDto,
+    });
   }
 
-  async remove(id: number): Promise<void> {
-    const user = await this.findOne(id);
-    await this.userRepository.remove(user);
+  async remove(id: string): Promise<void> {
+    await this.prisma.user.delete({ where: { id } });
   }
 }

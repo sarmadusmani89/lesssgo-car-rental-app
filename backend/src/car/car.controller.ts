@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
+import { Role } from '@prisma/client';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
@@ -12,32 +13,49 @@ export class CarController {
 
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles(Role.ADMIN)
   create(@Body() createCarDto: CreateCarDto) {
     return this.carService.create(createCarDto);
   }
 
   @Get()
-  findAll() {
-    return this.carService.findAll();
+  findAll(
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string
+  ) {
+    return this.carService.findAll(startDate, endDate);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: string) {
     return this.carService.findOne(id);
+  }
+
+  @Get(':id/availability')
+  checkAvailability(
+    @Param('id') id: string,
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string
+  ) {
+    return this.carService.checkAvailability(id, startDate, endDate);
+  }
+
+  @Get(':id/bookings')
+  getBookings(@Param('id') id: string) {
+    return this.carService.getBookings(id);
   }
 
   @Put(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateCarDto: UpdateCarDto) {
+  @Roles(Role.ADMIN)
+  update(@Param('id') id: string, @Body() updateCarDto: UpdateCarDto) {
     return this.carService.update(id, updateCarDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles('admin')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  @Roles(Role.ADMIN)
+  remove(@Param('id') id: string) {
     return this.carService.remove(id);
   }
 }

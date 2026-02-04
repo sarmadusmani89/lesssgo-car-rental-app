@@ -1,54 +1,99 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Booking } from './entities/booking.entity';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { PrismaService } from '../lib/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 
 @Injectable()
 export class BookingService {
-  constructor(
-    @InjectRepository(Booking)
-    private readonly bookingRepo: Repository<Booking>,
-  ) { }
+  constructor(private readonly prisma: PrismaService) { }
 
-  create(createBookingDto: CreateBookingDto) {
-    const booking = this.bookingRepo.create(createBookingDto);
-    return this.bookingRepo.save(booking);
-  }
+  async create(createBookingDto: CreateBookingDto) {
+    const { carId, startDate, endDate } = createBookingDto;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-  findAll() {
-    return this.bookingRepo.find({
-      relations: ['user', 'car', 'payments'],
-      order: { startDate: 'DESC' },
+    const overlappingBooking = await this.prisma.booking.findFirst({
+      where: {
+        carId,
+        status: { not: 'CANCELLED' },
+        OR: [
+          {
+            AND: [
+              { startDate: { lte: start } },
+              { endDate: { gt: start } },
+            ],
+          },
+          {
+            AND: [
+              { startDate: { lt: end } },
+              { endDate: { gte: end } },
+            ],
+          },
+          {
+            AND: [
+              { startDate: { gte: start } },
+              { endDate: { lte: end } },
+            ],
+          },
+        ],
+      },
+    });
+
+    if (overlappingBooking) {
+      throw new ConflictException('Car is already booked for the selected dates');
+    }
+
+    return this.prisma.booking.create({
+      data: createBookingDto,
     });
   }
 
-  async findOne(id: number) {
-    const booking = await this.bookingRepo.findOne({
+  findAll() {
+    return this.prisma.booking.findMany({
+      include: {
+        user: true,
+        car: true,
+        payments: true,
+      },
+      orderBy: { startDate: 'desc' },
+    });
+  }
+
+  async findOne(id: string) {
+    const booking = await this.prisma.booking.findUnique({
       where: { id },
-      relations: ['user', 'car', 'payments'],
+      include: {
+        user: true,
+        car: true,
+        payments: true,
+      },
     });
     if (!booking) throw new NotFoundException('Booking not found');
     return booking;
   }
 
-  async update(id: number, updateBookingDto: UpdateBookingDto) {
+  async update(id: string, updateBookingDto: UpdateBookingDto) {
     const booking = await this.findOne(id);
-    Object.assign(booking, updateBookingDto);
-    return this.bookingRepo.save(booking);
+    return this.prisma.booking.update({
+      where: { id },
+      data: updateBookingDto as any,
+    });
   }
 
-  async remove(id: number) {
-    const booking = await this.findOne(id);
-    return this.bookingRepo.remove(booking);
+  async remove(id: string) {
+    await this.findOne(id);
+    return this.prisma.booking.delete({ where: { id } });
   }
 
-  async findByUser(userId: number) {
-    return this.bookingRepo.find({
-      where: { user: { id: userId } },
-      relations: ['user', 'car', 'payments'],
-      order: { startDate: 'DESC' },
+  async findByUser(userId: string) {
+    return this.prisma.booking.findMany({
+      where: { userId },
+      include: {
+        user: true,
+        car: true,
+        payments: true,
+      },
+      orderBy: { startDate: 'desc' },
     });
   }
 }

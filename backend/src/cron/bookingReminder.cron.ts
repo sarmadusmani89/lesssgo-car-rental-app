@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Booking } from '../booking/entities/booking.entity';
+import { PrismaService } from '../lib/prisma.service';
 import { EmailService } from '../email/email.service';
 import { bookingReminderTemplate } from '../lib/emailTemplates/bookingReminder';
 
 @Injectable()
 export class BookingReminderCron {
   constructor(
-    @InjectRepository(Booking)
-    private readonly bookingRepo: Repository<Booking>,
+    private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
   ) { }
 
@@ -21,12 +18,18 @@ export class BookingReminderCron {
     const end = new Date(start);
     end.setHours(23, 59, 59, 999);
 
-    const bookings = await this.bookingRepo.find({
+    const bookings = await this.prisma.booking.findMany({
       where: {
-        startDate: start.toISOString().split('T')[0], // Assuming date string format from entity
-        status: 'confirmed'
+        startDate: {
+          gte: start,
+          lte: end,
+        },
+        status: 'CONFIRMED'
       },
-      relations: ['user', 'car'],
+      include: {
+        user: true,
+        car: true,
+      },
     });
 
     for (const booking of bookings) {
@@ -36,7 +39,7 @@ export class BookingReminderCron {
         booking.user.email,
         "Booking Reminder",
         bookingReminderTemplate(
-          booking.user.firstName ?? "User",
+          booking.user.name ?? "User",
           booking.car.name ?? "Car",
           new Date(booking.startDate).toDateString()
         )

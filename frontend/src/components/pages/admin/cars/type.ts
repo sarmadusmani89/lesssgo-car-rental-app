@@ -1,13 +1,16 @@
-export type CarStatus = "available" | "unavailable";
+export type CarStatus = "AVAILABLE" | "RENTED" | "MAINTENANCE";
 
 export interface Car {
-  id: number;
+  id: string;
   name: string;
   brand: string;
-  category: string;
-  description: string;
+  type: string;
+  transmission: string;
+  fuelCapacity: number;
   pricePerDay: number;
-  features: string[];
-  images: string[]; // preview URLs (frontend only)
+  imageUrl?: string;
+  description?: string;
   status: CarStatus;
+  createdAt: string;
+  updatedAt: string;
 }

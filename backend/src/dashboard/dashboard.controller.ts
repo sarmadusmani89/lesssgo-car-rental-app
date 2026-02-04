@@ -3,7 +3,7 @@ import { DashboardService } from './dashboard.service';
 
 @Controller('dashboard')
 export class DashboardController {
-  constructor(private readonly dashboardService: DashboardService) {}
+  constructor(private readonly dashboardService: DashboardService) { }
 
   @Get('admin')
   getAdminStats() {
@@ -12,6 +12,6 @@ export class DashboardController {
 
   @Get('user/:userId')
   getUserStats(@Param('userId') userId: string) {
-    return this.dashboardService.getUserStats(Number(userId));
+    return this.dashboardService.getUserStats(userId);
   }
 }

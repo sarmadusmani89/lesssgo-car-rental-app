@@ -4,10 +4,12 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-# Use --force if needed, though usually not recommended in production
 RUN npm install
 
 COPY . .
+
+# Generate Prisma Client
+RUN npx prisma generate
 
 # Build the NestJS app
 RUN npm run build
@@ -27,4 +29,4 @@ COPY --from=builder /app/prisma ./prisma
 EXPOSE 3001
 
 # Start the app
-CMD ["npm", "run", "start:prod"]
+CMD ["sh", "-c", "npx prisma generate && node dist/src/main"]

@@ -26,7 +26,7 @@ export default function ViewDetailsModal({ booking, onClose }: Props) {
           <p><span className="font-semibold">Vehicle:</span> {booking.carName}</p>
           <p><span className="font-semibold">Status:</span> {booking.status}</p>
           <p><span className="font-semibold">Payment:</span> {booking.paymentStatus}</p>
-          <p><span className="font-semibold">Amount:</span> ${booking.totalPrice}</p>
+          <p><span className="font-semibold">Amount:</span> ${booking.totalAmount}</p>
           <p><span className="font-semibold">From:</span> {booking.startDate}</p>
           <p><span className="font-semibold">To:</span> {booking.endDate}</p>
         </div>

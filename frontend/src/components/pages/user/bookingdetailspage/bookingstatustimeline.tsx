@@ -1,26 +1,30 @@
 'use client';
 
-export default function BookingStatusTimeline() {
+export default function BookingStatusTimeline({ booking }: { booking: any }) {
+  if (!booking) return null;
+
   const steps = [
-    { title: 'Booking Confirmed', status: 'completed', date: '2026-02-01' },
-    { title: 'Payment Received', status: 'completed', date: '2026-02-01' },
-    { title: 'Car Assigned', status: 'active', date: '2026-02-03' },
-    { title: 'Trip Started', status: 'upcoming', date: '2026-02-05' },
-    { title: 'Trip Completed', status: 'upcoming', date: '2026-02-06' },
+    { title: 'Booking Request', status: 'completed', date: new Date(booking.createdAt).toLocaleDateString() },
+    { title: 'Status: ' + booking.status, status: booking.status === 'CONFIRMED' || booking.status === 'COMPLETED' ? 'completed' : 'active', date: new Date(booking.updatedAt).toLocaleDateString() },
+    { title: 'Payment: ' + booking.paymentStatus, status: booking.paymentStatus === 'PAID' ? 'completed' : 'active', date: new Date(booking.updatedAt).toLocaleDateString() },
   ];
+
+  if (booking.status === 'COMPLETED') {
+    steps.push({ title: 'Trip Finished', status: 'completed', date: new Date(booking.endDate).toLocaleDateString() });
+  }
 
   return (
     <div className="p-6 bg-white shadow rounded-lg">
-      <h2 className="text-xl font-semibold mb-4">Booking Status Timeline</h2>
+      <h2 className="text-xl font-semibold mb-4">Booking Timeline</h2>
       <div className="flex flex-col gap-4">
         {steps.map((step, index) => (
           <div key={index} className="flex items-center gap-4">
             <div
               className={`w-4 h-4 rounded-full ${step.status === 'completed'
-                  ? 'bg-green-500'
-                  : step.status === 'active'
-                    ? 'bg-blue-500'
-                    : 'bg-gray-300'
+                ? 'bg-green-500'
+                : step.status === 'active'
+                  ? 'bg-blue-500'
+                  : 'bg-gray-300'
                 }`}
             ></div>
             <div>

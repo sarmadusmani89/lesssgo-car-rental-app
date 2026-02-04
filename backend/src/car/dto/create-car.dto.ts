@@ -1,28 +1,36 @@
-import { IsString, IsNumber, IsOptional, IsArray, IsEnum } from 'class-validator';
-import { CarStatus } from '../entities/car.entity';
+import { IsString, IsNumber, IsOptional, IsEnum, IsInt, Min } from 'class-validator';
+import { CarStatus } from '@prisma/client';
 
 export class CreateCarDto {
   @IsString()
   name!: string;
 
   @IsString()
-  description!: string;
+  brand!: string;
 
   @IsString()
-  category!: string;
+  type!: string;
+
+  @IsString()
+  transmission!: string;
+
+  @IsInt()
+  @Min(0)
+  fuelCapacity!: number;
 
   @IsNumber()
-  dailyPrice!: number;
+  @Min(0)
+  pricePerDay!: number;
 
   @IsOptional()
-  @IsArray()
-  features?: Record<string, any>[];
+  @IsString()
+  imageUrl?: string;
 
   @IsOptional()
-  @IsArray()
-  images?: string[];
+  @IsString()
+  description?: string;
 
   @IsOptional()
-  @IsEnum(['available', 'unavailable'])
+  @IsEnum(CarStatus)
   status?: CarStatus;
 }

@@ -14,9 +14,7 @@ export default function UpdateProfileForm() {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
-      // Combine name for display/edit
-      const full = `${parsed.firstName || ''} ${parsed.lastName || ''}`.trim();
-      setUser({ ...parsed, fullName: full });
+      setUser({ ...parsed });
     }
   }, []);
 
@@ -25,22 +23,15 @@ export default function UpdateProfileForm() {
     setLoading(true);
 
     try {
-      const { id, fullName, email } = user;
-
-      // Split name logic
-      const nameParts = fullName.trim().split(' ');
-      const firstName = nameParts[0];
-      const lastName = nameParts.slice(1).join(' ') || '';
+      const { id, name, email } = user;
 
       await api.put(`/users/${id}`, {
-        firstName,
-        lastName,
+        name,
         email,
       });
 
-      // Update localStorage with new split values
-      const updatedUser = { ...user, firstName, lastName };
-      delete updatedUser.fullName; // Don't store derived prop
+      // Update localStorage with new values
+      const updatedUser = { ...user, name };
 
       localStorage.setItem('user', JSON.stringify(updatedUser));
       window.dispatchEvent(new Event('storage'));
@@ -62,8 +53,8 @@ export default function UpdateProfileForm() {
         <AuthInput
           label="Full Name"
           icon={User}
-          value={user.fullName || ''}
-          onChange={(e) => setUser({ ...user, fullName: e.target.value })}
+          value={user.name || ''}
+          onChange={(e) => setUser({ ...user, name: e.target.value })}
           maxLength={50}
         />
 

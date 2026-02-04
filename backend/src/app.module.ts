@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { BookingModule } from './booking/booking.module';
@@ -10,20 +9,11 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { EmailModule } from './email/email.module';
 import { CronModule } from './cron/cron.module';
 import { ContactModule } from './contact/contact.module';
+import { PrismaService } from './lib/prisma.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        url: configService.get<string>('DATABASE_URL'),
-        autoLoadEntities: true,
-        synchronize: configService.get<string>('NODE_ENV') !== 'production',
-      }),
-    }),
     AuthModule,
     UsersModule,
     BookingModule,
@@ -34,5 +24,7 @@ import { ContactModule } from './contact/contact.module';
     CronModule,
     ContactModule,
   ],
+  providers: [PrismaService],
+  exports: [PrismaService],
 })
 export class AppModule { }
