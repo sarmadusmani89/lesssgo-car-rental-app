@@ -1,4 +1,4 @@
-import { BookingStatus, PaymentStatus } from "./BookingTable";
+import { BookingStatus, PaymentStatus } from "../../../../types/booking";
 
 type Props = {
   search: string;
