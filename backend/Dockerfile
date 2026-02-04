@@ -9,6 +9,7 @@ RUN npm install
 COPY . .
 
 # Build the NestJS app
+RUN npx prisma generate
 RUN npm run build
 
 # Stage 2: Runtime

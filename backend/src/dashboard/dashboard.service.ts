@@ -96,7 +96,7 @@ export class DashboardService {
       }
     }
 
-    monthlyPayments.forEach(payment => {
+    monthlyPayments.forEach((payment: { amount: unknown; createdAt: Date }) => {
       const monthYear = new Date(payment.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' });
       if (monthlyRevenueMap.has(monthYear)) {
         monthlyRevenueMap.set(monthYear, (monthlyRevenueMap.get(monthYear) || 0) + Number(payment.amount));

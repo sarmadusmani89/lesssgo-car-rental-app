@@ -93,7 +93,7 @@ export class CarService {
     if (file) {
       try {
         const upload = await this.cloudinary.uploadFile(file);
-        updateCarDto.imageUrl = upload.secure_url;
+        (updateCarDto as any).imageUrl = upload.secure_url;
       } catch (error) {
         throw new BadRequestException('Failed to upload image to Cloudinary');
       }
