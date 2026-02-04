@@ -1,6 +1,6 @@
 // app/admin/bookings/ViewDetailsModal.tsx
 "use client";
-import { Booking } from "./BookingTable";
+import { Booking } from "../../../../types/booking";
 
 type Props = {
   booking: Booking | null;
