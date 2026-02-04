@@ -15,5 +15,8 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*",
+    "prisma/**/*"
+  ]
 }

@@ -1,74 +1,153 @@
 'use client';
 
-import React from 'react';
-import { Calendar, Search, Filter, MoreHorizontal } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import {
+    Search,
+    Filter,
+    RefreshCw,
+    Download,
+    Calendar as CalendarIcon,
+    ChevronDown
+} from 'lucide-react';
+import { useBookings } from '../../../../hooks/useBookings';
+import BookingTable from './BookingTable';
+import { BookingFilters } from './BookingFilters';
+import { Pagination } from '../../../ui/Pagination';
+import { TableSkeleton } from '../../../ui/Skeletons';
+import { toast } from 'sonner';
+import { BookingStatus, PaymentStatus } from '../../../../types/booking';
 
 export default function AdminBookings() {
+    const { bookings, isLoading, refreshBookings, updateBookingStatus } = useBookings();
+    const [search, setSearch] = useState('');
+    const [statusFilter, setStatusFilter] = useState<BookingStatus | 'ALL'>('ALL');
+    const [paymentFilter, setPaymentFilter] = useState<PaymentStatus | 'ALL'>('ALL');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const itemsPerPage = 10;
+
+    // Filter Logic
+    const filteredBookings = useMemo(() => {
+        return bookings.filter(booking => {
+            const matchesSearch =
+                booking.id.toLowerCase().includes(search.toLowerCase()) ||
+                booking.customerName.toLowerCase().includes(search.toLowerCase()) ||
+                booking.customerEmail.toLowerCase().includes(search.toLowerCase()) ||
+                booking.car?.name?.toLowerCase().includes(search.toLowerCase());
+
+            const matchesStatus = statusFilter === 'ALL' || booking.status === statusFilter;
+            const matchesPayment = paymentFilter === 'ALL' || booking.paymentStatus === paymentFilter;
+
+            return matchesSearch && matchesStatus && matchesPayment;
+        });
+    }, [bookings, search, statusFilter, paymentFilter]);
+
+    // Pagination
+    const paginatedBookings = useMemo(() => {
+        const start = (currentPage - 1) * itemsPerPage;
+        return filteredBookings.slice(start, start + itemsPerPage);
+    }, [filteredBookings, currentPage]);
+
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        try {
+            await refreshBookings();
+            toast.success('Bookings synchronized');
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
+
+    const handleStatusUpdate = async (id: string, status: BookingStatus) => {
+        try {
+            await updateBookingStatus(id, status);
+            toast.success(`Booking ${status.toLowerCase()} successfully`);
+        } catch (err) {
+            toast.error('Failed to update booking status');
+        }
+    };
+
+    const handleViewDetails = (booking: any) => {
+        toast.info(`Viewing details for #${booking.id.slice(-8)} (Coming soon)`);
+    };
+
+    const handleExport = () => {
+        toast.success('Exporting bookings to CSV...');
+    };
+
+    if (isLoading && bookings.length === 0) {
+        return <TableSkeleton rows={10} cols={7} />;
+    }
+
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 italic">Booking Management</h1>
-                    <p className="text-slate-500 mt-1">Review and manage all customer reservations.</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight italic">
+                        Booking Records
+                    </h1>
+                    <p className="text-slate-500 mt-1 font-medium">
+                        Monitor active rentals, process confirmations, and manage customer reservations.
+                    </p>
                 </div>
+
                 <div className="flex items-center gap-3">
-                    <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
-                        <Filter size={20} />
+                    <button
+                        onClick={handleRefresh}
+                        disabled={isRefreshing}
+                        className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all shadow-sm disabled:opacity-50 group"
+                    >
+                        <RefreshCw size={20} className={isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'} />
                     </button>
-                    <div className="relative flex-1 md:w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Search bookings..."
-                            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
-                        />
-                    </div>
+                    <button
+                        onClick={handleExport}
+                        className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
+                    >
+                        <Download size={20} />
+                        Export
+                    </button>
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 text-sm font-medium">
-                                <th className="px-6 py-4">Booking ID</th>
-                                <th className="px-6 py-4">Customer</th>
-                                <th className="px-6 py-4">Car</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4">Dates</th>
-                                <th className="px-6 py-4">Amount</th>
-                                <th className="px-6 py-4 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                                <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
-                                    <td className="px-6 py-4 font-mono text-xs text-slate-500">#BK-100{i}</td>
-                                    <td className="px-6 py-4 font-medium text-slate-900">John Doe</td>
-                                    <td className="px-6 py-4 text-slate-600">Tesla Model 3</td>
-                                    <td className="px-6 py-4">
-                                        <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-green-50 text-green-600 border border-green-100">Confirmed</span>
-                                    </td>
-                                    <td className="px-6 py-4 text-slate-500 text-sm italic">Oct 24 - Oct 27</td>
-                                    <td className="px-6 py-4 font-bold text-slate-900">$450.00</td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button className="p-2 text-slate-400 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition-all">
-                                            <MoreHorizontal size={18} />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                    <p className="text-sm text-slate-500 font-medium italic">Showing 5 of 86 bookings</p>
-                    <div className="flex items-center gap-2">
-                        <button className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors">Previous</button>
-                        <button className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors">Next</button>
+            {/* Filters Bar */}
+            <BookingFilters
+                search={search}
+                onSearchChange={setSearch}
+                statusFilter={statusFilter}
+                onStatusFilterChange={setStatusFilter}
+                paymentFilter={paymentFilter}
+                onPaymentFilterChange={setPaymentFilter}
+            />
+
+            {/* Content Area */}
+            {filteredBookings.length > 0 ? (
+                <>
+                    <BookingTable
+                        bookings={paginatedBookings}
+                        onStatusUpdate={handleStatusUpdate}
+                        onViewDetails={handleViewDetails}
+                    />
+
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={filteredBookings.length}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                    />
+                </>
+            ) : (
+                <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-20 flex flex-col items-center justify-center text-center">
+                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                        <CalendarIcon className="text-slate-300" size={40} />
                     </div>
+                    <h3 className="text-xl font-bold text-slate-900">No bookings found</h3>
+                    <p className="text-slate-500 mt-2 max-w-xs font-medium">
+                        Adjust your search filters to find what you're looking for.
+                    </p>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

@@ -46,4 +46,18 @@ export const userApi = {
     update: (data: any) => api.put('/user/profile', data).then(res => res.data),
 };
 
+export const adminApi = {
+    // Users
+    listUsers: () => api.get('/users').then(res => res.data),
+    createUser: (data: any) => api.post('/users', data).then(res => res.data),
+    updateUser: (id: string, data: any) => api.put(`/users/${id}`, data).then(res => res.data),
+    deleteUser: (id: string) => api.delete(`/users/${id}`).then(res => res.data),
+
+    // Bookings (Admin management)
+    listBookings: () => api.get('/booking').then(res => res.data),
+    updateBooking: (id: string, data: any) => api.put(`/booking/${id}`, data).then(res => res.data),
+    deleteBooking: (id: string) => api.delete(`/booking/${id}`).then(res => res.data),
+};
+
+
 export default api;

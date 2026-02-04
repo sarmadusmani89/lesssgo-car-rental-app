@@ -4,41 +4,15 @@ const prisma = new PrismaClient();
 async function main() {
     console.log('Seeding data...');
 
-    // Create Admin User 1
-    await prisma.user.upsert({
-        where: { email: 'admin@lesssgo.com' },
+    // Create Single Admin User
+    const admin = await prisma.user.upsert({
+        where: { email: 'sarmadusmani598@gmail.com' },
         update: {},
         create: {
-            email: 'admin@lesssgo.com',
+            email: 'sarmadusmani598@gmail.com',
             password: '$2a$10$8K1p/a0dL3.I2GfLNs0p8.yrZi25GqDZPR.r3BqF9M8TlKdcQ9Z0K', // bcrypt hash of "admin123"
-            name: 'Admin User',
+            name: 'Admin',
             role: Role.ADMIN,
-            isVerified: true,
-        },
-    });
-
-    // Create Admin User 2 (Demo Admin)
-    await prisma.user.upsert({
-        where: { email: 'sarmadusmani327@gmail.com' },
-        update: {},
-        create: {
-            email: 'sarmadusmani327@gmail.com',
-            password: '$2a$10$8K1p/a0dL3.I2GfLNs0p8.yrZi25GqDZPR.r3BqF9M8TlKdcQ9Z0K', // bcrypt hash of "admin123"
-            name: 'Demo Admin',
-            role: Role.ADMIN,
-            isVerified: true,
-        },
-    });
-
-    // Create Regular User
-    const user = await prisma.user.upsert({
-        where: { email: 'user@lesssgo.com' },
-        update: {},
-        create: {
-            email: 'user@lesssgo.com',
-            password: '$2a$10$8K1p/a0dL3.I2GfLNs0p8.yrZi25GqDZPR.r3BqF9M8TlKdcQ9Z0K', // bcrypt hash of "user123"
-            name: 'John Doe',
-            role: Role.USER,
             isVerified: true,
         },
     });
@@ -85,29 +59,6 @@ async function main() {
 
     for (const v of cars) {
         await prisma.car.create({ data: v });
-    }
-
-    // Create a Booking
-    const car = await prisma.car.findFirst({ where: { status: CarStatus.RENTED } });
-    if (car) {
-        const startDate = new Date();
-        const endDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
-
-        await prisma.booking.create({
-            data: {
-                userId: user.id,
-                carId: car.id,
-                startDate,
-                endDate,
-                totalAmount: car.pricePerDay * 7,
-                status: BookingStatus.CONFIRMED,
-                paymentStatus: PaymentStatus.PAID,
-                paymentMethod: PaymentMethod.CARD,
-                customerName: user.name || 'John Doe',
-                customerEmail: user.email,
-                customerPhone: '+1234567890',
-            },
-        });
     }
 
     console.log('Seeding complete.');

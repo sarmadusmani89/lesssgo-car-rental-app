@@ -122,82 +122,114 @@ export class PaymentService {
   }
 
   async handleWebhook(signature: string, payload: Buffer) {
+    console.log('========================================');
+    console.log('📨 STRIPE WEBHOOK RECEIVED');
+    console.log('========================================');
+
     const webhookSecret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
     if (!webhookSecret) {
+      console.error('❌ Webhook secret not configured');
       throw new InternalServerErrorException('Stripe webhook secret not configured');
     }
     let event: Stripe.Event;
 
     try {
       event = this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+      console.log(`✅ Webhook signature verified`);
+      console.log(`📋 Event Type: ${event.type}`);
+      console.log(`🆔 Event ID: ${event.id}`);
     } catch (err: any) {
+      console.error('❌ Webhook signature verification failed:', err.message);
       throw new InternalServerErrorException(`Webhook Error: ${err.message}`);
     }
 
     if (event.type === 'checkout.session.completed') {
+      console.log('💳 Processing checkout.session.completed event');
       const session = event.data.object as Stripe.Checkout.Session;
       const bookingId = session.metadata?.bookingId;
 
+      console.log(`🔍 Session ID: ${session.id}`);
+      console.log(`📦 Booking ID from metadata: ${bookingId}`);
+      console.log(`💰 Payment Intent: ${session.payment_intent}`);
+      console.log(`💵 Amount Total: ${session.amount_total ? session.amount_total / 100 : 'N/A'} ${session.currency?.toUpperCase()}`);
+
       if (!bookingId) {
-        console.error('No bookingId found in session metadata');
+        console.error('❌ No bookingId found in session metadata');
         return { received: true };
       }
 
-      const [_, updatedBooking] = await this.prisma.$transaction([
-        this.prisma.payment.updateMany({
-          where: { bookingId: bookingId as string },
-          data: { status: 'PAID', stripePaymentIntentId: session.payment_intent as string },
-        }),
-        this.prisma.booking.update({
-          where: { id: bookingId as string },
-          data: { paymentStatus: 'PAID', status: 'CONFIRMED' },
-          include: { car: true }
-        }),
-      ]);
-
-      // Send confirmation emails for successful payment
       try {
-        const { customerName, customerEmail, car, startDate, endDate, totalAmount } = updatedBooking;
-        const start = new Date(startDate).toLocaleDateString();
-        const end = new Date(endDate).toLocaleDateString();
-
-        const userHtml = `
-          <div style="font-family: Arial, sans-serif; padding: 20px;">
-            <h2 style="color: #2563eb;">Payment Received - Booking Confirmed!</h2>
-            <p>Hi ${customerName},</p>
-            <p>Your payment was successful and your reservation is now fully confirmed.</p>
-            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
-              <p><strong>Period:</strong> ${start} to ${end}</p>
-              <p><strong>Total Paid:</strong> $${totalAmount}</p>
-              <p><strong>Status:</strong> Paid via Stripe</p>
-            </div>
-            <p>We look forward to seeing you!</p>
-          </div>
-        `;
-
-        const adminHtml = `
-          <div style="font-family: Arial, sans-serif; padding: 20px;">
-            <h2 style="color: #2563eb;">Payment Success Alert</h2>
-            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <p><strong>Booking ID:</strong> ${updatedBooking.id}</p>
-              <p><strong>Customer:</strong> ${customerName} (${customerEmail})</p>
-              <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
-              <p><strong>Total Paid:</strong> $${totalAmount}</p>
-            </div>
-          </div>
-        `;
-
-        const { sendEmail } = await import('../lib/sendEmail');
-        await Promise.all([
-          sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml),
-          sendEmail(process.env.SMTP_USER!, 'Payment Success Notification', adminHtml)
+        console.log(`🔄 Updating payment and booking status for booking: ${bookingId}`);
+        const [_, updatedBooking] = await this.prisma.$transaction([
+          this.prisma.payment.updateMany({
+            where: { bookingId: bookingId as string },
+            data: { status: 'PAID', stripePaymentIntentId: session.payment_intent as string },
+          }),
+          this.prisma.booking.update({
+            where: { id: bookingId as string },
+            data: { paymentStatus: 'PAID', status: 'CONFIRMED' },
+            include: { car: true }
+          }),
         ]);
+        console.log(`✅ Payment and booking status updated successfully`);
+        console.log(`📊 Updated Booking: ${updatedBooking.id} | Status: ${updatedBooking.status} | Payment: ${updatedBooking.paymentStatus}`);
+
+        // Send confirmation emails for successful payment
+        try {
+          console.log('📧 Sending payment confirmation emails...');
+          const { customerName, customerEmail, car, startDate, endDate, totalAmount } = updatedBooking;
+          const start = new Date(startDate).toLocaleDateString();
+          const end = new Date(endDate).toLocaleDateString();
+
+          const userHtml = `
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+              <h2 style="color: #2563eb;">Payment Received - Booking Confirmed!</h2>
+              <p>Hi ${customerName},</p>
+              <p>Your payment was successful and your reservation is now fully confirmed.</p>
+              <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
+                <p><strong>Period:</strong> ${start} to ${end}</p>
+                <p><strong>Total Paid:</strong> $${totalAmount}</p>
+                <p><strong>Status:</strong> Paid via Stripe</p>
+              </div>
+              <p>We look forward to seeing you!</p>
+            </div>
+          `;
+
+          const adminHtml = `
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+              <h2 style="color: #2563eb;">Payment Success Alert</h2>
+              <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <p><strong>Booking ID:</strong> ${updatedBooking.id}</p>
+                <p><strong>Customer:</strong> ${customerName} (${customerEmail})</p>
+                <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
+                <p><strong>Total Paid:</strong> $${totalAmount}</p>
+              </div>
+            </div>
+          `;
+
+          const { sendEmail } = await import('../lib/sendEmail');
+          await Promise.all([
+            sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml),
+            sendEmail(process.env.SMTP_USER!, 'Payment Success Notification', adminHtml)
+          ]);
+          console.log('✅ Payment confirmation emails sent successfully');
+          console.log(`   → User email: ${customerEmail}`);
+          console.log(`   → Admin email: ${process.env.SMTP_USER}`);
+        } catch (err) {
+          console.error('❌ Failed to send payment success emails:', err);
+        }
       } catch (err) {
-        console.error('Failed to send payment success emails:', err);
+        console.error('❌ Failed to update booking/payment status:', err);
+        throw err;
       }
+    } else {
+      console.log(`ℹ️  Unhandled event type: ${event.type} - Ignoring`);
     }
 
+    console.log('========================================');
+    console.log('✅ WEBHOOK PROCESSING COMPLETE');
+    console.log('========================================');
     return { received: true };
   }
 

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Car" ADD COLUMN     "hp" INTEGER NOT NULL DEFAULT 0;
