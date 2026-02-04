@@ -8,6 +8,7 @@ import CarForm from "./carform";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import AvailabilityCalendar from "@/components/pages/admin/dashboard/AvailabilityCalendar";
+import DeleteConfirmationModal from "./delete-confirmation-modal";
 
 export default function AdminCars() {
     const [cars, setCars] = useState<Car[]>([]);
@@ -18,7 +19,11 @@ export default function AdminCars() {
     const [showAvailability, setShowAvailability] = useState(false);
     const [selectedCar, setSelectedCar] = useState<Car | null>(null);
 
-    // ... fetchCars, delete, toggle ... (rest of the logic remains same)
+    // Delete Modal State
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [carToDelete, setCarToDelete] = useState<{ id: string; name: string; brand: string } | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     const fetchCars = async () => {
         try {
             setLoading(true);
@@ -43,14 +48,28 @@ export default function AdminCars() {
             v.type.toLowerCase().includes(search.toLowerCase())
     );
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this car?")) return;
+    const handleDeleteClick = (id: string) => {
+        const car = cars.find(c => c.id === id);
+        if (car) {
+            setCarToDelete({ id: car.id, name: car.name, brand: car.brand });
+            setDeleteModalOpen(true);
+        }
+    };
+
+    const confirmDelete = async () => {
+        if (!carToDelete) return;
+
         try {
-            await api.delete(`/car/${id}`);
+            setIsDeleting(true);
+            await api.delete(`/car/${carToDelete.id}`);
             toast.success("Car deleted successfully");
+            setDeleteModalOpen(false);
+            setCarToDelete(null);
             fetchCars();
         } catch (error) {
             toast.error("Failed to delete car");
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -119,7 +138,7 @@ export default function AdminCars() {
             ) : (
                 <CarTable
                     cars={filteredCars}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteClick}
                     onToggleStatus={handleToggleStatus}
                     onEdit={openEditForm}
                     onViewAvailability={openAvailability}
@@ -164,11 +183,20 @@ export default function AdminCars() {
                         </div>
                         <AvailabilityCalendar
                             carId={selectedCar.id}
-                            carName={`${selectedCar.brand} ${selectedCar.name}`}
+                            carName={selectedCar.name}
                         />
                     </div>
                 </div>
             )}
+
+            {/* DELETE CONFIRMATION MODAL */}
+            <DeleteConfirmationModal
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={confirmDelete}
+                carName={carToDelete?.name || ""}
+                isDeleting={isDeleting}
+            />
         </div>
     );
 }

@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Car } from "./type";
 import api from "@/lib/api";
 import { toast } from "sonner";
-import { X, Loader2, Image as ImageIcon } from "lucide-react";
+import { X, Loader2, Image as ImageIcon, Upload, ChevronDown, Check } from "lucide-react";
 
 const carSchema = z.object({
   name: z.string().min(2, "Name is too short"),
@@ -15,8 +16,8 @@ const carSchema = z.object({
   transmission: z.string().min(2, "Transmission is required"),
   fuelCapacity: z.number().min(1, "Fuel capacity must be positive"),
   pricePerDay: z.number().min(1, "Price must be positive"),
+  hp: z.number().min(50, "HP must be reasonable (min 50)"),
   description: z.string().optional(),
-  imageUrl: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
   status: z.enum(["AVAILABLE", "RENTED", "MAINTENANCE"]),
 });
 
@@ -29,9 +30,15 @@ type Props = {
 };
 
 export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(editingCar?.imageUrl || "");
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<CarFormValues>({
     resolver: zodResolver(carSchema),
@@ -42,19 +49,56 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
       transmission: "Automatic",
       fuelCapacity: 50,
       pricePerDay: 50,
+      hp: 150,
       description: "",
-      imageUrl: "",
       status: "AVAILABLE",
     },
   });
 
+  const currentStatus = watch("status");
+
+  const statusOptions = [
+    { value: "AVAILABLE", label: "Available" },
+    { value: "MAINTENANCE", label: "Maintenance" },
+    { value: "RENTED", label: "Rented" }
+  ];
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const onSubmit = async (data: CarFormValues) => {
+    if (!editingCar && !imageFile) {
+      toast.error("Please upload an image");
+      return;
+    }
+
     try {
+      const formData = new FormData();
+      // Append all fields to FormData, avoiding "undefined" strings
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, value.toString());
+        }
+      });
+
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
       if (editingCar) {
-        await api.put(`/car/${editingCar.id}`, data);
+        await api.put(`/car/${editingCar.id}`, formData);
         toast.success("Car updated successfully");
       } else {
-        await api.post("/car", data);
+        await api.post("/car", formData);
         toast.success("Car added successfully");
       }
       onSuccess();
@@ -150,32 +194,102 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Initial Status</label>
-              <select
-                {...register("status")}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition bg-white"
-              >
-                <option value="AVAILABLE">Available</option>
-                <option value="MAINTENANCE">Maintenance</option>
-                <option value="RENTED">Rented</option>
-              </select>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Horsepower (HP)</label>
+              <input
+                type="number"
+                {...register("hp", { valueAsNumber: true })}
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
+              />
+              {errors.hp && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.hp.message}</p>}
             </div>
+
+
           </div>
         </div>
 
-        {/* Full Width Fields */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Image URL</label>
+            <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Initial Status</label>
             <div className="relative">
-              <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
-                {...register("imageUrl")}
-                className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
-                placeholder="https://images.unsplash.com/..."
-              />
+              <button
+                type="button"
+                onClick={() => setIsStatusOpen(!isStatusOpen)}
+                className={`w-full px-4 py-3 rounded-xl border flex items-center justify-between text-left transition ${isStatusOpen ? 'border-blue-500 ring-2 ring-blue-500/20' : 'border-gray-200 hover:border-blue-400'
+                  }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${currentStatus === 'AVAILABLE' ? 'bg-green-500' :
+                    currentStatus === 'RENTED' ? 'bg-blue-500' : 'bg-red-500'
+                    }`} />
+                  <span className="font-medium text-gray-700">
+                    {statusOptions.find(o => o.value === currentStatus)?.label}
+                  </span>
+                </div>
+                <ChevronDown size={18} className={`text-gray-400 transition-transform ${isStatusOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isStatusOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setIsStatusOpen(false)}
+                  />
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-gray-100 p-1.5 z-20 animate-in fade-in zoom-in-95 duration-200">
+                    {statusOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => {
+                          setValue("status", option.value as any);
+                          setIsStatusOpen(false);
+                        }}
+                        className={`w-full px-3 py-2.5 rounded-lg flex items-center justify-between transition group ${currentStatus === option.value ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 text-gray-700'
+                          }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className={`w-2 h-2 rounded-full ${option.value === 'AVAILABLE' ? 'bg-green-500' :
+                            option.value === 'RENTED' ? 'bg-blue-500' : 'bg-red-500'
+                            }`} />
+                          <span className="font-medium">{option.label}</span>
+                        </div>
+                        {currentStatus === option.value && <Check size={16} />}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
-            {errors.imageUrl && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.imageUrl.message}</p>}
+            {/* Hidden Input for Form Submission */}
+            <input type="hidden" {...register("status")} />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-700 mb-1.5 uppercase tracking-tighter">Car Image</label>
+            <div className="mt-2 flex items-center gap-6">
+              {imagePreview ? (
+                <div className="relative w-40 h-24 rounded-2xl overflow-hidden border-2 border-blue-500 group">
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                  <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer">
+                    <Upload className="text-white" size={20} />
+                    <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                  </label>
+                </div>
+              ) : (
+                <label className="w-40 h-24 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-2 hover:border-blue-500 hover:bg-blue-50 transition cursor-pointer group">
+                  <div className="p-2 bg-gray-50 rounded-full group-hover:bg-blue-100 transition">
+                    <ImageIcon className="text-gray-400 group-hover:text-blue-600" size={20} />
+                  </div>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Upload Image</span>
+                  <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                </label>
+              )}
+              <div className="flex-1">
+                <p className="text-sm text-gray-500 leading-relaxed italic">
+                  Upload a high-quality image of the vehicle. <br />
+                  Supported formats: JPG, PNG, WebP. Max size: 5MB.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div>

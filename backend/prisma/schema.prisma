@@ -39,6 +39,7 @@ model Car {
   transmission  String
   fuelCapacity  Int
   pricePerDay   Float
+  hp            Int       @default(0) // Default for existing records
   imageUrl      String?
   description   String?   @db.Text
   status        CarStatus @default(AVAILABLE)

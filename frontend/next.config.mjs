@@ -10,7 +10,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'yourdomain.com',
+        hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
       },
     ],
   },

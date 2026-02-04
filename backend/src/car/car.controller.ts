@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, UseGuards, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Role } from '@prisma/client';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -14,8 +15,13 @@ export class CarController {
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  create(@Body() createCarDto: CreateCarDto) {
-    return this.carService.create(createCarDto);
+  @UseInterceptors(FileInterceptor('image'))
+  create(
+    @Body() createCarDto: CreateCarDto,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    return this.carService.create(createCarDto, file);
+
   }
 
   @Get()
@@ -48,8 +54,14 @@ export class CarController {
   @Put(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  update(@Param('id') id: string, @Body() updateCarDto: UpdateCarDto) {
-    return this.carService.update(id, updateCarDto);
+  @UseInterceptors(FileInterceptor('image'))
+  update(
+    @Param('id') id: string,
+    @Body() updateCarDto: UpdateCarDto,
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    return this.carService.update(id, updateCarDto, file);
+
   }
 
   @Delete(':id')

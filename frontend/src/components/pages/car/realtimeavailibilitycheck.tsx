@@ -38,15 +38,15 @@ export default function RealTimeAvailabilityCheck({ carId, startDate, endDate }:
   };
 
   if (!startDate || !endDate) return (
-    <div className="p-4 bg-blue-50 text-blue-700 rounded-2xl text-sm font-medium border border-blue-100 italic">
-      Select dates above to check vehicle availability.
+    <div className="p-6 bg-blue-50/50 text-blue-700 rounded-3xl text-sm font-black uppercase tracking-widest border border-blue-100/50 text-center leading-relaxed">
+      Select dates to check <br /> vehicle availability.
     </div>
   );
 
   return (
     <div className={`p-5 rounded-3xl border transition-all duration-300 ${loading ? 'bg-gray-50 border-gray-100' :
-        available === true ? 'bg-green-50 border-green-100 text-green-700 shadow-sm shadow-green-50' :
-          available === false ? 'bg-red-50 border-red-100 text-red-700' : 'bg-gray-50 border-gray-100'
+      available === true ? 'bg-green-50 border-green-100 text-green-700 shadow-sm shadow-green-50' :
+        available === false ? 'bg-red-50 border-red-100 text-red-700' : 'bg-gray-50 border-gray-100'
       }`}>
       <div className="flex items-center gap-3">
         {loading ? (

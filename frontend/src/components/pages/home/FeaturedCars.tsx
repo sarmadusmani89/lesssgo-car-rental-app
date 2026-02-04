@@ -1,106 +1,92 @@
+"use client";
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import styles from '../../../app/(public)/(home)/page.module.css';
 import CarCard from '../../ui/CarCard';
+import api from '@/lib/api';
+
+interface CarData {
+    id: string;
+    brand: string;
+    name: string;
+    type: string;
+    transmission: string;
+    fuelCapacity: number;
+    pricePerDay: number;
+    hp: number;
+    imageUrl?: string;
+    status: string;
+}
 
 export default function FeaturedCars() {
-    const featuredCars = [
-        {
-            id: 1,
-            brand: 'MERCEDES-BENZ',
-            name: 'AMG GT',
-            price: '1,200',
-            monthly: '8,000',
-            image: '/images/amg_gt_card_hero.png',
-            badge: 'New Arrival',
+    const [cars, setCars] = useState<CarData[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchCars = async () => {
+            try {
+                const res = await api.get('/car');
+                // Filter: Only display AVAILABLE cars
+                const availableCars = res.data.filter((car: CarData) =>
+                    car.status === 'AVAILABLE'
+                );
+                setCars(availableCars);
+            } catch (error) {
+                console.error("Failed to fetch featured cars:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCars();
+    }, []);
+
+    const mapCarToProps = (car: CarData) => {
+        return {
+            id: car.id,
+            brand: car.brand,
+            name: car.name,
+            price: car.pricePerDay.toString(),
+            monthly: (car.pricePerDay * 30).toLocaleString('en-US', { maximumFractionDigits: 0 }),
+            image: car.imageUrl || '/images/placeholder_car.png',
+            badge: 'Available',
             badgeClass: styles.badgeNew,
-            hp: '577 HP',
-            fuel: 'Petrol',
-            transmission: 'Auto',
-        },
-        {
-            id: 2,
-            brand: 'PORSCHE',
-            name: '911 Turbo S',
-            price: '1,800',
-            monthly: '12,500',
-            image: '/images/porsche_911_light_studio.png',
-            badge: 'Featured',
-            badgeClass: styles.badgeFeatured,
-            hp: '640 HP',
-            fuel: 'Petrol',
-            transmission: 'PDK',
-        },
-        {
-            id: 3,
-            brand: 'BMW',
-            name: 'M8 Competition',
-            price: '1,100',
-            monthly: '7,800',
-            image: '/images/bmw_m8_light_studio.png',
-            badge: 'Popular',
-            badgeClass: styles.badgePopular,
-            hp: '617 HP',
-            fuel: 'Petrol',
-            transmission: 'Auto',
-        },
-        {
-            id: 4,
-            brand: 'AUDI',
-            name: 'RS e-tron GT',
-            price: '950',
-            monthly: '6,900',
-            image: '/images/electric_sedan_card.png',
-            badge: 'Electric',
-            badgeClass: styles.badgeNew,
-            hp: '637 HP',
-            fuel: 'Electric',
-            transmission: 'Auto',
-        },
-        {
-            id: 5,
-            brand: 'LAMBORGHINI',
-            name: 'Urus',
-            price: '2,500',
-            monthly: '18,000',
-            image: '/images/luxury_suv_card.png',
-            badge: 'SUV',
-            badgeClass: styles.badgeFeatured,
-            hp: '657 HP',
-            fuel: 'Petrol',
-            transmission: 'Auto',
-        },
-        {
-            id: 6,
-            brand: 'FERRARI',
-            name: 'Roma',
-            price: '2,200',
-            monthly: '16,500',
-            image: '/images/sport_car_card.png',
-            badge: 'Sport',
-            badgeClass: styles.badgePopular,
-            hp: '612 HP',
-            fuel: 'Petrol',
-            transmission: 'F1',
-        },
-    ];
+            hp: `${car.hp} HP`,
+            type: car.type,
+            fuel: `${car.fuelCapacity}L`,
+            transmission: car.transmission || 'Auto',
+        };
+    };
 
     return (
         <section className={styles.carsSection}>
             <div className="container">
                 <div className={styles.sectionHeaderCentered}>
                     <h2 className={styles.sectionTitle}>Featured Cars</h2>
-                    <p className={styles.sectionSubtitle}>Discover our hand-picked selection of high-performance cars.</p>
+                    <p className={styles.sectionSubtitle}>Discover our hand-picked selection of high-performance cars from our real-time fleet.</p>
                 </div>
 
-                <div className={styles.carGrid}>
-                    {featuredCars.map((car) => (
-                        <CarCard key={car.id} {...car} />
-                    ))}
-                </div>
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-20">
+                        <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
+                        <p className="text-gray-500 font-medium font-outfit">Loading fleet...</p>
+                    </div>
+                ) : cars.length > 0 ? (
+                    <div className={styles.carGrid}>
+                        {cars.map((car) => (
+                            <CarCard key={car.id} {...mapCarToProps(car)} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-16">
+                        <p className="text-gray-500 font-medium">No cars currently available. Please check back later.</p>
+                    </div>
+                )}
 
                 <div style={{ textAlign: 'center', marginTop: '5rem' }}>
-                    <Link href="/cars" className="btn btn-outline btn-lg">
+                    <Link href="/vehicles" className="btn btn-outline btn-lg">
                         View All Cars <ArrowRight size={20} />
                     </Link>
                 </div>

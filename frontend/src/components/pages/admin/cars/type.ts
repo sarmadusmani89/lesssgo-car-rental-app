@@ -8,6 +8,7 @@ export interface Car {
   transmission: string;
   fuelCapacity: number;
   pricePerDay: number;
+  hp: number;
   imageUrl?: string;
   description?: string;
   status: CarStatus;

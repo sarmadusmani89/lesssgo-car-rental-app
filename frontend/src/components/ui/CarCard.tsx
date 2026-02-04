@@ -60,7 +60,7 @@ export default function CarCard(car: CarProps) {
                         </div>
                         <span className={styles.priceMonthly}>${car.monthly} / month</span>
                     </div>
-                    <Link href={`/car?id=${car.id}`} className={styles.btnDetails}>
+                    <Link href={`/car/${car.id}`} className={styles.btnDetails}>
                         Details <ArrowRight size={18} />
                     </Link>
                 </div>

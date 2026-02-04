@@ -1,5 +1,5 @@
 import { Car } from "./type";
-import { Pencil, Trash2, Fuel, Cog, ShieldCheck, ShieldAlert, Calendar } from "lucide-react";
+import { Pencil, Trash2, Fuel, Cog, ShieldCheck, ShieldAlert, Calendar, Gauge } from "lucide-react";
 
 type Props = {
   cars: Car[];
@@ -61,13 +61,18 @@ export default function CarTable({
           {/* Car Info */}
           <div className="flex-1 space-y-3">
             <div>
+              <span className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{v.brand}</span>
               <h3 className="text-xl font-bold text-gray-900 font-outfit leading-tight group-hover:text-blue-600 transition">
-                {v.brand} {v.name}
+                {v.name}
               </h3>
-              <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mt-0.5">{v.type}</p>
+              <p className="text-blue-600 font-semibold text-sm uppercase tracking-wide mt-1">{v.type}</p>
             </div>
 
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <div className="flex items-center gap-1.5 text-gray-500 text-xs font-medium bg-gray-50 px-2 py-1 rounded-lg">
+                <Gauge size={14} className="text-gray-400" />
+                {v.hp} HP
+              </div>
               <div className="flex items-center gap-1.5 text-gray-500 text-xs font-medium bg-gray-50 px-2 py-1 rounded-lg">
                 <Cog size={14} className="text-gray-400" />
                 {v.transmission}

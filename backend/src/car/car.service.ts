@@ -1,13 +1,28 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../lib/prisma.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
+import { CloudinaryService } from '../lib/cloudinary.service';
 
 @Injectable()
 export class CarService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cloudinary: CloudinaryService
+  ) { }
 
-  create(createCarDto: CreateCarDto) {
+  async create(createCarDto: CreateCarDto, file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('Image is required');
+    }
+
+    try {
+      const upload = await this.cloudinary.uploadFile(file);
+      createCarDto.imageUrl = upload.secure_url;
+    } catch (error) {
+      throw new BadRequestException('Failed to upload image to Cloudinary');
+    }
+
     return this.prisma.car.create({
       data: createCarDto,
     });
@@ -15,7 +30,9 @@ export class CarService {
 
   async findAll(startDate?: string, endDate?: string) {
     if (!startDate || !endDate) {
-      return this.prisma.car.findMany();
+      return this.prisma.car.findMany({
+        orderBy: { createdAt: 'desc' }
+      });
     }
 
     const start = new Date(startDate);
@@ -60,6 +77,7 @@ export class CarService {
         id: { notIn: unavailableIds },
         status: 'AVAILABLE', // Still respect manual maintenance status
       },
+      orderBy: { createdAt: 'desc' }
     });
   }
 
@@ -69,8 +87,18 @@ export class CarService {
     return car;
   }
 
-  async update(id: string, updateCarDto: UpdateCarDto) {
+  async update(id: string, updateCarDto: UpdateCarDto, file?: Express.Multer.File) {
     await this.findOne(id);
+
+    if (file) {
+      try {
+        const upload = await this.cloudinary.uploadFile(file);
+        updateCarDto.imageUrl = upload.secure_url;
+      } catch (error) {
+        throw new BadRequestException('Failed to upload image to Cloudinary');
+      }
+    }
+
     return this.prisma.car.update({
       where: { id },
       data: updateCarDto,

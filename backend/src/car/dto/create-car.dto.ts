@@ -1,4 +1,5 @@
-import { IsString, IsNumber, IsOptional, IsEnum, IsInt, Min } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsEnum, IsInt, Min, IsBoolean } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 import { CarStatus } from '@prisma/client';
 
 export class CreateCarDto {
@@ -16,11 +17,18 @@ export class CreateCarDto {
 
   @IsInt()
   @Min(0)
+  @Type(() => Number)
   fuelCapacity!: number;
 
   @IsNumber()
   @Min(0)
+  @Type(() => Number)
   pricePerDay!: number;
+
+  @IsInt()
+  @Min(0)
+  @Type(() => Number)
+  hp!: number;
 
   @IsOptional()
   @IsString()
@@ -33,4 +41,7 @@ export class CreateCarDto {
   @IsOptional()
   @IsEnum(CarStatus)
   status?: CarStatus;
+
+  @IsOptional()
+  image?: any;
 }
