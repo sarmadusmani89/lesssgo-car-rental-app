@@ -1,32 +1,88 @@
-export default function RevenueChart({ stats }: { stats: any }) {
-    // Generate some dummy data based on total revenue for visualization
-    const revenue = [
-        (stats?.revenue || 0) * 0.1,
-        (stats?.revenue || 0) * 0.15,
-        (stats?.revenue || 0) * 0.12,
-        (stats?.revenue || 0) * 0.2,
-        (stats?.revenue || 0) * 0.18,
-        (stats?.revenue || 0) * 0.25,
-    ];
+'use client';
 
-    const maxVal = Math.max(...revenue, 1);
+import React from 'react';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer
+} from 'recharts';
+
+export default function RevenueChart({ stats }: { stats: any }) {
+    // Fallback if no stats provided, although stats should be loaded by parent
+    const data = stats?.monthlyRevenue || [];
+
+    if (data.length === 0) {
+        return (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex items-center justify-center h-[300px]">
+                <p className="text-slate-400 font-medium">No revenue data available yet</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-6 font-outfit">Monthly Revenue Distribution</h2>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+            <div className="flex items-center justify-between mb-8">
+                <div>
+                    <h2 className="text-lg font-bold text-slate-900 font-outfit">Revenue Overview</h2>
+                    <p className="text-sm text-slate-500">Monthly earnings performance</p>
+                </div>
+                <select className="bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-lg p-2 font-medium">
+                    <option>Last 6 Months</option>
+                    <option>This Year</option>
+                </select>
+            </div>
 
-            <div className="flex items-end justify-between gap-3 h-48 px-2">
-                {revenue.map((value, index) => (
-                    <div key={index} className="flex-1 flex flex-col items-center gap-2 group">
-                        <div
-                            className="w-full bg-blue-500 rounded-t-lg transition-all duration-300 group-hover:bg-blue-600 relative overflow-hidden"
-                            style={{ height: `${(value / maxVal) * 100}%` }}
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
-                        </div>
-                        <span className="text-[10px] font-medium text-gray-400 uppercase tracking-tighter">Month {index + 1}</span>
-                    </div>
-                ))}
+            <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart
+                        data={data}
+                        margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                    >
+                        <defs>
+                            <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <XAxis
+                            dataKey="name"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }}
+                            dy={10}
+                        />
+                        <YAxis
+                            axisLine={false}
+                            tickLine={false}
+                            tick={{ fill: '#64748b', fontSize: 12 }}
+                            tickFormatter={(value) => `$${value}`}
+                        />
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: '#fff',
+                                border: '1px solid #e2e8f0',
+                                borderRadius: '12px',
+                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                            }}
+                            itemStyle={{ color: '#1e293b', fontWeight: 600 }}
+                            formatter={(value: number | undefined) => [`$${value?.toFixed(2) ?? '0.00'}`, 'Revenue']}
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="total"
+                            stroke="#3b82f6"
+                            strokeWidth={3}
+                            fillOpacity={1}
+                            fill="url(#colorRevenue)"
+                            activeDot={{ r: 6, strokeWidth: 0, fill: '#2563eb' }}
+                        />
+                    </AreaChart>
+                </ResponsiveContainer>
             </div>
         </div>
     );

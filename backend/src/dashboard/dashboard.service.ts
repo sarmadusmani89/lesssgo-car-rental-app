@@ -25,6 +25,45 @@ export class DashboardService {
       }
     });
 
+    // Calculate monthly revenue for the last 6 months
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+    sixMonthsAgo.setDate(1); // Start from the 1st of that month
+
+    const monthlyPayments = await this.prisma.payment.findMany({
+      where: {
+        status: 'PAID',
+        createdAt: {
+          gte: sixMonthsAgo,
+        },
+      },
+      select: {
+        amount: true,
+        createdAt: true,
+      }
+    });
+
+    // Group by Month
+    const monthlyRevenueMap = new Map<string, number>();
+
+    // Initialize last 6 months with 0
+    for (let i = 0; i < 6; i++) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' }); // e.g., "Jan 2026"
+      monthlyRevenueMap.set(monthYear, 0);
+    }
+
+    monthlyPayments.forEach(payment => {
+      const monthYear = new Date(payment.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' });
+      if (monthlyRevenueMap.has(monthYear)) {
+        monthlyRevenueMap.set(monthYear, (monthlyRevenueMap.get(monthYear) || 0) + Number(payment.amount));
+      }
+    });
+
+    // Convert map to array and reverse to show oldest to newest
+    const monthlyRevenue = Array.from(monthlyRevenueMap, ([name, total]) => ({ name, total })).reverse();
+
     return {
       users: usersCount,
       bookings: bookingsCount,
@@ -32,6 +71,7 @@ export class DashboardService {
       availableCars,
       rentedCars,
       recentBookings,
+      monthlyRevenue,
     };
   }
 
