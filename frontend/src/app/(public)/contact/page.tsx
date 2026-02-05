@@ -1,9 +1,9 @@
 'use client';
 
 import styles from './contact.module.css';
-import ContactHero from '@/components/pages/contact/ContactHero';
-import ContactInfo from '@/components/pages/contact/ContactInfo';
-import ContactForm from '@/components/pages/contact/ContactForm';
+import ContactHero from '@/components/pages/contact/sections/ContactHero';
+import ContactInfo from '@/components/pages/contact/sections/ContactInfo';
+import ContactForm from '@/components/pages/contact/sections/ContactForm';
 
 export default function ContactPage() {
     return (

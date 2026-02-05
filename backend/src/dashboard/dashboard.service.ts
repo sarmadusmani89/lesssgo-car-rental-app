@@ -7,117 +7,113 @@ export class DashboardService {
   constructor(private readonly prisma: PrismaService) { }
 
   async getAdminStats(range: string = '6m') {
-    const usersCount = await this.prisma.user.count();
-    const bookingsCount = await this.prisma.booking.count();
+    try {
+      console.log('--- getAdminStats START ---');
+      console.log('Range:', range);
 
-    const payments = await this.prisma.payment.findMany({ where: { status: 'PAID' } });
-    const revenueOverall = payments.reduce((acc: number, p: any) => acc + Number(p.amount), 0);
+      console.log('Querying User count...');
+      const usersCount = await this.prisma.user.count();
+      console.log('User count:', usersCount);
 
-    const availableCars = await this.prisma.car.count({ where: { status: 'AVAILABLE' } });
-    const rentedCars = await this.prisma.car.count({ where: { status: 'RENTED' } });
+      console.log('Querying Booking count...');
+      const bookingsCount = await this.prisma.booking.count();
+      console.log('Booking count:', bookingsCount);
 
-    const recentBookings = await this.prisma.booking.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        user: true,
-        car: true,
-      }
-    });
+      console.log('Querying Payments (status: PAID)...');
+      const payments = await this.prisma.payment.findMany({ where: { status: 'PAID' } });
+      console.log('Found payments:', payments.length);
 
-    // Calculate monthly revenue based on range
-    let startDate = new Date();
-    let monthsBack = 6;
+      const revenueOverall = payments.reduce((acc: number, p: any) => acc + Number(p.amount), 0);
+      console.log('Revenue overall:', revenueOverall);
 
-    if (range === '1y') {
-      startDate = new Date(new Date().getFullYear(), 0, 1); // Jan 1st of current year
-      startDate.setHours(0, 0, 0, 0);
-      // Calculate months from Jan to now (0-indexed) + 1
-      monthsBack = new Date().getMonth() + 1;
-    } else {
-      // Last 6 months (rolling)
-      startDate.setMonth(startDate.getMonth() - 5); // Go back 5 months to include current month = 6 months total
-      startDate.setDate(1);
-      startDate.setHours(0, 0, 0, 0);
-    }
+      console.log('Querying available cars stats...');
+      const availableCars = await this.prisma.car.count({ where: { status: 'AVAILABLE' } });
+      const rentedCars = await this.prisma.car.count({ where: { status: 'RENTED' } });
+      console.log('Available:', availableCars, 'Rented:', rentedCars);
 
-    const monthlyPayments = await this.prisma.payment.findMany({
-      where: {
-        status: 'PAID',
-        createdAt: {
-          gte: startDate,
-        },
-      },
-      select: {
-        amount: true,
-        createdAt: true,
-      }
-    });
+      console.log('Querying recent bookings...');
+      const recentBookings = await this.prisma.booking.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: true,
+          car: true,
+        }
+      });
+      console.log('Recent bookings count:', recentBookings.length);
 
-    // Group by Month
-    const monthlyRevenueMap = new Map<string, number>();
-
-    // Initialize months
-    for (let i = 0; i < monthsBack; i++) {
-      const d = new Date();
+      // Date logic
+      console.log('Determining start date for range...');
+      let startDate = new Date();
       if (range === '1y') {
-        // For this year, start from Jan
-        d.setMonth(new Date().getFullYear() === d.getFullYear() ? i : 0); // Logic simpler: just recreate date
-        const yearDate = new Date(new Date().getFullYear(), i, 1);
-        if (yearDate > new Date()) break; // Don't show future months if logic allows
-
-        const monthYear = yearDate.toLocaleString('default', { month: 'short', year: 'numeric' });
-        monthlyRevenueMap.set(monthYear, 0);
+        startDate = new Date(new Date().getFullYear(), 0, 1);
+        startDate.setHours(0, 0, 0, 0);
       } else {
-        // For last 6 months, go back from current
-        d.setMonth(d.getMonth() - i);
-        const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' });
-        monthlyRevenueMap.set(monthYear, 0);
+        startDate.setDate(1);
+        startDate.setMonth(startDate.getMonth() - 5);
+        startDate.setHours(0, 0, 0, 0);
       }
+      console.log('Start date:', startDate);
+
+      console.log('Querying monthly payments...');
+      const monthlyPayments = await this.prisma.payment.findMany({
+        where: {
+          status: 'PAID',
+          createdAt: { gte: startDate },
+        },
+        select: {
+          amount: true,
+          createdAt: true,
+        }
+      });
+      console.log('Monthly payments found:', monthlyPayments.length);
+
+      const monthlyRevenueMap = new Map<string, number>();
+      if (range === '1y') {
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth();
+        for (let i = 0; i <= currentMonth; i++) {
+          const d = new Date(currentYear, i, 1);
+          const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+          monthlyRevenueMap.set(monthYear, 0);
+        }
+      } else {
+        for (let i = 5; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(1);
+          d.setMonth(d.getMonth() - i);
+          const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+          monthlyRevenueMap.set(monthYear, 0);
+        }
+      }
+      console.log('Revenue maps initialized:', monthlyRevenueMap.size);
+
+      monthlyPayments.forEach((payment: any) => {
+        const monthYear = new Date(payment.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' });
+        if (monthlyRevenueMap.has(monthYear)) {
+          monthlyRevenueMap.set(monthYear, (monthlyRevenueMap.get(monthYear) || 0) + Number(payment.amount));
+        }
+      });
+
+      const monthlyRevenue = Array.from(monthlyRevenueMap, ([name, total]) => ({ name, total }));
+      console.log('Monthly revenue array size:', monthlyRevenue.length);
+
+      console.log('--- getAdminStats SUCCESS ---');
+      return {
+        users: usersCount,
+        bookings: bookingsCount,
+        revenue: revenueOverall,
+        availableCars,
+        rentedCars,
+        recentBookings,
+        monthlyRevenue,
+      };
+    } catch (error: any) {
+      console.error('--- getAdminStats FATAL ERROR ---');
+      console.error('Error stack:', error.stack);
+      console.error('Error message:', error.message);
+      throw error;
     }
-
-    // Re-do initialization logic to be cleaner and consistent for both
-    monthlyRevenueMap.clear();
-
-    if (range === '1y') {
-      const currentYear = new Date().getFullYear();
-      const currentMonth = new Date().getMonth();
-      for (let i = 0; i <= currentMonth; i++) {
-        const d = new Date(currentYear, i, 1);
-        const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' });
-        monthlyRevenueMap.set(monthYear, 0);
-      }
-    } else {
-      for (let i = 5; i >= 0; i--) {
-        const d = new Date();
-        d.setMonth(d.getMonth() - i);
-        const monthYear = d.toLocaleString('default', { month: 'short', year: 'numeric' });
-        monthlyRevenueMap.set(monthYear, 0);
-      }
-    }
-
-    monthlyPayments.forEach((payment: { amount: unknown; createdAt: Date }) => {
-      const monthYear = new Date(payment.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' });
-      if (monthlyRevenueMap.has(monthYear)) {
-        monthlyRevenueMap.set(monthYear, (monthlyRevenueMap.get(monthYear) || 0) + Number(payment.amount));
-      }
-    });
-
-    // Convert map to array. Map preserves insertion order, so for '1y' it's Jan->Now. For '6m' it relies on loop order.
-    // The previous loop for 6m was: i=5 (oldest) down to 0 (newest).
-    // The '1y' loop is i=0 (Jan) to current.
-    // So both are ordered oldest to newest.
-    const monthlyRevenue = Array.from(monthlyRevenueMap, ([name, total]) => ({ name, total }));
-
-    return {
-      users: usersCount,
-      bookings: bookingsCount,
-      revenue: revenueOverall,
-      availableCars,
-      rentedCars,
-      recentBookings,
-      monthlyRevenue,
-    };
   }
 
   async getUserStats(userId: string): Promise<UserStatsDto> {

@@ -1,7 +1,7 @@
 import { Shield, Star, Zap, MapPin, Calendar, Headphones } from 'lucide-react';
-import styles from '../../../app/(public)/(home)/page.module.css';
+import styles from '@/app/(public)/(home)/page.module.css';
 
-import BenefitCard from './BenefitCard';
+import BenefitCard from '../components/BenefitCard';
 
 const features = [
     {

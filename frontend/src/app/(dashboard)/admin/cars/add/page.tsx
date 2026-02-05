@@ -8,7 +8,7 @@ export default function AddCarPage() {
     const router = useRouter();
 
     return (
-        <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in slide-in-from-bottom-4 duration-500">
+        <div className="max-w-none mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-in slide-in-from-bottom-4 duration-500">
             <button
                 onClick={() => router.back()}
                 className="flex items-center gap-2 text-gray-400 hover:text-gray-900 transition mb-6 font-bold text-xs uppercase tracking-widest"

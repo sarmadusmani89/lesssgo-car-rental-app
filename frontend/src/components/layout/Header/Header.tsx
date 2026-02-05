@@ -11,6 +11,7 @@ import { setCurrency } from '@/lib/store/slices/uiSlice';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isCurrencyOpen, setIsCurrencyOpen] = useState(false);
     const [user, setUser] = useState<any>(null);
     const pathname = usePathname();
 
@@ -21,6 +22,30 @@ export default function Header() {
     const handleCurrencyChange = (newCurrency: 'AUD' | 'PGK') => {
         dispatch(setCurrency(newCurrency));
     };
+
+    // Close dropdowns on path change
+    useEffect(() => {
+        setIsMenuOpen(false);
+        setIsCurrencyOpen(false);
+    }, [pathname]);
+
+    useEffect(() => {
+        // Handle click outside for currency dropdown
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            if (isCurrencyOpen && !target.closest(`.${styles.currencyWrapper}`)) {
+                setIsCurrencyOpen(false);
+            }
+        };
+
+        if (isCurrencyOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isCurrencyOpen]);
 
     useEffect(() => {
         // Check for user in localStorage
@@ -83,17 +108,40 @@ export default function Header() {
                 </nav>
 
                 <div className={styles.actions}>
-                    {/* Currency Selector */}
-                    <div className="hidden lg:flex items-center gap-2 mr-4 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                        <Globe size={16} className="text-gray-400" />
-                        <select
-                            value={currency}
-                            onChange={(e) => handleCurrencyChange(e.target.value as any)}
-                            className="bg-transparent text-sm font-semibold outline-none cursor-pointer text-gray-700"
-                        >
-                            <option value="AUD">AUD ($)</option>
-                            <option value="PGK">PGK (K)</option>
-                        </select>
+                    {/* Premium Currency Selector */}
+                    <div className="hidden lg:block mr-4">
+                        <div className={styles.currencyWrapper}>
+                            <button
+                                className={styles.currencyTrigger}
+                                onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
+                            >
+                                <Globe size={16} />
+                                <span>{currency === 'AUD' ? 'AUD ($)' : 'PGK (K)'}</span>
+                            </button>
+
+                            {isCurrencyOpen && (
+                                <div className={styles.currencyDropdown}>
+                                    <div
+                                        className={`${styles.currencyItem} ${currency === 'AUD' ? styles.active : ''}`}
+                                        onClick={() => {
+                                            handleCurrencyChange('AUD');
+                                            setIsCurrencyOpen(false);
+                                        }}
+                                    >
+                                        AUD ($)
+                                    </div>
+                                    <div
+                                        className={`${styles.currencyItem} ${currency === 'PGK' ? styles.active : ''}`}
+                                        onClick={() => {
+                                            handleCurrencyChange('PGK');
+                                            setIsCurrencyOpen(false);
+                                        }}
+                                    >
+                                        PGK (K)
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className={styles.desktopOnly}>

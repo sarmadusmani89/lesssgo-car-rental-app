@@ -24,7 +24,7 @@ export default function CTA() {
                     </div>
 
                     <div className={styles.ctaButtons}>
-                        <Link href="/contact" className={styles.btnPrimary}>
+                        <Link href="/contact" className="btn btn-primary btn-lg">
                             Contact Us <ArrowRight size={20} />
                         </Link>
                     </div>

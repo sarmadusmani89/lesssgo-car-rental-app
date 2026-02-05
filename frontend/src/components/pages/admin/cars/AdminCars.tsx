@@ -40,10 +40,14 @@ export default function AdminCars() {
         try {
             setLoading(true);
             const res = await api.get('/car');
-            setCars(res.data);
+            const data = res.data;
+            setCars(data);
+            if (data.length === 0) {
+                toast.info('No cars found in the fleet catalog');
+            }
         } catch (error) {
             console.error("Failed to fetch cars:", error);
-            toast.error('Failed to fetch cars');
+            toast.error('Failed to fetch fleet inventory');
         } finally {
             setLoading(false);
         }

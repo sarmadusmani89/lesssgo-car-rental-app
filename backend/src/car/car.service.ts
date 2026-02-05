@@ -11,7 +11,7 @@ export class CarService {
     private readonly cloudinary: CloudinaryService
   ) { }
 
-  async create(createCarDto: CreateCarDto, file: Express.Multer.File) {
+  async create(createCarDto: CreateCarDto, file: Express.Multer.File, galleryFiles?: Express.Multer.File[]) {
     if (!file) {
       throw new BadRequestException('Image is required');
     }
@@ -19,8 +19,15 @@ export class CarService {
     try {
       const upload = await this.cloudinary.uploadFile(file);
       createCarDto.imageUrl = upload.secure_url;
+
+      if (galleryFiles && galleryFiles.length > 0) {
+        const galleryUrls = await Promise.all(
+          galleryFiles.map(f => this.cloudinary.uploadFile(f).then(res => res.secure_url))
+        );
+        createCarDto.gallery = galleryUrls;
+      }
     } catch (error) {
-      throw new BadRequestException('Failed to upload image to Cloudinary');
+      throw new BadRequestException('Failed to upload images to Cloudinary');
     }
 
     return this.prisma.car.create({
@@ -87,8 +94,8 @@ export class CarService {
     return car;
   }
 
-  async update(id: string, updateCarDto: UpdateCarDto, file?: Express.Multer.File) {
-    await this.findOne(id);
+  async update(id: string, updateCarDto: UpdateCarDto, file?: Express.Multer.File, galleryFiles?: Express.Multer.File[]) {
+    const existing = await this.findOne(id);
 
     if (file) {
       try {
@@ -96,6 +103,20 @@ export class CarService {
         (updateCarDto as any).imageUrl = upload.secure_url;
       } catch (error) {
         throw new BadRequestException('Failed to upload image to Cloudinary');
+      }
+    }
+
+    if (galleryFiles && galleryFiles.length > 0) {
+      try {
+        const galleryUrls = await Promise.all(
+          galleryFiles.map(f => this.cloudinary.uploadFile(f).then(res => res.secure_url))
+        );
+        // Append to existing gallery or replace if provided? 
+        // Usually, in these forms, we provide new files to add.
+        const currentGallery = existing.gallery || [];
+        updateCarDto.gallery = [...currentGallery, ...galleryUrls];
+      } catch (error) {
+        throw new BadRequestException('Failed to upload gallery images');
       }
     }
 

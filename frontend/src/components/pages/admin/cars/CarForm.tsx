@@ -27,8 +27,8 @@ const carSchema = z.object({
   hp: z.number().min(50, "HP must be reasonable (min 50)"),
   description: z.string().default(""),
   status: z.enum(["AVAILABLE", "RENTED", "MAINTENANCE"]),
-  pickupLocation: z.string().min(1, "Pickup location is required"),
-  dropoffLocation: z.string().min(1, "Dropoff location is required"),
+  pickupLocation: z.array(z.string()).min(1, "At least one pickup location is required"),
+  dropoffLocation: z.array(z.string()).min(1, "At least one dropoff location is required"),
   passengers: z.number().min(1, "At least 1 passenger"),
   freeCancellation: z.boolean().default(true),
   fuelType: z.string().default("Petrol"),
@@ -46,8 +46,8 @@ type CarFormValues = {
   hp: number;
   description: string;
   status: "AVAILABLE" | "RENTED" | "MAINTENANCE";
-  pickupLocation: string;
-  dropoffLocation: string;
+  pickupLocation: string[];
+  dropoffLocation: string[];
   passengers: number;
   freeCancellation: boolean;
   fuelType: string;
@@ -64,12 +64,15 @@ type Props = {
 export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(editingCar?.imageUrl || "");
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>(editingCar?.gallery || []);
 
   const {
     register,
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<CarFormValues>({
     resolver: zodResolver(carSchema) as any,
@@ -83,8 +86,8 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
       hp: editingCar.hp,
       description: editingCar.description || "",
       status: editingCar.status,
-      pickupLocation: editingCar.pickupLocation || "Port Moresby Airport",
-      dropoffLocation: editingCar.dropoffLocation || "Port Moresby Airport",
+      pickupLocation: editingCar.pickupLocation || [],
+      dropoffLocation: editingCar.dropoffLocation || [],
       passengers: editingCar.passengers || 4,
       freeCancellation: editingCar.freeCancellation ?? true,
       fuelType: editingCar.fuelType || "Petrol",
@@ -100,8 +103,8 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
       hp: 150,
       description: "",
       status: "AVAILABLE",
-      pickupLocation: "Port Moresby Airport",
-      dropoffLocation: "Port Moresby Airport",
+      pickupLocation: [],
+      dropoffLocation: [],
       passengers: 4,
       freeCancellation: true,
       fuelType: "Petrol",
@@ -140,6 +143,32 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
     }
   };
 
+  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setGalleryFiles(prev => [...prev, ...files]);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setGalleryPreviews(prev => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  };
+
+  const removeGalleryImage = (index: number) => {
+    const existingCount = editingCar?.gallery?.length || 0;
+    if (index < existingCount) {
+      // Deleting an existing image URL
+      setGalleryPreviews(prev => prev.filter((_, i) => i !== index));
+    } else {
+      // Deleting a newly added file
+      setGalleryPreviews(prev => prev.filter((_, i) => i !== index));
+      setGalleryFiles(prev => prev.filter((_, i) => i !== (index - existingCount)));
+    }
+  };
+
   const onSubmit = async (data: CarFormValues) => {
     if (!editingCar && !imageFile) {
       toast.error("Please upload an image");
@@ -150,12 +179,23 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
       const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          formData.append(key, value.toString());
+          if (Array.isArray(value)) {
+            // Send as comma-separated string for backend Transform
+            formData.append(key, value.join(','));
+          } else {
+            formData.append(key, value.toString());
+          }
         }
       });
 
       if (imageFile) {
         formData.append("image", imageFile);
+      }
+
+      if (galleryFiles.length > 0) {
+        galleryFiles.forEach(file => {
+          formData.append("gallery", file);
+        });
       }
 
       if (editingCar) {
@@ -187,7 +227,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
               brandOptions={brandOptions}
               categoryOptions={categoryOptions}
             />
-            <LocationSection register={register} />
+            <LocationSection control={control} errors={errors} />
           </div>
 
           {/* RIGHT COLUMN */}
@@ -210,6 +250,9 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
             <ImageUploadSection
               imagePreview={imagePreview}
               handleImageChange={handleImageChange}
+              galleryPreviews={galleryPreviews}
+              handleGalleryChange={handleGalleryChange}
+              removeGalleryImage={removeGalleryImage}
             />
           </div>
         </div>

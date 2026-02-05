@@ -1,47 +1,13 @@
 "use client";
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Loader2 } from 'lucide-react';
-import styles from '../../../app/(public)/(home)/page.module.css';
-import CarCard from '../../ui/CarCard';
-import api from '@/lib/api';
-
-interface CarData {
-    id: string;
-    brand: string;
-    name: string;
-    type: string;
-    transmission: string;
-    fuelCapacity: number;
-    pricePerDay: number;
-    hp: number;
-    imageUrl?: string;
-    status: string;
-}
+import styles from '@/app/(public)/(home)/page.module.css';
+import CarCard from '@/components/ui/CarCard';
+import { useFeaturedCars } from '@/hooks/useFeaturedCars';
 
 export default function FeaturedCars() {
-    const [cars, setCars] = useState<CarData[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchCars = async () => {
-            try {
-                const res = await api.get('/car');
-                // Filter: Only display AVAILABLE cars
-                const availableCars = res.data
-                    .filter((car: CarData) => car.status === 'AVAILABLE')
-                    .slice(0, 6);
-                setCars(availableCars);
-            } catch (error) {
-                console.error("Failed to fetch featured cars:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCars();
-    }, []);
+    const { cars, loading } = useFeaturedCars(6);
 
     const mapCarToProps = (car: any) => {
         return {

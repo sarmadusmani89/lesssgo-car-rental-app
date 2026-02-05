@@ -45,14 +45,14 @@ model Car {
   status        CarStatus @default(AVAILABLE)
   
   // New Metadata Fields
-  pickupLocation   String?
-  dropoffLocation  String?
+  pickupLocation   String[]  @default([])
+  dropoffLocation  String[]  @default([])
   passengers       Int       @default(4)
   freeCancellation Boolean   @default(true) // Default 48h policy
   fuelType         String?   @default("Petrol")
   airConditioner   Boolean   @default(true)
   gps              Boolean   @default(true)
-
+  gallery       String[]  @default([])
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   bookings      Booking[]
@@ -133,7 +133,7 @@ model SystemSettings {
   id                String   @id @default(uuid())
   siteName          String   @default("Lesssgo Car Rental")
   maintenanceMode   Boolean  @default(false)
-  currency          String   @default("USD")
+  currency          String   @default("AUD")
   passwordMinLength Int      @default(8)
   updatedAt         DateTime @updatedAt
 }

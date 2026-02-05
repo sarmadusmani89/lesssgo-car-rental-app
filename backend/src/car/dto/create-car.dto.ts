@@ -43,12 +43,18 @@ export class CreateCarDto {
   status?: CarStatus;
 
   @IsOptional()
-  @IsString()
-  pickupLocation?: string;
+  @Transform(({ value }) => {
+    if (typeof value === 'string') return value.split(',').map(s => s.trim()).filter(Boolean);
+    return value;
+  })
+  pickupLocation?: string[];
 
   @IsOptional()
-  @IsString()
-  dropoffLocation?: string;
+  @Transform(({ value }) => {
+    if (typeof value === 'string') return value.split(',').map(s => s.trim()).filter(Boolean);
+    return value;
+  })
+  dropoffLocation?: string[];
 
   @IsOptional()
   @IsInt()
@@ -64,6 +70,14 @@ export class CreateCarDto {
   @IsOptional()
   @IsString()
   fuelType?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string' && value.includes(',')) return value.split(',').map(s => s.trim()).filter(Boolean);
+    if (typeof value === 'string') return [value];
+    return value;
+  })
+  gallery?: string[];
 
   @IsOptional()
   @IsBoolean()

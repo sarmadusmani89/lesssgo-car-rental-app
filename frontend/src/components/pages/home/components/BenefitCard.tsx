@@ -1,4 +1,4 @@
-import styles from '../../../app/(public)/(home)/page.module.css';
+import styles from '@/app/(public)/(home)/page.module.css';
 import { LucideIcon } from 'lucide-react';
 
 interface BenefitCardProps {

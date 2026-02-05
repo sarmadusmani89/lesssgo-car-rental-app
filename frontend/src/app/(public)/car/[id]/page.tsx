@@ -24,6 +24,10 @@ interface Car {
     fuelCapacity: number;
     hp: number;
     description: string;
+    pickupLocation?: string[];
+    dropoffLocation?: string[];
+    gallery?: string[];
+    passengers?: number;
 }
 
 function CarContent() {
@@ -129,7 +133,7 @@ function CarContent() {
                     {/* Left Column: Focus on Content (8 cols) */}
                     <div className="lg:col-span-8 space-y-16">
                         <section className="bg-white p-2 rounded-[3rem] shadow-2xl shadow-gray-200/40 border border-white overflow-hidden">
-                            <ImageGalleryWithLightbox images={car.imageUrl ? [car.imageUrl] : []} />
+                            <ImageGalleryWithLightbox images={[car.imageUrl, ...(car.gallery || [])].filter(Boolean)} />
                         </section>
 
                         <section className="space-y-8">
@@ -138,7 +142,7 @@ function CarContent() {
                                 <div className="h-[2px] flex-1 bg-gradient-to-r from-gray-100 to-transparent" />
                             </div>
                             <CarSpecifications specs={{
-                                seats: 5,
+                                seats: car.passengers || 5,
                                 type: car.type,
                                 fuel: `${car.fuelCapacity}L`,
                                 transmission: car.transmission,
@@ -159,6 +163,36 @@ function CarContent() {
                                     {car.description || `Experience pure performance and luxury with the ${car.brand} ${car.name}. This ${car.type} vehicle combines state-of-the-art engineering with unparalleled comfort for an unforgettable driving journey.`}
                                 </p>
                             </div>
+
+                            {/* Locations section */}
+                            {(car.pickupLocation?.length || car.dropoffLocation?.length) ? (
+                                <div className="mt-8 pt-8 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {car.pickupLocation?.length ? (
+                                        <div>
+                                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-3 flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-600" /> Pickup Points
+                                            </h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                {car.pickupLocation.map(loc => (
+                                                    <span key={loc} className="px-3 py-1 bg-gray-50 text-gray-600 text-[10px] font-bold rounded-lg border border-gray-100">{loc}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : null}
+                                    {car.dropoffLocation?.length ? (
+                                        <div>
+                                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600 mb-3 flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-red-600" /> Dropoff Points
+                                            </h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                {car.dropoffLocation.map(loc => (
+                                                    <span key={loc} className="px-3 py-1 bg-gray-50 text-gray-600 text-[10px] font-bold rounded-lg border border-gray-100">{loc}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : null}
+                                </div>
+                            ) : null}
                         </section>
 
                         <section className="space-y-8">

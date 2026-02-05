@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, UseGuards, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, UseGuards, Query, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
+import { FileInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Role } from '@prisma/client';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -15,13 +15,17 @@ export class CarController {
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'image', maxCount: 1 },
+    { name: 'gallery', maxCount: 10 },
+  ]))
   create(
     @Body() createCarDto: CreateCarDto,
-    @UploadedFile() file: Express.Multer.File
+    @UploadedFiles() files: { image?: Express.Multer.File[], gallery?: Express.Multer.File[] }
   ) {
-    return this.carService.create(createCarDto, file);
-
+    const mainImage = files.image?.[0];
+    const galleryItems = files.gallery;
+    return this.carService.create(createCarDto, mainImage!, galleryItems);
   }
 
   @Get()
@@ -54,14 +58,18 @@ export class CarController {
   @Put(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'image', maxCount: 1 },
+    { name: 'gallery', maxCount: 10 },
+  ]))
   update(
     @Param('id') id: string,
     @Body() updateCarDto: UpdateCarDto,
-    @UploadedFile() file?: Express.Multer.File
+    @UploadedFiles() files: { image?: Express.Multer.File[], gallery?: Express.Multer.File[] }
   ) {
-    return this.carService.update(id, updateCarDto, file);
-
+    const mainImage = files.image?.[0];
+    const galleryItems = files.gallery;
+    return this.carService.update(id, updateCarDto, mainImage, galleryItems);
   }
 
   @Delete(':id')
