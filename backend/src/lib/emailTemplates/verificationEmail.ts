@@ -12,7 +12,7 @@ export const generateVerificationEmail = (verificationLink: string) => {
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td align="center" style="padding: 10px 0 30px;">
-          <a href="${verificationLink}" style="display: inline-block; padding: 16px 40px; background: #0f172a; color: #ffffff; text-decoration: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);">
+          <a href=${verificationLink} style="display: inline-block; padding: 16px 40px; background: #0f172a; color: #ffffff; text-decoration: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);">
             Verify Email Address
           </a>
         </td>

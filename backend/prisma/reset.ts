@@ -22,6 +22,7 @@ async function main() {
     try {
         // Delete dependent data first
         await safeDelete(prisma.review, 'reviews');
+        await safeDelete(prisma.payment, 'payments');
         await safeDelete(prisma.booking, 'bookings');
 
         // Delete users
