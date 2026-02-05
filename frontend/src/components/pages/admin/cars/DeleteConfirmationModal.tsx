@@ -1,6 +1,6 @@
-"use client";
-
+import { createPortal } from "react-dom";
 import { AlertTriangle, Trash2, X } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type Props = {
     isOpen: boolean;
@@ -12,10 +12,17 @@ type Props = {
 };
 
 export default function DeleteConfirmationModal({ isOpen, onClose, onConfirm, carBrand, carName, isDeleting }: Props) {
-    if (!isOpen) return null;
+    const [mounted, setMounted] = useState(false);
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
+    if (!isOpen || !mounted) return null;
+
+    return createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in cursor-pointer"
@@ -67,6 +74,7 @@ export default function DeleteConfirmationModal({ isOpen, onClose, onConfirm, ca
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

@@ -14,6 +14,7 @@ interface Car {
     fuelCapacity: number;
     status: string;
     hp?: number;
+    slug?: string;
 }
 
 interface CarsGridProps {
@@ -66,6 +67,7 @@ export default function CarsGrid({ cars, loading }: CarsGridProps) {
                     monthlyPrice={car.pricePerDay * 25}
                     status={car.status}
                     hp={car.hp || 0}
+                    slug={car.slug}
                 />
             ))}
         </div>

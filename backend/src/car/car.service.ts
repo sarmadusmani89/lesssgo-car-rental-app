@@ -11,10 +11,25 @@ export class CarService {
     private readonly cloudinary: CloudinaryService
   ) { }
 
+  private generateSlug(name: string): string {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
   async create(createCarDto: CreateCarDto, file: Express.Multer.File, galleryFiles?: Express.Multer.File[]) {
     if (!file) {
       throw new BadRequestException('Image is required');
     }
+
+    let slug = this.generateSlug(createCarDto.name);
+    // basic uniqueness check or allow prisma to throw
+    // Ideally we append a suffix if it exists, but for now we'll rely on the unique constraint or simple retry with timestamp if needed.
+    // For a rental fleet, names like "Land Cruiser 1", "Land Cruiser 2" are common if they are distinct cars.
+    // Or we just use the name as is.
 
     try {
       const upload = await this.cloudinary.uploadFile(file);
@@ -31,7 +46,10 @@ export class CarService {
     }
 
     return this.prisma.car.create({
-      data: createCarDto,
+      data: {
+        ...createCarDto,
+        slug,
+      },
     });
   }
 
@@ -88,8 +106,15 @@ export class CarService {
     });
   }
 
-  async findOne(id: string) {
-    const car = await this.prisma.car.findUnique({ where: { id } });
+  async findOne(idOrSlug: string) {
+    const car = await this.prisma.car.findFirst({
+      where: {
+        OR: [
+          { id: idOrSlug },
+          { slug: idOrSlug }
+        ]
+      }
+    });
     if (!car) throw new NotFoundException('Car not found');
     return car;
   }

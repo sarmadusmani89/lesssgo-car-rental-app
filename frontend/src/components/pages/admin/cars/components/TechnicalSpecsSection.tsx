@@ -25,7 +25,7 @@ export default function TechnicalSpecsSection({
 
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Transmission</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Transmission <span className="text-red-500">*</span></label>
                     <CustomSelect
                         options={transmissionOptions}
                         value={currentTransmission}
@@ -34,7 +34,7 @@ export default function TechnicalSpecsSection({
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Passengers</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Passengers <span className="text-red-500">*</span></label>
                     <div className="relative">
                         <Users className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         <input
@@ -42,26 +42,38 @@ export default function TechnicalSpecsSection({
                             {...register("passengers", { valueAsNumber: true })}
                             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
                         />
+                        {errors.passengers && <p className="text-red-500 text-xs mt-1 font-bold">{errors.passengers.message as string}</p>}
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Price / Day ($)</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Price / Day ($) <span className="text-red-500">*</span></label>
                     <input
                         type="number"
                         {...register("pricePerDay", { valueAsNumber: true })}
                         className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition font-bold text-blue-600"
                     />
+                    {errors.pricePerDay && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pricePerDay.message as string}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Fuel Cap. (L)</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Fuel (L) <span className="text-red-500">*</span></label>
                     <input
                         type="number"
                         {...register("fuelCapacity", { valueAsNumber: true })}
                         className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
                     />
+                    {errors.fuelCapacity && <p className="text-red-500 text-xs mt-1 font-bold">{errors.fuelCapacity.message as string}</p>}
+                </div>
+                <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Horsepower <span className="text-red-500">*</span></label>
+                    <input
+                        type="number"
+                        {...register("hp", { valueAsNumber: true })}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    />
+                    {errors.hp && <p className="text-red-500 text-xs mt-1 font-bold">{errors.hp.message as string}</p>}
                 </div>
             </div>
         </div>

@@ -12,8 +12,9 @@ import {
     Calendar,
     Loader2,
     AlertCircle,
-    ChevronDown
+    X
 } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -116,19 +117,19 @@ export default function AdminCars() {
                 />
             </div>
 
-            {showAvailability && selectedCar && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {showAvailability && selectedCar && typeof document !== 'undefined' && createPortal(
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowAvailability(false)} />
-                    <div className="relative bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl p-6">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-bold font-outfit">Availability: {selectedCar.brand} {selectedCar.name}</h2>
-                            <button onClick={() => setShowAvailability(false)} className="p-2 hover:bg-gray-100 rounded-full transition">
-                                <ChevronDown size={24} className="rotate-90 pointer-events-none" />
+                    <div className="relative bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl p-2">
+                        <div className="float-right p-4 relative z-10">
+                            <button onClick={() => setShowAvailability(false)} className="p-2 hover:bg-gray-100 rounded-full transition text-gray-400 hover:text-gray-900">
+                                <X size={24} />
                             </button>
                         </div>
                         <AvailabilityCalendar carId={selectedCar.id} />
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {carToDelete && (

@@ -26,6 +26,7 @@ export default function FeaturedCars() {
             hasAC: car.airConditioner,
             hasGPS: car.gps,
             freeCancellation: car.freeCancellation,
+            slug: car.slug,
         };
     };
 

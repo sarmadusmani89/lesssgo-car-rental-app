@@ -4,11 +4,8 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useParams } from 'next/navigation';
 import ImageGalleryWithLightbox from '@/components/pages/car/ImageGalleryWithLightbox';
 import CarSpecifications from '@/components/pages/car/CarSpecification';
-import PricingDisplay from '@/components/pages/car/PricingDisplay';
-import RealTimeAvailabilityCheck from '@/components/pages/car/RealtimeAvailabilityCheck';
-import TotalCostCalculation from '@/components/pages/car/TotalCostCalculation';
-import BookNowCTAButton from '@/components/pages/car/BookNowCtaButton';
 import UnifiedBookingCalendar from '@/components/pages/car/UnifiedBookingCalendar';
+import BookingForm from '@/components/pages/car/BookingForm';
 import api from '@/lib/api';
 import { toast } from "sonner";
 import { Loader2, ShieldCheck, Zap, Info } from 'lucide-react';
@@ -160,7 +157,7 @@ function CarContent() {
                                     <h3 className="text-xl md:text-2xl font-black font-outfit tracking-tight uppercase">Vehicle Description</h3>
                                 </div>
                                 <p className="text-gray-600 leading-relaxed text-base md:text-lg font-medium">
-                                    {car.description || `Experience pure performance and luxury with the ${car.brand} ${car.name}. This ${car.type} vehicle combines state-of-the-art engineering with unparalleled comfort for an unforgettable driving journey.`}
+                                    {car.description || 'N/A'}
                                 </p>
                             </div>
 
@@ -212,50 +209,12 @@ function CarContent() {
 
                     {/* Right Column: Dynamic Summary (4 cols) */}
                     <div className="lg:col-span-4 lg:sticky lg:top-28 h-fit space-y-10">
-                        <article className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-2xl shadow-blue-100/30 border border-blue-50/50 relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-3 bg-blue-600" />
-
-                            <h3 className="text-lg md:text-xl font-black text-gray-900 font-outfit mb-8 md:mb-10 tracking-tight uppercase flex items-center justify-between">
-                                Reservation Summary
-                                <ShieldCheck size={20} className="text-green-500" />
-                            </h3>
-
-                            <div className="space-y-8 md:space-y-10">
-                                <RealTimeAvailabilityCheck
-                                    carId={car.id}
-                                    startDate={dates.startDate}
-                                    endDate={dates.endDate}
-                                />
-
-                                <TotalCostCalculation
-                                    pricePerDay={car.pricePerDay}
-                                    startDate={dates.startDate}
-                                    endDate={dates.endDate}
-                                />
-
-                                <BookNowCTAButton
-                                    carId={car.id}
-                                    startDate={dates.startDate}
-                                    endDate={dates.endDate}
-                                    disabled={!dates.startDate || !dates.endDate}
-                                />
-                            </div>
-
-                            <div className="mt-8 md:mt-10 pt-8 md:pt-10 border-t border-gray-100 flex flex-col gap-6">
-                                <div className="flex items-center gap-4 text-gray-400">
-                                    <div className="w-10 h-10 rounded-2xl bg-green-50 text-green-500 flex items-center justify-center shrink-0">
-                                        <ShieldCheck size={20} />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] leading-tight">Elite Protection & Insurance Coverage</span>
-                                </div>
-                                <div className="flex items-center gap-4 text-gray-400">
-                                    <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                                        <Zap size={20} />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] leading-tight">24/7 Roadside Assistance Protocol</span>
-                                </div>
-                            </div>
-                        </article>
+                        <BookingForm
+                            car={car}
+                            defaultStartDate={dates.startDate}
+                            defaultEndDate={dates.endDate}
+                            onDatesChange={(start, end) => setDates({ startDate: start, endDate: end })}
+                        />
 
                         <div className="p-10 bg-gray-900 rounded-[3rem] text-white shadow-2xl shadow-gray-200 overflow-hidden relative group">
                             <div className="absolute bottom-0 right-0 w-48 h-48 bg-blue-600/20 rounded-full -mr-24 -mb-24 transition-transform duration-700 group-hover:scale-150" />
@@ -272,8 +231,8 @@ function CarContent() {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
 

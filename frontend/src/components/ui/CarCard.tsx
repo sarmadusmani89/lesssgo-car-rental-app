@@ -11,6 +11,7 @@ import styles from '@/app/(public)/(home)/page.module.css';
 
 interface CarCardProps {
     id: string;
+    slug?: string;
     name: string;
     brand: string;
     price: number;
@@ -28,7 +29,7 @@ interface CarCardProps {
 }
 
 export default function CarCard({
-    id, name, brand, price, monthlyPrice, status, hp, fuel, transmission, image,
+    id, slug, name, brand, price, monthlyPrice, status, hp, fuel, transmission, image,
     passengers, hasAC, hasGPS, freeCancellation
 }: CarCardProps) {
     const currency = useSelector((state: RootState) => state.ui.currency);
@@ -106,7 +107,7 @@ export default function CarCard({
                             <span className={styles.priceMonthly}>{formatPrice(monthlyPrice, currency)} / month</span>
                         )}
                     </div>
-                    <Link href={`/car/${id}`} className={styles.btnDetails}>
+                    <Link href={`/car/${slug || id}`} className={styles.btnDetails}>
                         Details <ArrowRight size={18} />
                     </Link>
                 </div>

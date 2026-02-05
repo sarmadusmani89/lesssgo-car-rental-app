@@ -17,7 +17,7 @@ export default function LocationSection({ control, errors }: Props) {
             <div className="grid grid-cols-1 space-y-4">
                 <div>
                     <label className="flex items-center gap-2 text-xs font-bold text-gray-700 mb-1.5 uppercase">
-                        <MapPin size={14} className="text-blue-500" /> Pickup Locations
+                        <MapPin size={14} className="text-blue-500" /> Pickup Locations <span className="text-red-500">*</span>
                     </label>
                     <Controller
                         name="pickupLocation"
@@ -37,7 +37,7 @@ export default function LocationSection({ control, errors }: Props) {
                 </div>
                 <div>
                     <label className="flex items-center gap-2 text-xs font-bold text-gray-700 mb-1.5 uppercase">
-                        <MapPin size={14} className="text-red-500" /> Dropoff Locations
+                        <MapPin size={14} className="text-red-500" /> Dropoff Locations <span className="text-red-500">*</span>
                     </label>
                     <Controller
                         name="dropoffLocation"
