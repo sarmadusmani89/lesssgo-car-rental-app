@@ -132,6 +132,7 @@ model Review {
 model SystemSettings {
   id                String   @id @default(uuid())
   siteName          String   @default("Lesssgo Car Rental")
+  adminEmail        String   @default("sarmadusmani598@gmail.com")
   maintenanceMode   Boolean  @default(false)
   currency          String   @default("AUD")
   passwordMinLength Int      @default(8)

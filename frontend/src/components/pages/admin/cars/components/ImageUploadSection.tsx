@@ -49,6 +49,7 @@ export default function ImageUploadSection({
                         <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-gray-200 group">
                             <img src={prev} alt={`Gallery ${index}`} className="w-full h-full object-cover" />
                             <button
+                                type="button"
                                 onClick={() => removeGalleryImage(index)}
                                 className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition shadow-md"
                             >

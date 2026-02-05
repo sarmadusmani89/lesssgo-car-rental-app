@@ -1,20 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { EmailService } from '../email/email.service';
 import { CreateContactDto } from './dto/create-contact.dto';
+import { SettingsService } from '../settings/settings.service';
 
 @Injectable()
 export class ContactService {
-    constructor(private readonly emailService: EmailService) { }
+    constructor(
+        private readonly emailService: EmailService,
+        private readonly settingsService: SettingsService
+    ) { }
 
     async sendContactMessage(createContactDto: CreateContactDto) {
         const { name, email, subject, message } = createContactDto;
+        const settings = await this.settingsService.getSettings();
 
         // Import template dynamically to avoid circular issues if any, or just direct import
         const { contactFormTemplate } = await import('../lib/emailTemplates/contactForm');
 
         // Send email to admin
         await this.emailService.sendEmail(
-            'sarmadusmani598@gmail.com', // Admin Email
+            settings.adminEmail || 'sarmadusmani598@gmail.com', // Configurable Admin Email
             `Contact Form: ${subject}`,
             contactFormTemplate({ name, email, subject, message })
         );

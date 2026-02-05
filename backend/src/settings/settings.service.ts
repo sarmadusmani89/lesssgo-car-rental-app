@@ -14,8 +14,9 @@ export class SettingsService {
             settings = await this.prisma.systemSettings.create({
                 data: {
                     siteName: 'Lesssgo Car Rental',
+                    adminEmail: 'sarmadusmani598@gmail.com',
                     maintenanceMode: false,
-                    currency: 'USD',
+                    currency: 'AUD',
                 },
             });
         }

@@ -14,12 +14,14 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         siteName: '',
+        adminEmail: '',
     });
 
     useEffect(() => {
         if (initialData) {
             setFormData({
                 siteName: initialData.siteName || '',
+                adminEmail: initialData.adminEmail || '',
             });
         }
     }, [initialData]);
@@ -54,6 +56,23 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                     placeholder="e.g. Lesssgo Car Rental"
                     required
                 />
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Admin Notification Email
+                </label>
+                <input
+                    type="email"
+                    value={formData.adminEmail}
+                    onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="e.g. admin@example.com"
+                    required
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                    Systems notifications and contact form messages will be sent to this address.
+                </p>
             </div>
 
 
