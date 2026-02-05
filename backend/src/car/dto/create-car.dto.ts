@@ -43,5 +43,38 @@ export class CreateCarDto {
   status?: CarStatus;
 
   @IsOptional()
+  @IsString()
+  pickupLocation?: string;
+
+  @IsOptional()
+  @IsString()
+  dropoffLocation?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  passengers?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
+  freeCancellation?: boolean;
+
+  @IsOptional()
+  @IsString()
+  fuelType?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
+  airConditioner?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true' || value === true)
+  gps?: boolean;
+
+  @IsOptional()
   image?: any;
 }

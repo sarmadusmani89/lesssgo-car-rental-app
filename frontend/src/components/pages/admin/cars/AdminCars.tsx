@@ -1,28 +1,40 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Plus, Search, Loader2, X } from "lucide-react";
-import { Car } from "./type";
-import CarTable from "./CarTable";
-import CarForm from "./CarForm";
-import api from "@/lib/api";
-import { toast } from "sonner";
+import { useState, useEffect } from 'react';
+import {
+    Plus,
+    Search,
+    Filter,
+    MoreVertical,
+    Edit2,
+    Trash2,
+    Eye,
+    Calendar,
+    Loader2,
+    AlertCircle,
+    ChevronDown
+} from 'lucide-react';
+import api from '@/lib/api';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 import AvailabilityCalendar from "@/components/pages/admin/dashboard/AvailabilityCalendar";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
+import Image from 'next/image';
+import { Car } from './type';
+
+import AdminCarsHeader from './components/AdminCarsHeader';
+import AdminCarSearch from './components/AdminCarSearch';
+import AdminCarTable from './components/AdminCarTable';
 
 export default function AdminCars() {
     const [cars, setCars] = useState<Car[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
-    const [showForm, setShowForm] = useState(false);
-    const [editingCar, setEditingCar] = useState<Car | null>(null);
     const [showAvailability, setShowAvailability] = useState(false);
     const [selectedCar, setSelectedCar] = useState<Car | null>(null);
-
-    // Delete Modal State
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [carToDelete, setCarToDelete] = useState<{ id: string; name: string; brand: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const router = useRouter();
 
     const fetchCars = async () => {
         try {
@@ -31,7 +43,7 @@ export default function AdminCars() {
             setCars(res.data);
         } catch (error) {
             console.error("Failed to fetch cars:", error);
-            toast.error("Failed to load cars");
+            toast.error('Failed to fetch cars');
         } finally {
             setLoading(false);
         }
@@ -41,162 +53,89 @@ export default function AdminCars() {
         fetchCars();
     }, []);
 
-    const filteredCars = cars.filter(
-        (v) =>
-            v.name.toLowerCase().includes(search.toLowerCase()) ||
-            v.brand.toLowerCase().includes(search.toLowerCase()) ||
-            v.type.toLowerCase().includes(search.toLowerCase())
-    );
-
-    const handleDeleteClick = (id: string) => {
-        const car = cars.find(c => c.id === id);
-        if (car) {
-            setCarToDelete({ id: car.id, name: car.name, brand: car.brand });
-            setDeleteModalOpen(true);
-        }
-    };
-
-    const confirmDelete = async () => {
+    const handleDelete = async () => {
         if (!carToDelete) return;
-
+        setIsDeleting(true);
         try {
-            setIsDeleting(true);
             await api.delete(`/car/${carToDelete.id}`);
-            toast.success("Car deleted successfully");
-            setDeleteModalOpen(false);
-            setCarToDelete(null);
+            toast.success('Car deleted successfully');
             fetchCars();
-        } catch (error) {
-            toast.error("Failed to delete car");
+            setCarToDelete(null);
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to delete car');
         } finally {
             setIsDeleting(false);
         }
     };
 
-    const handleToggleStatus = async (car: Car) => {
-        const newStatus = car.status === "AVAILABLE" ? "MAINTENANCE" : "AVAILABLE";
+    const toggleStatus = async (id: string, currentStatus: string) => {
+        const newStatus = currentStatus === 'AVAILABLE' ? 'MAINTENANCE' : 'AVAILABLE';
         try {
-            await api.put(`/car/${car.id}`, { status: newStatus });
-            toast.success(`Car marked as ${newStatus.toLowerCase()}`);
+            await api.put(`/car/${id}`, { status: newStatus });
+            toast.success(`Car status updated to ${newStatus}`);
             fetchCars();
         } catch (error) {
-            toast.error("Failed to update status");
+            toast.error('Failed to update car status');
         }
     };
 
-    const openAddForm = () => {
-        setEditingCar(null);
-        setShowForm(true);
-    };
+    const filteredCars = cars.filter(car =>
+        car.name.toLowerCase().includes(search.toLowerCase()) ||
+        car.brand.toLowerCase().includes(search.toLowerCase())
+    );
 
-    const openEditForm = (car: Car) => {
-        setEditingCar(car);
-        setShowForm(true);
-    };
-
-    const openAvailability = (car: Car) => {
-        setSelectedCar(car);
-        setShowAvailability(true);
-    };
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px]">
+                <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
+                <p className="text-gray-500 font-medium font-outfit">Loading fleet inventory...</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="p-6">
-            {/* HEADER */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 font-outfit">Car Inventory</h1>
-                    <p className="text-gray-500 mt-1">Manage your fleet and availability</p>
-                </div>
+        <div className="space-y-6 animate-in fade-in duration-500">
+            <AdminCarsHeader onAddClick={() => router.push('/admin/cars/add')} />
 
-                <button
-                    onClick={openAddForm}
-                    className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-200 font-medium"
-                >
-                    <Plus size={20} />
-                    Add New Car
-                </button>
-            </div>
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <AdminCarSearch search={search} onSearchChange={setSearch} />
 
-            {/* SEARCH & FILTERS */}
-            <div className="relative mb-6">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                    type="text"
-                    placeholder="Search by name, brand or type..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
-                />
-            </div>
-
-            {/* CONTENT */}
-            {loading ? (
-                <div className="flex flex-col items-center justify-center py-20">
-                    <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
-                    <p className="text-gray-500 font-medium font-outfit">Loading your fleet...</p>
-                </div>
-            ) : (
-                <CarTable
+                <AdminCarTable
                     cars={filteredCars}
-                    onDelete={handleDeleteClick}
-                    onToggleStatus={handleToggleStatus}
-                    onEdit={openEditForm}
-                    onViewAvailability={openAvailability}
+                    onToggleStatus={toggleStatus}
+                    onCheckAvailability={(car) => {
+                        setSelectedCar(car);
+                        setShowAvailability(true);
+                    }}
+                    onEdit={(id) => router.push(`/admin/cars/edit/${id}`)}
+                    onDelete={setCarToDelete}
                 />
-            )}
+            </div>
 
-            {/* FORM MODAL */}
-            {showForm && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div
-                        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-                        onClick={() => setShowForm(false)}
-                    />
-                    <div className="relative bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-                        <CarForm
-                            onSuccess={() => {
-                                setShowForm(false);
-                                fetchCars();
-                            }}
-                            onCancel={() => setShowForm(false)}
-                            editingCar={editingCar}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* AVAILABILITY MODAL */}
             {showAvailability && selectedCar && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div
-                        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-                        onClick={() => setShowAvailability(false)}
-                    />
-                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-300">
-                        <div className="absolute top-6 right-6 z-10">
-                            <button
-                                onClick={() => setShowAvailability(false)}
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-900 transition"
-                            >
-                                <X size={18} />
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowAvailability(false)} />
+                    <div className="relative bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl p-6">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-xl font-bold font-outfit">Availability: {selectedCar.brand} {selectedCar.name}</h2>
+                            <button onClick={() => setShowAvailability(false)} className="p-2 hover:bg-gray-100 rounded-full transition">
+                                <ChevronDown size={24} className="rotate-90 pointer-events-none" />
                             </button>
                         </div>
-                        <AvailabilityCalendar
-                            carId={selectedCar.id}
-                            carName={selectedCar.name}
-                        />
+                        <AvailabilityCalendar carId={selectedCar.id} />
                     </div>
                 </div>
             )}
 
-            {/* DELETE CONFIRMATION MODAL */}
-            <DeleteConfirmationModal
-                isOpen={deleteModalOpen}
-                onClose={() => setDeleteModalOpen(false)}
-                onConfirm={confirmDelete}
-                carName={carToDelete?.name || ""}
-                isDeleting={isDeleting}
-            />
+            {carToDelete && (
+                <DeleteConfirmationModal
+                    isOpen={true}
+                    onClose={() => setCarToDelete(null)}
+                    onConfirm={handleDelete}
+                    carName={`${carToDelete.brand} ${carToDelete.name}`}
+                    isDeleting={isDeleting}
+                />
+            )}
         </div>
     );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { Calendar, Settings, User } from 'lucide-react';
+import { Calendar, Settings, User, LayoutDashboard, Heart, CreditCard, LifeBuoy } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface UserLayoutProps {
@@ -37,8 +37,12 @@ export default function UserLayout({ children }: UserLayoutProps) {
       topbarTitle="User Dashboard"
       userName={userName}
       links={[
+        { name: 'Overview', href: '/dashboard', icon: <LayoutDashboard size={20} /> },
         { name: 'Profile', href: '/dashboard/profile', icon: <User size={20} /> },
         { name: 'My Bookings', href: '/dashboard/bookings', icon: <Calendar size={20} /> },
+        { name: 'Wishlist', href: '/dashboard/wishlist', icon: <Heart size={20} /> },
+        { name: 'Payments', href: '/dashboard/payments', icon: <CreditCard size={20} /> },
+        { name: 'Support', href: '/dashboard/support', icon: <LifeBuoy size={20} /> },
       ]}
     >
       {children}

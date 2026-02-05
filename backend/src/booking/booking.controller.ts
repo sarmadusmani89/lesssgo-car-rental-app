@@ -51,10 +51,17 @@ export class BookingController {
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.bookingService.remove(id);
+  }
+
+  @Patch(':id/confirm-payment')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  confirmPayment(@Param('id') id: string) {
+    return this.bookingService.confirmPayment(id);
   }
 
   @Get('user/:userId')

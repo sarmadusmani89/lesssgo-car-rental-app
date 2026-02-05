@@ -147,6 +147,54 @@ export class BookingService {
     });
   }
 
+  async confirmPayment(id: string) {
+    const booking = await this.findOne(id);
+
+    // Update booking payment status
+    const updatedBooking = await this.prisma.booking.update({
+      where: { id },
+      data: {
+        paymentStatus: 'PAID',
+        status: 'CONFIRMED'
+      },
+      include: { car: true }
+    });
+
+    // Also update associated payment records
+    await this.prisma.payment.updateMany({
+      where: { bookingId: id },
+      data: { status: 'PAID' }
+    });
+
+    // Send confirmation email if it was previously PENDING
+    try {
+      const { customerName, customerEmail, car, startDate, endDate, totalAmount, paymentMethod } = updatedBooking;
+      const start = new Date(startDate).toLocaleDateString();
+      const end = new Date(endDate).toLocaleDateString();
+
+      const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
+
+      const userHtml = bookingConfirmationTemplate({
+        customerName,
+        bookingId: updatedBooking.id,
+        brand: car.brand,
+        vehicleName: car.name,
+        startDate: start,
+        endDate: end,
+        totalAmount,
+        paymentMethod,
+        isConfirmed: true,
+      });
+
+      const { sendEmail } = await import('../lib/sendEmail');
+      await sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml);
+    } catch (err) {
+      console.error('Failed to send payment confirmation email:', err);
+    }
+
+    return updatedBooking;
+  }
+
   async remove(id: string) {
     await this.findOne(id);
     return this.prisma.booking.delete({ where: { id } });

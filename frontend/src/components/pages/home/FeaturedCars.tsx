@@ -43,19 +43,23 @@ export default function FeaturedCars() {
         fetchCars();
     }, []);
 
-    const mapCarToProps = (car: CarData) => {
+    const mapCarToProps = (car: any) => {
         return {
             id: car.id,
             brand: car.brand,
             name: car.name,
-            price: car.pricePerDay.toString(),
-            monthly: (car.pricePerDay * 30).toLocaleString('en-US', { maximumFractionDigits: 0 }),
-            image: car.imageUrl || '/images/placeholder_car.png',
+            price: car.pricePerDay,
+            monthlyPrice: car.pricePerDay * 30,
+            image: car.imageUrl || '/images/cars/placeholder.jpg',
             status: car.status,
-            hp: `${car.hp} HP`,
+            hp: car.hp,
             type: car.type,
-            fuel: `${car.fuelCapacity}L`,
+            fuel: car.fuelType || 'Petrol',
             transmission: car.transmission || 'Auto',
+            passengers: car.passengers,
+            hasAC: car.airConditioner,
+            hasGPS: car.gps,
+            freeCancellation: car.freeCancellation,
         };
     };
 

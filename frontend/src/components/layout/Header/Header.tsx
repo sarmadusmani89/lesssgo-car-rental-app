@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Header.module.css';
-import { Car, User, Menu, X, LayoutDashboard } from 'lucide-react';
+import { Car, User, Menu, X, LayoutDashboard, Globe } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
+import { setCurrency } from '@/lib/store/slices/uiSlice';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,6 +15,12 @@ export default function Header() {
     const pathname = usePathname();
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    const dispatch = useDispatch();
+    const currency = useSelector((state: RootState) => state.ui.currency);
+
+    const handleCurrencyChange = (newCurrency: 'AUD' | 'PGK') => {
+        dispatch(setCurrency(newCurrency));
+    };
 
     useEffect(() => {
         // Check for user in localStorage
@@ -74,6 +83,19 @@ export default function Header() {
                 </nav>
 
                 <div className={styles.actions}>
+                    {/* Currency Selector */}
+                    <div className="hidden lg:flex items-center gap-2 mr-4 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                        <Globe size={16} className="text-gray-400" />
+                        <select
+                            value={currency}
+                            onChange={(e) => handleCurrencyChange(e.target.value as any)}
+                            className="bg-transparent text-sm font-semibold outline-none cursor-pointer text-gray-700"
+                        >
+                            <option value="AUD">AUD ($)</option>
+                            <option value="PGK">PGK (K)</option>
+                        </select>
+                    </div>
+
                     <div className={styles.desktopOnly}>
                         {user ? (
                             <Link href={dashboardLink} className="btn btn-primary flex items-center gap-2">
@@ -96,6 +118,23 @@ export default function Header() {
             {/* Mobile Menu Drawer */}
             <div className={`${styles.mobileDrawer} ${isMenuOpen ? styles.mobileDrawerOpen : ''}`}>
                 <nav className={styles.mobileNav}>
+                    <div className="px-4 py-4 border-b border-gray-100 mb-2">
+                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Currency</label>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => handleCurrencyChange('AUD')}
+                                className={`flex-1 py-2 rounded-lg text-sm font-bold border ${currency === 'AUD' ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-gray-50 border-gray-100 text-gray-500'}`}
+                            >
+                                AUD ($)
+                            </button>
+                            <button
+                                onClick={() => handleCurrencyChange('PGK')}
+                                className={`flex-1 py-2 rounded-lg text-sm font-bold border ${currency === 'PGK' ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-gray-50 border-gray-100 text-gray-500'}`}
+                            >
+                                PGK (K)
+                            </button>
+                        </div>
+                    </div>
                     <Link href="/cars" onClick={() => setIsMenuOpen(false)}>Find Cars</Link>
                     <Link href="/how-it-works" onClick={() => setIsMenuOpen(false)}>How it Works</Link>
                     <Link href="/about" onClick={() => setIsMenuOpen(false)}>About Us</Link>

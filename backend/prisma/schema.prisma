@@ -43,6 +43,16 @@ model Car {
   imageUrl      String?
   description   String?   @db.Text
   status        CarStatus @default(AVAILABLE)
+  
+  // New Metadata Fields
+  pickupLocation   String?
+  dropoffLocation  String?
+  passengers       Int       @default(4)
+  freeCancellation Boolean   @default(true) // Default 48h policy
+  fuelType         String?   @default("Petrol")
+  airConditioner   Boolean   @default(true)
+  gps              Boolean   @default(true)
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   bookings      Booking[]

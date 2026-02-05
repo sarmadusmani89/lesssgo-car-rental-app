@@ -12,6 +12,13 @@ export interface Car {
   imageUrl?: string;
   description?: string;
   status: CarStatus;
+  pickupLocation?: string;
+  dropoffLocation?: string;
+  passengers?: number;
+  freeCancellation?: boolean;
+  fuelType?: string;
+  airConditioner?: boolean;
+  gps?: boolean;
   createdAt: string;
   updatedAt: string;
 }

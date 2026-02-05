@@ -59,14 +59,13 @@ export default function CarsGrid({ cars, loading }: CarsGridProps) {
                     id={car.id}
                     brand={car.brand}
                     name={car.name}
+                    price={car.pricePerDay}
                     image={car.imageUrl || '/images/car-placeholder.jpg'}
-                    price={car.pricePerDay.toString()}
-                    type={car.type}
                     fuel={car.fuelCapacity.toString() + 'L'}
                     transmission={car.transmission}
-                    monthly={(car.pricePerDay * 25).toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                    monthlyPrice={car.pricePerDay * 25}
                     status={car.status}
-                    hp={car.hp?.toString() || '---'}
+                    hp={car.hp || 0}
                 />
             ))}
         </div>

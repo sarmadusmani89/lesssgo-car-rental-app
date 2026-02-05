@@ -10,7 +10,7 @@ export class DashboardService {
     const usersCount = await this.prisma.user.count();
     const bookingsCount = await this.prisma.booking.count();
 
-    const payments = await this.prisma.payment.findMany();
+    const payments = await this.prisma.payment.findMany({ where: { status: 'PAID' } });
     const revenueOverall = payments.reduce((acc: number, p: any) => acc + Number(p.amount), 0);
 
     const availableCars = await this.prisma.car.count({ where: { status: 'AVAILABLE' } });

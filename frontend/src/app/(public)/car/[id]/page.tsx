@@ -10,6 +10,7 @@ import TotalCostCalculation from '@/components/pages/car/TotalCostCalculation';
 import BookNowCTAButton from '@/components/pages/car/BookNowCtaButton';
 import UnifiedBookingCalendar from '@/components/pages/car/UnifiedBookingCalendar';
 import api from '@/lib/api';
+import { toast } from "sonner";
 import { Loader2, ShieldCheck, Zap, Info } from 'lucide-react';
 
 interface Car {
@@ -26,16 +27,15 @@ interface Car {
 }
 
 function CarContent() {
-    const searchParams = useSearchParams();
     const params = useParams();
 
-    const carId = (params?.id as string) || searchParams.get('id');
+    const carId = params.id as string;
 
     const [car, setCar] = useState<Car | null>(null);
     const [loading, setLoading] = useState(true);
     const [dates, setDates] = useState({
-        startDate: searchParams.get('startDate') || '',
-        endDate: searchParams.get('endDate') || ''
+        startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString().slice(0, 16),
+        endDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().slice(0, 16),
     });
 
     useEffect(() => {
@@ -43,11 +43,11 @@ function CarContent() {
 
         const fetchCar = async () => {
             try {
-                setLoading(true);
                 const res = await api.get(`/car/${carId}`);
                 setCar(res.data);
             } catch (error) {
                 console.error("Failed to fetch car:", error);
+                toast.error("Failed to load car details");
             } finally {
                 setLoading(false);
             }
@@ -58,7 +58,7 @@ function CarContent() {
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <Loader2 className="animate-spin text-blue-600" size={48} />
+            <Loader2 className="animate-spin text-blue-600" size={40} />
         </div>
     );
 
