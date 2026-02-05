@@ -3,71 +3,100 @@ version: '3.8'
 services:
   db:
     image: postgres:16-alpine
+    container_name: car_rental_db
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Sarmad@}
+      POSTGRES_USER: ${POSTGRES_USER:-carrental}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-carrental123}
       POSTGRES_DB: ${POSTGRES_DB:-car_rental}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
-      interval: 5s
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-carrental} -d ${POSTGRES_DB:-car_rental}" ]
+      interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - car_rental_net
+      - app_network
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    env_file:
-      - ./backend/.env
+    container_name: car_rental_backend
     restart: always
     ports:
       - "3001:3001"
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-Sarmad@}@db:5432/${POSTGRES_DB:-car_rental}?schema=public
-      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_here}
-      SMTP_HOST: ${SMTP_HOST:-smtp.mailtrap.io}
-      SMTP_PORT: ${SMTP_PORT:-2525}
-      SMTP_USER: ${SMTP_USER}
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
-      FRONTEND_URL: http://134.199.169.242
-      PORT: 3001
-    command: sh -c "npx prisma generate && npm run start:prod"
+      # SendGrid Configuration
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
+      SENDGRID_FROM_NAME: ${SENDGRID_FROM_NAME}
+
+      # Stripe Configuration
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_dummy}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_dummy}
+
+      # Cloudinary
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+
+      # Database Configuration
+      DATABASE_URL: postgresql://${POSTGRES_USER:-carrental}:${POSTGRES_PASSWORD:-carrental123}@db:5432/${POSTGRES_DB:->
+
+      # Application Configuration
+      PORT: ${PORT:-3001}
+      FRONTEND_URL: ${FRONTEND_URL:-https://lesssgopng.com}
+      NODE_ENV: ${NODE_ENV:-production}
+      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://lesssgopng.com}
+
+      # Optional SMTP fallback
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
     depends_on:
       db:
         condition: service_healthy
+    command: sh -c "npx prisma db push && npm run start:prod"
     networks:
-      - car_rental_net
+      - app_network
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    env_file:
-      - ./frontend/.env
+    container_name: car_rental_frontend
     restart: always
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: http://134.199.169.242:3001
-      # Internal URL for SSR (if needed by Next.js apps to talk to backend inside Docker)
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://lesssgopng.com/api}
       BACKEND_INTERNAL_URL: http://backend:3001
     depends_on:
       - backend
     networks:
-      - car_rental_net
+      - app_network
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: car_rental_mailhog
+    restart: always
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+    networks:
+      - app_network
 
 volumes:
   postgres_data:
 
 
 networks:
-  car_rental_net:
+  app_network:
     driver: bridge
