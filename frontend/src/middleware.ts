@@ -29,6 +29,7 @@ export function middleware(request: NextRequest) {
     }
 
     // 3. Prevent logged-in users from accessing Auth pages
+    // Only redirect if token is valid and PRESENT.
     if (pathname.startsWith('/auth/login') || pathname.startsWith('/auth/signup')) {
         if (token) {
             if (role?.toLowerCase() === 'admin') {
