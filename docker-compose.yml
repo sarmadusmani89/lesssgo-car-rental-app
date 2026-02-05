@@ -45,7 +45,7 @@ services:
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
 
       # Database Configuration
-      DATABASE_URL: postgresql://${POSTGRES_USER:-carrental}:${POSTGRES_PASSWORD:-carrental123}@db:5432/${POSTGRES_DB:->
+      DATABASE_URL: postgresql://${POSTGRES_USER:-carrental}:${POSTGRES_PASSWORD:-carrental123}@db:5432/${POSTGRES_DB:-car_rental}?schema=public
 
       # Application Configuration
       PORT: ${PORT:-3001}
@@ -54,9 +54,9 @@ services:
       JWT_SECRET: ${JWT_SECRET:-your_jwt_secret}
       CORS_ORIGINS: ${CORS_ORIGINS:-https://lesssgopng.com}
 
-      # Optional SMTP fallback
-      SMTP_HOST: ${SMTP_HOST:-}
-      SMTP_PORT: ${SMTP_PORT:-}
+      # SMTP Configuration (Defaulting to MailHog for local dev)
+      SMTP_HOST: ${SMTP_HOST:-mailhog}
+      SMTP_PORT: ${SMTP_PORT:-1025}
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
     depends_on:
@@ -76,7 +76,10 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: production
+      # Points to the public URL of the backend. For local docker, this usually needs to be localhost if accessed from host browser,
+      # or the domain name if deployed.
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://lesssgopng.com/api}
+      # Internal URL for SSR to talk to backend container directly
       BACKEND_INTERNAL_URL: http://backend:3001
     depends_on:
       - backend
@@ -88,7 +91,7 @@ services:
     container_name: car_rental_mailhog
     restart: always
     ports:
-      - "1025:1025" # SMTP
+      - "1025:1025" # SMTP server
       - "8025:8025" # Web UI
     networks:
       - app_network
