@@ -9,14 +9,12 @@ interface Props {
     carName?: string;
     startDate: string;
     endDate: string;
-    onChange: (start: string, end: string) => void;
 }
 
-export default function UnifiedBookingCalendar({ carId, carName, startDate, endDate, onChange }: Props) {
+export default function UnifiedBookingCalendar({ carId, carName, startDate, endDate }: Props) {
     const [bookings, setBookings] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [viewDate, setViewDate] = useState(new Date());
-    const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
     useEffect(() => {
         if (!carId) return;
@@ -55,7 +53,8 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
     const toLocalTime = (date: Date | string) => {
         if (!date) return 0;
         if (typeof date === 'string') {
-            const [year, month, day] = date.split('-').map(Number);
+            const datePart = date.includes('T') ? date.split('T')[0] : date;
+            const [year, month, day] = datePart.split('-').map(Number);
             return new Date(year, month - 1, day).getTime();
         }
         return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
@@ -73,12 +72,14 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
 
     const isPast = (date: Date) => {
         if (!date) return true;
-        const todayTime = toLocalTime(new Date());
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayTime = today.getTime();
 
-        // No instant booking. Earliest is 2 days from today.
+        // No instant booking. Earliest is 48 hours (2 days) from today.
         const earliest = new Date(todayTime);
-        earliest.setDate(new Date(todayTime).getDate() + 2);
-        const earliestTime = toLocalTime(earliest);
+        earliest.setDate(earliest.getDate() + 2);
+        const earliestTime = earliest.getTime();
 
         return toLocalTime(date) < earliestTime;
     };
@@ -93,11 +94,6 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
             return checkTime >= startTime && checkTime <= endTime;
         }
 
-        if (hoverDate && toLocalTime(hoverDate) > startTime) {
-            const hoverTime = toLocalTime(hoverDate);
-            return checkTime >= startTime && checkTime <= hoverTime;
-        }
-
         return checkTime === startTime;
     };
 
@@ -107,59 +103,8 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
     };
 
     const isEnd = (date: Date) => {
-        if (!date) return false;
-        const checkTime = toLocalTime(date);
-
-        if (endDate) {
-            return checkTime === toLocalTime(endDate);
-        }
-
-        if (startDate && hoverDate && toLocalTime(hoverDate) > toLocalTime(startDate)) {
-            return checkTime === toLocalTime(hoverDate);
-        }
-
-        return false;
-    };
-
-    const handleDateClick = (date: Date) => {
-        if (!date || isBooked(date) || isPast(date)) return;
-
-        // Use local date part for the string
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        const dateStr = `${y}-${m}-${d}`;
-
-        if (!startDate || (startDate && endDate)) {
-            // Start new selection
-            onChange(dateStr, '');
-        } else {
-            // Complete selection
-            const startTime = toLocalTime(startDate);
-            const checkTime = toLocalTime(date);
-
-            if (checkTime < startTime) {
-                // If clicked earlier date, make it the new start
-                onChange(dateStr, '');
-            } else {
-                // Verify no bookings in between
-                let hasBookingBetween = false;
-                let temp = new Date(startTime);
-                while (toLocalTime(temp) <= checkTime) {
-                    if (isBooked(temp)) {
-                        hasBookingBetween = true;
-                        break;
-                    }
-                    temp.setDate(temp.getDate() + 1);
-                }
-
-                if (hasBookingBetween) {
-                    onChange(dateStr, '');
-                } else {
-                    onChange(startDate, dateStr);
-                }
-            }
-        }
+        if (!date || !endDate) return false;
+        return toLocalTime(date) === toLocalTime(endDate);
     };
 
     const nextMonth = () => setViewDate(new Date(currentYear, currentMonth + 1, 1));
@@ -175,10 +120,7 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
     );
 
     return (
-        <div
-            className="bg-white rounded-[2.5rem] p-8 w-full border border-gray-100 shadow-xl shadow-gray-100/50"
-            onMouseLeave={() => setHoverDate(null)}
-        >
+        <div className="bg-white rounded-[2.5rem] p-8 w-full border border-gray-100 shadow-xl shadow-gray-100/50">
             <div className="mb-8 flex justify-between items-center">
                 <div>
                     <h2 className="text-2xl font-black text-gray-900 font-outfit tracking-tighter uppercase leading-none">
@@ -186,7 +128,7 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
                     </h2>
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-2 flex items-center gap-2">
                         <CalendarIcon size={12} className="text-blue-600" />
-                        Select Dates
+                        Availability Reference
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -215,17 +157,14 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
                     const disabled = booked || past;
 
                     return (
-                        <button
+                        <div
                             key={date.toISOString()}
-                            disabled={disabled}
-                            onClick={() => handleDateClick(date)}
-                            onMouseEnter={() => !disabled && setHoverDate(date)}
-                            className={`aspect-square flex flex-col items-center justify-center rounded-2xl text-[13px] font-black transition-all relative group
+                            className={`aspect-square flex flex-col items-center justify-center rounded-2xl text-[13px] font-black transition-all relative
                                 ${disabled
-                                    ? "bg-gray-50 text-gray-200 cursor-not-allowed"
+                                    ? "bg-gray-50 text-gray-200"
                                     : inRange
                                         ? "bg-blue-600 text-white shadow-lg shadow-blue-100 scale-105 z-10"
-                                        : "hover:bg-blue-50 hover:text-blue-600 text-gray-600"
+                                        : "text-gray-600"
                                 }
                                 ${start ? 'rounded-r-none' : ''}
                                 ${end ? 'rounded-l-none' : ''}
@@ -234,7 +173,7 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
                         >
                             <span>{date.getDate()}</span>
                             {booked && <div className="absolute bottom-2 w-1 h-1 bg-red-400 rounded-full" />}
-                        </button>
+                        </div>
                     );
                 })}
             </div>
@@ -249,11 +188,9 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
                     <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Unavailable</span>
                 </div>
             </div>
-            {!startDate && (
-                <p className="mt-4 text-[9px] font-bold text-blue-600 uppercase tracking-widest text-center italic">
-                    * Bookings must lead by 48 hours for vehicle preparation
-                </p>
-            )}
+            <p className="mt-4 text-[9px] font-bold text-blue-600 uppercase tracking-widest text-center italic">
+                * Please use the booking form to the right to select your dates
+            </p>
         </div>
     );
 }

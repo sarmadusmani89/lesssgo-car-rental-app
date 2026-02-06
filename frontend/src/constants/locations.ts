@@ -1,9 +1,16 @@
 export const PREDEFINED_LOCATIONS = [
-    "Kagamuga Airport",
-    "Kokopo",
-    "Lae",
-    "Madang",
-    "Mt Hagen",
     "Port Moresby",
-    "Wewak"
+    "Lae",
+    "Mt Hagen",
+    "Kokopo",
+    "Kavieng",
+    "Manus",
+    "Kimbe",
+    "Mendi",
+    "Tari",
+    "Madang",
+    "Goroka",
+    "Wabag",
+    "Alotau",
+    "Popondetta"
 ];

@@ -1,0 +1,10 @@
+.footer {
+    font-size: 10px;
+    color: #9ca3af;
+    /* gray-400 */
+    font-weight: 500;
+    /* font-medium */
+    text-align: center;
+    line-height: 1.625;
+    padding: 0 1rem;
+}

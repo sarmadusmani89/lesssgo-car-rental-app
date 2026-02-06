@@ -1,6 +1,7 @@
-import DatePicker from "react-datepicker";
-import { Calendar, Clock } from 'lucide-react';
-import "react-datepicker/dist/react-datepicker.css";
+import { Calendar } from 'lucide-react';
+import DateInput from './DateInput';
+import TimeInput from './TimeInput';
+import styles from './DateTimeField.module.css';
 
 interface DateTimeFieldProps {
     label: string;
@@ -36,39 +37,27 @@ export default function DateTimeField({
     required = true
 }: DateTimeFieldProps) {
     return (
-        <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
-                <Calendar size={12} /> {label} {required && <span className="text-red-500">*</span>}
+        <div className={styles.container}>
+            <label className={styles.label}>
+                <Calendar size={12} /> {label} {required && <span className={styles.required}>*</span>}
             </label>
-            <div className="grid grid-cols-2 gap-4">
-                <div className="relative">
-                    <DatePicker
-                        selected={dateValue}
-                        onChange={onDateChange}
-                        selectsStart={selectsStart}
-                        selectsEnd={selectsEnd}
-                        startDate={startDate}
-                        endDate={endDate}
-                        minDate={minDate}
-                        maxDate={maxDate}
-                        excludeDates={excludeDates}
-                        placeholderText="Select Date"
-                        className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                        dateFormat="dd/MM/yyyy"
-                    />
-                </div>
-                <div className="relative">
-                    <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none" />
-                    <select
-                        value={timeValue}
-                        onChange={(e) => onTimeChange(e.target.value)}
-                        className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none cursor-pointer"
-                    >
-                        {timeOptions.map((time) => (
-                            <option key={time.value} value={time.value}>{time.label}</option>
-                        ))}
-                    </select>
-                </div>
+            <div className={styles.grid}>
+                <DateInput
+                    value={dateValue}
+                    onChange={onDateChange}
+                    selectsStart={selectsStart}
+                    selectsEnd={selectsEnd}
+                    startDate={startDate}
+                    endDate={endDate}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    excludeDates={excludeDates}
+                />
+                <TimeInput
+                    value={timeValue}
+                    onChange={onTimeChange}
+                    options={timeOptions}
+                />
             </div>
         </div>
     );

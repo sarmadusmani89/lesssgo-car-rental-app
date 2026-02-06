@@ -4,6 +4,7 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class PaymentService {
@@ -12,6 +13,7 @@ export class PaymentService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
   ) {
     const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
     if (!secretKey) {
@@ -194,6 +196,12 @@ export class PaymentService {
             totalAmount,
             paymentMethod: 'ONLINE',
             isConfirmed: true,
+            hp: car.hp,
+            passengers: car.passengers,
+            fuelType: car.fuelType,
+            transmission: car.transmission,
+            airConditioner: car.airConditioner,
+            gps: car.gps,
           });
 
           const receiptHtml = paymentReceiptTemplate({
@@ -215,13 +223,18 @@ export class PaymentService {
             totalAmount,
             paymentMethod: 'ONLINE',
             isConfirmed: true,
+            hp: car.hp,
+            passengers: car.passengers,
+            fuelType: car.fuelType,
+            transmission: car.transmission,
+            airConditioner: car.airConditioner,
+            gps: car.gps,
           });
 
-          const { sendEmail } = await import('../lib/sendEmail');
           await Promise.all([
-            sendEmail(customerEmail, 'Booking Confirmed - LesssGo', confirmHtml),
-            sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml),
-            sendEmail(process.env.SMTP_USER!, 'Payment Success Notification', adminHtml)
+            this.emailService.sendEmail(customerEmail, 'Booking Confirmed - LesssGo', confirmHtml),
+            this.emailService.sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml),
+            this.emailService.sendEmail(process.env.SMTP_USER!, 'Payment Success Notification', adminHtml)
           ]);
           console.log('✅ Payment confirmation emails sent successfully');
           console.log(`   → User email: ${customerEmail}`);

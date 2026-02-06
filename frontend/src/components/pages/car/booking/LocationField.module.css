@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    /* space-y-2 */
+}
+
+.label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #9ca3af;
+    /* gray-400 */
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    /* gap-1.5 */
+}
+
+.selectWrapper {
+    position: relative;
+}
+
+.select {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #f9fafb;
+    /* gray-50 */
+    border: 1px solid #f3f4f6;
+    /* gray-100 */
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    font-size: 0.875rem;
+    /* text-sm */
+    font-weight: 700;
+    /* font-bold */
+    color: #374151;
+    /* gray-700 */
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.select:focus {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    border-color: #3b82f6;
+}

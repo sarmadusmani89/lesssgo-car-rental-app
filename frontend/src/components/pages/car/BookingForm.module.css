@@ -1,0 +1,65 @@
+.formContainer {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 2.5rem;
+    box-shadow: 0 25px 50px -12px rgba(219, 234, 254, 0.3);
+    /* shadow-2xl shadow-blue-100/30 */
+    border: 1px solid #f3f4f6;
+    /* border-gray-100 */
+    position: relative;
+    overflow: visible;
+}
+
+@media (min-width: 768px) {
+    .formContainer {
+        padding: 2rem;
+    }
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    /* space-y-6 */
+    position: relative;
+    z-index: 10;
+}
+
+.locationGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+/* Decorations */
+.decorationTop {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 16rem;
+    height: 16rem;
+    background-color: #eff6ff;
+    /* blue-50 */
+    border-radius: 9999px;
+    margin-right: -8rem;
+    margin-top: -8rem;
+    filter: blur(64px);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.decorationBottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 16rem;
+    height: 16rem;
+    background-color: #f9fafb;
+    /* gray-50 */
+    border-radius: 9999px;
+    margin-left: -8rem;
+    margin-bottom: -8rem;
+    filter: blur(64px);
+    opacity: 0.5;
+    pointer-events: none;
+}

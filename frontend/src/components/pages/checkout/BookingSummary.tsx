@@ -1,7 +1,18 @@
 'use client';
 
 interface Props {
-  car: { name: string; brand: string; pricePerDay: number } | null;
+  car: {
+    name: string;
+    brand: string;
+    pricePerDay: number;
+    hp?: number;
+    passengers?: number;
+    fuelType?: string;
+    transmission?: string;
+    airConditioner?: boolean;
+    gps?: boolean;
+    freeCancellation?: boolean;
+  } | null;
   startDate: string;
   endDate: string;
 }
@@ -55,6 +66,43 @@ export default function BookingSummary({ car, startDate, endDate }: Props) {
         <div className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Duration</span>
           <span className="font-black text-gray-900 uppercase text-xs tracking-widest">{days} {days === 1 ? 'Day' : 'Days'}</span>
+        </div>
+
+        <div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-3">Vehicle Specifications</span>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Performance</span>
+              <span className="text-xs font-black text-slate-900 uppercase">{car?.hp || '0'} HP</span>
+            </div>
+            <div className="flex flex-col p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Capacity</span>
+              <span className="text-xs font-black text-slate-900 uppercase">{car?.passengers || '4'} Seats</span>
+            </div>
+            <div className="flex flex-col p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Fuel Type</span>
+              <span className="text-xs font-black text-slate-900 uppercase">{car?.fuelType || 'Petrol'}</span>
+            </div>
+            <div className="flex flex-col p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+              <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Drivetrain</span>
+              <span className="text-xs font-black text-slate-900 uppercase">{car?.transmission || 'Automatic'}</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-3">Included Extras</span>
+          <div className="flex flex-wrap gap-2">
+            {car?.airConditioner && (
+              <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100">A/C</span>
+            )}
+            {car?.gps && (
+              <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100">GPS</span>
+            )}
+            {car?.freeCancellation && (
+              <span className="px-3 py-1 bg-green-50 text-green-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-green-100">Free Cancel</span>
+            )}
+          </div>
         </div>
       </div>
 

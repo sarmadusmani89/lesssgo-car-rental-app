@@ -1,0 +1,34 @@
+.container {
+    width: 100%;
+    position: relative;
+}
+
+.datePickerWrapper {
+    width: 100%;
+}
+
+.input {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #f9fafb;
+    /* gray-50 */
+    border: 1px solid #f3f4f6;
+    /* gray-100 */
+    border-radius: 0.75rem;
+    /* rounded-xl */
+    font-size: 0.875rem;
+    /* text-sm */
+    font-weight: 700;
+    /* font-bold */
+    color: #374151;
+    /* gray-700 */
+    outline: none;
+    transition: all 0.2s;
+}
+
+.input:focus {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    /* ring-blue-500/20 */
+    border-color: #3b82f6;
+    /* border-blue-500 */
+}

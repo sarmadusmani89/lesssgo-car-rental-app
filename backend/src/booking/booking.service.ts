@@ -2,10 +2,14 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { PrismaService } from '../lib/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class BookingService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
+  ) { }
 
   async create(createBookingDto: CreateBookingDto) {
     const { carId, startDate, endDate } = createBookingDto;
@@ -87,6 +91,12 @@ export class BookingService {
         totalAmount,
         paymentMethod,
         isConfirmed: paymentMethod === 'CASH', // Cash is immediately confirmed
+        hp: car.hp,
+        passengers: car.passengers,
+        fuelType: car.fuelType,
+        transmission: car.transmission,
+        airConditioner: car.airConditioner,
+        gps: car.gps,
       });
 
       const adminHtml = bookingConfirmationTemplate({
@@ -99,13 +109,18 @@ export class BookingService {
         totalAmount,
         paymentMethod,
         isConfirmed: paymentMethod === 'CASH',
+        hp: car.hp,
+        passengers: car.passengers,
+        fuelType: car.fuelType,
+        transmission: car.transmission,
+        airConditioner: car.airConditioner,
+        gps: car.gps,
       });
 
-      const { sendEmail } = await import('../lib/sendEmail');
       console.log(`Sending booking confirmation emails for ${paymentMethod} payment...`);
       await Promise.all([
-        sendEmail(customerEmail, emailSubject, userHtml),
-        sendEmail(process.env.SMTP_USER!, adminEmailSubject, adminHtml)
+        this.emailService.sendEmail(customerEmail, emailSubject, userHtml),
+        this.emailService.sendEmail(process.env.SMTP_USER!, adminEmailSubject, adminHtml)
       ]);
       console.log('Booking confirmation emails sent successfully');
     } catch (err) {
@@ -184,10 +199,15 @@ export class BookingService {
         totalAmount,
         paymentMethod,
         isConfirmed: true,
+        hp: car.hp,
+        passengers: car.passengers,
+        fuelType: car.fuelType,
+        transmission: car.transmission,
+        airConditioner: car.airConditioner,
+        gps: car.gps,
       });
 
-      const { sendEmail } = await import('../lib/sendEmail');
-      await sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml);
+      await this.emailService.sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml);
     } catch (err) {
       console.error('Failed to send payment confirmation email:', err);
     }

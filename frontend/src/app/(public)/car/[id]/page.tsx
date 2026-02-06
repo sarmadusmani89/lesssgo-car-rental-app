@@ -34,9 +34,18 @@ function CarContent() {
 
     const [car, setCar] = useState<Car | null>(null);
     const [loading, setLoading] = useState(true);
-    const [dates, setDates] = useState({
-        startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString().slice(0, 16),
-        endDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().slice(0, 16),
+    const [dates, setDates] = useState(() => {
+        const start = new Date();
+        start.setDate(start.getDate() + 2);
+        start.setHours(10, 0, 0, 0);
+
+        const end = new Date(start);
+        end.setDate(end.getDate() + 1);
+
+        return {
+            startDate: start.toISOString().split('T')[0] + 'T10:00',
+            endDate: end.toISOString().split('T')[0] + 'T10:00',
+        };
     });
 
     const handleDatesChange = useCallback((start: string, end: string) => {

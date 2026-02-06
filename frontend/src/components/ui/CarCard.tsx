@@ -33,6 +33,7 @@ export default function CarCard({
     passengers, hasAC, hasGPS, freeCancellation
 }: CarCardProps) {
     const currency = useSelector((state: RootState) => state.ui.currency);
+    const rates = useSelector((state: RootState) => state.ui.rates);
     const wishlist = useSelector((state: RootState) => state.wishlist.items);
     const isWishlisted = wishlist.includes(id);
     const dispatch = useDispatch();

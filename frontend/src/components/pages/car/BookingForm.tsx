@@ -1,15 +1,20 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Zap, X, Globe } from 'lucide-react';
 import { toast } from 'sonner';
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import api from '@/lib/api';
-import { formatPrice } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
+
+// Sub-components
+import LocationField from './booking/LocationField';
+import DateTimeField from './booking/DateTimeField';
+import PriceSummary from './booking/PriceSummary';
+import BookingHeader from './booking/BookingHeader';
+import BookingButton from './booking/BookingButton';
+import BookingFooter from './booking/BookingFooter';
+
+// Styles
+import styles from './BookingForm.module.css';
 
 interface Props {
     car: {
@@ -45,6 +50,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
     const [returnDate, setReturnDate] = useState<Date | null>(defaultEndDate ? new Date(defaultEndDate) : null);
     const [returnTime, setReturnTime] = useState('10:00');
     const [bookedDates, setBookedDates] = useState<Date[]>([]);
+    const lastDatesRef = useRef({ start: '', end: '' });
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -80,13 +86,11 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
     }, [pickupDate, pickupTime, returnDate, returnTime, onDatesChange]);
 
     useEffect(() => {
-        // Validation: If pickup date changes and return date is invalid (before pickup), reset or adjust
         if (pickupDate && returnDate && returnDate < pickupDate) {
             setReturnDate(pickupDate);
         }
     }, [pickupDate]);
 
-    // Set default locations
     useEffect(() => {
         if (car.pickupLocation && car.pickupLocation.length > 0) {
             setPickupLocation(car.pickupLocation[0]);
@@ -96,22 +100,45 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
         }
     }, [car]);
 
+    // Sync internal state with props if they change externally
+    useEffect(() => {
+        if (defaultStartDate) {
+            const datePart = new Date(defaultStartDate);
+            setPickupDate(datePart);
+            if (defaultStartDate.includes('T')) {
+                setPickupTime(defaultStartDate.split('T')[1].substring(0, 5));
+            }
+        }
+    }, [defaultStartDate]);
+
+    useEffect(() => {
+        if (defaultEndDate) {
+            const datePart = new Date(defaultEndDate);
+            setReturnDate(datePart);
+            if (defaultEndDate.includes('T')) {
+                setReturnTime(defaultEndDate.split('T')[1].substring(0, 5));
+            }
+        }
+    }, [defaultEndDate]);
+
     const calculateTotal = () => {
         if (!pickupDate || !returnDate) return 0;
 
-        // Combine date and time
-        const start = new Date(`${pickupDate.toISOString().split('T')[0]}T${pickupTime}`);
-        const end = new Date(`${returnDate.toISOString().split('T')[0]}T${returnTime}`);
+        // Get date parts only (ignore time for the daily count based on client request)
+        const start = new Date(pickupDate.getFullYear(), pickupDate.getMonth(), pickupDate.getDate());
+        const end = new Date(returnDate.getFullYear(), returnDate.getMonth(), returnDate.getDate());
 
-        const diff = end.getTime() - start.getTime();
-        if (isNaN(diff) || diff <= 0) return 0;
+        const diffTime = Math.abs(end.getTime() - start.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-        return Math.max(1, days) * car.pricePerDay;
+        // Inclusive count: start date to end date (e.g., 9th to 19th is 11 days)
+        const totalDays = diffDays + 1;
+
+        return totalDays * car.pricePerDay;
     };
 
     const total = calculateTotal();
-    const days = total / car.pricePerDay;
+    const daysCount = total / car.pricePerDay;
 
     const handleBooking = () => {
         if (!pickupDate || !returnDate || !pickupLocation || !returnLocation) {
@@ -135,157 +162,86 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
     };
 
     return (
-        <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-2xl shadow-blue-100/30 border border-gray-100 relative overflow-hidden booking-form-container">
-            {/* Header */}
-            <div className="relative z-10 mb-8">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-2 block">
-                    Reserve Your Journey
-                </span>
-                <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-black text-gray-900 font-outfit tracking-tighter">
-                        {formatPrice(car.pricePerDay, currency, rates)}
-                    </span>
-                    <span className="text-gray-400 font-bold text-xs uppercase tracking-widest">/ day</span>
-                </div>
-            </div>
+        <div className={styles.formContainer}>
+            <BookingHeader
+                pricePerDay={car.pricePerDay}
+                currency={currency}
+                rates={rates}
+            />
 
-            <div className="space-y-6 relative z-10">
+            <div className={styles.content}>
                 {/* Locations */}
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
-                            <MapPin size={12} /> Pick Up Location
-                        </label>
-                        <div className="relative">
-                            <select
-                                value={pickupLocation}
-                                onChange={(e) => setPickupLocation(e.target.value)}
-                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none cursor-pointer"
-                            >
-                                {car.pickupLocation?.map(loc => (
-                                    <option key={loc} value={loc}>{loc}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
-                            <MapPin size={12} /> Return Location
-                        </label>
-                        <div className="relative">
-                            <select
-                                value={returnLocation}
-                                onChange={(e) => setReturnLocation(e.target.value)}
-                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none cursor-pointer"
-                            >
-                                {car.dropoffLocation?.map(loc => (
-                                    <option key={loc} value={loc}>{loc}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
+                <div className={styles.locationGrid}>
+                    <LocationField
+                        label="Pick Up Location"
+                        value={pickupLocation}
+                        onChange={setPickupLocation}
+                        options={car.pickupLocation}
+                    />
+                    <LocationField
+                        label="Return Location"
+                        value={returnLocation}
+                        onChange={setReturnLocation}
+                        options={car.dropoffLocation}
+                    />
                 </div>
 
                 {/* Pick-Up Date & Time */}
-                <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
-                        <Calendar size={12} /> Pick-Up Date & Time <span className="text-red-500">*</span>
-                    </label>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="relative">
-                            <DatePicker
-                                selected={pickupDate}
-                                onChange={(date: Date | null) => setPickupDate(date)}
-                                selectsStart
-                                startDate={pickupDate}
-                                endDate={returnDate}
-                                minDate={new Date()}
-                                excludeDates={bookedDates}
-                                placeholderText="Select Date"
-                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                                dateFormat="dd/MM/yyyy"
-                            />
-                        </div>
-                        <div className="relative">
-                            <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none" />
-                            <select
-                                value={pickupTime}
-                                onChange={(e) => setPickupTime(e.target.value)}
-                                className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none cursor-pointer"
-                            >
-                                {TIME_OPTIONS.map((time) => (
-                                    <option key={time.value} value={time.value}>{time.label}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                <DateTimeField
+                    label="Pick-Up Date & Time"
+                    dateValue={pickupDate}
+                    timeValue={pickupTime}
+                    onDateChange={setPickupDate}
+                    onTimeChange={setPickupTime}
+                    timeOptions={TIME_OPTIONS}
+                    minDate={(() => {
+                        const d = new Date();
+                        d.setDate(d.getDate() + 2);
+                        return d;
+                    })()}
+                    excludeDates={bookedDates}
+                    startDate={pickupDate}
+                    endDate={returnDate}
+                    selectsStart
+                />
 
                 {/* Return Date & Time */}
-                <div className="space-y-2">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
-                        <Calendar size={12} /> Return Date & Time <span className="text-red-500">*</span>
-                    </label>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="relative">
-                            <DatePicker
-                                selected={returnDate}
-                                onChange={(date: Date | null) => setReturnDate(date)}
-                                selectsEnd
-                                startDate={pickupDate}
-                                endDate={returnDate}
-                                minDate={pickupDate || new Date()}
-                                excludeDates={bookedDates}
-                                placeholderText="Select Date"
-                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                                dateFormat="dd/MM/yyyy"
-                            />
-                        </div>
-                        <div className="relative">
-                            <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none" />
-                            <select
-                                value={returnTime}
-                                onChange={(e) => setReturnTime(e.target.value)}
-                                className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none cursor-pointer"
-                            >
-                                {TIME_OPTIONS.map((time) => (
-                                    <option key={time.value} value={time.value}>{time.label}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                <DateTimeField
+                    label="Return Date & Time"
+                    dateValue={returnDate}
+                    timeValue={returnTime}
+                    onDateChange={setReturnDate}
+                    onTimeChange={setReturnTime}
+                    timeOptions={TIME_OPTIONS}
+                    minDate={(() => {
+                        const d = pickupDate ? new Date(pickupDate) : new Date();
+                        if (!pickupDate) d.setDate(d.getDate() + 2);
+                        return d;
+                    })()}
+                    excludeDates={bookedDates}
+                    startDate={pickupDate}
+                    endDate={returnDate}
+                    selectsEnd
+                />
 
-                {/* Summary */}
-                {total > 0 && (
-                    <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 space-y-3">
-                        <div className="flex justify-between items-center text-sm">
-                            <span className="font-bold text-gray-500">Duration</span>
-                            <span className="font-bold text-gray-900">{days} Days</span>
-                        </div>
-                        <div className="flex justify-between items-center text-lg pt-2 border-t border-blue-100">
-                            <span className="font-black text-gray-900 font-outfit uppercase">Total</span>
-                            <span className="font-black text-blue-600 font-outfit">{formatPrice(total, currency, rates)}</span>
-                        </div>
-                    </div>
-                )}
+                <PriceSummary
+                    days={daysCount}
+                    total={total}
+                    currency={currency}
+                    rates={rates}
+                />
 
-                <button
+                <BookingButton
                     onClick={handleBooking}
-                    className="w-full py-4 bg-blue-600 text-white rounded-xl font-black uppercase text-xs tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group"
-                >
-                    Book Now
-                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </button>
+                    label="Book Now"
+                />
 
-                <p className="text-[10px] text-gray-400 font-medium text-center leading-relaxed px-4">
-                    You won't be charged yet. We'll check availability and confirm your booking instantly.
-                </p>
+                <BookingFooter />
             </div>
 
             {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -mr-32 -mt-32 blur-3xl opacity-50 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-50 rounded-full -ml-32 -mb-32 blur-3xl opacity-50 pointer-events-none" />
+            <div className={styles.decorationTop} />
+            <div className={styles.decorationBottom} />
 
             <style jsx global>{`
                 .react-datepicker-wrapper {
@@ -301,3 +257,4 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
         </div>
     );
 }
+

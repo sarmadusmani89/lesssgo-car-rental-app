@@ -10,6 +10,12 @@ export function bookingConfirmationTemplate(data: {
   totalAmount: number;
   paymentMethod: string;
   isConfirmed: boolean;
+  hp?: number | null;
+  passengers?: number | null;
+  fuelType?: string | null;
+  transmission?: string | null;
+  airConditioner?: boolean | null;
+  gps?: boolean | null;
 }) {
   const statusColor = data.isConfirmed ? '#10b981' : '#f59e0b';
   const statusText = data.isConfirmed ? 'Confirmed' : 'Pending Confirmation';
@@ -51,18 +57,51 @@ export function bookingConfirmationTemplate(data: {
       <div style="margin-top: 25px; padding: 20px; background: #ffffff; border-radius: 12px; border: 1px solid #f1f5f9;">
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr>
-            <td>
+            <td width="50%">
                <p style="margin: 0; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Pickup - Dropoff</p>
                <p style="margin: 4px 0 0; font-size: 14px; font-weight: 700; color: #334155;">${data.startDate} to ${data.endDate}</p>
             </td>
-          </tr>
-          <tr>
-            <td style="padding-top: 15px;">
+            <td width="50%" align="right">
                <p style="margin: 0; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Payment Method</p>
                <p style="margin: 4px 0 0; font-size: 14px; font-weight: 700; color: #334155;">${data.paymentMethod === 'ONLINE' ? 'Pay via Stripe (Online)' : 'Cash on Pickup'}</p>
             </td>
           </tr>
         </table>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">
+          <p style="margin: 0 0 10px; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Vehicle details</p>
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td width="25%">
+                <p style="margin: 0; font-size: 10px; color: #64748b;">Performance</p>
+                <p style="margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #1e293b;">${data.hp || 0} HP</p>
+              </td>
+              <td width="25%">
+                <p style="margin: 0; font-size: 10px; color: #64748b;">Capacity</p>
+                <p style="margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #1e293b;">${data.passengers || 4} Seats</p>
+              </td>
+              <td width="25%">
+                <p style="margin: 0; font-size: 10px; color: #64748b;">Fuel</p>
+                <p style="margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #1e293b;">${data.fuelType || 'Petrol'}</p>
+              </td>
+              <td width="25%">
+                <p style="margin: 0; font-size: 10px; color: #64748b;">Drivetrain</p>
+                <p style="margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #1e293b;">${data.transmission || 'Automatic'}</p>
+              </td>
+            </tr>
+          </table>
+          <div style="margin-top: 12px;">
+            <p style="margin: 0; font-size: 10px; color: #64748b;">Included Features: 
+              <span style="color: #3b82f6; font-weight: 700;">
+                ${[
+      data.airConditioner ? 'Air Conditioning' : '',
+      data.gps ? 'GPS Navigation' : '',
+      'Standard Insurance'
+    ].filter(Boolean).join(', ')}
+              </span>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
     
