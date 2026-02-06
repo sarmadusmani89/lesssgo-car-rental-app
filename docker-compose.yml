@@ -30,11 +30,6 @@ services:
     ports:
       - "3001:3001"
     environment:
-      # SendGrid Configuration
-      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
-      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
-      SENDGRID_FROM_NAME: ${SENDGRID_FROM_NAME}
-
       # Stripe Configuration
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_dummy}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_dummy}
@@ -49,16 +44,16 @@ services:
 
       # Application Configuration
       PORT: ${PORT:-3001}
-      FRONTEND_URL: ${FRONTEND_URL:-https://lesssgopng.com}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
       NODE_ENV: ${NODE_ENV:-production}
       JWT_SECRET: ${JWT_SECRET:-your_jwt_secret}
       CORS_ORIGINS: ${CORS_ORIGINS:-https://lesssgopng.com}
 
       # SMTP Configuration (Defaulting to MailHog for local dev)
-      SMTP_HOST: ${SMTP_HOST:-mailhog}
-      SMTP_PORT: ${SMTP_PORT:-1025}
-      SMTP_USER: ${SMTP_USER:-}
-      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_HOST: ${SMTP_HOST:-smtpout.secureserver.net}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-sarmad@xvolveai.com}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-Sarmad@175413}
     depends_on:
       db:
         condition: service_healthy
@@ -78,7 +73,7 @@ services:
       NODE_ENV: production
       # Points to the public URL of the backend. For local docker, this usually needs to be localhost if accessed from host browser,
       # or the domain name if deployed.
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://lesssgopng.com/api}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
       # Internal URL for SSR to talk to backend container directly
       BACKEND_INTERNAL_URL: http://backend:3001
     depends_on:
