@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useCallback } from 'react';
 import { useSearchParams, useParams } from 'next/navigation';
 import ImageGalleryWithLightbox from '@/components/pages/car/ImageGalleryWithLightbox';
 import CarSpecifications from '@/components/pages/car/CarSpecification';
@@ -8,7 +8,7 @@ import UnifiedBookingCalendar from '@/components/pages/car/UnifiedBookingCalenda
 import BookingForm from '@/components/pages/car/BookingForm';
 import api from '@/lib/api';
 import { toast } from "sonner";
-import { Loader2, ShieldCheck, Zap, Info } from 'lucide-react';
+import { Loader2, Zap, Info } from 'lucide-react';
 
 interface Car {
     id: string;
@@ -38,6 +38,13 @@ function CarContent() {
         startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString().slice(0, 16),
         endDate: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().slice(0, 16),
     });
+
+    const handleDatesChange = useCallback((start: string, end: string) => {
+        setDates(prev => {
+            if (prev.startDate === start && prev.endDate === end) return prev;
+            return { startDate: start, endDate: end };
+        });
+    }, []);
 
     useEffect(() => {
         if (!carId) return;
@@ -202,7 +209,7 @@ function CarContent() {
                                 carName={car.name}
                                 startDate={dates.startDate}
                                 endDate={dates.endDate}
-                                onChange={(start, end) => setDates({ startDate: start, endDate: end })}
+                                onChange={handleDatesChange}
                             />
                         </section>
                     </div>
@@ -213,8 +220,9 @@ function CarContent() {
                             car={car}
                             defaultStartDate={dates.startDate}
                             defaultEndDate={dates.endDate}
-                            onDatesChange={(start, end) => setDates({ startDate: start, endDate: end })}
+                            onDatesChange={handleDatesChange}
                         />
+
 
                         <div className="p-10 bg-gray-900 rounded-[3rem] text-white shadow-2xl shadow-gray-200 overflow-hidden relative group">
                             <div className="absolute bottom-0 right-0 w-48 h-48 bg-blue-600/20 rounded-full -mr-24 -mb-24 transition-transform duration-700 group-hover:scale-150" />

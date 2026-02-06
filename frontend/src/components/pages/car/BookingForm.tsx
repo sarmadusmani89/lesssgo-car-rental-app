@@ -71,7 +71,11 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
         if (onDatesChange && pickupDate) {
             const startISO = `${pickupDate.toISOString().split('T')[0]}T${pickupTime}`;
             const endISO = returnDate ? `${returnDate.toISOString().split('T')[0]}T${returnTime}` : '';
-            onDatesChange(startISO, endISO);
+
+            if (lastDatesRef.current.start !== startISO || lastDatesRef.current.end !== endISO) {
+                lastDatesRef.current = { start: startISO, end: endISO };
+                onDatesChange(startISO, endISO);
+            }
         }
     }, [pickupDate, pickupTime, returnDate, returnTime, onDatesChange]);
 
@@ -191,7 +195,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                         <div className="relative">
                             <DatePicker
                                 selected={pickupDate}
-                                onChange={(date) => setPickupDate(date)}
+                                onChange={(date: Date | null) => setPickupDate(date)}
                                 selectsStart
                                 startDate={pickupDate}
                                 endDate={returnDate}
@@ -226,7 +230,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                         <div className="relative">
                             <DatePicker
                                 selected={returnDate}
-                                onChange={(date) => setReturnDate(date)}
+                                onChange={(date: Date | null) => setReturnDate(date)}
                                 selectsEnd
                                 startDate={pickupDate}
                                 endDate={returnDate}
