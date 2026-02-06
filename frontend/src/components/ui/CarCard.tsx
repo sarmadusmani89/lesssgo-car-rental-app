@@ -100,12 +100,13 @@ export default function CarCard({
                     <div className={styles.priceSection}>
                         <span className={styles.priceLabel}>Daily Rate</span>
                         <div className="flex items-baseline gap-1">
-                            <span className={styles.priceMain}>{formatPrice(price, currency)}</span>
+                            <span className={styles.priceMain}>{formatPrice(price, currency, rates)}</span>
                             <span className="text-xs font-bold text-gray-400">/ day</span>
                         </div>
                         {monthlyPrice && (
-                            <span className={styles.priceMonthly}>{formatPrice(monthlyPrice, currency)} / month</span>
+                            <span className={styles.priceMonthly}>{formatPrice(monthlyPrice, currency, rates)} / month</span>
                         )}
+
                     </div>
                     <Link href={`/car/${slug || id}`} className={styles.btnDetails}>
                         Details <ArrowRight size={18} />

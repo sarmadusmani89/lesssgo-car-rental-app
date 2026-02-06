@@ -19,9 +19,26 @@ export default function Header() {
     const dispatch = useDispatch();
     const currency = useSelector((state: RootState) => state.ui.currency);
 
-    const handleCurrencyChange = (newCurrency: 'AUD' | 'PGK') => {
+    const handleCurrencyChange = (newCurrency: 'AUD' | 'PGK' | 'USD') => {
         dispatch(setCurrency(newCurrency));
     };
+
+    // Fetch dynamic rates on mount
+    useEffect(() => {
+        const fetchRates = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/settings/rates`);
+                if (response.ok) {
+                    const rates = await response.json();
+                    dispatch({ type: 'ui/setRates', payload: rates });
+                }
+            } catch (error) {
+                console.error('Failed to fetch currency rates:', error);
+            }
+        };
+
+        fetchRates();
+    }, [dispatch]);
 
     // Close dropdowns on path change
     useEffect(() => {
@@ -68,13 +85,6 @@ export default function Header() {
         // Listen for storage events (logout/login in other tabs)
         window.addEventListener('storage', checkUser);
 
-        // Listen for custom 'auth-change' event (if we implement dispatchEvent in login/logout)
-        // For now, simpler to just rely on mount or maybe an interval if needed, but storage event covers cross-tab.
-        // For single-tab updates, we might need to dispatch an event or use context.
-        // Let's rely on the fact that login usually redirects, which re-mounts or at least triggers checks if we navigate.
-        // Since Next.js navigation is client-side, purely relying on mount might not be enough if we just push state.
-        // But typically a full login flow involves a router.push which re-renders. 
-
         return () => {
             window.removeEventListener('storage', checkUser);
         };
@@ -92,6 +102,15 @@ export default function Header() {
     }, []);
 
     const dashboardLink = user?.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard';
+
+    const getCurrencyLabel = (curr: string) => {
+        switch (curr) {
+            case 'AUD': return 'AUD ($)';
+            case 'USD': return 'USD ($)';
+            case 'PGK': return 'PGK (K)';
+            default: return curr;
+        }
+    };
 
     return (
         <header className={styles.header}>
@@ -116,29 +135,23 @@ export default function Header() {
                                 onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
                             >
                                 <Globe size={16} />
-                                <span>{currency === 'AUD' ? 'AUD ($)' : 'PGK (K)'}</span>
+                                <span>{getCurrencyLabel(currency)}</span>
                             </button>
 
                             {isCurrencyOpen && (
                                 <div className={styles.currencyDropdown}>
-                                    <div
-                                        className={`${styles.currencyItem} ${currency === 'AUD' ? styles.active : ''}`}
-                                        onClick={() => {
-                                            handleCurrencyChange('AUD');
-                                            setIsCurrencyOpen(false);
-                                        }}
-                                    >
-                                        AUD ($)
-                                    </div>
-                                    <div
-                                        className={`${styles.currencyItem} ${currency === 'PGK' ? styles.active : ''}`}
-                                        onClick={() => {
-                                            handleCurrencyChange('PGK');
-                                            setIsCurrencyOpen(false);
-                                        }}
-                                    >
-                                        PGK (K)
-                                    </div>
+                                    {(['AUD', 'USD', 'PGK'] as const).map((curr) => (
+                                        <div
+                                            key={curr}
+                                            className={`${styles.currencyItem} ${currency === curr ? styles.active : ''}`}
+                                            onClick={() => {
+                                                handleCurrencyChange(curr);
+                                                setIsCurrencyOpen(false);
+                                            }}
+                                        >
+                                            {getCurrencyLabel(curr)}
+                                        </div>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -168,21 +181,19 @@ export default function Header() {
                 <nav className={styles.mobileNav}>
                     <div className="px-4 py-4 border-b border-gray-100 mb-2">
                         <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Currency</label>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={() => handleCurrencyChange('AUD')}
-                                className={`flex-1 py-2 rounded-lg text-sm font-bold border ${currency === 'AUD' ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-gray-50 border-gray-100 text-gray-500'}`}
-                            >
-                                AUD ($)
-                            </button>
-                            <button
-                                onClick={() => handleCurrencyChange('PGK')}
-                                className={`flex-1 py-2 rounded-lg text-sm font-bold border ${currency === 'PGK' ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-gray-50 border-gray-100 text-gray-500'}`}
-                            >
-                                PGK (K)
-                            </button>
+                        <div className="grid grid-cols-3 gap-2">
+                            {(['AUD', 'USD', 'PGK'] as const).map((curr) => (
+                                <button
+                                    key={curr}
+                                    onClick={() => handleCurrencyChange(curr)}
+                                    className={`py-2 rounded-lg text-xs font-bold border transition-all ${currency === curr ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-gray-50 border-gray-100 text-gray-500'}`}
+                                >
+                                    {curr}
+                                </button>
+                            ))}
                         </div>
                     </div>
+
                     <Link href="/cars" onClick={() => setIsMenuOpen(false)}>Find Cars</Link>
                     <Link href="/how-it-works" onClick={() => setIsMenuOpen(false)}>How it Works</Link>
                     <Link href="/about" onClick={() => setIsMenuOpen(false)}>About Us</Link>

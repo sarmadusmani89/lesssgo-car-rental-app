@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Zap, X } from 'lucide-react';
+import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Zap, X, Globe } from 'lucide-react';
 import { toast } from 'sonner';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import api from '@/lib/api';
+import { formatPrice } from '@/lib/utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
 
 interface Props {
     car: {
@@ -31,6 +34,8 @@ const TIME_OPTIONS = Array.from({ length: 13 * 2 + 1 }, (_, i) => {
 
 export default function BookingForm({ car, defaultStartDate, defaultEndDate, onDatesChange }: Props) {
     const router = useRouter();
+    const currency = useSelector((state: RootState) => state.ui.currency);
+    const rates = useSelector((state: RootState) => state.ui.rates);
 
     const [pickupLocation, setPickupLocation] = useState('');
     const [returnLocation, setReturnLocation] = useState('');
@@ -134,7 +139,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                 </span>
                 <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-black text-gray-900 font-outfit tracking-tighter">
-                        ${car.pricePerDay}
+                        {formatPrice(car.pricePerDay, currency, rates)}
                     </span>
                     <span className="text-gray-400 font-bold text-xs uppercase tracking-widest">/ day</span>
                 </div>
@@ -256,7 +261,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                         </div>
                         <div className="flex justify-between items-center text-lg pt-2 border-t border-blue-100">
                             <span className="font-black text-gray-900 font-outfit uppercase">Total</span>
-                            <span className="font-black text-blue-600 font-outfit">${total}</span>
+                            <span className="font-black text-blue-600 font-outfit">{formatPrice(total, currency, rates)}</span>
                         </div>
                     </div>
                 )}
