@@ -208,7 +208,11 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
       onSuccess();
     } catch (error: any) {
       console.error("Form submission error:", error);
-      toast.error(error.response?.data?.message || "Something went wrong");
+      if (error.response?.status === 413) {
+        toast.error("File size is too large. Please upload smaller images (max 50MB).");
+      } else {
+        toast.error(error.response?.data?.message || "Something went wrong sending the request");
+      }
     }
   };
 

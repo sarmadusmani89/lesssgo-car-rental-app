@@ -8,29 +8,36 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 
 @Controller('booking')
-@UseGuards(AuthGuard)
 export class BookingController {
   constructor(private readonly bookingService: BookingService) { }
 
   @Post()
+  @UseGuards(AuthGuard)
   create(@Body() createBookingDto: CreateBookingDto) {
     return this.bookingService.create(createBookingDto);
   }
 
   @Get()
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   findAll() {
     return this.bookingService.findAll();
   }
 
+  @Get('car/:carId')
+  findByCar(@Param('carId') carId: string) {
+    return this.bookingService.findByCar(carId);
+  }
+
   @Get(':id')
+  @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
     return this.bookingService.findOne(id);
   }
 
   // Added PATCH endpoint to allow users to cancel/update their own bookings
   @Patch(':id')
+  @UseGuards(AuthGuard)
   async updateStatus(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto, @Req() req: any) {
     const user = req.user;
     const booking = await this.bookingService.findOne(id);
@@ -44,7 +51,7 @@ export class BookingController {
   }
 
   @Put(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
     return this.bookingService.update(id, updateBookingDto);
@@ -65,6 +72,7 @@ export class BookingController {
   }
 
   @Get('user/:userId')
+  @UseGuards(AuthGuard)
   findByUser(@Param('userId') userId: string) {
     return this.bookingService.findByUser(userId);
   }

@@ -101,7 +101,7 @@ function LoginContent() {
             } else if (userRole === 'admin') {
                 window.location.href = '/admin/dashboard';
             } else {
-                window.location.href = '/dashboard/profile';
+                window.location.href = '/dashboard';
             }
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || 'Login failed';

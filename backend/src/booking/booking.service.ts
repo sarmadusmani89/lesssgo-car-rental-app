@@ -211,4 +211,17 @@ export class BookingService {
       orderBy: { startDate: 'desc' },
     });
   }
+
+  async findByCar(carId: string) {
+    return this.prisma.booking.findMany({
+      where: {
+        carId,
+        status: { not: 'CANCELLED' }
+      },
+      select: {
+        startDate: true,
+        endDate: true
+      }
+    });
+  }
 }

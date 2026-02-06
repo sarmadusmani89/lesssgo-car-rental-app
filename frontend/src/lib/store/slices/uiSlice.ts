@@ -20,8 +20,13 @@ const uiSlice = createSlice({
         },
         initializeCurrency: (state) => {
             if (typeof window !== 'undefined') {
-                const stored = localStorage.getItem('currency') as 'AUD' | 'PGK';
-                if (stored) state.currency = stored;
+                const stored = localStorage.getItem('currency');
+                if (stored === 'AUD' || stored === 'PGK') {
+                    state.currency = stored;
+                } else {
+                    state.currency = 'AUD';
+                    localStorage.setItem('currency', 'AUD');
+                }
             }
         }
     },

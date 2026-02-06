@@ -41,6 +41,12 @@ export class PaymentController {
     return this.paymentService.create(createPaymentDto);
   }
 
+  @Get('user/:userId')
+  @UseGuards(AuthGuard)
+  findByUser(@Param('userId') userId: string) {
+    return this.paymentService.findByUser(userId);
+  }
+
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)

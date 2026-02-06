@@ -2,8 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { MapPin, Calendar, Clock, ArrowRight, ShieldCheck, Zap, X } from 'lucide-react';
 import { toast } from 'sonner';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import api from '@/lib/api';
 
 interface Props {
     car: {
@@ -32,50 +35,49 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
     const [pickupLocation, setPickupLocation] = useState('');
     const [returnLocation, setReturnLocation] = useState('');
 
-    // Initialize with props or empty
-    const [pickupDate, setPickupDate] = useState(defaultStartDate ? defaultStartDate.split('T')[0] : '');
+    const [pickupDate, setPickupDate] = useState<Date | null>(defaultStartDate ? new Date(defaultStartDate) : null);
     const [pickupTime, setPickupTime] = useState('10:00');
-    const [returnDate, setReturnDate] = useState(defaultEndDate ? defaultEndDate.split('T')[0] : '');
+    const [returnDate, setReturnDate] = useState<Date | null>(defaultEndDate ? new Date(defaultEndDate) : null);
     const [returnTime, setReturnTime] = useState('10:00');
+    const [bookedDates, setBookedDates] = useState<Date[]>([]);
 
-    // Sync when props change (e.g. from big calendar click)
     useEffect(() => {
-        if (defaultStartDate) setPickupDate(defaultStartDate.split('T')[0]);
-        if (defaultEndDate) setReturnDate(defaultEndDate.split('T')[0]);
-    }, [defaultStartDate, defaultEndDate]);
-
-    // Handle date changes and sync back
-    const handleDateChange = (type: 'pickup' | 'return', date: string) => {
-        let newPickup = pickupDate;
-        let newReturn = returnDate;
-
-        if (type === 'pickup') {
-            newPickup = date;
-            setPickupDate(date);
-            // Validation: Dropoff always > Pickup
-            if (newReturn && new Date(date) > new Date(newReturn)) {
-                newReturn = date;
-                setReturnDate(date);
+        const fetchBookings = async () => {
+            try {
+                const { data } = await api.get(`/booking/car/${car.id}`);
+                const dates: Date[] = [];
+                data.forEach((booking: any) => {
+                    let currentDate = new Date(booking.startDate);
+                    const endDate = new Date(booking.endDate);
+                    while (currentDate <= endDate) {
+                        dates.push(new Date(currentDate));
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                });
+                setBookedDates(dates);
+            } catch (error) {
+                console.error("Failed to fetch car bookings", error);
             }
-        } else {
-            // Dropoff Date Validation
-            if (newPickup && new Date(date) < new Date(newPickup)) {
-                toast.error("Return date cannot be before pick-up date");
-                return;
-            }
-            newReturn = date;
-            setReturnDate(date);
-        }
+        };
+        fetchBookings();
+    }, [car.id]);
 
-        if (onDatesChange && newPickup) {
-            // Construct ISO strings roughly for the calendar sync
-            const startISO = `${newPickup}T${pickupTime}`;
-            const endISO = newReturn ? `${newReturn}T${returnTime}` : '';
+    useEffect(() => {
+        if (onDatesChange && pickupDate) {
+            const startISO = `${pickupDate.toISOString().split('T')[0]}T${pickupTime}`;
+            const endISO = returnDate ? `${returnDate.toISOString().split('T')[0]}T${returnTime}` : '';
             onDatesChange(startISO, endISO);
         }
-    };
+    }, [pickupDate, pickupTime, returnDate, returnTime, onDatesChange]);
 
-    // Set default locations if available
+    useEffect(() => {
+        // Validation: If pickup date changes and return date is invalid (before pickup), reset or adjust
+        if (pickupDate && returnDate && returnDate < pickupDate) {
+            setReturnDate(pickupDate);
+        }
+    }, [pickupDate]);
+
+    // Set default locations
     useEffect(() => {
         if (car.pickupLocation && car.pickupLocation.length > 0) {
             setPickupLocation(car.pickupLocation[0]);
@@ -88,15 +90,13 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
     const calculateTotal = () => {
         if (!pickupDate || !returnDate) return 0;
 
-        const start = new Date(`${pickupDate}T${pickupTime}`);
-        const end = new Date(`${returnDate}T${returnTime}`);
+        // Combine date and time
+        const start = new Date(`${pickupDate.toISOString().split('T')[0]}T${pickupTime}`);
+        const end = new Date(`${returnDate.toISOString().split('T')[0]}T${returnTime}`);
 
-        // Calculate difference in milliseconds
         const diff = end.getTime() - start.getTime();
-
         if (isNaN(diff) || diff <= 0) return 0;
 
-        // Calculate 24-hour periods, rounding up
         const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
         return Math.max(1, days) * car.pricePerDay;
     };
@@ -110,19 +110,14 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
             return;
         }
 
-        const startCombined = `${pickupDate}T${pickupTime}`;
-        const endCombined = `${returnDate}T${returnTime}`;
+        const startCombined = `${pickupDate.toISOString().split('T')[0]}T${pickupTime}`;
+        const endCombined = `${returnDate.toISOString().split('T')[0]}T${returnTime}`;
 
-        // Check if user is logged in
         const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-
         const checkoutUrl = `/checkout?id=${car.id}&startDate=${startCombined}&endDate=${endCombined}&pickupLocation=${encodeURIComponent(pickupLocation)}&dropoffLocation=${encodeURIComponent(returnLocation)}`;
 
         if (!token) {
-            toast.info('Authenticating...', {
-                description: 'Please sign in to proceed with your reservation.',
-                duration: 4000
-            });
+            toast.info('Authenticating...', { description: 'Please sign in to proceed.' });
             router.push(`/auth/login?redirect=${encodeURIComponent(checkoutUrl)}`);
             return;
         }
@@ -131,7 +126,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
     };
 
     return (
-        <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-2xl shadow-blue-100/30 border border-gray-100 relative overflow-hidden">
+        <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-2xl shadow-blue-100/30 border border-gray-100 relative overflow-hidden booking-form-container">
             {/* Header */}
             <div className="relative z-10 mb-8">
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-2 block">
@@ -188,13 +183,20 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                         <Calendar size={12} /> Pick-Up Date & Time <span className="text-red-500">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-4">
-                        <input
-                            type="date"
-                            value={pickupDate}
-                            onChange={(e) => handleDateChange('pickup', e.target.value)}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                        />
+                        <div className="relative">
+                            <DatePicker
+                                selected={pickupDate}
+                                onChange={(date) => setPickupDate(date)}
+                                selectsStart
+                                startDate={pickupDate}
+                                endDate={returnDate}
+                                minDate={new Date()}
+                                excludeDates={bookedDates}
+                                placeholderText="Select Date"
+                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                dateFormat="dd/MM/yyyy"
+                            />
+                        </div>
                         <div className="relative">
                             <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none" />
                             <select
@@ -203,9 +205,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                                 className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none cursor-pointer"
                             >
                                 {TIME_OPTIONS.map((time) => (
-                                    <option key={time.value} value={time.value}>
-                                        {time.label}
-                                    </option>
+                                    <option key={time.value} value={time.value}>{time.label}</option>
                                 ))}
                             </select>
                         </div>
@@ -218,13 +218,20 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                         <Calendar size={12} /> Return Date & Time <span className="text-red-500">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-4">
-                        <input
-                            type="date"
-                            value={returnDate}
-                            onChange={(e) => handleDateChange('return', e.target.value)}
-                            min={pickupDate || new Date().toISOString().split('T')[0]}
-                            className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                        />
+                        <div className="relative">
+                            <DatePicker
+                                selected={returnDate}
+                                onChange={(date) => setReturnDate(date)}
+                                selectsEnd
+                                startDate={pickupDate}
+                                endDate={returnDate}
+                                minDate={pickupDate || new Date()}
+                                excludeDates={bookedDates}
+                                placeholderText="Select Date"
+                                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                                dateFormat="dd/MM/yyyy"
+                            />
+                        </div>
                         <div className="relative">
                             <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10 pointer-events-none" />
                             <select
@@ -233,9 +240,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                                 className="w-full p-3 pl-10 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none cursor-pointer"
                             >
                                 {TIME_OPTIONS.map((time) => (
-                                    <option key={time.value} value={time.value}>
-                                        {time.label}
-                                    </option>
+                                    <option key={time.value} value={time.value}>{time.label}</option>
                                 ))}
                             </select>
                         </div>
@@ -272,6 +277,18 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
             {/* Background Decorations */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -mr-32 -mt-32 blur-3xl opacity-50 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-50 rounded-full -ml-32 -mb-32 blur-3xl opacity-50 pointer-events-none" />
+
+            <style jsx global>{`
+                .react-datepicker-wrapper {
+                    width: 100%;
+                }
+                .react-datepicker__input-container input {
+                    width: 100%;
+                }
+                .react-datepicker-popper {
+                    z-index: 50 !important;
+                }
+            `}</style>
         </div>
     );
 }

@@ -263,6 +263,26 @@ export class PaymentService {
     });
   }
 
+  async findByUser(userId: string) {
+    return this.prisma.payment.findMany({
+      where: {
+        booking: {
+          userId: userId
+        }
+      },
+      include: {
+        booking: {
+          include: {
+            car: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+  }
+
   async findOne(id: string) {
     const payment = await this.prisma.payment.findUnique({
       where: { id },
