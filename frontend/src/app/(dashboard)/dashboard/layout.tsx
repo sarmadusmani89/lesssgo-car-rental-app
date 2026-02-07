@@ -41,7 +41,6 @@ export default function UserLayout({ children }: UserLayoutProps) {
         { name: 'Profile', href: '/dashboard/profile', icon: <User size={20} /> },
         { name: 'My Bookings', href: '/dashboard/bookings', icon: <Calendar size={20} /> },
         { name: 'Wishlist', href: '/dashboard/wishlist', icon: <Heart size={20} /> },
-        { name: 'Payments', href: '/dashboard/payments', icon: <CreditCard size={20} /> },
         { name: 'Support', href: '/dashboard/support', icon: <LifeBuoy size={20} /> },
       ]}
     >

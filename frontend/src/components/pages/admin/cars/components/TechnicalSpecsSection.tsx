@@ -74,7 +74,7 @@ export default function TechnicalSpecsSection({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Price / Day ($) <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Price / Day (A$) <span className="text-red-500">*</span></label>
                     <input
                         type="number"
                         {...register("pricePerDay", { valueAsNumber: true })}
