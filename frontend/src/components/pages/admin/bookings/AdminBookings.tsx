@@ -100,7 +100,7 @@ export default function AdminBookings() {
             b.car?.name || 'N/A',
             new Date(b.startDate).toLocaleDateString('en-AU', { timeZone: 'UTC' }),
             new Date(b.endDate).toLocaleDateString('en-AU', { timeZone: 'UTC' }),
-            `$${b.totalAmount}`,
+            `A$${b.totalAmount}`,
             b.status,
             b.paymentStatus
         ]);
