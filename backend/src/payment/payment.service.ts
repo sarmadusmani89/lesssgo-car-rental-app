@@ -237,8 +237,17 @@ export class PaymentService {
         try {
           console.log('📧 Sending payment confirmation emails...');
           const { customerName, customerEmail, car, startDate, endDate, totalAmount } = updatedBooking;
-          const start = new Date(startDate).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' });
-          const end = new Date(endDate).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' });
+          const formatOptions: Intl.DateTimeFormatOptions = {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          };
+          const start = new Date(startDate).toLocaleString('en-AU', formatOptions);
+          const end = new Date(endDate).toLocaleString('en-AU', formatOptions);
 
           const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
           const { paymentReceiptTemplate } = await import('../lib/emailTemplates/paymentReceipt');

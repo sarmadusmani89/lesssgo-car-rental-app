@@ -74,8 +74,17 @@ export class BookingService {
     try {
       const settings = await this.settingsService.getSettings();
       const { customerName, customerEmail, customerPhone, car, startDate, endDate, totalAmount } = booking;
-      const start = new Date(startDate).toLocaleDateString();
-      const end = new Date(endDate).toLocaleDateString();
+      const formatOptions: Intl.DateTimeFormatOptions = {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      };
+      const start = new Date(startDate).toLocaleString('en-AU', formatOptions);
+      const end = new Date(endDate).toLocaleString('en-AU', formatOptions);
       const paymentMethod = createBookingDto.paymentMethod;
 
       // Customize message based on payment method
@@ -230,8 +239,17 @@ export class BookingService {
     // Send confirmation email if it was previously PENDING
     try {
       const { customerName, customerEmail, car, startDate, endDate, totalAmount, paymentMethod } = updatedBooking;
-      const start = new Date(startDate).toLocaleDateString();
-      const end = new Date(endDate).toLocaleDateString();
+      const formatOptions: Intl.DateTimeFormatOptions = {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      };
+      const start = new Date(startDate).toLocaleString('en-AU', formatOptions);
+      const end = new Date(endDate).toLocaleString('en-AU', formatOptions);
 
       const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
 

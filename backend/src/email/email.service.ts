@@ -34,13 +34,14 @@ export class EmailService {
     const htmlContent = generateVerificationEmail(verificationLink);
 
     try {
+      const from = process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`;
       await this.transporter.sendMail({
-        from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
+        from: from,
         to: email,
         subject: 'Verify your email - LesssGo',
         html: htmlContent,
       });
-      console.log(`📧 Verification email sent to: ${email}`);
+      console.log(`📧 Verification email sent (From: ${from}) to: ${email}`);
     } catch (error) {
       console.error(`❌ Failed to send verification email to ${email}:`, error);
     }
@@ -51,13 +52,14 @@ export class EmailService {
     const htmlContent = generatePasswordResetEmail(resetLink);
 
     try {
+      const from = process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`;
       await this.transporter.sendMail({
-        from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
+        from: from,
         to: email,
         subject: 'Reset your password - LesssGo',
         html: htmlContent,
       });
-      console.log(`📧 Password reset email sent to: ${email}`);
+      console.log(`📧 Password reset email sent (From: ${from}) to: ${email}`);
     } catch (error) {
       console.error(`❌ Failed to send password reset email to ${email}:`, error);
     }
@@ -65,13 +67,14 @@ export class EmailService {
 
   async sendEmail(to: string, subject: string, html: string) {
     try {
+      const from = process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`;
       await this.transporter.sendMail({
-        from: process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`,
+        from: from,
         to,
         subject,
         html,
       });
-      console.log(`📧 Notification email sent to: ${to}`);
+      console.log(`📧 Notification email sent (From: ${from}) to: ${to}`);
     } catch (error) {
       console.error(`❌ Failed to send notification email to ${to}:`, error);
     }
