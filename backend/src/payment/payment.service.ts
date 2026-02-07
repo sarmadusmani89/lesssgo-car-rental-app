@@ -299,6 +299,10 @@ export class PaymentService {
             paymentStatus: 'Confirmed (Paid via Stripe)',
             hp: car.hp,
             vehicleClass: car.vehicleClass,
+            transmission: car.transmission,
+            fuelType: car.fuelType,
+            pickupLocation: updatedBooking.pickupLocation,
+            returnLocation: updatedBooking.returnLocation,
           });
 
           await Promise.all([

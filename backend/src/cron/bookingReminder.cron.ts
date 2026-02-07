@@ -38,11 +38,23 @@ export class BookingReminderCron {
       await this.emailService.sendEmail(
         booking.user.email,
         "Booking Reminder",
-        bookingReminderTemplate(
-          booking.user.name ?? "User",
-          booking.car.name ?? "Car",
-          new Date(booking.startDate).toDateString()
-        )
+        bookingReminderTemplate({
+          userName: booking.user.name ?? "User",
+          carName: booking.car.name ?? "Car",
+          brand: booking.car.brand ?? "Vehicle",
+          startDate: new Date(booking.startDate).toLocaleString('en-AU', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: 'UTC'
+          }),
+          pickupLocation: booking.pickupLocation || 'Not specified',
+          bookingId: booking.id
+        })
       );
     }
   }

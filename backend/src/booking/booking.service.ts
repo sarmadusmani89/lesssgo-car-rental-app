@@ -148,6 +148,8 @@ export class BookingService {
           paymentStatus: 'Confirmed (Cash)',
           hp: car.hp,
           vehicleClass: car.vehicleClass,
+          transmission: car.transmission,
+          fuelType: car.fuelType,
           pickupLocation: createBookingDto.pickupLocation,
           returnLocation: createBookingDto.returnLocation,
         });
@@ -189,7 +191,7 @@ export class BookingService {
 
   async update(id: string, updateBookingDto: UpdateBookingDto) {
     const booking = await this.findOne(id);
-    return this.prisma.booking.update({
+    const updated = await this.prisma.booking.update({
       where: { id },
       data: updateBookingDto as any,
       include: {
@@ -198,6 +200,24 @@ export class BookingService {
         payments: true,
       }
     });
+
+    // Send Cancellation Email if status changed to CANCELLED
+    if (updateBookingDto.status === 'CANCELLED' && booking.status !== 'CANCELLED') {
+      try {
+        const { cancellationNoticeTemplate } = await import('../lib/emailTemplates/cancellationNotice');
+        const emailHtml = cancellationNoticeTemplate({
+          name: updated.customerName,
+          bookingId: updated.id,
+          carName: updated.car.name,
+          brand: updated.car.brand
+        });
+        await this.emailService.sendEmail(updated.customerEmail, 'Booking Cancelled - LesssGo', emailHtml);
+      } catch (err) {
+        console.error('Failed to send cancellation email:', err);
+      }
+    }
+
+    return updated;
   }
 
   async confirmPayment(id: string) {
@@ -295,6 +315,10 @@ export class BookingService {
         paymentStatus: 'Confirmed (Online)',
         hp: car.hp,
         vehicleClass: car.vehicleClass,
+        transmission: car.transmission,
+        fuelType: car.fuelType,
+        pickupLocation: booking.pickupLocation,
+        returnLocation: booking.returnLocation,
       });
 
       await this.emailService.sendEmail(settings.adminEmail, 'New Booking Alert - Payment Received', adminHtml);
