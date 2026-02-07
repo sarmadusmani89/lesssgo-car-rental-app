@@ -8,8 +8,15 @@ async function bootstrap() {
 
   app.enableCors();
 
-  // Increase payload size limit to 50mb to handle high-res car images
-  app.use(json({ limit: '50mb' }));
+  // Configure body parser to preserve rawBody while maintaining size limits
+  app.use(json({
+    limit: '50mb',
+    verify: (req: any, res, buf) => {
+      if (req.url && req.url.includes('/payment/webhook')) {
+        req.rawBody = buf;
+      }
+    }
+  }));
   app.use(urlencoded({ extended: true, limit: '50mb' }));
 
   app.useGlobalPipes(new ValidationPipe({

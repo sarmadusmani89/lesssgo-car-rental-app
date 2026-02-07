@@ -8,22 +8,23 @@ export class EmailService {
   private transporter: nodemailer.Transporter;
 
   constructor() {
+    const port = Number(process.env.SMTP_PORT) || 587;
     this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: false,
+      host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
+      port: port,
+      secure: port === 465, // true for 465, false for other ports (like 587)
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASSWORD,
       },
     });
 
-    // Verify connection on startup
+    // Verify Brevo SMTP connection on startup
     this.transporter.verify((error, success) => {
       if (error) {
-        console.error('❌ SMTP Connection Error:', error);
+        console.error('❌ Brevo SMTP Connection Error:', error);
       } else {
-        console.log('✅ SMTP Server reached successfully');
+        console.log('✅ Brevo SMTP Server reached successfully');
       }
     });
   }
