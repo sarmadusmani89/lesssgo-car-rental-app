@@ -1,12 +1,15 @@
 'use client';
 
-import { X, Check } from 'lucide-react';
+import { X, Check, MapPin } from 'lucide-react';
+import { PREDEFINED_LOCATIONS } from '@/constants/locations';
 
 interface FilterState {
     brand: string;
     type: string;
     transmission: string;
     priceRange: string;
+    pickup: string;
+    dropoff: string;
 }
 
 interface CarsFiltersProps {
@@ -30,10 +33,10 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
     };
 
     const clearFilters = () => {
-        onChange({ brand: '', type: '', transmission: '', priceRange: '' });
+        onChange({ brand: '', type: '', transmission: '', priceRange: '', pickup: '', dropoff: '' });
     };
 
-    const isFiltered = filters.brand || filters.type || filters.transmission || filters.priceRange;
+    const isFiltered = filters.brand || filters.type || filters.transmission || filters.priceRange || filters.pickup || filters.dropoff;
 
     const FilterGroup = ({ title, options, activeValue, onSelect, valueKey = (opt: string) => opt }: any) => (
         <div className="space-y-4">
@@ -101,6 +104,20 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
                 activeValue={filters.priceRange}
                 onSelect={(val: string) => updateFilter('priceRange', val)}
                 valueKey={(opt: any) => opt.value}
+            />
+
+            <FilterGroup
+                title="Pickup Location"
+                options={PREDEFINED_LOCATIONS}
+                activeValue={filters.pickup}
+                onSelect={(val: string) => updateFilter('pickup', val)}
+            />
+
+            <FilterGroup
+                title="Dropoff Location"
+                options={PREDEFINED_LOCATIONS}
+                activeValue={filters.dropoff}
+                onSelect={(val: string) => updateFilter('dropoff', val)}
             />
 
             <div className="p-8 bg-slate-900 rounded-[2rem] text-white relative overflow-hidden group">

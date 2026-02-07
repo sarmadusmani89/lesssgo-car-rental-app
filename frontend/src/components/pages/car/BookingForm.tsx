@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import api from '@/lib/api';
@@ -28,6 +28,14 @@ interface Props {
     onDatesChange?: (start: string, end: string) => void;
 }
 
+// Helper to get YYYY-MM-DD from a Date object using local time components
+const toLocalISO = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+};
+
 const TIME_OPTIONS = Array.from({ length: 13 * 2 + 1 }, (_, i) => {
     const totalMinutes = 9 * 60 + i * 30; // Start at 9:00
     const hours = Math.floor(totalMinutes / 60);
@@ -49,6 +57,21 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
     const [pickupTime, setPickupTime] = useState('10:00');
     const [returnDate, setReturnDate] = useState<Date | null>(defaultEndDate ? new Date(defaultEndDate) : null);
     const [returnTime, setReturnTime] = useState('10:00');
+
+    // Memoized minDate (48 hours from now)
+    const minPickupDate = useMemo(() => {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() + 2);
+        return d;
+    }, []);
+
+    const minReturnDate = useMemo(() => {
+        if (!pickupDate) return minPickupDate;
+        const d = new Date(pickupDate);
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }, [pickupDate, minPickupDate]);
     const [bookedDates, setBookedDates] = useState<Date[]>([]);
     const lastDatesRef = useRef({ start: '', end: '' });
 
@@ -75,8 +98,8 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
 
     useEffect(() => {
         if (onDatesChange && pickupDate) {
-            const startISO = `${pickupDate.toISOString().split('T')[0]}T${pickupTime}`;
-            const endISO = returnDate ? `${returnDate.toISOString().split('T')[0]}T${returnTime}` : '';
+            const startISO = `${toLocalISO(pickupDate)}T${pickupTime}`;
+            const endISO = returnDate ? `${toLocalISO(returnDate)}T${returnTime}` : '';
 
             if (lastDatesRef.current.start !== startISO || lastDatesRef.current.end !== endISO) {
                 lastDatesRef.current = { start: startISO, end: endISO };
@@ -86,40 +109,55 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
     }, [pickupDate, pickupTime, returnDate, returnTime, onDatesChange]);
 
     useEffect(() => {
-        if (pickupDate && returnDate && returnDate < pickupDate) {
-            setReturnDate(pickupDate);
-        }
-    }, [pickupDate]);
-
-    useEffect(() => {
+        if (!car) return;
         if (car.pickupLocation && car.pickupLocation.length > 0) {
-            setPickupLocation(car.pickupLocation[0]);
+            setPickupLocation(prev => prev || car.pickupLocation![0]);
         }
         if (car.dropoffLocation && car.dropoffLocation.length > 0) {
-            setReturnLocation(car.dropoffLocation[0]);
+            setReturnLocation(prev => prev || car.dropoffLocation![0]);
         }
     }, [car]);
 
-    // Sync internal state with props if they change externally
+    // Sync internal state with props only when they actually change value
     useEffect(() => {
         if (defaultStartDate) {
             const datePart = new Date(defaultStartDate);
-            setPickupDate(datePart);
+            if (!pickupDate || pickupDate.getTime() !== datePart.getTime()) {
+                setPickupDate(datePart);
+            }
             if (defaultStartDate.includes('T')) {
-                setPickupTime(defaultStartDate.split('T')[1].substring(0, 5));
+                const timePart = defaultStartDate.split('T')[1].substring(0, 5);
+                if (pickupTime !== timePart) {
+                    setPickupTime(timePart);
+                }
             }
         }
-    }, [defaultStartDate]);
+    }, [defaultStartDate, pickupDate, pickupTime]);
 
     useEffect(() => {
         if (defaultEndDate) {
             const datePart = new Date(defaultEndDate);
-            setReturnDate(datePart);
+            if (!returnDate || returnDate.getTime() !== datePart.getTime()) {
+                setReturnDate(datePart);
+            }
             if (defaultEndDate.includes('T')) {
-                setReturnTime(defaultEndDate.split('T')[1].substring(0, 5));
+                const timePart = defaultEndDate.split('T')[1].substring(0, 5);
+                if (returnTime !== timePart) {
+                    setReturnTime(timePart);
+                }
             }
         }
-    }, [defaultEndDate]);
+    }, [defaultEndDate, returnDate, returnTime]);
+
+    // Ensure return date is not before pickup date
+    useEffect(() => {
+        if (pickupDate && returnDate && returnDate < pickupDate) {
+            // Compare identifying strings to avoid loop if they are effectively same
+            if (toLocalISO(returnDate) !== toLocalISO(pickupDate)) {
+                setReturnDate(pickupDate);
+            }
+        }
+    }, [pickupDate, returnDate]);
 
     const calculateTotal = () => {
         if (!pickupDate || !returnDate) return 0;
@@ -146,8 +184,8 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
             return;
         }
 
-        const startCombined = `${pickupDate.toISOString().split('T')[0]}T${pickupTime}`;
-        const endCombined = `${returnDate.toISOString().split('T')[0]}T${returnTime}`;
+        const startCombined = `${toLocalISO(pickupDate)}T${pickupTime}`;
+        const endCombined = `${toLocalISO(returnDate)}T${returnTime}`;
 
         const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
         const checkoutUrl = `/checkout?id=${car.id}&startDate=${startCombined}&endDate=${endCombined}&pickupLocation=${encodeURIComponent(pickupLocation)}&dropoffLocation=${encodeURIComponent(returnLocation)}`;
@@ -194,11 +232,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                     onDateChange={setPickupDate}
                     onTimeChange={setPickupTime}
                     timeOptions={TIME_OPTIONS}
-                    minDate={(() => {
-                        const d = new Date();
-                        d.setDate(d.getDate() + 2);
-                        return d;
-                    })()}
+                    minDate={minPickupDate}
                     excludeDates={bookedDates}
                     startDate={pickupDate}
                     endDate={returnDate}
@@ -213,11 +247,7 @@ export default function BookingForm({ car, defaultStartDate, defaultEndDate, onD
                     onDateChange={setReturnDate}
                     onTimeChange={setReturnTime}
                     timeOptions={TIME_OPTIONS}
-                    minDate={(() => {
-                        const d = pickupDate ? new Date(pickupDate) : new Date();
-                        if (!pickupDate) d.setDate(d.getDate() + 2);
-                        return d;
-                    })()}
+                    minDate={minReturnDate}
                     excludeDates={bookedDates}
                     startDate={pickupDate}
                     endDate={returnDate}

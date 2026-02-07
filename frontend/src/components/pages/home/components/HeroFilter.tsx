@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, Search, Loader2 } from 'lucide-react';
+import { ChevronDown, Search, Loader2, MapPin } from 'lucide-react';
 import styles from '@/app/(public)/(home)/page.module.css';
+import { PREDEFINED_LOCATIONS } from '@/constants/locations';
 
 export default function HeroFilter() {
     const router = useRouter();
@@ -12,7 +13,9 @@ export default function HeroFilter() {
     const [selections, setSelections] = useState({
         brand: '',
         category: '',
-        transmission: ''
+        transmission: '',
+        pickup: '',
+        dropoff: ''
     });
 
     const toggleDropdown = (key: string) => {
@@ -30,6 +33,8 @@ export default function HeroFilter() {
         if (selections.brand) params.set('brand', selections.brand);
         if (selections.category) params.set('type', selections.category);
         if (selections.transmission) params.set('transmission', selections.transmission);
+        if (selections.pickup) params.set('pickup', selections.pickup);
+        if (selections.dropoff) params.set('dropoff', selections.dropoff);
 
         router.push(`/cars?${params.toString()}`);
     };
@@ -37,7 +42,8 @@ export default function HeroFilter() {
     const dropdownOptions = {
         brand: ['Porsche', 'Ferrari', 'Lamborghini', 'Mercedes-AMG', 'BMW M', 'Audi RS'],
         category: ['Supercar', 'Sports Car', 'Luxury Sedan', 'SUV', 'Convertible'],
-        transmission: ['Automatic', 'Manual']
+        transmission: ['Automatic', 'Manual'],
+        locations: PREDEFINED_LOCATIONS
     };
 
     return (
@@ -61,6 +67,62 @@ export default function HeroFilter() {
                                         key={opt}
                                         className={`${styles.dropdownItem} ${selections.brand === opt ? styles.selected : ''}`}
                                         onClick={() => handleSelect('brand', opt)}
+                                    >
+                                        {opt}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className={styles.divider} />
+
+                {/* Pickup Location Selection */}
+                <div className={styles.inputGroup}>
+                    <label className="flex items-center gap-1"><MapPin size={10} className="text-blue-600" /> Pickup Location</label>
+                    <div
+                        className={`${styles.selectWrapper} ${activeDropdown === 'pickup' ? styles.active : ''}`}
+                        onClick={() => toggleDropdown('pickup')}
+                    >
+                        <span>{selections.pickup || 'Select Pickup'}</span>
+                        <ChevronDown size={16} />
+                        {activeDropdown === 'pickup' && (
+                            <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
+                                <div className={styles.dropdownItem} onClick={() => handleSelect('pickup', '')}>Select Pickup</div>
+                                {dropdownOptions.locations.map(opt => (
+                                    <div
+                                        key={opt}
+                                        className={`${styles.dropdownItem} ${selections.pickup === opt ? styles.selected : ''}`}
+                                        onClick={() => handleSelect('pickup', opt)}
+                                    >
+                                        {opt}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className={styles.divider} />
+
+                {/* Dropoff Location Selection */}
+                <div className={styles.inputGroup}>
+                    <label className="flex items-center gap-1"><MapPin size={10} className="text-red-500" /> Dropoff Location</label>
+                    <div
+                        className={`${styles.selectWrapper} ${activeDropdown === 'dropoff' ? styles.active : ''}`}
+                        onClick={() => toggleDropdown('dropoff')}
+                    >
+                        <span>{selections.dropoff || 'Select Dropoff'}</span>
+                        <ChevronDown size={16} />
+                        {activeDropdown === 'dropoff' && (
+                            <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
+                                <div className={styles.dropdownItem} onClick={() => handleSelect('dropoff', '')}>Select Dropoff</div>
+                                {dropdownOptions.locations.map(opt => (
+                                    <div
+                                        key={opt}
+                                        className={`${styles.dropdownItem} ${selections.dropoff === opt ? styles.selected : ''}`}
+                                        onClick={() => handleSelect('dropoff', opt)}
                                     >
                                         {opt}
                                     </div>

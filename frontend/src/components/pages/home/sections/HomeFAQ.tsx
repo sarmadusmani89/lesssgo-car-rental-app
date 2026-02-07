@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import FAQ from '@/components/common/FAQ';
+import FAQ from '@/components/common/FAQ/FAQ';
 import { FAQS } from '@/data/faqs';
 
 export default function HomeFAQ() {

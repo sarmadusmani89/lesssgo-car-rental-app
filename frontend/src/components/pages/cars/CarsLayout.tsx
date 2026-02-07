@@ -20,6 +20,8 @@ interface Car {
     transmission: string;
     fuelCapacity: number;
     status: string;
+    pickupLocation?: string[];
+    dropoffLocation?: string[];
 }
 
 export default function CarsLayout() {
@@ -36,7 +38,9 @@ export default function CarsLayout() {
         brand: searchParams.get('brand') || '',
         type: searchParams.get('type') || '',
         transmission: searchParams.get('transmission') || '',
-        priceRange: searchParams.get('price') || ''
+        priceRange: searchParams.get('price') || '',
+        pickup: searchParams.get('pickup') || '',
+        dropoff: searchParams.get('dropoff') || ''
     });
 
     const ITEMS_PER_PAGE = 6;
@@ -82,6 +86,16 @@ export default function CarsLayout() {
         if (filters.priceRange) {
             const [min, max] = filters.priceRange.split('-').map(Number);
             results = results.filter(car => car.pricePerDay >= min && car.pricePerDay <= max);
+        }
+        if (filters.pickup) {
+            results = results.filter(car =>
+                car.pickupLocation?.some(loc => loc.toLowerCase() === filters.pickup.toLowerCase())
+            );
+        }
+        if (filters.dropoff) {
+            results = results.filter(car =>
+                car.dropoffLocation?.some(loc => loc.toLowerCase() === filters.dropoff.toLowerCase())
+            );
         }
 
         setFilteredCars(results);
