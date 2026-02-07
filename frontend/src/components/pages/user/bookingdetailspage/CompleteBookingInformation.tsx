@@ -15,7 +15,7 @@ export default function CompleteBookingInformation({ booking }: { booking: any }
         </div>
         <div className="flex items-center gap-2">
           <Calendar size={20} className="text-green-500" />
-          <span>Dates: {new Date(booking.startDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })} - {new Date(booking.endDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span>
+          <span>Dates: {new Date(booking.startDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short', hour12: false })} - {new Date(booking.endDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short', hour12: false })}</span>
         </div>
         <div className="flex items-center gap-2">
           <MapPin size={20} className="text-red-500" />
