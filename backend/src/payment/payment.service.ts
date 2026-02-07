@@ -244,7 +244,8 @@ export class PaymentService {
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
-            hour12: false
+            hour12: false,
+            timeZone: 'UTC'
           };
           const start = new Date(startDate).toLocaleString('en-AU', formatOptions);
           const end = new Date(endDate).toLocaleString('en-AU', formatOptions);

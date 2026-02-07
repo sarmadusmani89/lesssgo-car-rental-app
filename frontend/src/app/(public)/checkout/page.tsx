@@ -122,8 +122,8 @@ function CheckoutContent() {
       const bookingData = {
         userId,
         carId: carId as string,
-        startDate: new Date(startDate).toISOString(),
-        endDate: new Date(endDate).toISOString(),
+        startDate: startDate ? `${startDate}:00Z` : '',
+        endDate: endDate ? `${endDate}:00Z` : '',
         totalAmount,
         status: 'PENDING',
         paymentStatus: 'PENDING',
