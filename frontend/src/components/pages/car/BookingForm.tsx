@@ -150,8 +150,8 @@ export default function BookingForm({ car }: Props) {
             return;
         }
 
-        const startCombined = `${toLocalISO(pickupDate)}T${pickupTime}`;
-        const endCombined = `${toLocalISO(returnDate)}T${returnTime}`;
+        const startCombined = `${toLocalISO(pickupDate)}T${pickupTime}:00Z`;
+        const endCombined = `${toLocalISO(returnDate)}T${returnTime}:00Z`;
 
         const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
         const checkoutUrl = `/checkout?id=${car.id}&startDate=${startCombined}&endDate=${endCombined}&pickupLocation=${encodeURIComponent(pickupLocation)}&returnLocation=${encodeURIComponent(returnLocation)}`;

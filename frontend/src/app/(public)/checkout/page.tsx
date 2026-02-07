@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { toUtcDate } from '@/lib/utils';
 import BookingSummary from '@/components/pages/checkout/BookingSummary';
 import CustomerInformationForm from '@/components/pages/checkout/CustomerInformationForm';
 import PaymentMethodSelection from '@/components/pages/checkout/PaymentMethodSelection';
