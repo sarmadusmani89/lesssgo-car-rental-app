@@ -57,7 +57,7 @@ export default function CustomSelect({ options, value, onChange, placeholder = '
             </button>
 
             {isOpen && (
-                <div className="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 py-1 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-100">
+                <div className="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 py-1 max-h-[280px] overflow-y-auto animate-in fade-in zoom-in-95 duration-100">
                     {options.map((option) => (
                         <button
                             key={option.value}

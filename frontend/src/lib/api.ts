@@ -80,6 +80,7 @@ export const adminApi = {
     listBookings: () => api.get('/booking').then(res => res.data),
     updateBooking: (id: string, data: any) => api.put(`/booking/${id}`, data).then(res => res.data),
     deleteBooking: (id: string) => api.delete(`/booking/${id}`).then(res => res.data),
+    confirmPayment: (id: string) => api.patch(`/booking/${id}/confirm-payment`).then(res => res.data),
 };
 
 export const newsletterApi = {

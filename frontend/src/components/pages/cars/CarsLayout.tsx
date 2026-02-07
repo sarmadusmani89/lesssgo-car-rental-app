@@ -21,7 +21,7 @@ interface Car {
     fuelCapacity: number;
     status: string;
     pickupLocation?: string[];
-    dropoffLocation?: string[];
+    returnLocation?: string[];
 }
 
 export default function CarsLayout() {
@@ -40,7 +40,7 @@ export default function CarsLayout() {
         transmission: searchParams.get('transmission') || '',
         priceRange: searchParams.get('price') || '',
         pickup: searchParams.get('pickup') || '',
-        dropoff: searchParams.get('dropoff') || ''
+        return: searchParams.get('return') || ''
     });
 
     const ITEMS_PER_PAGE = 6;
@@ -92,9 +92,9 @@ export default function CarsLayout() {
                 car.pickupLocation?.some(loc => loc.toLowerCase() === filters.pickup.toLowerCase())
             );
         }
-        if (filters.dropoff) {
+        if (filters.return) {
             results = results.filter(car =>
-                car.dropoffLocation?.some(loc => loc.toLowerCase() === filters.dropoff.toLowerCase())
+                car.returnLocation?.some(loc => loc.toLowerCase() === filters.return.toLowerCase())
             );
         }
 

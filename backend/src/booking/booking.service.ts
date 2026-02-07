@@ -3,12 +3,14 @@ import { PrismaService } from '../lib/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
 import { EmailService } from '../email/email.service';
+import { SettingsService } from '../settings/settings.service';
 
 @Injectable()
 export class BookingService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
+    private readonly settingsService: SettingsService,
   ) { }
 
   async create(createBookingDto: CreateBookingDto) {
@@ -47,14 +49,31 @@ export class BookingService {
       throw new ConflictException('Car is already booked for the selected dates');
     }
 
+    // Auto-confirm CASH bookings
+    if (createBookingDto.paymentMethod === 'CASH') {
+      createBookingDto.status = 'CONFIRMED';
+    }
+
     const booking = await this.prisma.booking.create({
       data: createBookingDto,
       include: { car: true }
     });
 
-    // Send email notifications for ALL bookings
+    // Create Payment Record (Essential for Stats)
+    await this.prisma.payment.create({
+      data: {
+        amount: createBookingDto.totalAmount,
+        currency: 'AUD', // Default currency
+        paymentMethod: createBookingDto.paymentMethod,
+        status: createBookingDto.paymentStatus, // Usually PENDING initially
+        bookingId: booking.id
+      }
+    });
+
+    // Send email notifications
     try {
-      const { customerName, customerEmail, car, startDate, endDate, totalAmount } = booking;
+      const settings = await this.settingsService.getSettings();
+      const { customerName, customerEmail, customerPhone, car, startDate, endDate, totalAmount } = booking;
       const start = new Date(startDate).toLocaleDateString();
       const end = new Date(endDate).toLocaleDateString();
       const paymentMethod = createBookingDto.paymentMethod;
@@ -62,12 +81,10 @@ export class BookingService {
       // Customize message based on payment method
       let paymentStatusMessage = '';
       let emailSubject = '';
-      let adminEmailSubject = '';
 
       if (paymentMethod === 'CASH') {
         paymentStatusMessage = '<p><strong>Payment Method:</strong> Cash on Pickup</p>';
         emailSubject = 'Booking Confirmed - LesssGo';
-        adminEmailSubject = 'New Cash Booking Alert';
       } else {
         // For ONLINE/CARD payments
         paymentStatusMessage = `
@@ -76,7 +93,6 @@ export class BookingService {
           <p style="font-size: 14px; color: #6b7280;">You will receive another email once your payment is confirmed.</p>
         `;
         emailSubject = 'Booking Created - Payment Processing';
-        adminEmailSubject = 'New Online Booking - Payment Pending';
       }
 
       const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
@@ -98,33 +114,38 @@ export class BookingService {
         airConditioner: car.airConditioner,
         gps: car.gps,
         vehicleClass: car.vehicleClass,
+        pickupLocation: createBookingDto.pickupLocation,
+        returnLocation: createBookingDto.returnLocation,
       });
 
-      const adminHtml = bookingConfirmationTemplate({
-        customerName: 'Admin',
-        bookingId: booking.id,
-        brand: car.brand,
-        vehicleName: car.name,
-        startDate: start,
-        endDate: end,
-        totalAmount,
-        paymentMethod,
-        isConfirmed: paymentMethod === 'CASH',
-        hp: car.hp,
-        passengers: car.passengers,
-        fuelType: car.fuelType,
-        transmission: car.transmission,
-        airConditioner: car.airConditioner,
-        gps: car.gps,
-        vehicleClass: car.vehicleClass,
-      });
+      // Send to User
+      await this.emailService.sendEmail(customerEmail, emailSubject, userHtml);
 
-      console.log(`Sending booking confirmation emails for ${paymentMethod} payment...`);
-      await Promise.all([
-        this.emailService.sendEmail(customerEmail, emailSubject, userHtml),
-        this.emailService.sendEmail(process.env.SMTP_USER!, adminEmailSubject, adminHtml)
-      ]);
-      console.log('Booking confirmation emails sent successfully');
+      // Send to Admin ONLY if CASH (Confirmed immediately)
+      if (paymentMethod === 'CASH') {
+        const { adminBookingNotificationTemplate } = await import('../lib/emailTemplates/adminBookingNotification');
+        const adminHtml = adminBookingNotificationTemplate({
+          customerName,
+          customerEmail,
+          customerPhone: customerPhone || 'N/A',
+          bookingId: booking.id,
+          brand: car.brand,
+          vehicleName: car.name,
+          startDate: start,
+          endDate: end,
+          totalAmount,
+          paymentMethod,
+          paymentStatus: 'Confirmed (Cash)',
+          hp: car.hp,
+          vehicleClass: car.vehicleClass,
+          pickupLocation: createBookingDto.pickupLocation,
+          returnLocation: createBookingDto.returnLocation,
+        });
+
+        await this.emailService.sendEmail(settings.adminEmail, 'New Booking Alert - Cash Payment', adminHtml);
+      }
+
+      console.log('Booking emails processed successfully');
     } catch (err) {
       console.error('Failed to send booking emails:', err);
     }
@@ -161,6 +182,11 @@ export class BookingService {
     return this.prisma.booking.update({
       where: { id },
       data: updateBookingDto as any,
+      include: {
+        car: true,
+        user: true,
+        payments: true,
+      }
     });
   }
 
@@ -177,11 +203,29 @@ export class BookingService {
       include: { car: true }
     });
 
-    // Also update associated payment records
-    await this.prisma.payment.updateMany({
-      where: { bookingId: id },
-      data: { status: 'PAID' }
+    // Check for existing payment
+    const existingPayment = await this.prisma.payment.findFirst({
+      where: { bookingId: id }
     });
+
+    if (existingPayment) {
+      // Update existing
+      await this.prisma.payment.update({
+        where: { id: existingPayment.id },
+        data: { status: 'PAID' }
+      });
+    } else {
+      // Create missing payment record (Backfill)
+      await this.prisma.payment.create({
+        data: {
+          bookingId: id,
+          currency: 'AUD', // Default currency
+          amount: updatedBooking.totalAmount,
+          paymentMethod: updatedBooking.paymentMethod,
+          status: 'PAID'
+        }
+      });
+    }
 
     // Send confirmation email if it was previously PENDING
     try {
@@ -205,12 +249,36 @@ export class BookingService {
         passengers: car.passengers,
         fuelType: car.fuelType,
         transmission: car.transmission,
-        airConditioner: car.airConditioner,
-        gps: car.gps,
-        vehicleClass: car.vehicleClass,
+        airConditioner: booking.car.airConditioner,
+        gps: booking.car.gps,
+        vehicleClass: booking.car.vehicleClass,
+        pickupLocation: booking.pickupLocation,
+        returnLocation: booking.returnLocation,
       });
 
       await this.emailService.sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml);
+
+      // Send to Admin (Confirmed)
+      const settings = await this.settingsService.getSettings();
+      const { adminBookingNotificationTemplate } = await import('../lib/emailTemplates/adminBookingNotification');
+      const adminHtml = adminBookingNotificationTemplate({
+        customerName,
+        customerEmail,
+        customerPhone: updatedBooking.customerPhone || 'N/A',
+        bookingId: updatedBooking.id,
+        brand: car.brand,
+        vehicleName: car.name,
+        startDate: start,
+        endDate: end,
+        totalAmount,
+        paymentMethod,
+        paymentStatus: 'Confirmed (Online)',
+        hp: car.hp,
+        vehicleClass: car.vehicleClass,
+      });
+
+      await this.emailService.sendEmail(settings.adminEmail, 'New Booking Alert - Payment Received', adminHtml);
+
     } catch (err) {
       console.error('Failed to send payment confirmation email:', err);
     }

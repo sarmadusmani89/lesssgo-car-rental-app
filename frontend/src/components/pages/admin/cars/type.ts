@@ -14,7 +14,7 @@ export interface Car {
   description?: string;
   status: CarStatus;
   pickupLocation?: string[];
-  dropoffLocation?: string[];
+  returnLocation?: string[];
   passengers?: number;
   freeCancellation?: boolean;
   fuelType?: string;

@@ -12,7 +12,9 @@ interface CurrencyRates {
 }
 
 export function formatPrice(amount: number, currency: 'AUD' | 'PGK' | 'USD' = 'AUD', rates?: CurrencyRates) {
-    const symbol = currency === 'PGK' ? 'K' : '$';
+    let symbol = '$';
+    if (currency === 'PGK') symbol = 'K';
+    if (currency === 'AUD') symbol = 'A$';
 
     // Use provided rates or fallback to defaults
     const currentRates = rates || { AUD: 1, USD: 0.65, PGK: 2.6 };

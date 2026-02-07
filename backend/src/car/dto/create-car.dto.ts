@@ -54,7 +54,7 @@ export class CreateCarDto {
     if (typeof value === 'string') return value.split(',').map(s => s.trim()).filter(Boolean);
     return value;
   })
-  dropoffLocation?: string[];
+  returnLocation?: string[];
 
   @IsOptional()
   @IsInt()

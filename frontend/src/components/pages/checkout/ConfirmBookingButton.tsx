@@ -1,5 +1,8 @@
 'use client';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
+import { formatPrice } from '@/lib/utils';
 import { ShieldCheck } from 'lucide-react';
 
 interface Props {
@@ -15,8 +18,10 @@ export default function ConfirmBookingButton({
   paymentMethod,
   total,
 }: Props) {
+  const { currency, rates } = useSelector((state: RootState) => state.ui);
+
   const label = paymentMethod === 'stripe'
-    ? `Pay Via Stripe ($${total || 0})`
+    ? `Pay Via Stripe (${formatPrice(total || 0, currency, rates)})`
     : 'Confirm Reservation';
 
   return (

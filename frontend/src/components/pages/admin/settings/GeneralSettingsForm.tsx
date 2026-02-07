@@ -63,11 +63,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                 data.append('favicon', favicon);
             }
 
-            await api.put('/settings', data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            await api.put('/settings', data);
             toast.success('Settings updated successfully');
             onSaved();
         } catch (error) {

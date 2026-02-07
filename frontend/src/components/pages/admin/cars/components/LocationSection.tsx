@@ -37,22 +37,22 @@ export default function LocationSection({ control, errors }: Props) {
                 </div>
                 <div>
                     <label className="flex items-center gap-2 text-xs font-bold text-gray-700 mb-1.5 uppercase">
-                        <MapPin size={14} className="text-red-500" /> Dropoff Locations <span className="text-red-500">*</span>
+                        <MapPin size={14} className="text-red-500" /> Return Locations <span className="text-red-500">*</span>
                     </label>
                     <Controller
-                        name="dropoffLocation"
+                        name="returnLocation"
                         control={control}
                         render={({ field }) => (
                             <MultiSelect
                                 options={PREDEFINED_LOCATIONS}
                                 value={field.value}
                                 onChange={field.onChange}
-                                placeholder="Select dropoff locations..."
+                                placeholder="Select return locations..."
                             />
                         )}
                     />
-                    {errors.dropoffLocation && (
-                        <p className="mt-1 text-xs text-red-500 font-bold">{errors.dropoffLocation.message as string}</p>
+                    {errors.returnLocation && (
+                        <p className="mt-1 text-xs text-red-500 font-bold">{errors.returnLocation.message as string}</p>
                     )}
                 </div>
             </div>

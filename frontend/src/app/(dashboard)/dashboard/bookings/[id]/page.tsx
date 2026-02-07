@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import CompleteBookingInformation from '@/components/pages/user/bookingdetailspage/CompleteBookingInformation';
 import CarDetailsWithImages from '@/components/pages/user/bookingdetailspage/CarDetailsWithImages';
 import PaymentStatusAndMethod from '@/components/pages/user/bookingdetailspage/PaymentStatusAndMethod';
@@ -11,6 +12,7 @@ import BookingStatusTimeline from '@/components/pages/user/bookingdetailspage/Bo
 
 export default function BookingDetailsPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [booking, setBooking] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,13 +47,64 @@ export default function BookingDetailsPage() {
     );
   }
 
+
+  const handleCancel = async () => {
+    try {
+      if (!confirm('Are you sure you want to cancel this booking? This action cannot be undone.')) return;
+
+      await api.patch(`/booking/${id}`, { status: 'CANCELLED' });
+      toast.success('Booking cancelled successfully');
+      // Refresh data
+      const res = await api.get(`/booking/${id}`);
+      setBooking(res.data);
+    } catch (error: any) {
+      console.error('Failed to cancel booking:', error);
+      toast.error(error.response?.data?.message || 'Failed to cancel booking');
+    }
+  };
+
+
+
+  const pickupDate = new Date(booking.startDate);
+  const now = new Date();
+  const hoursDifference = (pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+  const isFreeCancellation = booking.car.freeCancellation;
+  const isTimeValid = hoursDifference >= 48;
+  const isCancellable = booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED' && isFreeCancellation && isTimeValid;
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold font-outfit">Booking Details</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold font-outfit">Booking Details</h1>
+        {booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED' && (
+          <button
+            onClick={handleCancel}
+            disabled={!isCancellable}
+            className={`px-4 py-2 rounded-lg font-bold text-sm uppercase tracking-wider ${isCancellable
+              ? 'bg-red-50 text-red-600 hover:bg-red-100'
+              : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              }`}
+            title={
+              !isFreeCancellation
+                ? "This car does not offer free cancellation"
+                : !isTimeValid
+                  ? "Cancellations are only allowed 48 hours before pickup"
+                  : "Cancel Booking"
+            }
+          >
+            {!isFreeCancellation
+              ? 'Non-Cancellable'
+              : !isTimeValid
+                ? 'Cancellation Unavailable (<48h)'
+                : 'Cancel Booking'}
+          </button>
+        )}
+      </div>
       <CompleteBookingInformation booking={booking} />
       <CarDetailsWithImages car={booking.car} />
       <PaymentStatusAndMethod booking={booking} />
       <BookingStatusTimeline booking={booking} />
     </div>
   );
+
 }

@@ -17,6 +17,8 @@ export function bookingConfirmationTemplate(data: {
   airConditioner?: boolean | null;
   gps?: boolean | null;
   vehicleClass?: string | null;
+  pickupLocation?: string | null;
+  returnLocation?: string | null;
 }) {
   const statusColor = data.isConfirmed ? '#10b981' : '#f59e0b';
   const statusText = data.isConfirmed ? 'Confirmed' : 'Pending Confirmation';
@@ -62,7 +64,7 @@ export function bookingConfirmationTemplate(data: {
         <table width="100%" cellpadding="0" cellspacing="0">
           <tr>
             <td width="50%">
-               <p style="margin: 0; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Pickup - Dropoff</p>
+               <p style="margin: 0; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Pickup - Return</p>
                <p style="margin: 4px 0 0; font-size: 14px; font-weight: 700; color: #334155;">${data.startDate} to ${data.endDate}</p>
             </td>
             <td width="50%" align="right">
@@ -70,6 +72,26 @@ export function bookingConfirmationTemplate(data: {
                <p style="margin: 4px 0 0; font-size: 14px; font-weight: 700; color: #334155;">${data.paymentMethod === 'ONLINE' ? 'Pay via Stripe (Online)' : 'Cash on Pickup'}</p>
             </td>
           </tr>
+          ${(data.pickupLocation || data.returnLocation) ? `
+          <tr>
+            <td colspan="2" style="padding-top: 15px;">
+              <div style="padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #edf2f7;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td width="50%">
+                      <p style="margin: 0; font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Pickup Location</p>
+                      <p style="margin: 2px 0 0; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase;">${data.pickupLocation || 'Not specified'}</p>
+                    </td>
+                    <td width="50%" align="right">
+                      <p style="margin: 0; font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Return Location</p>
+                      <p style="margin: 2px 0 0; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase;">${data.returnLocation || 'Not specified'}</p>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </tr>
+          ` : ''}
         </table>
         
         <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed #e2e8f0;">

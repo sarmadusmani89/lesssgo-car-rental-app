@@ -1,6 +1,6 @@
 'use client';
 
-import FAQ from '@/components/common/FAQ';
+import FAQ from '@/components/common/FAQ/FAQ';
 import { FAQS } from '@/data/faqs';
 import styles from '@/app/(public)/faq/faq.module.css';
 

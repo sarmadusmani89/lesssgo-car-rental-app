@@ -12,7 +12,7 @@ export default function CheckoutHeader({ carId }: CheckoutHeaderProps) {
         <div className="bg-white border-b border-gray-100 mb-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
                 <Link
-                    href={carId ? `/car?id=${carId}` : '/vehicles'}
+                    href={carId ? `/cars/${carId}` : '/cars'}
                     className="inline-flex items-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-blue-600 transition-colors mb-6"
                 >
                     <ArrowLeft size={14} className="mr-2" />

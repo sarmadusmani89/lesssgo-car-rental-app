@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, User } from 'lucide-react';
+import { Calendar, User, MapPin } from 'lucide-react';
 
 export default function CompleteBookingInformation({ booking }: { booking: any }) {
   if (!booking) return null;
@@ -15,7 +15,15 @@ export default function CompleteBookingInformation({ booking }: { booking: any }
         </div>
         <div className="flex items-center gap-2">
           <Calendar size={20} className="text-green-500" />
-          <span>Dates: {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}</span>
+          <span>Dates: {new Date(booking.startDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })} - {new Date(booking.endDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <MapPin size={20} className="text-red-500" />
+          <span>Pickup Location: <span className="font-bold uppercase">{booking.pickupLocation || 'Not specified'}</span></span>
+        </div>
+        <div className="flex items-center gap-2">
+          <MapPin size={20} className="text-orange-500" />
+          <span>Return Location: <span className="font-bold uppercase">{booking.returnLocation || 'Not specified'}</span></span>
         </div>
         <div>
           <span className="font-medium text-gray-500">Booking ID:</span>

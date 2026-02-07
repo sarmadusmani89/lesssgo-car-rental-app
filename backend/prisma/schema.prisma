@@ -48,7 +48,7 @@ model Car {
   
   // New Metadata Fields
   pickupLocation   String[]  @default([])
-  dropoffLocation  String[]  @default([])
+  returnLocation   String[]  @default([])
   passengers       Int       @default(4)
   freeCancellation Boolean   @default(true) // Default 48h policy
   fuelType         String?   @default("Petrol")
@@ -79,6 +79,8 @@ model Booking {
   customerName    String
   customerEmail   String
   customerPhone   String
+  pickupLocation  String?
+  returnLocation  String?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   user            User            @relation(fields: [userId], references: [id])

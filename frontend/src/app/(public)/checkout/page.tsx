@@ -22,6 +22,8 @@ function CheckoutContent() {
   const carId = searchParams.get('id');
   const startDate = searchParams.get('startDate') || '';
   const endDate = searchParams.get('endDate') || '';
+  const pickupLocation = searchParams.get('pickupLocation') || '';
+  const returnLocation = searchParams.get('returnLocation') || '';
 
   const [car, setCar] = useState<any>(null);
   const [customerData, setCustomerData] = useState<any>({
@@ -38,7 +40,7 @@ function CheckoutContent() {
 
   useEffect(() => {
     if (!carId) {
-      router.push('/vehicles');
+      router.push('/cars');
       return;
     }
 
@@ -78,9 +80,14 @@ function CheckoutContent() {
     if (!startDate || !endDate) return 0;
     const start = new Date(startDate);
     const end = new Date(endDate);
+
+    // Normalize to midnight to calculate calendar days only
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
     const diffTime = Math.abs(end.getTime() - start.getTime());
-    const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return days >= 0 ? days + 1 : 0; // Sync with car detail page (inclusive)
+    const days = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    return days >= 0 ? days + 1 : 0;
   };
 
   const days = calculateDays();
@@ -119,6 +126,8 @@ function CheckoutContent() {
         customerEmail: customerData.email,
         customerPhone: customerData.phoneNumber || '',
         paymentMethod: paymentMethod === 'stripe' ? 'ONLINE' : 'CASH',
+        pickupLocation,
+        returnLocation,
       };
 
       const bookingRes = await api.post('/booking', bookingData);
@@ -144,7 +153,11 @@ function CheckoutContent() {
 
     } catch (error: any) {
       console.error("Booking error:", error);
-      toast.error(error.response?.data?.message || "Booking failed! Please try again.");
+      if (error.response?.status === 409) {
+        toast.error("This vehicle is unavailable for the selected dates. Please choose different dates.");
+      } else {
+        toast.error(error.response?.data?.message || "Booking failed! Please try again.");
+      }
     } finally {
       if (paymentMethod !== 'stripe') setLoading(false);
     }
@@ -200,7 +213,13 @@ function CheckoutContent() {
           <div className="xl:col-span-4 space-y-8">
             <div className="xl:sticky xl:top-28 space-y-8">
               <div className="bg-white p-2 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 border border-white overflow-hidden">
-                <BookingSummary car={car} startDate={startDate} endDate={endDate} />
+                <BookingSummary
+                  car={car}
+                  startDate={startDate}
+                  endDate={endDate}
+                  pickupLocation={pickupLocation}
+                  returnLocation={returnLocation}
+                />
               </div>
 
               <CheckoutSupport />

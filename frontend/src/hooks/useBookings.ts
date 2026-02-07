@@ -37,12 +37,23 @@ export function useBookings() {
         }
     };
 
+    const confirmPayment = async (id: string) => {
+        try {
+            const updatedBooking = await adminApi.confirmPayment(id);
+            mutate(data?.map(b => (b.id === id ? updatedBooking : b)), false);
+            return updatedBooking;
+        } catch (err) {
+            throw err;
+        }
+    };
+
     return {
         bookings: data || [],
         isLoading,
         isError: error,
         updateBookingStatus,
         updatePaymentStatus,
+        confirmPayment,
         deleteBooking,
         refreshBookings: mutate,
     };

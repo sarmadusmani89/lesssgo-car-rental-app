@@ -1,5 +1,9 @@
 'use client';
 
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
+import { formatPrice } from '@/lib/utils';
+
 interface Props {
   car: {
     name: string;
@@ -16,16 +20,25 @@ interface Props {
   } | null;
   startDate: string;
   endDate: string;
+  pickupLocation?: string;
+  returnLocation?: string;
 }
 
-export default function BookingSummary({ car, startDate, endDate }: Props) {
+export default function BookingSummary({ car, startDate, endDate, pickupLocation, returnLocation }: Props) {
+  const { currency, rates } = useSelector((state: RootState) => state.ui);
+
   const getDays = () => {
     if (!startDate || !endDate) return 0;
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const diff = end.getTime() - start.getTime();
-    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    return days >= 0 ? days + 1 : 0; // Include both start and end day (Sync with Checkout page)
+
+    // Normalize to midnight to calculate calendar days only
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    const diff = Math.abs(end.getTime() - start.getTime());
+    const days = Math.round(diff / (1000 * 60 * 60 * 24));
+    return days >= 0 ? days + 1 : 0;
   };
 
   const days = getDays();
@@ -34,10 +47,13 @@ export default function BookingSummary({ car, startDate, endDate }: Props) {
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '...';
     const date = new Date(dateStr);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = String(date.getFullYear()).slice(-2);
-    return `${day}/${month}/${year}`;
+    return date.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   return (
@@ -69,6 +85,22 @@ export default function BookingSummary({ car, startDate, endDate }: Props) {
           <p className="font-bold text-gray-900 text-sm">
             From {formatDate(startDate)} To {formatDate(endDate)}
           </p>
+          {(pickupLocation || returnLocation) && (
+            <div className="mt-4 grid grid-cols-2 gap-4 border-t border-gray-50 pt-4">
+              {pickupLocation && (
+                <div>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Pickup</span>
+                  <p className="font-bold text-gray-900 text-[10px] uppercase leading-tight">{pickupLocation}</p>
+                </div>
+              )}
+              {returnLocation && (
+                <div>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 block mb-1">Return</span>
+                  <p className="font-bold text-gray-900 text-[10px] uppercase leading-tight">{returnLocation}</p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100">
@@ -117,7 +149,9 @@ export default function BookingSummary({ car, startDate, endDate }: Props) {
       <div className="pt-8 mt-4 border-t border-gray-100 flex justify-between items-end">
         <div>
           <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 leading-none">Total Investment</p>
-          <p className="text-4xl font-black text-blue-600 font-outfit tracking-tighter">${total}</p>
+          <p className="text-4xl font-black text-blue-600 font-outfit tracking-tighter">
+            {formatPrice(total, currency, rates)}
+          </p>
         </div>
         <div className="text-right">
           <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">Tax Inclusive</p>

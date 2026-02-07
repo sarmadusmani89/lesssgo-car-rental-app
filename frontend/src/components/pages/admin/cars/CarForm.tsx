@@ -8,8 +8,7 @@ import { Car } from "./type";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { X, Loader2, Image as ImageIcon, Upload, ChevronDown, Check, Users, Snowflake, MapPin, Fuel } from "lucide-react";
-import CustomSelect from '@/components/ui/CustomSelect';
-import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS, VEHICLE_FUEL_TYPES } from "./constants";
+import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS, VEHICLE_FUEL_TYPES, VEHICLE_CLASSES } from "./constants";
 
 import BasicInfoSection from "./components/BasicInfoSection";
 import LocationSection from "./components/LocationSection";
@@ -22,14 +21,14 @@ const carSchema = z.object({
   brand: z.string().min(1, "Brand is required"),
   type: z.string().min(1, "Category is required"),
   transmission: z.string().min(1, "Transmission is required"),
-  fuelCapacity: z.number().min(1, "Fuel capacity must be positive"),
-  pricePerDay: z.number().min(1, "Price must be positive"),
-  hp: z.number().min(50, "HP must be reasonable (min 50)"),
+  fuelCapacity: z.preprocess((val) => Number(val) || undefined, z.number().min(1, "Fuel capacity must be positive")),
+  pricePerDay: z.preprocess((val) => Number(val) || undefined, z.number().min(1, "Price must be positive")),
+  hp: z.preprocess((val) => Number(val) || undefined, z.number().min(50, "HP must be reasonable (min 50)")),
   description: z.string().default(""),
   status: z.enum(["AVAILABLE", "RENTED", "MAINTENANCE"]),
   pickupLocation: z.array(z.string()).min(1, "At least one pickup location is required"),
-  dropoffLocation: z.array(z.string()).min(1, "At least one dropoff location is required"),
-  passengers: z.number().min(1, "At least 1 passenger"),
+  returnLocation: z.array(z.string()).min(1, "At least one return location is required"),
+  passengers: z.preprocess((val) => Number(val) || undefined, z.number().min(1, "At least 1 passenger")),
   freeCancellation: z.boolean().default(true),
   fuelType: z.string().default("Petrol"),
   airConditioner: z.boolean().default(true),
@@ -48,7 +47,7 @@ type CarFormValues = {
   description: string;
   status: "AVAILABLE" | "RENTED" | "MAINTENANCE";
   pickupLocation: string[];
-  dropoffLocation: string[];
+  returnLocation: string[];
   passengers: number;
   freeCancellation: boolean;
   fuelType: string;
@@ -90,6 +89,12 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
       status: editingCar.status,
       gps: editingCar.gps ?? true,
       vehicleClass: editingCar.vehicleClass || "Standard",
+      pickupLocation: editingCar.pickupLocation || [],
+      returnLocation: editingCar.returnLocation || [],
+      passengers: editingCar.passengers || 4,
+      fuelType: editingCar.fuelType || "Petrol",
+      freeCancellation: editingCar.freeCancellation ?? true,
+      airConditioner: editingCar.airConditioner ?? true,
     } : {
       name: "",
       brand: "",
@@ -102,6 +107,12 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
       status: "AVAILABLE",
       gps: true,
       vehicleClass: "Standard",
+      pickupLocation: [],
+      returnLocation: [],
+      passengers: 4,
+      fuelType: "Petrol",
+      freeCancellation: true,
+      airConditioner: true,
     },
   });
 
@@ -126,8 +137,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
   const transmissionOptions = VEHICLE_TRANSMISSIONS.map(trans => ({ label: trans, value: trans }));
   const fuelOptions = VEHICLE_FUEL_TYPES.map(fuel => ({ label: fuel, value: fuel }));
 
-  const { VEHICLE_CLASSES } = require("../constants");
-  const classOptions = (VEHICLE_CLASSES as string[]).map(cls => ({ label: cls, value: cls }));
+  const classOptions = VEHICLE_CLASSES.map(cls => ({ label: cls, value: cls }));
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

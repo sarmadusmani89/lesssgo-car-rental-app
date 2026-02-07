@@ -26,6 +26,7 @@ export interface Car {
     imageUrl: string | null;
     pricePerDay: number;
     vehicleClass: string;
+    freeCancellation: boolean;
 }
 
 export interface BookingUser {

@@ -36,7 +36,7 @@ export default function MaintenancePage() {
                         </div>
                         <div className="text-left">
                             <div className="text-xs font-bold text-gray-400 uppercase">Email Us</div>
-                            <div className="text-sm font-bold text-gray-900">support@lesssgo.com.pg</div>
+                            <div className="text-sm font-bold text-gray-900">support@lesssgo.com</div>
                         </div>
                     </div>
                     <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex items-center gap-3">

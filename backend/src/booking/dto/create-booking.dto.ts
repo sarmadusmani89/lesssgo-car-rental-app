@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsEnum, IsDateString } from 'class-validator';
+import { IsNumber, IsString, IsEnum, IsDateString, IsOptional } from 'class-validator';
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED';
 export type PaymentMethod = 'CASH' | 'CARD' | 'ONLINE';
@@ -36,4 +36,12 @@ export class CreateBookingDto {
 
   @IsString()
   customerPhone!: string;
+
+  @IsString()
+  @IsOptional()
+  pickupLocation?: string;
+
+  @IsString()
+  @IsOptional()
+  returnLocation?: string;
 }

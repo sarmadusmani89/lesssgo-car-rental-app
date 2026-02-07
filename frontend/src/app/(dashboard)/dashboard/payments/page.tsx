@@ -52,8 +52,8 @@ export default function PaymentsPage() {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div>
-                <h1 className="text-3xl font-bold text-gray-900 font-outfit">Payments & Invoices</h1>
-                <p className="text-gray-500 mt-1">Manage your billing history and download invoices.</p>
+                <h1 className="text-3xl font-bold text-gray-900 font-outfit">Payments</h1>
+                <p className="text-gray-500 mt-1">Manage your billing and transaction history.</p>
             </div>
 
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
@@ -76,7 +76,6 @@ export default function PaymentsPage() {
                                 <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Date</th>
                                 <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Amount</th>
                                 <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest">Status</th>
-                                <th className="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-widest text-right">Invoice</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100 font-medium">
@@ -89,7 +88,7 @@ export default function PaymentsPage() {
                                             </div>
                                             <div>
                                                 <div className="text-sm font-bold text-gray-900 line-clamp-1">#TRX-{payment.id.slice(-8).toUpperCase()}</div>
-                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{payment.method || 'STRIPE'}</div>
+                                                <div className="text-[10px] text-gray-500 uppercase tracking-widest">{payment.paymentMethod || 'ONLINE'}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -105,22 +104,17 @@ export default function PaymentsPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 w-fit ${payment.status === 'PAID' ? 'bg-green-50 text-green-600' :
-                                                payment.status === 'PENDING' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'
+                                            payment.status === 'PENDING' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'
                                             }`}>
                                             {payment.status === 'PAID' ? <CheckCircle2 size={12} /> :
                                                 payment.status === 'PENDING' ? <Clock size={12} /> : <AlertCircle size={12} />}
                                             {payment.status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Download Invoice">
-                                            <Download size={18} />
-                                        </button>
-                                    </td>
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                                    <td colSpan={4} className="px-6 py-12 text-center text-gray-400">
                                         No transaction history available.
                                     </td>
                                 </tr>

@@ -718,7 +718,8 @@
     border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: 1rem;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    max-height: 280px;
+    overflow-y: auto;
     z-index: 50;
     animation: fadeIn 0.2s ease;
 }

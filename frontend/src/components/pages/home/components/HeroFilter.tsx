@@ -15,7 +15,7 @@ export default function HeroFilter() {
         category: '',
         transmission: '',
         pickup: '',
-        dropoff: ''
+        return: ''
     });
 
     const toggleDropdown = (key: string) => {
@@ -34,7 +34,7 @@ export default function HeroFilter() {
         if (selections.category) params.set('type', selections.category);
         if (selections.transmission) params.set('transmission', selections.transmission);
         if (selections.pickup) params.set('pickup', selections.pickup);
-        if (selections.dropoff) params.set('dropoff', selections.dropoff);
+        if (selections.return) params.set('return', selections.return);
 
         router.push(`/cars?${params.toString()}`);
     };
@@ -106,23 +106,23 @@ export default function HeroFilter() {
 
                 <div className={styles.divider} />
 
-                {/* Dropoff Location Selection */}
+                {/* Return Location Selection */}
                 <div className={styles.inputGroup}>
-                    <label className="flex items-center gap-1"><MapPin size={10} className="text-red-500" /> Dropoff Location</label>
+                    <label className="flex items-center gap-1"><MapPin size={10} className="text-red-500" /> Return Location</label>
                     <div
-                        className={`${styles.selectWrapper} ${activeDropdown === 'dropoff' ? styles.active : ''}`}
-                        onClick={() => toggleDropdown('dropoff')}
+                        className={`${styles.selectWrapper} ${activeDropdown === 'return' ? styles.active : ''}`}
+                        onClick={() => toggleDropdown('return')}
                     >
-                        <span>{selections.dropoff || 'Select Dropoff'}</span>
+                        <span>{selections.return || 'Select Return'}</span>
                         <ChevronDown size={16} />
-                        {activeDropdown === 'dropoff' && (
+                        {activeDropdown === 'return' && (
                             <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
-                                <div className={styles.dropdownItem} onClick={() => handleSelect('dropoff', '')}>Select Dropoff</div>
+                                <div className={styles.dropdownItem} onClick={() => handleSelect('return', '')}>Select Return</div>
                                 {dropdownOptions.locations.map(opt => (
                                     <div
                                         key={opt}
-                                        className={`${styles.dropdownItem} ${selections.dropoff === opt ? styles.selected : ''}`}
-                                        onClick={() => handleSelect('dropoff', opt)}
+                                        className={`${styles.dropdownItem} ${selections.return === opt ? styles.selected : ''}`}
+                                        onClick={() => handleSelect('return', opt)}
                                     >
                                         {opt}
                                     </div>

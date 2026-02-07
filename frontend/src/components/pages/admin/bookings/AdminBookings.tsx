@@ -19,7 +19,7 @@ import { toast } from 'sonner';
 import { BookingStatus, PaymentStatus } from '../../../../types/booking';
 
 export default function AdminBookings() {
-    const { bookings, isLoading, refreshBookings, updateBookingStatus } = useBookings();
+    const { bookings, isLoading, refreshBookings, updateBookingStatus, confirmPayment } = useBookings();
     const router = useRouter();
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState<BookingStatus | 'ALL'>('ALL');
@@ -69,6 +69,15 @@ export default function AdminBookings() {
             toast.success(`Booking ${status.toLowerCase()} successfully`);
         } catch (err) {
             toast.error('Failed to update booking status');
+        }
+    };
+
+    const handleConfirmPayment = async (id: string) => {
+        try {
+            await confirmPayment(id);
+            toast.success('Payment confirmed successfully');
+        } catch (err) {
+            toast.error('Failed to confirm payment');
         }
     };
 
@@ -163,6 +172,7 @@ export default function AdminBookings() {
                     <BookingTable
                         bookings={paginatedBookings}
                         onStatusUpdate={handleStatusUpdate}
+                        onConfirmPayment={handleConfirmPayment}
                         onViewDetails={handleViewDetails}
                     />
 

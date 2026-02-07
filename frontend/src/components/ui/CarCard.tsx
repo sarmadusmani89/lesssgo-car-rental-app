@@ -117,7 +117,7 @@ export default function CarCard({
                         )}
 
                     </div>
-                    <Link href={`/car/${slug || id}`} className={styles.btnDetails}>
+                    <Link href={`/cars/${slug || id}`} className={styles.btnDetails}>
                         Details <ArrowRight size={18} />
                     </Link>
                 </div>

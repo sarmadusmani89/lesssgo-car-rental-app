@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, Suspense, useCallback } from 'react';
-import { useSearchParams, useParams } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useParams } from 'next/navigation';
 import ImageGalleryWithLightbox from '@/components/pages/car/ImageGalleryWithLightbox';
 import CarSpecifications from '@/components/pages/car/CarSpecification';
 import UnifiedBookingCalendar from '@/components/pages/car/UnifiedBookingCalendar';
@@ -9,6 +9,10 @@ import BookingForm from '@/components/pages/car/BookingForm';
 import api from '@/lib/api';
 import { toast } from "sonner";
 import { Loader2, Zap, Info } from 'lucide-react';
+import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
+import { formatPrice } from '@/lib/utils';
 
 interface Car {
     id: string;
@@ -22,7 +26,7 @@ interface Car {
     hp: number;
     description: string;
     pickupLocation?: string[];
-    dropoffLocation?: string[];
+    returnLocation?: string[];
     gallery?: string[];
     passengers?: number;
     vehicleClass: string;
@@ -33,36 +37,10 @@ function CarContent() {
     const params = useParams();
 
     const carId = params.id as string;
+    const { currency, rates } = useSelector((state: RootState) => state.ui);
 
     const [car, setCar] = useState<Car | null>(null);
     const [loading, setLoading] = useState(true);
-    const [dates, setDates] = useState(() => {
-        const toLocalISO = (d: Date) => {
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${y}-${m}-${day}`;
-        };
-
-        const start = new Date();
-        start.setHours(10, 0, 0, 0);
-        start.setDate(start.getDate() + 2);
-
-        const end = new Date(start);
-        end.setDate(end.getDate() + 1);
-
-        return {
-            startDate: toLocalISO(start) + 'T10:00',
-            endDate: toLocalISO(end) + 'T10:00',
-        };
-    });
-
-    const handleDatesChange = useCallback((start: string, end: string) => {
-        setDates(prev => {
-            if (prev.startDate === start && prev.endDate === end) return prev;
-            return { startDate: start, endDate: end };
-        });
-    }, []);
 
     useEffect(() => {
         if (!carId) return;
@@ -141,7 +119,9 @@ function CarContent() {
                         <div className="flex flex-col items-start md:items-end">
                             <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Elite Fleet rate</span>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-5xl font-black text-blue-600 font-outfit tracking-tighter">${car.pricePerDay}</span>
+                                <span className="text-5xl font-black text-blue-600 font-outfit tracking-tighter">
+                                    {formatPrice(car.pricePerDay, currency, rates)}
+                                </span>
                                 <span className="text-gray-400 font-black text-sm uppercase tracking-widest">/ day</span>
                             </div>
                         </div>
@@ -188,7 +168,7 @@ function CarContent() {
                             </div>
 
                             {/* Locations section */}
-                            {(car.pickupLocation?.length || car.dropoffLocation?.length) ? (
+                            {(car.pickupLocation?.length || car.returnLocation?.length) ? (
                                 <div className="mt-8 pt-8 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {car.pickupLocation?.length ? (
                                         <div>
@@ -202,13 +182,13 @@ function CarContent() {
                                             </div>
                                         </div>
                                     ) : null}
-                                    {car.dropoffLocation?.length ? (
-                                        <div>
+                                    {car.returnLocation?.length ? (
+                                        <div className="space-y-4">
                                             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-red-600 mb-3 flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-red-600" /> Dropoff Points
+                                                <div className="w-1.5 h-1.5 rounded-full bg-red-600" /> Return Points
                                             </h4>
                                             <div className="flex flex-wrap gap-2">
-                                                {car.dropoffLocation.map(loc => (
+                                                {car.returnLocation.map(loc => (
                                                     <span key={loc} className="px-3 py-1 bg-gray-50 text-gray-600 text-[10px] font-bold rounded-lg border border-gray-100">{loc}</span>
                                                 ))}
                                             </div>
@@ -226,9 +206,6 @@ function CarContent() {
                             <UnifiedBookingCalendar
                                 carId={car.id}
                                 carName={car.name}
-                                startDate={dates.startDate}
-                                endDate={dates.endDate}
-                                onChange={handleDatesChange}
                             />
                         </section>
                     </div>
@@ -237,9 +214,6 @@ function CarContent() {
                     <div className="lg:col-span-4 lg:sticky lg:top-28 h-fit space-y-10">
                         <BookingForm
                             car={car}
-                            defaultStartDate={dates.startDate}
-                            defaultEndDate={dates.endDate}
-                            onDatesChange={handleDatesChange}
                         />
 
 
@@ -251,9 +225,9 @@ function CarContent() {
                                 <p className="text-gray-400 text-sm font-medium leading-relaxed mb-8">
                                     Our dedicated specialist team is available 24/7 to personalize your legendary driving experience.
                                 </p>
-                                <button className="w-full py-5 bg-white text-gray-900 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all duration-300">
+                                <Link href="/contact" className="w-full py-5 px-4 bg-white text-gray-900 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all duration-300">
                                     Contact Support
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>

@@ -47,6 +47,23 @@ export class BookingController {
       throw new ForbiddenException('You can only update your own bookings');
     }
 
+    // Check cancellation rules if status is CANCELLED
+    if (updateBookingDto.status === 'CANCELLED' && user.role !== Role.ADMIN) {
+      // 1. Check if car allows free cancellation
+      if (!booking.car.freeCancellation) {
+        throw new ForbiddenException('This car does not allow free cancellation.');
+      }
+
+      // 2. Check 48h notice
+      const pickupDate = new Date(booking.startDate);
+      const now = new Date();
+      const hoursDifference = (pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+      if (hoursDifference < 48) {
+        throw new ForbiddenException('Cancellations are only allowed 48 hours before pickup.');
+      }
+    }
+
     return this.bookingService.update(id, updateBookingDto);
   }
 

@@ -49,6 +49,7 @@ export default function BasicInfoSection({
                             onChange={(val) => setValue("brand", val)}
                             className="w-full bg-white"
                         />
+                        {errors.brand && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.brand.message as string}</p>}
                     </div>
                     <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Category <span className="text-red-500">*</span></label>
@@ -58,6 +59,7 @@ export default function BasicInfoSection({
                             onChange={(val) => setValue("type", val)}
                             className="w-full bg-white"
                         />
+                        {errors.type && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.type.message as string}</p>}
                     </div>
                 </div>
 
@@ -69,6 +71,7 @@ export default function BasicInfoSection({
                         onChange={(val) => setValue("vehicleClass", val)}
                         className="w-full bg-white"
                     />
+                    {errors.vehicleClass && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.vehicleClass.message as string}</p>}
                 </div>
             </div>
 

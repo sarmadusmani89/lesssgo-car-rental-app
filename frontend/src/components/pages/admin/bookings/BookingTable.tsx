@@ -11,7 +11,8 @@ import {
   MoreHorizontal,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  DollarSign
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
@@ -19,10 +20,11 @@ import { cn } from '../../../../lib/utils';
 interface BookingTableProps {
   bookings: Booking[];
   onStatusUpdate: (id: string, status: BookingStatus) => void;
+  onConfirmPayment: (id: string) => void;
   onViewDetails: (booking: Booking) => void;
 }
 
-const BookingTable: React.FC<BookingTableProps> = ({ bookings, onStatusUpdate, onViewDetails }) => {
+const BookingTable: React.FC<BookingTableProps> = ({ bookings, onStatusUpdate, onConfirmPayment, onViewDetails }) => {
   return (
     <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
@@ -113,6 +115,15 @@ const BookingTable: React.FC<BookingTableProps> = ({ bookings, onStatusUpdate, o
                             <XCircle size={18} />
                           </button>
                         </>
+                      )}
+                      {(booking.status === 'PENDING' || booking.status === 'CONFIRMED') && booking.paymentStatus !== 'PAID' && (
+                        <button
+                          onClick={() => onConfirmPayment(booking.id)}
+                          className="px-3 py-1.5 bg-slate-900 text-white hover:bg-slate-800 hover:shadow-lg rounded-lg transition-all text-xs font-bold border border-slate-900"
+                          title="Confirm Payment Received"
+                        >
+                          Payment Received
+                        </button>
                       )}
                       <button
                         onClick={() => onViewDetails(booking)}

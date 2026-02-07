@@ -118,7 +118,12 @@ export class DashboardService {
 
   async getUserStats(userId: string): Promise<UserStatsDto> {
     const bookings = await this.prisma.booking.findMany({ where: { userId } });
-    const totalSpent = bookings.reduce((acc: number, b: any) => acc + Number(b.totalAmount), 0);
+    const totalSpent = bookings.reduce((acc: number, b: any) => {
+      if (b.paymentStatus === 'PAID') {
+        return acc + Number(b.totalAmount);
+      }
+      return acc;
+    }, 0);
 
     return {
       userId, // Use the string userId passed to the function

@@ -9,7 +9,7 @@ interface FilterState {
     transmission: string;
     priceRange: string;
     pickup: string;
-    dropoff: string;
+    return: string;
 }
 
 interface CarsFiltersProps {
@@ -33,10 +33,10 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
     };
 
     const clearFilters = () => {
-        onChange({ brand: '', type: '', transmission: '', priceRange: '', pickup: '', dropoff: '' });
+        onChange({ brand: '', type: '', transmission: '', priceRange: '', pickup: '', return: '' });
     };
 
-    const isFiltered = filters.brand || filters.type || filters.transmission || filters.priceRange || filters.pickup || filters.dropoff;
+    const isFiltered = filters.brand || filters.type || filters.transmission || filters.priceRange || filters.pickup || filters.return;
 
     const FilterGroup = ({ title, options, activeValue, onSelect, valueKey = (opt: string) => opt }: any) => (
         <div className="space-y-4">
@@ -114,10 +114,10 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
             />
 
             <FilterGroup
-                title="Dropoff Location"
+                title="Return Location"
                 options={PREDEFINED_LOCATIONS}
-                activeValue={filters.dropoff}
-                onSelect={(val: string) => updateFilter('dropoff', val)}
+                activeValue={filters.return}
+                onSelect={(val: string) => updateFilter('return', val)}
             />
 
             <div className="p-8 bg-slate-900 rounded-[2rem] text-white relative overflow-hidden group">

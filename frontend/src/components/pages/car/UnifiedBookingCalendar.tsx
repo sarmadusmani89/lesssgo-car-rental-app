@@ -7,12 +7,9 @@ import { Loader2, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lu
 interface Props {
     carId: string;
     carName?: string;
-    startDate: string;
-    endDate: string;
-    onChange?: (start: string, end: string) => void;
 }
 
-export default function UnifiedBookingCalendar({ carId, carName, startDate, endDate, onChange }: Props) {
+export default function UnifiedBookingCalendar({ carId, carName }: Props) {
     const [bookings, setBookings] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [viewDate, setViewDate] = useState(new Date());
@@ -85,28 +82,6 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
         return toLocalTime(date) < earliestTime;
     };
 
-    const isInRange = (date: Date) => {
-        if (!date || !startDate) return false;
-        const checkTime = toLocalTime(date);
-        const startTime = toLocalTime(startDate);
-
-        if (endDate) {
-            const endTime = toLocalTime(endDate);
-            return checkTime >= startTime && checkTime <= endTime;
-        }
-
-        return checkTime === startTime;
-    };
-
-    const isStart = (date: Date) => {
-        if (!date || !startDate) return false;
-        return toLocalTime(date) === toLocalTime(startDate);
-    };
-
-    const isEnd = (date: Date) => {
-        if (!date || !endDate) return false;
-        return toLocalTime(date) === toLocalTime(endDate);
-    };
 
     const nextMonth = () => setViewDate(new Date(currentYear, currentMonth + 1, 1));
     const prevMonth = () => setViewDate(new Date(currentYear, currentMonth - 1, 1));
@@ -157,24 +132,16 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
 
                     const booked = isBooked(date);
                     const past = isPast(date);
-                    const inRange = isInRange(date);
-                    const start = isStart(date);
-                    const end = isEnd(date);
                     const disabled = booked || past;
 
                     return (
                         <div
                             key={date.toISOString()}
-                            className={`aspect-square flex flex-col items-center justify-center rounded-2xl text-[13px] font-black transition-all relative
+                            className={`aspect-square flex flex-col items-center justify-center rounded-2xl text-[13px] font-black transition-all relative cursor-default
                                 ${disabled
-                                    ? "bg-gray-50 text-gray-200 cursor-not-allowed"
-                                    : inRange
-                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-100 scale-105 z-10"
-                                        : "text-gray-600"
+                                    ? "bg-gray-50 text-gray-200"
+                                    : "text-gray-600 hover:bg-gray-50"
                                 }
-                                ${start ? 'rounded-r-none' : ''}
-                                ${end ? 'rounded-l-none' : ''}
-                                ${inRange && !start && !end ? 'rounded-none opacity-90' : ''}
                             `}
                         >
                             <span>{date.getDate()}</span>
@@ -186,11 +153,11 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
 
             <div className="mt-10 pt-8 border-t border-gray-100 grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 rounded-lg bg-blue-600 shadow-lg shadow-blue-100" />
-                    <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Selected Period</span>
+                    <div className="w-4 h-4 rounded-lg bg-red-400" />
+                    <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Booked Out</span>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="w-4 h-4 rounded-lg bg-gray-100" />
+                    <div className="w-4 h-4 rounded-lg bg-gray-50" />
                     <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Unavailable</span>
                 </div>
             </div>

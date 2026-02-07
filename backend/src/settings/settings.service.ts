@@ -31,6 +31,15 @@ export class SettingsService {
     async updateSettings(data: any, favicon?: Express.Multer.File) {
         const settings = await this.getSettings();
 
+        // Handle type conversion for multipart/form-data (where everything is a string)
+        if (typeof data.maintenanceMode === 'string') {
+            data.maintenanceMode = data.maintenanceMode === 'true';
+        }
+
+        if (typeof data.passwordMinLength === 'string') {
+            data.passwordMinLength = parseInt(data.passwordMinLength, 10);
+        }
+
         if (favicon) {
             try {
                 const upload = await this.cloudinary.uploadFile(favicon);
