@@ -90,5 +90,9 @@ export class CreateCarDto {
   gps?: boolean;
 
   @IsOptional()
+  @IsString()
+  vehicleClass?: string;
+
+  @IsOptional()
   image?: any;
 }

@@ -79,6 +79,8 @@ export default function WishlistPage() {
                             hasAC={car.airConditioner}
                             hasGPS={car.gps}
                             freeCancellation={car.freeCancellation}
+                            vehicleClass={car.vehicleClass}
+                            slug={car.slug}
                         />
                     ))}
                 </div>

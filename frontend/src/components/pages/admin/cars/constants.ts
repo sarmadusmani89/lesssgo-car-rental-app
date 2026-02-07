@@ -19,3 +19,15 @@ export const VEHICLE_TRANSMISSIONS = [
   "Automatic",
   "Manual",
 ];
+
+export const VEHICLE_CLASSES = [
+  "Economy",
+  "Standard",
+  "Luxury",
+];
+
+export const VEHICLE_FUEL_TYPES = [
+  "Petrol",
+  "Diesel",
+  "Electricity",
+];

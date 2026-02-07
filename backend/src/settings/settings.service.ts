@@ -1,9 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../lib/prisma.service';
+import { CloudinaryService } from '../lib/cloudinary.service';
 
 @Injectable()
 export class SettingsService {
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        private cloudinary: CloudinaryService
+    ) { }
 
     async getSettings() {
         // Try to find the first settings record
@@ -24,8 +28,17 @@ export class SettingsService {
         return settings;
     }
 
-    async updateSettings(data: any) {
+    async updateSettings(data: any, favicon?: Express.Multer.File) {
         const settings = await this.getSettings();
+
+        if (favicon) {
+            try {
+                const upload = await this.cloudinary.uploadFile(favicon);
+                data.faviconUrl = upload.secure_url;
+            } catch (error) {
+                throw new BadRequestException('Failed to upload favicon');
+            }
+        }
 
         return this.prisma.systemSettings.update({
             where: { id: settings.id },

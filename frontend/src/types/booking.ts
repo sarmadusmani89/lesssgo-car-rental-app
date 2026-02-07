@@ -25,6 +25,7 @@ export interface Car {
     type: string;
     imageUrl: string | null;
     pricePerDay: number;
+    vehicleClass: string;
 }
 
 export interface BookingUser {

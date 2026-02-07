@@ -9,9 +9,10 @@ interface Props {
     carName?: string;
     startDate: string;
     endDate: string;
+    onChange?: (start: string, end: string) => void;
 }
 
-export default function UnifiedBookingCalendar({ carId, carName, startDate, endDate }: Props) {
+export default function UnifiedBookingCalendar({ carId, carName, startDate, endDate, onChange }: Props) {
     const [bookings, setBookings] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [viewDate, setViewDate] = useState(new Date());
@@ -110,6 +111,42 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
     const nextMonth = () => setViewDate(new Date(currentYear, currentMonth + 1, 1));
     const prevMonth = () => setViewDate(new Date(currentYear, currentMonth - 1, 1));
 
+    const handleDateClick = (date: Date) => {
+        if (!onChange || isBooked(date) || isPast(date)) return;
+
+        const clickedTime = toLocalTime(date);
+        const startTime = startDate ? toLocalTime(startDate) : 0;
+        const endTime = endDate ? toLocalTime(endDate) : 0;
+
+        // Selection logic:
+        // 1. If nothing selected, or if we have both start and end, reset and set as start
+        // 2. If we have a start but no end, and clicked is after start, set as end
+        // 3. If clicked is before current start, set as new start
+
+        // Convert date to ISO string with time part from props or default
+        const formatWithTime = (d: Date, originalISO: string) => {
+            const datePart = d.toISOString().split('T')[0];
+            const timePart = originalISO.includes('T') ? originalISO.split('T')[1] : '10:00';
+            return `${datePart}T${timePart}`;
+        };
+
+        if (!startDate || (startDate && endDate)) {
+            // New selection
+            onChange(formatWithTime(date, startDate || ''), '');
+        } else {
+            // Currently have a start, setting end or moving start
+            if (clickedTime < startTime) {
+                onChange(formatWithTime(date, startDate), '');
+            } else if (clickedTime > startTime) {
+                onChange(startDate, formatWithTime(date, endDate || ''));
+            } else {
+                // Clicked same as start, do nothing or reset?
+                // Let's reset for better UX if they click the same date twice
+                // Actually, let's keep it as start.
+            }
+        }
+    };
+
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     if (loading) return (
@@ -159,12 +196,13 @@ export default function UnifiedBookingCalendar({ carId, carName, startDate, endD
                     return (
                         <div
                             key={date.toISOString()}
+                            onClick={() => handleDateClick(date)}
                             className={`aspect-square flex flex-col items-center justify-center rounded-2xl text-[13px] font-black transition-all relative
                                 ${disabled
-                                    ? "bg-gray-50 text-gray-200"
+                                    ? "bg-gray-50 text-gray-200 cursor-not-allowed"
                                     : inRange
-                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-100 scale-105 z-10"
-                                        : "text-gray-600"
+                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-100 scale-105 z-10 cursor-pointer"
+                                        : "text-gray-600 hover:bg-blue-50 cursor-pointer"
                                 }
                                 ${start ? 'rounded-r-none' : ''}
                                 ${end ? 'rounded-l-none' : ''}

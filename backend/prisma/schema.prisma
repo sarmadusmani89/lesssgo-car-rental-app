@@ -44,6 +44,7 @@ model Car {
   imageUrl      String?
   description   String?   @db.Text
   status        CarStatus @default(AVAILABLE)
+  vehicleClass  String    @default("Standard")
   
   // New Metadata Fields
   pickupLocation   String[]  @default([])
@@ -136,6 +137,7 @@ model SystemSettings {
   adminEmail        String   @default("sarmadusmani598@gmail.com")
   maintenanceMode   Boolean  @default(false)
   currency          String   @default("AUD")
+  faviconUrl        String?
   passwordMinLength Int      @default(8)
   updatedAt         DateTime @updatedAt
 }

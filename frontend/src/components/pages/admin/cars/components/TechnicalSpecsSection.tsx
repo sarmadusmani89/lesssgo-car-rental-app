@@ -10,6 +10,8 @@ interface Props {
     setValue: UseFormSetValue<any>;
     currentTransmission: string;
     transmissionOptions: { label: string; value: string }[];
+    currentFuelType: string;
+    fuelOptions: { label: string; value: string }[];
 }
 
 export default function TechnicalSpecsSection({
@@ -17,13 +19,15 @@ export default function TechnicalSpecsSection({
     errors,
     setValue,
     currentTransmission,
-    transmissionOptions
+    transmissionOptions,
+    currentFuelType,
+    fuelOptions
 }: Props) {
     return (
         <div className="bg-blue-50/30 p-6 rounded-2xl border border-blue-100 space-y-4">
             <h3 className="text-sm font-bold text-blue-800 uppercase tracking-widest mb-4">Technical Specs</h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Transmission <span className="text-red-500">*</span></label>
                     <CustomSelect
@@ -33,6 +37,18 @@ export default function TechnicalSpecsSection({
                         className="w-full bg-white"
                     />
                 </div>
+                <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Fuel Type <span className="text-red-500">*</span></label>
+                    <CustomSelect
+                        options={fuelOptions}
+                        value={currentFuelType}
+                        onChange={(val) => setValue("fuelType", val)}
+                        className="w-full bg-white"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Passengers <span className="text-red-500">*</span></label>
                     <div className="relative">
@@ -45,9 +61,18 @@ export default function TechnicalSpecsSection({
                         {errors.passengers && <p className="text-red-500 text-xs mt-1 font-bold">{errors.passengers.message as string}</p>}
                     </div>
                 </div>
+                <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Horsepower <span className="text-red-500">*</span></label>
+                    <input
+                        type="number"
+                        {...register("hp", { valueAsNumber: true })}
+                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    />
+                    {errors.hp && <p className="text-red-500 text-xs mt-1 font-bold">{errors.hp.message as string}</p>}
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Price / Day ($) <span className="text-red-500">*</span></label>
                     <input
@@ -58,22 +83,13 @@ export default function TechnicalSpecsSection({
                     {errors.pricePerDay && <p className="text-red-500 text-xs mt-1 font-bold">{errors.pricePerDay.message as string}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Fuel (L) <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Fuel Capacity (L) <span className="text-red-500">*</span></label>
                     <input
                         type="number"
                         {...register("fuelCapacity", { valueAsNumber: true })}
                         className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
                     />
                     {errors.fuelCapacity && <p className="text-red-500 text-xs mt-1 font-bold">{errors.fuelCapacity.message as string}</p>}
-                </div>
-                <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Horsepower <span className="text-red-500">*</span></label>
-                    <input
-                        type="number"
-                        {...register("hp", { valueAsNumber: true })}
-                        className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition"
-                    />
-                    {errors.hp && <p className="text-red-500 text-xs mt-1 font-bold">{errors.hp.message as string}</p>}
                 </div>
             </div>
         </div>

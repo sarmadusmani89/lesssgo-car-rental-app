@@ -26,11 +26,12 @@ interface CarCardProps {
     hasAC?: boolean;
     hasGPS?: boolean;
     freeCancellation?: boolean;
+    vehicleClass?: string;
 }
 
 export default function CarCard({
     id, slug, name, brand, price, monthlyPrice, status, hp, fuel, transmission, image,
-    passengers, hasAC, hasGPS, freeCancellation
+    passengers, hasAC, hasGPS, freeCancellation, vehicleClass
 }: CarCardProps) {
     const currency = useSelector((state: RootState) => state.ui.currency);
     const rates = useSelector((state: RootState) => state.ui.rates);
@@ -73,7 +74,14 @@ export default function CarCard({
             </div>
 
             <div className={styles.cardBody}>
-                <span className={styles.brandLabel}>{brand}</span>
+                <div className="flex items-baseline gap-2">
+                    <span className={styles.brandLabel}>{brand}</span>
+                    {vehicleClass && (
+                        <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                            {vehicleClass}
+                        </span>
+                    )}
+                </div>
                 <h3 className="line-clamp-1">{name}</h3>
 
                 <div className={styles.carSpecs}>
@@ -116,7 +124,7 @@ export default function CarCard({
 
                 {freeCancellation && (
                     <div className="mt-3 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-block uppercase tracking-wider">
-                        Free Cancellation
+                        Free cancellation Upto 48h before Pickup time
                     </div>
                 )}
             </div>

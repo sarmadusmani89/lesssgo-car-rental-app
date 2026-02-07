@@ -97,6 +97,7 @@ export class BookingService {
         transmission: car.transmission,
         airConditioner: car.airConditioner,
         gps: car.gps,
+        vehicleClass: car.vehicleClass,
       });
 
       const adminHtml = bookingConfirmationTemplate({
@@ -115,6 +116,7 @@ export class BookingService {
         transmission: car.transmission,
         airConditioner: car.airConditioner,
         gps: car.gps,
+        vehicleClass: car.vehicleClass,
       });
 
       console.log(`Sending booking confirmation emails for ${paymentMethod} payment...`);
@@ -205,6 +207,7 @@ export class BookingService {
         transmission: car.transmission,
         airConditioner: car.airConditioner,
         gps: car.gps,
+        vehicleClass: car.vehicleClass,
       });
 
       await this.emailService.sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml);

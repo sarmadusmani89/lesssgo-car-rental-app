@@ -202,6 +202,7 @@ export class PaymentService {
             transmission: car.transmission,
             airConditioner: car.airConditioner,
             gps: car.gps,
+            vehicleClass: car.vehicleClass,
           });
 
           const receiptHtml = paymentReceiptTemplate({
@@ -229,6 +230,7 @@ export class PaymentService {
             transmission: car.transmission,
             airConditioner: car.airConditioner,
             gps: car.gps,
+            vehicleClass: car.vehicleClass,
           });
 
           await Promise.all([

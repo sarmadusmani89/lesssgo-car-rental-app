@@ -12,9 +12,15 @@ interface Car {
     type: string;
     transmission: string;
     fuelCapacity: number;
+    fuelType?: string;
     status: string;
     hp?: number;
     slug?: string;
+    vehicleClass?: string;
+    passengers?: number;
+    airConditioner?: boolean;
+    gps?: boolean;
+    freeCancellation?: boolean;
 }
 
 interface CarsGridProps {
@@ -62,12 +68,17 @@ export default function CarsGrid({ cars, loading }: CarsGridProps) {
                     name={car.name}
                     price={car.pricePerDay}
                     image={car.imageUrl || '/images/car-placeholder.jpg'}
-                    fuel={car.fuelCapacity.toString() + 'L'}
-                    transmission={car.transmission}
-                    monthlyPrice={car.pricePerDay * 25}
+                    fuel={car.fuelType || 'Petrol'}
+                    transmission={car.transmission || 'Auto'}
+                    monthlyPrice={car.pricePerDay * 30}
                     status={car.status}
                     hp={car.hp || 0}
                     slug={car.slug}
+                    vehicleClass={car.vehicleClass}
+                    passengers={car.passengers}
+                    hasAC={car.airConditioner}
+                    hasGPS={car.gps}
+                    freeCancellation={car.freeCancellation}
                 />
             ))}
         </div>

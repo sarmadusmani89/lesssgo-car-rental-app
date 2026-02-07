@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, Gauge, Fuel, Cog, Zap } from 'lucide-react';
+import { Users, Gauge, Fuel, Cog, Zap, Car } from 'lucide-react';
 
 interface Specs {
   seats: number;
@@ -8,6 +8,7 @@ interface Specs {
   fuel: string;
   transmission: string;
   hp: number;
+  vehicleClass: string;
 }
 
 interface Props {
@@ -18,8 +19,9 @@ export default function VehicleSpecifications({ specs }: Props) {
   const specList = [
     { label: 'Seats', value: `${specs.seats} People`, icon: <Users size={20} /> },
     { label: 'Horsepower', value: `${specs.hp} HP`, icon: <Zap size={20} /> },
-    { label: 'Fuel', value: specs.fuel, icon: <Fuel size={20} /> },
+    { label: 'Fuel Type', value: specs.fuel, icon: <Fuel size={20} /> },
     { label: 'Gearbox', value: specs.transmission, icon: <Cog size={20} /> },
+    { label: 'Class', value: specs.vehicleClass, icon: <Car size={20} /> },
   ];
 
   return (

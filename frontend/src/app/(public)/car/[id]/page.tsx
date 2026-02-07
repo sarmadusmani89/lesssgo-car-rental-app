@@ -25,6 +25,8 @@ interface Car {
     dropoffLocation?: string[];
     gallery?: string[];
     passengers?: number;
+    vehicleClass: string;
+    fuelType: string;
 }
 
 function CarContent() {
@@ -157,9 +159,10 @@ function CarContent() {
                             <CarSpecifications specs={{
                                 seats: car.passengers || 5,
                                 type: car.type,
-                                fuel: `${car.fuelCapacity}L`,
+                                fuel: car.fuelType || 'Petrol',
                                 transmission: car.transmission,
-                                hp: car.hp
+                                hp: car.hp,
+                                vehicleClass: car.vehicleClass
                             }} />
                         </section>
 

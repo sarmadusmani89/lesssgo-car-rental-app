@@ -9,6 +9,7 @@ export interface Car {
   fuelCapacity: number;
   pricePerDay: number;
   hp: number;
+  vehicleClass: string;
   imageUrl?: string;
   description?: string;
   status: CarStatus;

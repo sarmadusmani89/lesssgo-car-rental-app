@@ -16,6 +16,7 @@ export function bookingConfirmationTemplate(data: {
   transmission?: string | null;
   airConditioner?: boolean | null;
   gps?: boolean | null;
+  vehicleClass?: string | null;
 }) {
   const statusColor = data.isConfirmed ? '#10b981' : '#f59e0b';
   const statusText = data.isConfirmed ? 'Confirmed' : 'Pending Confirmation';
@@ -44,7 +45,10 @@ export function bookingConfirmationTemplate(data: {
         <tr>
           <td style="padding-top: 20px;">
             <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Vehicle</p>
-            <p style="margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;">${data.brand}</p>
+            <p style="margin: 2px 0 0; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;">
+              ${data.brand} 
+              ${data.vehicleClass ? `<span style="margin-left: 8px; color: #3b82f6; background: #eff6ff; padding: 2px 6px; border-radius: 4px; font-size: 10px;">${data.vehicleClass}</span>` : ''}
+            </p>
             <p style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a; text-transform: uppercase;">${data.vehicleName}</p>
           </td>
           <td align="right" style="padding-top: 20px;">

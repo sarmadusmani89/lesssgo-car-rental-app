@@ -1,4 +1,5 @@
-import { Controller, Get, Put, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put, Body, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { SettingsService } from './settings.service';
 import { CurrencyService } from './currency.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -26,8 +27,12 @@ export class SettingsController {
     @Put()
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
-    updateSettings(@Body() data: any) {
-        return this.settingsService.updateSettings(data);
+    @UseInterceptors(FileInterceptor('favicon'))
+    updateSettings(
+        @Body() data: any,
+        @UploadedFile() favicon?: Express.Multer.File
+    ) {
+        return this.settingsService.updateSettings(data, favicon);
     }
 }
 

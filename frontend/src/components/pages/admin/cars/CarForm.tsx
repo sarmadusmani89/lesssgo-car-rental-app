@@ -9,7 +9,7 @@ import api from "@/lib/api";
 import { toast } from "sonner";
 import { X, Loader2, Image as ImageIcon, Upload, ChevronDown, Check, Users, Snowflake, MapPin, Fuel } from "lucide-react";
 import CustomSelect from '@/components/ui/CustomSelect';
-import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS } from "./constants";
+import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS, VEHICLE_FUEL_TYPES } from "./constants";
 
 import BasicInfoSection from "./components/BasicInfoSection";
 import LocationSection from "./components/LocationSection";
@@ -34,6 +34,7 @@ const carSchema = z.object({
   fuelType: z.string().default("Petrol"),
   airConditioner: z.boolean().default(true),
   gps: z.boolean().default(true),
+  vehicleClass: z.string().min(1, "Vehicle class is required"),
 });
 
 type CarFormValues = {
@@ -53,6 +54,7 @@ type CarFormValues = {
   fuelType: string;
   airConditioner: boolean;
   gps: boolean;
+  vehicleClass: string;
 };
 
 type Props = {
@@ -86,13 +88,8 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
       hp: editingCar.hp,
       description: editingCar.description || "",
       status: editingCar.status,
-      pickupLocation: editingCar.pickupLocation || [],
-      dropoffLocation: editingCar.dropoffLocation || [],
-      passengers: editingCar.passengers || 4,
-      freeCancellation: editingCar.freeCancellation ?? true,
-      fuelType: editingCar.fuelType || "Petrol",
-      airConditioner: editingCar.airConditioner ?? true,
       gps: editingCar.gps ?? true,
+      vehicleClass: editingCar.vehicleClass || "Standard",
     } : {
       name: "",
       brand: "",
@@ -103,13 +100,8 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
       hp: 150,
       description: "",
       status: "AVAILABLE",
-      pickupLocation: [],
-      dropoffLocation: [],
-      passengers: 4,
-      freeCancellation: true,
-      fuelType: "Petrol",
-      airConditioner: true,
       gps: true,
+      vehicleClass: "Standard",
     },
   });
 
@@ -117,9 +109,11 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
   const currentBrand = watch("brand");
   const currentCategory = watch("type");
   const currentTransmission = watch("transmission");
+  const currentFuelType = watch("fuelType");
   const freeCancellation = watch("freeCancellation");
   const airConditioner = watch("airConditioner");
   const gps = watch("gps");
+  const currentClass = watch("vehicleClass");
 
   const statusOptions = [
     { value: "AVAILABLE", label: "Available" },
@@ -130,6 +124,10 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
   const brandOptions = VEHICLE_BRANDS.map(brand => ({ label: brand, value: brand }));
   const categoryOptions = VEHICLE_CATEGORIES.map(cat => ({ label: cat, value: cat }));
   const transmissionOptions = VEHICLE_TRANSMISSIONS.map(trans => ({ label: trans, value: trans }));
+  const fuelOptions = VEHICLE_FUEL_TYPES.map(fuel => ({ label: fuel, value: fuel }));
+
+  const { VEHICLE_CLASSES } = require("../constants");
+  const classOptions = (VEHICLE_CLASSES as string[]).map(cls => ({ label: cls, value: cls }));
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -228,8 +226,10 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
               setValue={setValue}
               currentBrand={currentBrand}
               currentCategory={currentCategory}
+              currentClass={currentClass}
               brandOptions={brandOptions}
               categoryOptions={categoryOptions}
+              classOptions={classOptions}
             />
             <LocationSection control={control} errors={errors} />
           </div>
@@ -242,6 +242,8 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
               setValue={setValue}
               currentTransmission={currentTransmission}
               transmissionOptions={transmissionOptions}
+              currentFuelType={currentFuelType}
+              fuelOptions={fuelOptions}
             />
             <FeaturesStatusSection
               setValue={setValue}

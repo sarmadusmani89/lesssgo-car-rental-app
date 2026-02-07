@@ -12,6 +12,7 @@ interface Props {
     airConditioner?: boolean;
     gps?: boolean;
     freeCancellation?: boolean;
+    vehicleClass?: string;
   } | null;
   startDate: string;
   endDate: string;
@@ -50,9 +51,16 @@ export default function BookingSummary({ car, startDate, endDate }: Props) {
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight mb-1">
               {car?.brand || 'Premium'}
             </span>
-            <p className="font-black text-slate-900 tracking-tight uppercase text-xl leading-tight">
-              {car?.name || 'Selection'}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="font-black text-slate-900 tracking-tight uppercase text-xl leading-tight">
+                {car?.name || 'Selection'}
+              </p>
+              {car?.vehicleClass && (
+                <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 uppercase tracking-widest">
+                  {car.vehicleClass}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 

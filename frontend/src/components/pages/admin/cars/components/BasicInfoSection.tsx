@@ -9,8 +9,10 @@ interface Props {
     setValue: UseFormSetValue<any>;
     currentBrand: string;
     currentCategory: string;
+    currentClass: string;
     brandOptions: { label: string; value: string }[];
     categoryOptions: { label: string; value: string }[];
+    classOptions: { label: string; value: string }[];
 }
 
 export default function BasicInfoSection({
@@ -19,8 +21,10 @@ export default function BasicInfoSection({
     setValue,
     currentBrand,
     currentCategory,
+    currentClass,
     brandOptions,
-    categoryOptions
+    categoryOptions,
+    classOptions
 }: Props) {
     return (
         <div className="space-y-6">
@@ -55,6 +59,16 @@ export default function BasicInfoSection({
                             className="w-full bg-white"
                         />
                     </div>
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 uppercase">Vehicle Class <span className="text-red-500">*</span></label>
+                    <CustomSelect
+                        options={classOptions}
+                        value={currentClass}
+                        onChange={(val) => setValue("vehicleClass", val)}
+                        className="w-full bg-white"
+                    />
                 </div>
             </div>
 
