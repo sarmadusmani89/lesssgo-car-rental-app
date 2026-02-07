@@ -79,14 +79,14 @@ function CheckoutContent() {
 
   const calculateDays = () => {
     if (!startDate || !endDate) return 0;
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = toUtcDate(startDate);
+    const end = toUtcDate(endDate);
 
-    // Normalize to midnight to calculate calendar days only
-    start.setHours(0, 0, 0, 0);
-    end.setHours(0, 0, 0, 0);
+    // Normalize to midnight UTC to calculate calendar days only
+    const startUTC = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
+    const endUTC = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate());
 
-    const diffTime = Math.abs(end.getTime() - start.getTime());
+    const diffTime = Math.abs(endUTC - startUTC);
     const days = Math.round(diffTime / (1000 * 60 * 60 * 24));
     return days >= 0 ? days + 1 : 0;
   };
@@ -123,8 +123,8 @@ function CheckoutContent() {
       const bookingData = {
         userId,
         carId: carId as string,
-        startDate: startDate ? `${startDate}:00Z` : '',
-        endDate: endDate ? `${endDate}:00Z` : '',
+        startDate: startDate, // Already has Z from BookingForm
+        endDate: endDate,     // Already has Z from BookingForm
         totalAmount,
         status: 'PENDING',
         paymentStatus: 'PENDING',
