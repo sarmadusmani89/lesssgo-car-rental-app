@@ -67,7 +67,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <p className="text-sm text-slate-500 font-medium italic">
-                                            {new Date(user.createdAt).toLocaleDateString(undefined, {
+                                            {new Date(user.createdAt).toLocaleDateString('en-AU', {
                                                 month: 'short',
                                                 day: 'numeric',
                                                 year: 'numeric'

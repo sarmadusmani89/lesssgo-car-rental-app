@@ -17,7 +17,7 @@ function ThankYouContent() {
 
     const formatDate = (dateStr: string | null) => {
         if (!dateStr) return 'TBD';
-        return new Date(dateStr).toLocaleDateString('en-US', {
+        return new Date(dateStr).toLocaleDateString('en-AU', {
             month: 'long',
             day: 'numeric',
             year: 'numeric',

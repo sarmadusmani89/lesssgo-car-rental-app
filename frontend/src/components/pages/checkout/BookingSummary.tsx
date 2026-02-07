@@ -32,11 +32,11 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    // Normalize to midnight to calculate calendar days only
-    start.setHours(0, 0, 0, 0);
-    end.setHours(0, 0, 0, 0);
+    // Normalize to midnight UTC to calculate calendar days only
+    const startUTC = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
+    const endUTC = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate());
 
-    const diff = Math.abs(end.getTime() - start.getTime());
+    const diff = Math.abs(endUTC - startUTC);
     const days = Math.round(diff / (1000 * 60 * 60 * 24));
     return days >= 0 ? days + 1 : 0;
   };
@@ -47,7 +47,7 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
   const formatDate = (dateStr: string) => {
     if (!dateStr) return '...';
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB', {
+    return date.toLocaleDateString('en-AU', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',

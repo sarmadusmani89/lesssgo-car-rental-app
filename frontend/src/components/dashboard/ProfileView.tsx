@@ -42,7 +42,7 @@ export default function ProfileView({ user }: ProfileViewProps) {
                     <div className="p-4 border border-gray-100 rounded-xl">
                         <label className="block text-sm font-medium text-gray-500 mb-1">Member Since</label>
                         <div className="font-medium text-gray-900">
-                            {new Date(user.createdAt).toLocaleDateString(undefined, {
+                            {new Date(user.createdAt).toLocaleDateString('en-AU', {
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric'

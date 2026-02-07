@@ -24,7 +24,7 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
     // Helper to format date
     const formatDate = (dateString: string) => {
         try {
-            return new Date(dateString).toLocaleDateString('en-US', {
+            return new Date(dateString).toLocaleDateString('en-AU', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',

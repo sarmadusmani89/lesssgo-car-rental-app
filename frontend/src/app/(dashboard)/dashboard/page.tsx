@@ -121,7 +121,7 @@ export default function DashboardOverview() {
                                     <div className="flex-1">
                                         <h4 className="font-bold text-gray-900 text-sm">{booking.car?.brand} {booking.car?.name}</h4>
                                         <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
-                                            <span className="flex items-center gap-1"><Clock size={12} /> {new Date(booking.startDate).toLocaleDateString(undefined, { timeZone: 'UTC' })}</span>
+                                            <span className="flex items-center gap-1"><Clock size={12} /> {new Date(booking.startDate).toLocaleDateString('en-AU', { timeZone: 'UTC' })}</span>
                                             <span className={`px-2 py-0.5 rounded-full font-bold uppercase ${booking.status === 'CONFIRMED' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'}`}>
                                                 {booking.status}
                                             </span>

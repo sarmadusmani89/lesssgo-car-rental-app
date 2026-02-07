@@ -93,7 +93,7 @@ export default function PaymentsPage() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-600">
-                                        {new Date(payment.createdAt).toLocaleDateString(undefined, {
+                                        {new Date(payment.createdAt).toLocaleDateString('en-AU', {
                                             year: 'numeric',
                                             month: 'short',
                                             day: 'numeric',
