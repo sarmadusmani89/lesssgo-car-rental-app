@@ -54,7 +54,7 @@ export default function RecentBookingsTable({ bookings }: { bookings: any[] }) {
                                             {b.status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 font-semibold text-gray-900">${b.totalAmount}</td>
+                                    <td className="px-6 py-4 font-semibold text-gray-900">A${b.totalAmount}</td>
                                     <td className="px-6 py-4 text-right">
                                         <Link
                                             href={`/admin/bookings/${b.id}`}

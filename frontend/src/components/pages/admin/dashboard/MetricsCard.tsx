@@ -11,7 +11,7 @@ export default function MetricsCards({ stats }: { stats: any }) {
         },
         {
             title: "Total Revenue",
-            value: `$${stats?.revenue?.toLocaleString() || 0} `,
+            value: `A$${stats?.revenue?.toLocaleString() || 0} `,
             icon: DollarSign,
             color: "text-green-600",
             bg: "bg-green-50"
