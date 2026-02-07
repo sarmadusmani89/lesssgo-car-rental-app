@@ -1,6 +1,7 @@
 'use client';
 
 import { Calendar, User, MapPin } from 'lucide-react';
+import { formatDashboardDate } from '@/lib/utils';
 
 export default function CompleteBookingInformation({ booking }: { booking: any }) {
   if (!booking) return null;
@@ -15,7 +16,7 @@ export default function CompleteBookingInformation({ booking }: { booking: any }
         </div>
         <div className="flex items-center gap-2">
           <Calendar size={20} className="text-green-500" />
-          <span>Dates: {new Date(booking.startDate).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false, timeZone: 'UTC' })} - {new Date(booking.endDate).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false, timeZone: 'UTC' })}</span>
+          <span>Dates: {formatDashboardDate(booking.startDate)} - {formatDashboardDate(booking.endDate)}</span>
         </div>
         <div className="flex items-center gap-2">
           <MapPin size={20} className="text-red-500" />

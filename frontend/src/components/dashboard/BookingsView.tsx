@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Calendar, MapPin, Clock, Car } from 'lucide-react';
 import api from '@/lib/api';
+import { formatDashboardDate } from '@/lib/utils';
 
 interface BookingsViewProps {
     userId: number;
@@ -76,7 +77,7 @@ export default function BookingsView({ userId }: BookingsViewProps) {
                                 <div className="flex items-center gap-2">
                                     <Calendar size={16} />
                                     <span>
-                                        {new Date(booking.startDate).toLocaleDateString('en-AU', { timeZone: 'UTC' })} - {new Date(booking.endDate).toLocaleDateString('en-AU', { timeZone: 'UTC' })}
+                                        {formatDashboardDate(booking.startDate)} - {formatDashboardDate(booking.endDate)}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">

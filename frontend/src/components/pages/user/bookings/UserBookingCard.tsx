@@ -1,5 +1,6 @@
 import { Calendar, AlertCircle, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { formatDashboardDate } from '@/lib/utils';
 
 interface Booking {
     id: number | string;
@@ -15,27 +16,14 @@ interface Booking {
 }
 
 interface UserBookingCardProps {
-    booking: any; // Using any to be safe with unknown API response structure initially, but will try to cast
+    booking: any;
     onCancel: (id: string | number) => void;
     cancellingId: string | number | null;
 }
 
 export default function UserBookingCard({ booking, onCancel, cancellingId }: UserBookingCardProps) {
-    // Helper to format date
-    const formatDate = (dateString: string) => {
-        try {
-            return new Date(dateString).toLocaleDateString('en-AU', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                timeZone: 'UTC'
-            });
-        } catch (e) {
-            return dateString;
-        }
-    };
+    const formatDate = (dateString: string) => formatDashboardDate(dateString);
 
-    // Helper to determine status color
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
             case 'confirmed':
@@ -57,12 +45,6 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
     const status = booking.status || 'Pending';
     const isCompleted = status.toLowerCase() === 'completed';
     const isCancelled = status.toLowerCase() === 'cancelled';
-    const isActive = status.toLowerCase() === 'active';
-
-    // Can cancel if not completed and not cancelled
-    // Assuming 'Active' bookings might also not be cancellable depending on logic, but user request was specifically "remove cancelled button from completed bookings".
-    // Usually you can't cancel an active trip via simple button, but let's follow the user's specific request: "remove the cancelled button from completed bookings".
-    // Implies it should be there for others, but common sense says not for Cancelled either.
     const canCancel = !isCompleted && !isCancelled;
 
     return (

@@ -13,7 +13,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import api from '@/lib/api';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, formatDashboardDate } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 
@@ -93,12 +93,7 @@ export default function PaymentsPage() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-600">
-                                        {new Date(payment.createdAt).toLocaleDateString('en-AU', {
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric',
-                                            timeZone: 'UTC'
-                                        })}
+                                        {formatDashboardDate(payment.createdAt)}
                                     </td>
                                     <td className="px-6 py-4 font-bold text-gray-900">
                                         {formatPrice(payment.amount, currency)}
