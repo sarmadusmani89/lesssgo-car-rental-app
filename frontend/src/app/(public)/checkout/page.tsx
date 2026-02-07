@@ -114,9 +114,14 @@ function CheckoutContent() {
         return;
       }
 
+      if (!carId) {
+        toast.error("Vehicle information is missing. Please select a vehicle again.");
+        return;
+      }
+
       const bookingData = {
         userId,
-        carId,
+        carId: carId as string,
         startDate: new Date(startDate).toISOString(),
         endDate: new Date(endDate).toISOString(),
         totalAmount,
