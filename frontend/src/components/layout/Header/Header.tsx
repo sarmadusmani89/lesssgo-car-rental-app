@@ -116,8 +116,7 @@ export default function Header() {
         <header className={styles.header}>
             <div className={`container ${styles.nav}`}>
                 <Link href="/" className={styles.logo}>
-                    <Car size={32} className={styles.logoIcon} />
-                    <span>Lesssgo</span>
+                    <img src="/web-logo.jpg" alt="Lesssgo Logo" className={styles.logoImage} />
                 </Link>
 
                 <nav className={styles.desktopNav}>
