@@ -53,6 +53,7 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
+      timeZone: 'UTC'
     });
   };
 

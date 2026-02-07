@@ -28,6 +28,7 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
+                timeZone: 'UTC'
             });
         } catch (e) {
             return dateString;

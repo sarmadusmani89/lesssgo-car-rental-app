@@ -96,7 +96,8 @@ export default function PaymentsPage() {
                                         {new Date(payment.createdAt).toLocaleDateString(undefined, {
                                             year: 'numeric',
                                             month: 'short',
-                                            day: 'numeric'
+                                            day: 'numeric',
+                                            timeZone: 'UTC'
                                         })}
                                     </td>
                                     <td className="px-6 py-4 font-bold text-gray-900">

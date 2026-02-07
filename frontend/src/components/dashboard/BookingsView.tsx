@@ -76,7 +76,7 @@ export default function BookingsView({ userId }: BookingsViewProps) {
                                 <div className="flex items-center gap-2">
                                     <Calendar size={16} />
                                     <span>
-                                        {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
+                                        {new Date(booking.startDate).toLocaleDateString(undefined, { timeZone: 'UTC' })} - {new Date(booking.endDate).toLocaleDateString(undefined, { timeZone: 'UTC' })}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2">
