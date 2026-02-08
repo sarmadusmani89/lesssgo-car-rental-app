@@ -32,8 +32,8 @@ export default function RecentBookingsTable({ bookings }: { bookings: any[] }) {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="font-medium text-gray-900">{b.user?.name || b.customerName}</span>
-                                            <span className="text-xs text-gray-500">{b.user?.email || b.customerEmail}</span>
+                                            <span className="font-medium text-gray-900">{b.customerName || b.user?.name}</span>
+                                            <span className="text-xs text-gray-500">{b.customerEmail || b.user?.email}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -54,7 +54,7 @@ export default function RecentBookingsTable({ bookings }: { bookings: any[] }) {
                                             {b.status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 font-semibold text-gray-900">K${b.totalAmount}</td>
+                                    <td className="px-6 py-4 font-semibold text-gray-900">K{b.totalAmount}</td>
                                     <td className="px-6 py-4 text-right">
                                         <Link
                                             href={`/admin/bookings/${b.id}`}

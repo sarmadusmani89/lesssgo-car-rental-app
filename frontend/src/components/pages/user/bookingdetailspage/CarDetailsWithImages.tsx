@@ -15,7 +15,7 @@ export default function CarDetailsWithImages({ car }: { car: any }) {
           <p className="text-gray-600 mt-1">Type: {car.type}</p>
           <p className="text-gray-600">Transmission: {car.transmission}</p>
           <p className="text-gray-600">Fuel Capacity: {car.fuelCapacity}L</p>
-          <p className="text-gray-600 font-medium text-blue-600 mt-2">A${car.pricePerDay} / day</p>
+          <p className="text-gray-600 font-medium text-blue-600 mt-2">K{car.pricePerDay} / day</p>
         </div>
         <div className="flex gap-2 overflow-x-auto">
           {car.imageUrl && (

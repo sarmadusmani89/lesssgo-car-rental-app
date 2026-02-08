@@ -57,7 +57,7 @@ export default function AdminCarTable({
                                 </div>
                             </td>
                             <td className="px-6 py-4 font-bold text-gray-900">
-                                A${car.pricePerDay}
+                                K{car.pricePerDay}
                             </td>
                             <td className="px-6 py-4">
                                 <button
