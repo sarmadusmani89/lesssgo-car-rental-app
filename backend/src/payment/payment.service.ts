@@ -462,4 +462,10 @@ export class PaymentService {
       // Cash or no Stripe PI found - Manual marker
       await this.prisma.booking.update({
         where: { id: booking.id },
-   
+        data: { bondStatus: 'REFUNDED' },
+      });
+    }
+
+    return { message: 'Bond released successfully' };
+  }
+}
