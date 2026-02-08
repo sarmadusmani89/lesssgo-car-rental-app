@@ -60,7 +60,7 @@ export default function AdminBookingDetailsPage() {
 
             <CompleteBookingInformation booking={booking} />
             <CarDetailsWithImages car={booking.car} />
-            <PaymentStatusAndMethod booking={booking} />
+            <PaymentStatusAndMethod booking={booking} isAdmin={true} />
             <BookingStatusTimeline booking={booking} />
         </div>
     );

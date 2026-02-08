@@ -33,8 +33,12 @@ export default function CompleteBookingInformation({ booking }: { booking: any }
           </span>
         </div>
         <div>
-          <span className="font-medium text-gray-500">Total Amount:</span>
-          <span className="ml-2 font-bold text-blue-600">K${booking.totalAmount}</span>
+          <span className="font-medium text-gray-500">Total Rental:</span>
+          <span className="ml-2 font-bold text-blue-600">K{booking.totalAmount}</span>
+        </div>
+        <div>
+          <span className="font-medium text-gray-500">Security Bond:</span>
+          <span className="ml-2 font-bold text-orange-600">K{booking.bondAmount}</span>
         </div>
         <div>
           <span className="font-medium text-gray-500">Status:</span>
