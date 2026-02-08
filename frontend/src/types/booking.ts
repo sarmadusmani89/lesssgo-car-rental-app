@@ -12,6 +12,13 @@ export enum PaymentStatus {
     FAILED = 'FAILED',
 }
 
+export enum BondStatus {
+    PENDING = 'PENDING',
+    PAID = 'PAID',
+    REFUNDED = 'REFUNDED',
+    CLAIMED = 'CLAIMED',
+}
+
 export enum PaymentMethod {
     CASH = 'CASH',
     CARD = 'CARD',
@@ -51,9 +58,16 @@ export interface Booking {
     startDate: string;
     endDate: string;
     totalAmount: number;
+    bondAmount: number;
+    bondStatus: BondStatus;
     status: BookingStatus;
     paymentStatus: PaymentStatus;
     paymentMethod: PaymentMethod;
+    customerName: string;
+    customerEmail: string;
+    customerPhone: string;
+    pickupLocation?: string;
+    returnLocation?: string;
     createdAt: string;
     updatedAt: string;
     user: BookingUser; // Now required as we rely on it
