@@ -228,7 +228,7 @@ export class PaymentService {
         const updatedBooking = await this.prisma.booking.update({
           where: { id: bookingId as string },
           data: { paymentStatus: 'PAID', status: 'CONFIRMED' },
-          include: { car: true }
+          include: { car: true, user: true }
         });
         console.log(`✅ Payment and booking status updated successfully`);
         console.log(`📊 Updated Booking: ${updatedBooking.id} | Status: ${updatedBooking.status} | Payment: ${updatedBooking.paymentStatus}`);
@@ -236,7 +236,9 @@ export class PaymentService {
         // Send confirmation emails for successful payment
         try {
           console.log('📧 Sending payment confirmation emails...');
-          const { customerName, customerEmail, car, startDate, endDate, totalAmount } = updatedBooking;
+          const { user, car, startDate, endDate, totalAmount } = updatedBooking;
+          const customerName = user.name || 'Valued Customer';
+          const customerEmail = user.email;
           const formatOptions: Intl.DateTimeFormatOptions = {
             weekday: 'short',
             year: 'numeric',
@@ -288,7 +290,7 @@ export class PaymentService {
           const adminHtml = adminBookingNotificationTemplate({
             customerName,
             customerEmail,
-            customerPhone: updatedBooking.customerPhone || 'N/A',
+            customerPhone: user.phoneNumber || 'N/A',
             bookingId: updatedBooking.id,
             brand: car.brand,
             vehicleName: car.name,

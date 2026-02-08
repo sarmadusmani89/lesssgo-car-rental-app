@@ -324,7 +324,7 @@ export class BookingService {
       const adminHtml = adminBookingNotificationTemplate({
         customerName,
         customerEmail,
-        customerPhone: updatedBooking.customerPhone || 'N/A',
+        customerPhone: user.phoneNumber || 'N/A',
         bookingId: updatedBooking.id,
         brand: car.brand,
         vehicleName: car.name,
