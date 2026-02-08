@@ -272,9 +272,9 @@ export class PaymentService {
   private async sendPaymentConfirmationEmails(booking: any, transactionId: string) {
     try {
       console.log('📧 Sending payment confirmation emails...');
-      const { user, car, startDate, endDate, totalAmount } = booking;
-      const customerName = user.name || 'Valued Customer';
-      const customerEmail = user.email;
+      const { user, car, startDate, endDate, totalAmount, customerName: snapName, customerEmail: snapEmail } = booking;
+      const customerName = snapName || user.name || 'Valued Customer';
+      const customerEmail = snapEmail || user.email;
 
       const formatOptions: Intl.DateTimeFormatOptions = {
         weekday: 'short',

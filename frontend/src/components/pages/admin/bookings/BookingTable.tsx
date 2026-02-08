@@ -69,8 +69,8 @@ const BookingTable: React.FC<BookingTableProps> = ({ bookings, onStatusUpdate, o
                         <User size={14} />
                       </div>
                       <div>
-                        <p className="font-bold text-slate-900 text-sm">{booking.user?.name || 'Valued Customer'}</p>
-                        <p className="text-[10px] text-slate-500 font-medium">{booking.user?.email}</p>
+                        <p className="font-bold text-slate-900 text-sm">{booking.customerName || booking.user?.name || 'Valued Customer'}</p>
+                        <p className="text-[10px] text-slate-500 font-medium">{booking.customerEmail || booking.user?.email}</p>
                       </div>
                     </div>
                   </td>
