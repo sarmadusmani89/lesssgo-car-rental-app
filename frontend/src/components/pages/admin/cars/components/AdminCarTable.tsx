@@ -1,8 +1,10 @@
 "use client";
 
 import Image from 'next/image';
-import { Calendar, Edit2, Trash2, AlertCircle } from 'lucide-react';
 import { Car } from '../type';
+import { formatPrice } from '@/lib/utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
 
 interface Props {
     cars: Car[];
@@ -19,6 +21,7 @@ export default function AdminCarTable({
     onEdit,
     onDelete
 }: Props) {
+    const { currency, rates } = useSelector((state: RootState) => state.ui);
     return (
         <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -57,7 +60,7 @@ export default function AdminCarTable({
                                 </div>
                             </td>
                             <td className="px-6 py-4 font-bold text-gray-900">
-                                K{car.pricePerDay}
+                                {formatPrice(car.pricePerDay, currency, rates)}
                             </td>
                             <td className="px-6 py-4">
                                 <button

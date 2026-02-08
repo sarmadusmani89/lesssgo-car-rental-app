@@ -105,7 +105,7 @@ export default function Header() {
 
     const getCurrencyLabel = (curr: string) => {
         switch (curr) {
-            case 'AUD': return 'AUD ($)';
+            case 'AUD': return 'AUD (A$)';
             case 'USD': return 'USD ($)';
             case 'PGK': return 'PGK (K)';
             default: return curr;

@@ -1,6 +1,9 @@
-'use client';
+import { formatPrice } from '@/lib/utils';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
 
 export default function CarDetailsWithImages({ car }: { car: any }) {
+  const { currency, rates } = useSelector((state: RootState) => state.ui);
   if (!car) return null;
 
   return (
@@ -15,7 +18,7 @@ export default function CarDetailsWithImages({ car }: { car: any }) {
           <p className="text-gray-600 mt-1">Type: {car.type}</p>
           <p className="text-gray-600">Transmission: {car.transmission}</p>
           <p className="text-gray-600">Fuel Capacity: {car.fuelCapacity}L</p>
-          <p className="text-gray-600 font-medium text-blue-600 mt-2">K{car.pricePerDay} / day</p>
+          <p className="text-gray-600 font-medium text-blue-600 mt-2">{formatPrice(car.pricePerDay, currency, rates)} / day</p>
         </div>
         <div className="flex gap-2 overflow-x-auto">
           {car.imageUrl && (

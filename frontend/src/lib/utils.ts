@@ -14,7 +14,7 @@ interface CurrencyRates {
 export function formatPrice(amount: number, currency: 'AUD' | 'PGK' | 'USD' = 'PGK', rates?: CurrencyRates) {
     let symbol = 'K';
     if (currency === 'PGK') symbol = 'K';
-    if (currency === 'AUD') symbol = 'K';
+    if (currency === 'AUD') symbol = 'A$';
     if (currency === 'USD') symbol = '$';
 
     // Use provided rates or fallback to defaults
