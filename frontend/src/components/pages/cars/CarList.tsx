@@ -24,7 +24,7 @@ export default function CarsList() {
           <img src={car.image} alt={car.name} className="w-full h-48 object-cover" />
           <div className="p-4 flex flex-col gap-2">
             <h3 className="text-lg font-semibold">{car.name}</h3>
-            <p className="text-gray-600">${car.pricePerDay} / day</p>
+            <p className="text-gray-600">K{car.pricePerDay} / day</p>
             <Link
               href={`/car?id=${car.id}`}
               className="mt-2 inline-block px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-center"
