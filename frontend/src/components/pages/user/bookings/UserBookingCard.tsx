@@ -83,7 +83,7 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
                         {booking.totalAmount && (
                             <div className="flex items-center gap-2">
                                 <span className="text-xl font-black text-slate-900 font-outfit tracking-tighter">
-                                    A${booking.totalAmount}
+                                    K${booking.totalAmount}
                                 </span>
                             </div>
                         )}

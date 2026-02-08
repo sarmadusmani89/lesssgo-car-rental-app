@@ -34,7 +34,7 @@ export default function CompleteBookingInformation({ booking }: { booking: any }
         </div>
         <div>
           <span className="font-medium text-gray-500">Total Amount:</span>
-          <span className="ml-2 font-bold text-blue-600">A${booking.totalAmount}</span>
+          <span className="ml-2 font-bold text-blue-600">K${booking.totalAmount}</span>
         </div>
         <div>
           <span className="font-medium text-gray-500">Status:</span>

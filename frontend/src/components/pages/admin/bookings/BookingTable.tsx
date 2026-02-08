@@ -94,7 +94,7 @@ const BookingTable: React.FC<BookingTableProps> = ({ bookings, onStatusUpdate, o
                     <StatusBadge status={booking.paymentStatus} type="payment" />
                   </td>
                   <td className="px-6 py-4 font-black text-slate-900">
-                    A${booking.totalAmount.toFixed(2)}
+                    K${booking.totalAmount.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-1">
