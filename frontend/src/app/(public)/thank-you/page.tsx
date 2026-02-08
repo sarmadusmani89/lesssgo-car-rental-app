@@ -32,7 +32,7 @@ function ThankYouContent() {
                     startDate: b.startDate,
                     endDate: b.endDate,
                     total: b.totalAmount.toString(),
-                    bond: (b.car.pricePerDay || 0).toString(),
+                    bond: (b.bondAmount || 0).toString(),
                     payment: b.paymentMethod
                 });
             } catch (err) {

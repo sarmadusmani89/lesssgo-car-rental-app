@@ -83,7 +83,8 @@ export class PaymentService {
         await this.prisma.payment.update({
           where: { id: existingPayment.id },
           data: {
-            stripePaymentIntentId: session.id,
+            stripePaymentIntentId: session.id, // Keeping this for backward compatibility or initial tracking
+            stripeSessionId: session.id,
             status: 'PENDING',
             paymentMethod: 'ONLINE',
             currency: 'PGK',
@@ -97,6 +98,7 @@ export class PaymentService {
             currency: 'PGK',
             status: 'PENDING',
             stripePaymentIntentId: session.id,
+            stripeSessionId: session.id,
             paymentMethod: 'ONLINE',
           },
         });
@@ -236,7 +238,11 @@ export class PaymentService {
       if (existingPayment) {
         await this.prisma.payment.update({
           where: { id: existingPayment.id },
-          data: { status: 'PAID', stripePaymentIntentId: session.payment_intent as string }
+          data: {
+            status: 'PAID',
+            stripePaymentIntentId: session.payment_intent as string,
+            stripeSessionId: session.id
+          }
         });
       } else {
         // Create missing payment record
@@ -247,6 +253,7 @@ export class PaymentService {
             currency: 'PGK',
             status: 'PAID',
             stripePaymentIntentId: session.payment_intent as string,
+            stripeSessionId: session.id,
             paymentMethod: 'ONLINE'
           }
         });

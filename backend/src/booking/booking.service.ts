@@ -430,7 +430,7 @@ export class BookingService {
 
   async findBySessionId(sessionId: string) {
     const payment = await this.prisma.payment.findFirst({
-      where: { stripePaymentIntentId: sessionId },
+      where: { stripeSessionId: sessionId },
       include: {
         booking: {
           include: {
