@@ -1,6 +1,7 @@
 import { IsNumber, IsString, IsEnum, IsDateString, IsOptional } from 'class-validator';
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED';
+export type BondStatus = 'PENDING' | 'PAID' | 'REFUNDED' | 'CLAIMED';
 export type PaymentMethod = 'CASH' | 'CARD' | 'ONLINE';
 
 export class CreateBookingDto {
@@ -19,11 +20,19 @@ export class CreateBookingDto {
   @IsNumber()
   totalAmount!: number;
 
+  @IsNumber()
+  @IsOptional()
+  bondAmount?: number;
+
   @IsEnum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])
   status!: BookingStatus;
 
   @IsEnum(['PENDING', 'PAID', 'FAILED'])
   paymentStatus!: PaymentStatus;
+
+  @IsEnum(['PENDING', 'PAID', 'REFUNDED', 'CLAIMED'])
+  @IsOptional()
+  bondStatus?: BondStatus;
 
   @IsEnum(['CASH', 'CARD', 'ONLINE'])
   paymentMethod!: PaymentMethod;

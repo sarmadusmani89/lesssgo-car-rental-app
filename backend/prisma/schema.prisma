@@ -79,6 +79,9 @@ model Booking {
   status          BookingStatus   @default(PENDING)
   paymentStatus   PaymentStatus   @default(PENDING)
   paymentMethod   PaymentMethod   @default(CASH)
+  customerName    String?
+  customerEmail   String?
+  customerPhone   String?
   pickupLocation  String?
   returnLocation  String?
   createdAt       DateTime        @default(now())

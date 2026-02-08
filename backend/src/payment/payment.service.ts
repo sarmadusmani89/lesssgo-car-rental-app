@@ -6,25 +6,17 @@ import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { EmailService } from '../email/email.service';
 import { SettingsService } from '../settings/settings.service';
+import { StripeService } from './stripe.service';
 
 @Injectable()
 export class PaymentService {
-  private stripe: Stripe;
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
     private readonly settingsService: SettingsService,
-  ) {
-    const secretKey = this.configService.get<string>('STRIPE_SECRET_KEY');
-    if (!secretKey) {
-      throw new Error('STRIPE_SECRET_KEY is not defined');
-    }
-    this.stripe = new Stripe(secretKey, {
-      apiVersion: '2025-01-27.acacia' as any,
-    });
-  }
+    private readonly stripeService: StripeService,
+  ) { }
 
   async createCheckoutSession(bookingId: string) {
     const booking = await this.prisma.booking.findUnique({
@@ -40,7 +32,7 @@ export class PaymentService {
     const currency = settings.currency.toLowerCase();
 
     try {
-      const session = await this.stripe.checkout.sessions.create({
+      const session = await this.stripeService.createCheckoutSession({
         payment_method_types: ['card'],
         line_items: [
           {
@@ -128,7 +120,7 @@ export class PaymentService {
     const currency = settings.currency.toLowerCase();
 
     try {
-      const paymentIntent = await this.stripe.paymentIntents.create({
+      const paymentIntent = await this.stripeService.createPaymentIntent({
         amount: Math.round((booking.totalAmount + booking.bondAmount) * 100), // Amount in cents
         currency: currency,
         metadata: { bookingId: booking.id, userId: booking.userId },
@@ -186,7 +178,7 @@ export class PaymentService {
     let event: Stripe.Event;
 
     try {
-      event = this.stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+      event = this.stripeService.constructEvent(payload, signature, webhookSecret);
       console.log(`✅ Webhook signature verified`);
       console.log(`📋 Event Type: ${event.type}`);
       console.log(`🆔 Event ID: ${event.id}`);
@@ -195,169 +187,171 @@ export class PaymentService {
       throw new InternalServerErrorException(`Webhook Error: ${err.message}`);
     }
 
-    if (event.type === 'charge.refunded') {
-      const charge = event.data.object as Stripe.Charge;
-      const bookingId = charge.metadata?.bookingId;
-      if (bookingId) {
-        await this.prisma.booking.update({
-          where: { id: bookingId },
-          data: { bondStatus: 'REFUNDED' }
-        });
-        console.log(`✅ Bond status updated to REFUNDED via webhook for booking: ${bookingId}`);
-      }
-    }
-
-    if (event.type === 'checkout.session.completed') {
-      console.log('💳 Processing checkout.session.completed event');
-      const session = event.data.object as Stripe.Checkout.Session;
-      const bookingId = session.metadata?.bookingId;
-
-      console.log(`🔍 Session ID: ${session.id}`);
-      console.log(`📦 Booking ID from metadata: ${bookingId}`);
-      console.log(`💰 Payment Intent: ${session.payment_intent}`);
-      console.log(`💵 Amount Total: ${session.amount_total ? session.amount_total / 100 : 'N/A'} ${session.currency?.toUpperCase()}`);
-
-      if (!bookingId) {
-        console.error('❌ No bookingId found in session metadata');
-        return { received: true };
-      }
-
-      try {
-        console.log(`🔄 Updating payment and booking status for booking: ${bookingId}`);
-        // Check for existing payment
-        const existingPayment = await this.prisma.payment.findFirst({
-          where: { bookingId: bookingId as string }
-        });
-
-        if (existingPayment) {
-          await this.prisma.payment.update({
-            where: { id: existingPayment.id },
-            data: { status: 'PAID', stripePaymentIntentId: session.payment_intent as string }
-          });
-        } else {
-          // Create missing payment record
-          await this.prisma.payment.create({
-            data: {
-              bookingId: bookingId as string,
-              amount: session.amount_total ? session.amount_total / 100 : 0,
-              currency: session.currency || 'usd',
-              status: 'PAID',
-              stripePaymentIntentId: session.payment_intent as string,
-              paymentMethod: 'ONLINE'
-            }
-          });
-        }
-
-        // Update booking status
-        const updatedBooking = await this.prisma.booking.update({
-          where: { id: bookingId as string },
-          data: {
-            paymentStatus: 'PAID',
-            status: 'CONFIRMED',
-            bondStatus: 'PAID'
-          },
-          include: { car: true, user: true }
-        });
-        console.log(`✅ Payment and booking status updated successfully`);
-        console.log(`📊 Updated Booking: ${updatedBooking.id} | Status: ${updatedBooking.status} | Payment: ${updatedBooking.paymentStatus}`);
-
-        // Send confirmation emails for successful payment
-        try {
-          console.log('📧 Sending payment confirmation emails...');
-          const { user, car, startDate, endDate, totalAmount } = updatedBooking;
-          const customerName = user.name || 'Valued Customer';
-          const customerEmail = user.email;
-          const formatOptions: Intl.DateTimeFormatOptions = {
-            weekday: 'short',
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-            timeZone: 'UTC'
-          };
-          const start = new Date(startDate).toLocaleString('en-AU', formatOptions);
-          const end = new Date(endDate).toLocaleString('en-AU', formatOptions);
-
-          const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
-          const { paymentReceiptTemplate } = await import('../lib/emailTemplates/paymentReceipt');
-
-          const confirmHtml = bookingConfirmationTemplate({
-            customerName,
-            bookingId: updatedBooking.id,
-            brand: car.brand,
-            vehicleName: car.name,
-            startDate: start,
-            endDate: end,
-            totalAmount,
-            paymentMethod: 'ONLINE',
-            isConfirmed: true,
-            hp: car.hp,
-            passengers: car.passengers,
-            fuelType: car.fuelType,
-            transmission: car.transmission,
-            airConditioner: car.airConditioner,
-            gps: car.gps,
-            vehicleClass: car.vehicleClass,
-          });
-
-          const receiptHtml = paymentReceiptTemplate({
-            customerName,
-            amount: totalAmount,
-            bookingId: updatedBooking.id,
-            paymentMethod: 'Stripe Online',
-            transactionId: session.payment_intent as string,
-            date: new Date().toLocaleDateString(),
-          });
-
-          // Fetch admin email
-          const settings = await this.settingsService.getSettings();
-
-          const { adminBookingNotificationTemplate } = await import('../lib/emailTemplates/adminBookingNotification');
-          const adminHtml = adminBookingNotificationTemplate({
-            customerName,
-            customerEmail,
-            customerPhone: user.phoneNumber || 'N/A',
-            bookingId: updatedBooking.id,
-            brand: car.brand,
-            vehicleName: car.name,
-            startDate: start,
-            endDate: end,
-            totalAmount,
-            paymentMethod: 'ONLINE',
-            paymentStatus: 'Confirmed (Paid via Stripe)',
-            hp: car.hp,
-            vehicleClass: car.vehicleClass,
-            transmission: car.transmission,
-            fuelType: car.fuelType,
-            pickupLocation: updatedBooking.pickupLocation,
-            returnLocation: updatedBooking.returnLocation,
-          });
-
-          await Promise.all([
-            this.emailService.sendEmail(customerEmail, 'Booking Confirmed - LesssGo', confirmHtml),
-            this.emailService.sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml),
-            this.emailService.sendEmail(settings.adminEmail, 'New Booking Alert - Payment Received', adminHtml)
-          ]);
-          console.log('✅ Payment confirmation emails sent successfully');
-          console.log(`   → User email: ${customerEmail}`);
-          console.log(`   → Admin email: ${settings.adminEmail}`);
-        } catch (err) {
-          console.error('❌ Failed to send payment success emails:', err);
-        }
-      } catch (err) {
-        console.error('❌ Failed to update booking/payment status:', err);
-        throw err;
-      }
-    } else {
-      console.log(`ℹ️  Unhandled event type: ${event.type} - Ignoring`);
+    switch (event.type) {
+      case 'charge.refunded':
+        await this.handleChargeRefunded(event.data.object as Stripe.Charge);
+        break;
+      case 'checkout.session.completed':
+        await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+        break;
+      default:
+        console.log(`ℹ️  Unhandled event type: ${event.type} - Ignoring`);
     }
 
     console.log('========================================');
     console.log('✅ WEBHOOK PROCESSING COMPLETE');
     console.log('========================================');
     return { received: true };
+  }
+
+  private async handleChargeRefunded(charge: Stripe.Charge) {
+    const bookingId = charge.metadata?.bookingId;
+    if (bookingId) {
+      await this.prisma.booking.update({
+        where: { id: bookingId },
+        data: { bondStatus: 'REFUNDED' }
+      });
+      console.log(`✅ Bond status updated to REFUNDED via webhook for booking: ${bookingId}`);
+    }
+  }
+
+  private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+    console.log('💳 Processing checkout.session.completed event');
+    const bookingId = session.metadata?.bookingId;
+
+    if (!bookingId) {
+      console.error('❌ No bookingId found in session metadata');
+      return;
+    }
+
+    try {
+      console.log(`🔄 Updating payment and booking status for booking: ${bookingId}`);
+      // Check for existing payment
+      const existingPayment = await this.prisma.payment.findFirst({
+        where: { bookingId: bookingId as string }
+      });
+
+      if (existingPayment) {
+        await this.prisma.payment.update({
+          where: { id: existingPayment.id },
+          data: { status: 'PAID', stripePaymentIntentId: session.payment_intent as string }
+        });
+      } else {
+        // Create missing payment record
+        await this.prisma.payment.create({
+          data: {
+            bookingId: bookingId as string,
+            amount: session.amount_total ? session.amount_total / 100 : 0,
+            currency: session.currency || 'usd',
+            status: 'PAID',
+            stripePaymentIntentId: session.payment_intent as string,
+            paymentMethod: 'ONLINE'
+          }
+        });
+      }
+
+      // Update booking status
+      const updatedBooking = await this.prisma.booking.update({
+        where: { id: bookingId as string },
+        data: {
+          paymentStatus: 'PAID',
+          status: 'CONFIRMED',
+          bondStatus: 'PAID'
+        },
+        include: { car: true, user: true }
+      });
+
+      console.log(`✅ Payment and booking status updated successfully`);
+      await this.sendPaymentConfirmationEmails(updatedBooking, session.payment_intent as string);
+    } catch (err) {
+      console.error('❌ Failed to update booking/payment status:', err);
+      throw err;
+    }
+  }
+
+  private async sendPaymentConfirmationEmails(booking: any, transactionId: string) {
+    try {
+      console.log('📧 Sending payment confirmation emails...');
+      const { user, car, startDate, endDate, totalAmount } = booking;
+      const customerName = user.name || 'Valued Customer';
+      const customerEmail = user.email;
+
+      const formatOptions: Intl.DateTimeFormatOptions = {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'UTC'
+      };
+      const start = new Date(startDate).toLocaleString('en-AU', formatOptions);
+      const end = new Date(endDate).toLocaleString('en-AU', formatOptions);
+
+      const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
+      const { paymentReceiptTemplate } = await import('../lib/emailTemplates/paymentReceipt');
+
+      const confirmHtml = bookingConfirmationTemplate({
+        customerName,
+        bookingId: booking.id,
+        brand: car.brand,
+        vehicleName: car.name,
+        startDate: start,
+        endDate: end,
+        totalAmount,
+        paymentMethod: 'ONLINE',
+        isConfirmed: true,
+        hp: car.hp,
+        passengers: car.passengers,
+        fuelType: car.fuelType,
+        transmission: car.transmission,
+        airConditioner: car.airConditioner,
+        gps: car.gps,
+        vehicleClass: car.vehicleClass,
+      });
+
+      const receiptHtml = paymentReceiptTemplate({
+        customerName,
+        amount: totalAmount,
+        bookingId: booking.id,
+        paymentMethod: 'Stripe Online',
+        transactionId,
+        date: new Date().toLocaleDateString(),
+      });
+
+      const settings = await this.settingsService.getSettings();
+      const { adminBookingNotificationTemplate } = await import('../lib/emailTemplates/adminBookingNotification');
+
+      const adminHtml = adminBookingNotificationTemplate({
+        customerName,
+        customerEmail,
+        customerPhone: user.phoneNumber || 'N/A',
+        bookingId: booking.id,
+        brand: car.brand,
+        vehicleName: car.name,
+        startDate: start,
+        endDate: end,
+        totalAmount,
+        paymentMethod: 'ONLINE',
+        paymentStatus: 'Confirmed (Paid via Stripe)',
+        hp: car.hp,
+        vehicleClass: car.vehicleClass,
+        transmission: car.transmission,
+        fuelType: car.fuelType,
+        pickupLocation: booking.pickupLocation,
+        returnLocation: booking.returnLocation,
+      });
+
+      await Promise.all([
+        this.emailService.sendEmail(customerEmail, 'Booking Confirmed - LesssGo', confirmHtml),
+        this.emailService.sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml),
+        this.emailService.sendEmail(settings.adminEmail, 'New Booking Alert - Payment Received', adminHtml)
+      ]);
+      console.log('✅ Payment confirmation emails sent successfully');
+    } catch (err) {
+      console.error('❌ Failed to send payment success emails:', err);
+    }
   }
 
   create(createPaymentDto: CreatePaymentDto) {
@@ -444,7 +438,7 @@ export class PaymentService {
     if (booking.paymentMethod === 'ONLINE' && stripePayment && stripePayment.stripePaymentIntentId) {
       // Stripe Refund
       try {
-        await this.stripe.refunds.create({
+        await this.stripeService.createRefund({
           payment_intent: stripePayment.stripePaymentIntentId,
           amount: Math.round(booking.bondAmount * 100),
           metadata: { bookingId: booking.id, type: 'BOND_REFUND' },
