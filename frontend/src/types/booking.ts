@@ -33,6 +33,7 @@ export interface BookingUser {
     id: string;
     name: string | null;
     email: string;
+    phoneNumber?: string | null;
 }
 
 export interface Payment {
@@ -53,12 +54,9 @@ export interface Booking {
     status: BookingStatus;
     paymentStatus: PaymentStatus;
     paymentMethod: PaymentMethod;
-    customerName: string;
-    customerEmail: string;
-    customerPhone: string;
     createdAt: string;
     updatedAt: string;
-    user?: BookingUser;
+    user: BookingUser; // Now required as we rely on it
     car?: Car;
     payments?: Payment[];
 }

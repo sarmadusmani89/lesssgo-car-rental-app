@@ -54,10 +54,25 @@ export class BookingService {
       createBookingDto.status = 'CONFIRMED';
     }
 
+    const { customerName, customerEmail, customerPhone, ...bookingData } = createBookingDto;
+
     const booking = await this.prisma.booking.create({
-      data: createBookingDto,
-      include: { car: true }
+      data: bookingData,
+      include: { car: true, user: true }
     });
+
+    // Sync User Profile (Name and Phone)
+    try {
+      await this.prisma.user.update({
+        where: { id: createBookingDto.userId },
+        data: {
+          name: customerName,
+          phoneNumber: customerPhone
+        }
+      });
+    } catch (err) {
+      console.warn('Failed to sync user profile during booking:', err);
+    }
 
     // Create Payment Record (Essential for Stats)
     await this.prisma.payment.create({
@@ -73,7 +88,10 @@ export class BookingService {
     // Send email notifications
     try {
       const settings = await this.settingsService.getSettings();
-      const { customerName, customerEmail, customerPhone, car, startDate, endDate, totalAmount } = booking;
+      const { user, car, startDate, endDate, totalAmount } = booking;
+      const customerName = user.name || 'Valued Customer';
+      const customerEmail = user.email;
+      const customerPhone = user.phoneNumber || 'N/A';
       const formatOptions: Intl.DateTimeFormatOptions = {
         weekday: 'short',
         year: 'numeric',
@@ -206,12 +224,12 @@ export class BookingService {
       try {
         const { cancellationNoticeTemplate } = await import('../lib/emailTemplates/cancellationNotice');
         const emailHtml = cancellationNoticeTemplate({
-          name: updated.customerName,
+          name: updated.user.name || 'Valued Customer',
           bookingId: updated.id,
           carName: updated.car.name,
           brand: updated.car.brand
         });
-        await this.emailService.sendEmail(updated.customerEmail, 'Booking Cancelled - LesssGo', emailHtml);
+        await this.emailService.sendEmail(updated.user.email, 'Booking Cancelled - LesssGo', emailHtml);
       } catch (err) {
         console.error('Failed to send cancellation email:', err);
       }
@@ -230,7 +248,7 @@ export class BookingService {
         paymentStatus: 'PAID',
         status: 'CONFIRMED'
       },
-      include: { car: true }
+      include: { car: true, user: true }
     });
 
     // Check for existing payment
@@ -259,7 +277,9 @@ export class BookingService {
 
     // Send confirmation email if it was previously PENDING
     try {
-      const { customerName, customerEmail, car, startDate, endDate, totalAmount, paymentMethod } = updatedBooking;
+      const { user, car, startDate, endDate, totalAmount, paymentMethod } = updatedBooking;
+      const customerName = user.name || 'Valued Customer';
+      const customerEmail = user.email;
       const formatOptions: Intl.DateTimeFormatOptions = {
         weekday: 'short',
         year: 'numeric',
@@ -312,7 +332,7 @@ export class BookingService {
         endDate: end,
         totalAmount,
         paymentMethod,
-        paymentStatus: 'Confirmed (Online)',
+        paymentStatus: updatedBooking.paymentMethod === 'CASH' ? 'Confirmed (Cash)' : 'Confirmed (Online)',
         hp: car.hp,
         vehicleClass: car.vehicleClass,
         transmission: car.transmission,

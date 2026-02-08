@@ -36,8 +36,8 @@ export default function AdminBookings() {
             const matchesSearch =
                 booking.id.toLowerCase().includes(search.toLowerCase()) ||
                 shortId.includes(search.toUpperCase()) ||
-                booking.customerName.toLowerCase().includes(search.toLowerCase()) ||
-                booking.customerEmail.toLowerCase().includes(search.toLowerCase()) ||
+                booking.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
+                booking.user?.email?.toLowerCase().includes(search.toLowerCase()) ||
                 booking.car?.name?.toLowerCase().includes(search.toLowerCase());
 
             const matchesStatus = statusFilter === 'ALL' || booking.status === statusFilter;
@@ -95,8 +95,8 @@ export default function AdminBookings() {
         const csvRows = filteredBookings.map(b => [
             b.id,
             b.id.slice(-8).toUpperCase(),
-            b.customerName,
-            b.customerEmail,
+            b.user?.name || 'N/A',
+            b.user?.email || 'N/A',
             b.car?.name || 'N/A',
             new Date(b.startDate).toLocaleDateString('en-AU', { timeZone: 'UTC' }),
             new Date(b.endDate).toLocaleDateString('en-AU', { timeZone: 'UTC' }),

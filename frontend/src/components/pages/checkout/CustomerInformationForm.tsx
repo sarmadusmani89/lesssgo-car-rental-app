@@ -72,17 +72,16 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
 
         <div>
           <label className={labelClasses}>
-            Email Address <span className="text-red-500">*</span>
+            Email Address <span className="text-gray-400 font-normal italic lowercase ml-1">(read-only)</span>
           </label>
           <div className="relative group">
-            <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-colors" size={18} />
+            <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
             <input
               name="email"
               type="email"
-              placeholder="john@example.com"
-              className={`${inputClasses} pl-12`}
+              readOnly
+              className={`${inputClasses} pl-12 bg-gray-100 cursor-not-allowed text-gray-400`}
               value={formData.email}
-              onChange={handleChange}
               maxLength={100}
             />
           </div>

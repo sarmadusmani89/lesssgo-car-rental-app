@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { ChevronDown, Search, Loader2, MapPin } from 'lucide-react';
 import styles from '@/app/(public)/(home)/page.module.css';
 import { PREDEFINED_LOCATIONS } from '@/constants/locations';
+import { VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS } from '@/constants/car';
 
 export default function HeroFilter() {
     const router = useRouter();
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [selections, setSelections] = useState({
-        brand: '',
         category: '',
         transmission: '',
         pickup: '',
@@ -30,7 +30,6 @@ export default function HeroFilter() {
     const handleSearch = () => {
         setIsLoading(true);
         const params = new URLSearchParams();
-        if (selections.brand) params.set('brand', selections.brand);
         if (selections.category) params.set('type', selections.category);
         if (selections.transmission) params.set('transmission', selections.transmission);
         if (selections.pickup) params.set('pickup', selections.pickup);
@@ -40,9 +39,8 @@ export default function HeroFilter() {
     };
 
     const dropdownOptions = {
-        brand: ['Porsche', 'Ferrari', 'Lamborghini', 'Mercedes-AMG', 'BMW M', 'Audi RS'],
-        category: ['Supercar', 'Sports Car', 'Luxury Sedan', 'SUV', 'Convertible'],
-        transmission: ['Automatic', 'Manual'],
+        category: VEHICLE_CATEGORIES,
+        transmission: VEHICLE_TRANSMISSIONS,
         locations: PREDEFINED_LOCATIONS
     };
 
@@ -50,34 +48,6 @@ export default function HeroFilter() {
         <div className={`${styles.filterWidget} glass animate-slide-up`}>
             <h2 className={styles.widgetTitle}>Find Your Drive</h2>
             <div className={styles.searchInputs}>
-                {/* Brand Selection */}
-                <div className={styles.inputGroup}>
-                    <label>Brand</label>
-                    <div
-                        className={`${styles.selectWrapper} ${activeDropdown === 'brand' ? styles.active : ''}`}
-                        onClick={() => toggleDropdown('brand')}
-                    >
-                        <span>{selections.brand || 'All Brands'}</span>
-                        <ChevronDown size={16} />
-                        {activeDropdown === 'brand' && (
-                            <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
-                                <div className={styles.dropdownItem} onClick={() => handleSelect('brand', '')}>All Brands</div>
-                                {dropdownOptions.brand.map(opt => (
-                                    <div
-                                        key={opt}
-                                        className={`${styles.dropdownItem} ${selections.brand === opt ? styles.selected : ''}`}
-                                        onClick={() => handleSelect('brand', opt)}
-                                    >
-                                        {opt}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                <div className={styles.divider} />
-
                 {/* Pickup Location Selection */}
                 <div className={styles.inputGroup}>
                     <label className="flex items-center gap-1"><MapPin size={10} className="text-blue-600" /> Pickup Location</label>
@@ -90,7 +60,7 @@ export default function HeroFilter() {
                         {activeDropdown === 'pickup' && (
                             <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
                                 <div className={styles.dropdownItem} onClick={() => handleSelect('pickup', '')}>Select Pickup</div>
-                                {dropdownOptions.locations.map(opt => (
+                                {dropdownOptions.locations.map((opt: string) => (
                                     <div
                                         key={opt}
                                         className={`${styles.dropdownItem} ${selections.pickup === opt ? styles.selected : ''}`}
@@ -118,7 +88,7 @@ export default function HeroFilter() {
                         {activeDropdown === 'return' && (
                             <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
                                 <div className={styles.dropdownItem} onClick={() => handleSelect('return', '')}>Select Return</div>
-                                {dropdownOptions.locations.map(opt => (
+                                {dropdownOptions.locations.map((opt: string) => (
                                     <div
                                         key={opt}
                                         className={`${styles.dropdownItem} ${selections.return === opt ? styles.selected : ''}`}
@@ -146,7 +116,7 @@ export default function HeroFilter() {
                         {activeDropdown === 'category' && (
                             <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
                                 <div className={styles.dropdownItem} onClick={() => handleSelect('category', '')}>Any Category</div>
-                                {dropdownOptions.category.map(opt => (
+                                {dropdownOptions.category.map((opt: string) => (
                                     <div
                                         key={opt}
                                         className={`${styles.dropdownItem} ${selections.category === opt ? styles.selected : ''}`}
@@ -174,7 +144,7 @@ export default function HeroFilter() {
                         {activeDropdown === 'transmission' && (
                             <div className={styles.dropdownMenu}>
                                 <div className={styles.dropdownItem} onClick={() => handleSelect('transmission', '')}>Any</div>
-                                {dropdownOptions.transmission.map(opt => (
+                                {dropdownOptions.transmission.map((opt: string) => (
                                     <div
                                         key={opt}
                                         className={`${styles.dropdownItem} ${selections.transmission === opt ? styles.selected : ''}`}

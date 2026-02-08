@@ -3,6 +3,8 @@
 import { X, Check, MapPin } from 'lucide-react';
 import { PREDEFINED_LOCATIONS } from '@/constants/locations';
 
+import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS } from '@/constants/car';
+
 interface FilterState {
     brand: string;
     type: string;
@@ -18,9 +20,9 @@ interface CarsFiltersProps {
 }
 
 export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
-    const brands = ['Porsche', 'Ferrari', 'Lamborghini', 'Mercedes-AMG', 'BMW M', 'Audi RS'];
-    const types = ['Supercar', 'Sports Car', 'Luxury Sedan', 'SUV', 'Convertible'];
-    const transmissions = ['Automatic', 'Manual'];
+    const brands = VEHICLE_BRANDS;
+    const types = VEHICLE_CATEGORIES;
+    const transmissions = VEHICLE_TRANSMISSIONS;
     const prices = [
         { label: 'Under $500', value: '0-500' },
         { label: '$500 - $1,000', value: '500-1000' },
