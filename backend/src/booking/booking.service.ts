@@ -100,10 +100,11 @@ export class BookingService {
     // Send email notifications
     try {
       const settings = await this.settingsService.getSettings();
-      const { user, car, startDate, endDate, totalAmount } = booking;
-      const customerName = user.name || 'Valued Customer';
-      const customerEmail = user.email;
-      const customerPhone = user.phoneNumber || 'N/A';
+      const bookingWithRelations = booking as any;
+      const { user, car, startDate, endDate, totalAmount } = bookingWithRelations;
+      const bCustomerName = user.name || 'Valued Customer';
+      const bCustomerEmail = user.email;
+      const bCustomerPhone = user.phoneNumber || 'N/A';
       const formatOptions: Intl.DateTimeFormatOptions = {
         weekday: 'short',
         year: 'numeric',
@@ -138,7 +139,7 @@ export class BookingService {
       const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
 
       const userHtml = bookingConfirmationTemplate({
-        customerName,
+        customerName: bCustomerName,
         bookingId: booking.id,
         brand: car.brand,
         vehicleName: car.name,
@@ -159,15 +160,15 @@ export class BookingService {
       });
 
       // Send to User
-      await this.emailService.sendEmail(customerEmail, emailSubject, userHtml);
+      await this.emailService.sendEmail(bCustomerEmail, emailSubject, userHtml);
 
       // Send to Admin ONLY if CASH (Confirmed immediately)
       if (paymentMethod === 'CASH') {
         const { adminBookingNotificationTemplate } = await import('../lib/emailTemplates/adminBookingNotification');
         const adminHtml = adminBookingNotificationTemplate({
-          customerName,
-          customerEmail,
-          customerPhone: customerPhone || 'N/A',
+          customerName: bCustomerName,
+          customerEmail: bCustomerEmail,
+          customerPhone: bCustomerPhone || 'N/A',
           bookingId: booking.id,
           brand: car.brand,
           vehicleName: car.name,
@@ -290,8 +291,8 @@ export class BookingService {
     // Send confirmation email if it was previously PENDING
     try {
       const { user, car, startDate, endDate, totalAmount, paymentMethod } = updatedBooking;
-      const customerName = user.name || 'Valued Customer';
-      const customerEmail = user.email;
+      const customerNameFinal = user.name || 'Valued Customer';
+      const customerEmailFinal = user.email;
       const formatOptions: Intl.DateTimeFormatOptions = {
         weekday: 'short',
         year: 'numeric',
@@ -308,7 +309,7 @@ export class BookingService {
       const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
 
       const userHtml = bookingConfirmationTemplate({
-        customerName,
+        customerName: customerNameFinal,
         bookingId: updatedBooking.id,
         brand: car.brand,
         vehicleName: car.name,
@@ -328,14 +329,14 @@ export class BookingService {
         returnLocation: booking.returnLocation,
       });
 
-      await this.emailService.sendEmail(customerEmail, 'Payment Confirmed - LesssGo', userHtml);
+      await this.emailService.sendEmail(customerEmailFinal, 'Payment Confirmed - LesssGo', userHtml);
 
       // Send to Admin (Confirmed)
       const settings = await this.settingsService.getSettings();
       const { adminBookingNotificationTemplate } = await import('../lib/emailTemplates/adminBookingNotification');
       const adminHtml = adminBookingNotificationTemplate({
-        customerName,
-        customerEmail,
+        customerName: customerNameFinal,
+        customerEmail: customerEmailFinal,
         customerPhone: user.phoneNumber || 'N/A',
         bookingId: updatedBooking.id,
         brand: car.brand,
