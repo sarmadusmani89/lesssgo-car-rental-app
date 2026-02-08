@@ -64,6 +64,9 @@ export class BookingService {
     const booking = await this.prisma.booking.create({
       data: {
         ...bookingData,
+        customerName,
+        customerEmail,
+        customerPhone,
         bondAmount,
         bondStatus: 'PENDING'
       },
