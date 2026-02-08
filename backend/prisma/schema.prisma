@@ -136,7 +136,7 @@ model SystemSettings {
   siteName          String   @default("Lesssgo Car Rental")
   adminEmail        String   @default("sarmadusmani598@gmail.com")
   maintenanceMode   Boolean  @default(false)
-  currency          String   @default("AUD")
+  currency          String   @default("PGK")
   faviconUrl        String?
   passwordMinLength Int      @default(8)
   updatedAt         DateTime @updatedAt

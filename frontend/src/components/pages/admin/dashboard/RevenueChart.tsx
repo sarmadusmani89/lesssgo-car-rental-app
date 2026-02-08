@@ -69,7 +69,7 @@ export default function RevenueChart({ stats, range, onRangeChange }: { stats: a
                             axisLine={false}
                             tickLine={false}
                             tick={{ fill: '#64748b', fontSize: 12 }}
-                            tickFormatter={(value) => `A$${value}`}
+                            tickFormatter={(value) => `K${value}`}
                         />
                         <Tooltip
                             contentStyle={{
@@ -79,7 +79,7 @@ export default function RevenueChart({ stats, range, onRangeChange }: { stats: a
                                 boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
                             }}
                             itemStyle={{ color: '#1e293b', fontWeight: 600 }}
-                            formatter={(value: number | undefined) => [`A$${value?.toFixed(2) ?? '0.00'}`, 'Revenue']}
+                            formatter={(value: number | undefined) => [`K${value?.toFixed(2) ?? '0.00'}`, 'Revenue']}
                         />
                         <Area
                             type="monotone"

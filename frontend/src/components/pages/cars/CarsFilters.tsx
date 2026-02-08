@@ -3,7 +3,7 @@
 import { X, Check, MapPin } from 'lucide-react';
 import { PREDEFINED_LOCATIONS } from '@/constants/locations';
 
-import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS } from '@/constants/car';
+import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS, VEHICLE_CLASSES, VEHICLE_FUEL_TYPES } from '@/constants/car';
 
 interface FilterState {
     brand: string;
@@ -12,6 +12,8 @@ interface FilterState {
     priceRange: string;
     pickup: string;
     return: string;
+    vehicleClass: string;
+    fuelType: string;
 }
 
 interface CarsFiltersProps {
@@ -23,6 +25,9 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
     const brands = VEHICLE_BRANDS;
     const types = VEHICLE_CATEGORIES;
     const transmissions = VEHICLE_TRANSMISSIONS;
+    const vehicleClasses = VEHICLE_CLASSES;
+    const fuelTypes = VEHICLE_FUEL_TYPES;
+    const locations = PREDEFINED_LOCATIONS;
     const prices = [
         { label: 'Under $500', value: '0-500' },
         { label: '$500 - $1,000', value: '500-1000' },
@@ -35,10 +40,19 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
     };
 
     const clearFilters = () => {
-        onChange({ brand: '', type: '', transmission: '', priceRange: '', pickup: '', return: '' });
+        onChange({
+            brand: '',
+            type: '',
+            transmission: '',
+            priceRange: '',
+            pickup: '',
+            return: '',
+            vehicleClass: '',
+            fuelType: ''
+        });
     };
 
-    const isFiltered = filters.brand || filters.type || filters.transmission || filters.priceRange || filters.pickup || filters.return;
+    const isFiltered = filters.brand || filters.type || filters.transmission || filters.priceRange || filters.pickup || filters.return || filters.vehicleClass || filters.fuelType;
 
     const FilterGroup = ({ title, options, activeValue, onSelect, valueKey = (opt: string) => opt }: any) => (
         <div className="space-y-4">
@@ -101,6 +115,20 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
             />
 
             <FilterGroup
+                title="Vehicle Class"
+                options={vehicleClasses}
+                activeValue={filters.vehicleClass}
+                onSelect={(val: string) => updateFilter('vehicleClass', val)}
+            />
+
+            <FilterGroup
+                title="Fuel Type"
+                options={fuelTypes}
+                activeValue={filters.fuelType}
+                onSelect={(val: string) => updateFilter('fuelType', val)}
+            />
+
+            <FilterGroup
                 title="Daily Rate"
                 options={prices}
                 activeValue={filters.priceRange}
@@ -110,14 +138,14 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
 
             <FilterGroup
                 title="Pickup Location"
-                options={PREDEFINED_LOCATIONS}
+                options={locations}
                 activeValue={filters.pickup}
                 onSelect={(val: string) => updateFilter('pickup', val)}
             />
 
             <FilterGroup
                 title="Return Location"
-                options={PREDEFINED_LOCATIONS}
+                options={locations}
                 activeValue={filters.return}
                 onSelect={(val: string) => updateFilter('return', val)}
             />

@@ -61,7 +61,7 @@ export function adminBookingNotificationTemplate(data: {
           </td>
           <td align="right" style="padding-bottom: 20px;">
             <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Total</p>
-            <p style="margin: 4px 0 0; font-size: 20px; font-weight: 800; color: #10b981;">A$${data.totalAmount}</p>
+            <p style="margin: 4px 0 0; font-size: 20px; font-weight: 800; color: #10b981;">K${data.totalAmount}</p>
           </td>
         </tr>
         <tr>

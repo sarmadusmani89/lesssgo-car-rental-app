@@ -20,7 +20,7 @@ export class SettingsService {
                     siteName: 'Lesssgo Car Rental',
                     adminEmail: 'sarmadusmani598@gmail.com',
                     maintenanceMode: false,
-                    currency: 'AUD',
+                    currency: 'PGK',
                 },
             });
         }

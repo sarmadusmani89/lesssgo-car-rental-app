@@ -55,7 +55,7 @@ export function bookingConfirmationTemplate(data: {
           </td>
           <td align="right" style="padding-top: 20px;">
              <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Total Amount</p>
-             <p style="margin: 2px 0 0; font-size: 24px; font-weight: 800; color: #3b82f6;">A$${data.totalAmount}</p>
+             <p style="margin: 2px 0 0; font-size: 24px; font-weight: 800; color: #3b82f6;">K${data.totalAmount}</p>
           </td>
         </tr>
       </table>

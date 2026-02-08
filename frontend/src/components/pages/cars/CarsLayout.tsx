@@ -1,14 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import CarCard from '@/components/ui/CarCard';
 import api from '@/lib/api';
 import { useRouter, useSearchParams } from 'next/navigation';
 import CarsPageHeader from './CarsPageHeader';
 import CarsFilters from './CarsFilters';
 import CarsGrid from './CarsGrid';
 import CarsPagination from './CarsPagination';
-import { Loader2 } from 'lucide-react';
 
 interface Car {
     id: string;
@@ -40,7 +38,9 @@ export default function CarsLayout() {
         transmission: searchParams.get('transmission') || '',
         priceRange: searchParams.get('price') || '',
         pickup: searchParams.get('pickup') || '',
-        return: searchParams.get('return') || ''
+        return: searchParams.get('return') || '',
+        vehicleClass: searchParams.get('vehicleClass') || '',
+        fuelType: searchParams.get('fuelType') || ''
     });
 
     const ITEMS_PER_PAGE = 6;
@@ -86,6 +86,12 @@ export default function CarsLayout() {
         if (filters.priceRange) {
             const [min, max] = filters.priceRange.split('-').map(Number);
             results = results.filter(car => car.pricePerDay >= min && car.pricePerDay <= max);
+        }
+        if (filters.vehicleClass) {
+            results = results.filter(car => (car as any).vehicleClass?.toLowerCase() === filters.vehicleClass.toLowerCase());
+        }
+        if (filters.fuelType) {
+            results = results.filter(car => (car as any).fuelType?.toLowerCase() === filters.fuelType.toLowerCase());
         }
         if (filters.pickup) {
             results = results.filter(car =>

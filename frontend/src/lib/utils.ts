@@ -11,13 +11,14 @@ interface CurrencyRates {
     AUD: number;
 }
 
-export function formatPrice(amount: number, currency: 'AUD' | 'PGK' | 'USD' = 'AUD', rates?: CurrencyRates) {
-    let symbol = '$';
+export function formatPrice(amount: number, currency: 'AUD' | 'PGK' | 'USD' = 'PGK', rates?: CurrencyRates) {
+    let symbol = 'K';
     if (currency === 'PGK') symbol = 'K';
     if (currency === 'AUD') symbol = 'A$';
+    if (currency === 'USD') symbol = '$';
 
     // Use provided rates or fallback to defaults
-    const currentRates = rates || { AUD: 1, USD: 0.65, PGK: 2.6 };
+    const currentRates = rates || { AUD: 0.38, USD: 0.25, PGK: 1 };
     const factor = currentRates[currency] || 1;
 
     const value = amount * factor;

@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 @Injectable()
 export class CurrencyService {
     private readonly logger = new Logger(CurrencyService.name);
-    private readonly API_URL = 'https://open.er-api.com/v6/latest/AUD';
+    private readonly API_URL = 'https://open.er-api.com/v6/latest/PGK';
     private cachedRates: any = null;
     private lastFetchTime: number = 0;
     private readonly CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
@@ -24,9 +24,9 @@ export class CurrencyService {
 
             if (data && data.rates) {
                 this.cachedRates = {
-                    USD: data.rates.USD || 0.65,
-                    PGK: data.rates.PGK || 2.6,
-                    AUD: 1,
+                    USD: data.rates.USD || 0.25,
+                    AUD: data.rates.AUD || 0.38,
+                    PGK: 1,
                     lastUpdate: data.time_last_update_utc
                 };
                 this.lastFetchTime = now;
@@ -38,9 +38,9 @@ export class CurrencyService {
             // Fallback to defaults if API fails and no cache exists
             if (!this.cachedRates) {
                 return {
-                    USD: 0.65,
-                    PGK: 2.6,
-                    AUD: 1,
+                    USD: 0.25,
+                    AUD: 0.38,
+                    PGK: 1,
                     isFallback: true
                 };
             }

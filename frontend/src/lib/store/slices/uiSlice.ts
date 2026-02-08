@@ -12,11 +12,11 @@ interface UIState {
 }
 
 const initialState: UIState = {
-    currency: 'AUD',
+    currency: 'PGK',
     rates: {
-        AUD: 1,
-        USD: 0.65,
-        PGK: 2.6,
+        AUD: 0.38,
+        USD: 0.25,
+        PGK: 1,
     }
 };
 
@@ -39,8 +39,8 @@ const uiSlice = createSlice({
                 if (stored === 'AUD' || stored === 'PGK' || stored === 'USD') {
                     state.currency = stored;
                 } else {
-                    state.currency = 'AUD';
-                    localStorage.setItem('currency', 'AUD');
+                    state.currency = 'PGK';
+                    localStorage.setItem('currency', 'PGK');
                 }
             }
         }
