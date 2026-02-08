@@ -127,6 +127,7 @@ model Payment {
   currency               String
   paymentMethod          PaymentMethod       @default(ONLINE)
   stripePaymentIntentId  String?
+  stripeSessionId        String?
   status                 PaymentStatus       @default(PENDING)
   metadata               Json?
   createdAt              DateTime            @default(now())

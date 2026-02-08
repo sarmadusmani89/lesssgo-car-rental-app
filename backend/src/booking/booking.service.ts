@@ -163,7 +163,8 @@ export class BookingService {
         customTitle: paymentMethod === 'CASH' ? 'Booking Confirmed' : 'Booking Received',
         customDescription: paymentMethod === 'CASH'
           ? 'Great news! Your booking is officially confirmed and your vehicle is reserved.'
-          : 'We have received your booking request. Please complete the payment to secure your reservation.'
+          : 'We have received your booking request. Please complete the payment to secure your reservation.',
+        paymentStatus: paymentMethod === 'CASH' ? 'To be Paid' : 'Awaiting Payment'
       });
 
       // Send to User
@@ -184,7 +185,7 @@ export class BookingService {
           totalAmount,
           bondAmount,
           paymentMethod,
-          paymentStatus: 'Confirmed (Cash)',
+          paymentStatus: 'Pending (Cash on Pickup)',
           hp: car.hp,
           vehicleClass: car.vehicleClass,
           transmission: car.transmission,
@@ -192,7 +193,8 @@ export class BookingService {
           pickupLocation: createBookingDto.pickupLocation,
           returnLocation: createBookingDto.returnLocation,
           customTitle: 'New Cash Booking',
-          customDescription: 'A new booking has been placed with <strong>Cash on Pickup</strong> and is automatically confirmed.'
+          customDescription: 'A new booking has been placed with <strong>Cash on Pickup</strong>. The booking is confirmed, but payment is pending.',
+          isPaid: false
         });
 
         await this.emailService.sendEmail(settings.adminEmail, 'New Booking Alert - Cash Payment', adminHtml);
@@ -340,7 +342,8 @@ export class BookingService {
         pickupLocation: booking.pickupLocation,
         returnLocation: booking.returnLocation,
         customTitle: 'Booking & Payment Confirmed',
-        customDescription: 'Your payment has been successfully received and verified by our team. Your reservation is now fully confirmed.'
+        customDescription: 'Your payment has been successfully received and verified by our team. Your reservation is now fully confirmed.',
+        paymentStatus: 'Paid'
       });
 
       const receiptHtml = paymentReceiptTemplate({
@@ -382,7 +385,8 @@ export class BookingService {
         pickupLocation: booking.pickupLocation,
         returnLocation: booking.returnLocation,
         customTitle: 'Payment Received & Confirmed',
-        customDescription: `You have manually confirmed payment for booking #${updatedBooking.id.slice(-8).toUpperCase()}. The customer has been notified.`
+        customDescription: `You have manually confirmed payment for booking #${updatedBooking.id.slice(-8).toUpperCase()}. The customer has been notified.`,
+        isPaid: true
       });
 
       await this.emailService.sendEmail(settings.adminEmail, 'Admin Action: Payment Received & Confirmed', adminHtml);

@@ -22,6 +22,7 @@ export function bookingConfirmationTemplate(data: {
   returnLocation?: string | null;
   customTitle?: string;
   customDescription?: string;
+  paymentStatus?: string;
 }) {
   const statusColor = data.isConfirmed ? '#10b981' : '#f59e0b';
   const statusText = data.isConfirmed ? 'Confirmed' : 'Pending Confirmation';
@@ -58,7 +59,9 @@ export function bookingConfirmationTemplate(data: {
             <p style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a; text-transform: uppercase;">${data.vehicleName}</p>
           </td>
           <td align="right" style="padding-top: 20px;">
-             <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Grand Total (Paid)</p>
+             <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">
+               Grand Total ${data.paymentStatus ? `(${data.paymentStatus})` : (data.isConfirmed ? (data.paymentMethod === 'CASH' ? '(To be Paid)' : '(Paid)') : '(Awaiting Payment)')}
+             </p>
              <p style="margin: 2px 0 0; font-size: 24px; font-weight: 800; color: #3b82f6;">K${grandTotal}</p>
              <p style="margin: 4px 0 0; font-size: 10px; color: #64748b;">(Rental: K${data.totalAmount} + Bond: K${data.bondAmount})</p>
           </td>

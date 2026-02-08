@@ -315,7 +315,8 @@ export class PaymentService {
         pickupLocation: booking.pickupLocation,
         returnLocation: booking.returnLocation,
         customTitle: 'Booking Confirmed',
-        customDescription: 'Great news! Your online payment was successful and your booking is officially confirmed.'
+        customDescription: 'Great news! Your online payment was successful and your booking is officially confirmed.',
+        paymentStatus: 'Paid'
       });
 
       const receiptHtml = paymentReceiptTemplate({
@@ -351,7 +352,8 @@ export class PaymentService {
         pickupLocation: booking.pickupLocation,
         returnLocation: booking.returnLocation,
         customTitle: 'Booking Paid - Stripe',
-        customDescription: `Online payment received via Stripe for booking #${booking.id.slice(-8).toUpperCase()}. Booking is now fully confirmed.`
+        customDescription: `Online payment received via Stripe for booking #${booking.id.slice(-8).toUpperCase()}. Booking is now fully confirmed.`,
+        isPaid: true
       });
 
       await Promise.all([
