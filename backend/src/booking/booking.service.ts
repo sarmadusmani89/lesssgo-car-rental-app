@@ -90,7 +90,7 @@ export class BookingService {
     await this.prisma.payment.create({
       data: {
         amount: createBookingDto.totalAmount + bondAmount,
-        currency: 'AUD', // Default currency
+        currency: 'PGK',
         paymentMethod: createBookingDto.paymentMethod,
         status: createBookingDto.paymentStatus, // Usually PENDING initially
         bookingId: booking.id
@@ -101,10 +101,12 @@ export class BookingService {
     try {
       const settings = await this.settingsService.getSettings();
       const bookingWithRelations = booking as any;
-      const { user, car, startDate, endDate, totalAmount } = bookingWithRelations;
-      const bCustomerName = user.name || 'Valued Customer';
-      const bCustomerEmail = user.email;
-      const bCustomerPhone = user.phoneNumber || 'N/A';
+      const { car, startDate, endDate, totalAmount } = bookingWithRelations;
+
+      // Prioritize customerName from DTO over user profile name
+      const bCustomerName = customerName || 'Valued Customer';
+      const bCustomerEmail = customerEmail;
+      const bCustomerPhone = customerPhone || 'N/A';
       const formatOptions: Intl.DateTimeFormatOptions = {
         weekday: 'short',
         year: 'numeric',
@@ -133,7 +135,7 @@ export class BookingService {
           <p style="color: #f59e0b;"><strong>Payment Status:</strong> Processing...</p>
           <p style="font-size: 14px; color: #6b7280;">You will receive another email once your payment is confirmed.</p>
         `;
-        emailSubject = 'Booking Created - Payment Processing';
+        emailSubject = 'Booking Received - Awaiting Payment - LesssGo';
       }
 
       const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
@@ -175,6 +177,7 @@ export class BookingService {
           startDate: start,
           endDate: end,
           totalAmount,
+          bondAmount,
           paymentMethod,
           paymentStatus: 'Confirmed (Cash)',
           hp: car.hp,
@@ -273,14 +276,14 @@ export class BookingService {
       // Update existing
       await this.prisma.payment.update({
         where: { id: existingPayment.id },
-        data: { status: 'PAID' }
+        data: { status: 'PAID', currency: 'PGK' }
       });
     } else {
       // Create missing payment record (Backfill)
       await this.prisma.payment.create({
         data: {
           bookingId: id,
-          currency: 'AUD', // Default currency
+          currency: 'PGK',
           amount: updatedBooking.totalAmount,
           paymentMethod: updatedBooking.paymentMethod,
           status: 'PAID'
@@ -290,9 +293,9 @@ export class BookingService {
 
     // Send confirmation email if it was previously PENDING
     try {
-      const { user, car, startDate, endDate, totalAmount, paymentMethod } = updatedBooking;
-      const customerNameFinal = user.name || 'Valued Customer';
-      const customerEmailFinal = user.email;
+      const { car, startDate, endDate, totalAmount, paymentMethod, customerName: snapName, customerEmail: snapEmail } = updatedBooking;
+      const customerNameFinal = snapName || updatedBooking.user?.name || 'Valued Customer';
+      const customerEmailFinal = snapEmail || updatedBooking.user?.email;
       const formatOptions: Intl.DateTimeFormatOptions = {
         weekday: 'short',
         year: 'numeric',
@@ -316,6 +319,7 @@ export class BookingService {
         startDate: start,
         endDate: end,
         totalAmount,
+        bondAmount: updatedBooking.bondAmount,
         paymentMethod,
         isConfirmed: true,
         hp: car.hp,
@@ -344,6 +348,7 @@ export class BookingService {
         startDate: start,
         endDate: end,
         totalAmount,
+        bondAmount: updatedBooking.bondAmount,
         paymentMethod,
         paymentStatus: updatedBooking.paymentMethod === 'CASH' ? 'Confirmed (Cash)' : 'Confirmed (Online)',
         hp: car.hp,

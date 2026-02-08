@@ -3,6 +3,7 @@ import { generateBaseTemplate } from './baseTemplate';
 export function paymentReceiptTemplate(data: {
   customerName: string;
   amount: number;
+  bondAmount: number;
   bookingId: string;
   paymentMethod: string;
   transactionId?: string;
@@ -18,8 +19,9 @@ export function paymentReceiptTemplate(data: {
     
     <div style="background-color: #f8fafc; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
       <div style="text-align: center; margin-bottom: 25px;">
-        <p style="margin: 0; font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.15em;">Amount Paid</p>
-        <p style="margin: 5px 0 0; font-size: 48px; font-weight: 800; color: #10b981; font-family: 'Outfit', sans-serif;">K${data.amount}</p>
+        <p style="margin: 0; font-size: 12px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.15em;">Total Amount Paid</p>
+        <p style="margin: 5px 0 0; font-size: 48px; font-weight: 800; color: #10b981; font-family: 'Outfit', sans-serif;">K${data.amount + data.bondAmount}</p>
+        <p style="margin: 4px 0 0; font-size: 11px; color: #64748b;">(Includes K${data.bondAmount} Refundable Bond)</p>
       </div>
       
       <table width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px solid #e2e8f0; padding-top: 25px;">

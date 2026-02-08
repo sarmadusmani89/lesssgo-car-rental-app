@@ -29,7 +29,7 @@ export class PaymentService {
     const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
 
     const settings = await this.settingsService.getSettings();
-    const currency = settings.currency.toLowerCase();
+    const currency = 'pgk'; // Force PGK
 
     try {
       const session = await this.stripeService.createCheckoutSession({
@@ -86,6 +86,7 @@ export class PaymentService {
             stripePaymentIntentId: session.id,
             status: 'PENDING',
             paymentMethod: 'ONLINE',
+            currency: 'PGK',
           },
         });
       } else {
@@ -93,7 +94,7 @@ export class PaymentService {
           data: {
             bookingId: booking.id,
             amount: booking.totalAmount + booking.bondAmount,
-            currency: currency,
+            currency: 'PGK',
             status: 'PENDING',
             stripePaymentIntentId: session.id,
             paymentMethod: 'ONLINE',
@@ -117,7 +118,7 @@ export class PaymentService {
     if (!booking) throw new NotFoundException('Booking not found');
 
     const settings = await this.settingsService.getSettings();
-    const currency = settings.currency.toLowerCase();
+    const currency = 'pgk'; // Force PGK
 
     try {
       const paymentIntent = await this.stripeService.createPaymentIntent({
@@ -140,6 +141,7 @@ export class PaymentService {
             amount: booking.totalAmount + booking.bondAmount,
             status: 'PENDING',
             paymentMethod: 'ONLINE',
+            currency: 'PGK'
           },
         });
       } else {
@@ -147,7 +149,7 @@ export class PaymentService {
           data: {
             bookingId: booking.id,
             amount: booking.totalAmount + booking.bondAmount,
-            currency: currency,
+            currency: 'PGK',
             status: 'PENDING',
             stripePaymentIntentId: paymentIntent.id,
             paymentMethod: 'ONLINE',
@@ -242,7 +244,7 @@ export class PaymentService {
           data: {
             bookingId: bookingId as string,
             amount: session.amount_total ? session.amount_total / 100 : 0,
-            currency: session.currency || 'usd',
+            currency: 'PGK',
             status: 'PAID',
             stripePaymentIntentId: session.payment_intent as string,
             paymentMethod: 'ONLINE'
@@ -300,6 +302,7 @@ export class PaymentService {
         startDate: start,
         endDate: end,
         totalAmount,
+        bondAmount: booking.bondAmount,
         paymentMethod: 'ONLINE',
         isConfirmed: true,
         hp: car.hp,
@@ -314,6 +317,7 @@ export class PaymentService {
       const receiptHtml = paymentReceiptTemplate({
         customerName,
         amount: totalAmount,
+        bondAmount: booking.bondAmount,
         bookingId: booking.id,
         paymentMethod: 'Stripe Online',
         transactionId,
@@ -333,6 +337,7 @@ export class PaymentService {
         startDate: start,
         endDate: end,
         totalAmount,
+        bondAmount: booking.bondAmount,
         paymentMethod: 'ONLINE',
         paymentStatus: 'Confirmed (Paid via Stripe)',
         hp: car.hp,
@@ -457,10 +462,4 @@ export class PaymentService {
       // Cash or no Stripe PI found - Manual marker
       await this.prisma.booking.update({
         where: { id: booking.id },
-        data: { bondStatus: 'REFUNDED' },
-      });
-    }
-
-    return { message: 'Bond released successfully' };
-  }
-}
+   

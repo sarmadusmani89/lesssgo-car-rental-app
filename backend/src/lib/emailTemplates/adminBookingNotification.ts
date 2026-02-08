@@ -10,6 +10,7 @@ export function adminBookingNotificationTemplate(data: {
   startDate: string;
   endDate: string;
   totalAmount: number;
+  bondAmount: number;
   paymentMethod: string;
   paymentStatus: string;
   transmission?: string | null;
@@ -60,8 +61,9 @@ export function adminBookingNotificationTemplate(data: {
             <p style="margin: 4px 0 0; font-size: 16px; font-weight: 800; color: #334155; font-family: monospace;">#${data.bookingId.toString().slice(-8).toUpperCase()}</p>
           </td>
           <td align="right" style="padding-bottom: 20px;">
-            <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Total</p>
-            <p style="margin: 4px 0 0; font-size: 20px; font-weight: 800; color: #10b981;">K${data.totalAmount}</p>
+            <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Total Received</p>
+            <p style="margin: 4px 0 0; font-size: 20px; font-weight: 800; color: #10b981;">K${data.totalAmount + data.bondAmount}</p>
+            <p style="margin: 2px 0 0; font-size: 10px; color: #64748b;">(K${data.totalAmount} + K${data.bondAmount} Bond)</p>
           </td>
         </tr>
         <tr>
