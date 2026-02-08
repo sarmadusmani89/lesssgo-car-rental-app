@@ -312,6 +312,10 @@ export class PaymentService {
         airConditioner: car.airConditioner,
         gps: car.gps,
         vehicleClass: car.vehicleClass,
+        pickupLocation: booking.pickupLocation,
+        returnLocation: booking.returnLocation,
+        customTitle: 'Booking Confirmed',
+        customDescription: 'Great news! Your online payment was successful and your booking is officially confirmed.'
       });
 
       const receiptHtml = paymentReceiptTemplate({
@@ -346,12 +350,14 @@ export class PaymentService {
         fuelType: car.fuelType,
         pickupLocation: booking.pickupLocation,
         returnLocation: booking.returnLocation,
+        customTitle: 'Booking Paid - Stripe',
+        customDescription: `Online payment received via Stripe for booking #${booking.id.slice(-8).toUpperCase()}. Booking is now fully confirmed.`
       });
 
       await Promise.all([
-        this.emailService.sendEmail(customerEmail, 'Booking Confirmed - LesssGo', confirmHtml),
+        this.emailService.sendEmail(customerEmail, 'Booking & Payment Confirmed - LesssGo', confirmHtml),
         this.emailService.sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml),
-        this.emailService.sendEmail(settings.adminEmail, 'New Booking Alert - Payment Received', adminHtml)
+        this.emailService.sendEmail(settings.adminEmail, 'Booking Paid: Stripe Payment Received', adminHtml)
       ]);
       console.log('✅ Payment confirmation emails sent successfully');
     } catch (err) {

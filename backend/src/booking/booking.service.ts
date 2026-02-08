@@ -148,6 +148,7 @@ export class BookingService {
         startDate: start,
         endDate: end,
         totalAmount,
+        bondAmount,
         paymentMethod,
         isConfirmed: paymentMethod === 'CASH', // Cash is immediately confirmed
         hp: car.hp,
@@ -159,6 +160,10 @@ export class BookingService {
         vehicleClass: car.vehicleClass,
         pickupLocation: createBookingDto.pickupLocation,
         returnLocation: createBookingDto.returnLocation,
+        customTitle: paymentMethod === 'CASH' ? 'Booking Confirmed' : 'Booking Received',
+        customDescription: paymentMethod === 'CASH'
+          ? 'Great news! Your booking is officially confirmed and your vehicle is reserved.'
+          : 'We have received your booking request. Please complete the payment to secure your reservation.'
       });
 
       // Send to User
@@ -186,6 +191,8 @@ export class BookingService {
           fuelType: car.fuelType,
           pickupLocation: createBookingDto.pickupLocation,
           returnLocation: createBookingDto.returnLocation,
+          customTitle: 'New Cash Booking',
+          customDescription: 'A new booking has been placed with <strong>Cash on Pickup</strong> and is automatically confirmed.'
         });
 
         await this.emailService.sendEmail(settings.adminEmail, 'New Booking Alert - Cash Payment', adminHtml);
@@ -310,6 +317,7 @@ export class BookingService {
       const end = new Date(endDate).toLocaleString('en-AU', formatOptions);
 
       const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
+      const { paymentReceiptTemplate } = await import('../lib/emailTemplates/paymentReceipt');
 
       const userHtml = bookingConfirmationTemplate({
         customerName: customerNameFinal,
@@ -331,9 +339,25 @@ export class BookingService {
         vehicleClass: booking.car.vehicleClass,
         pickupLocation: booking.pickupLocation,
         returnLocation: booking.returnLocation,
+        customTitle: 'Booking & Payment Confirmed',
+        customDescription: 'Your payment has been successfully received and verified by our team. Your reservation is now fully confirmed.'
       });
 
-      await this.emailService.sendEmail(customerEmailFinal, 'Payment Confirmed - LesssGo', userHtml);
+      const receiptHtml = paymentReceiptTemplate({
+        customerName: customerNameFinal,
+        amount: totalAmount,
+        bondAmount: updatedBooking.bondAmount,
+        bookingId: updatedBooking.id,
+        paymentMethod: paymentMethod === 'CASH' ? 'Cash/Manual' : 'Online Payment',
+        transactionId: 'MANUAL-CONFIRM',
+        date: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }),
+      });
+
+      // Send Confirmation AND Receipt to User
+      await Promise.all([
+        this.emailService.sendEmail(customerEmailFinal, 'Booking & Payment Confirmed - LesssGo', userHtml),
+        this.emailService.sendEmail(customerEmailFinal, 'Payment Receipt - LesssGo', receiptHtml)
+      ]);
 
       // Send to Admin (Confirmed)
       const settings = await this.settingsService.getSettings();
@@ -341,7 +365,7 @@ export class BookingService {
       const adminHtml = adminBookingNotificationTemplate({
         customerName: customerNameFinal,
         customerEmail: customerEmailFinal,
-        customerPhone: user.phoneNumber || 'N/A',
+        customerPhone: updatedBooking.user.phoneNumber || 'N/A',
         bookingId: updatedBooking.id,
         brand: car.brand,
         vehicleName: car.name,
@@ -350,16 +374,18 @@ export class BookingService {
         totalAmount,
         bondAmount: updatedBooking.bondAmount,
         paymentMethod,
-        paymentStatus: updatedBooking.paymentMethod === 'CASH' ? 'Confirmed (Cash)' : 'Confirmed (Online)',
+        paymentStatus: 'PAID (Verified by Admin)',
         hp: car.hp,
         vehicleClass: car.vehicleClass,
         transmission: car.transmission,
         fuelType: car.fuelType,
         pickupLocation: booking.pickupLocation,
         returnLocation: booking.returnLocation,
+        customTitle: 'Payment Received & Confirmed',
+        customDescription: `You have manually confirmed payment for booking #${updatedBooking.id.slice(-8).toUpperCase()}. The customer has been notified.`
       });
 
-      await this.emailService.sendEmail(settings.adminEmail, 'New Booking Alert - Payment Received', adminHtml);
+      await this.emailService.sendEmail(settings.adminEmail, 'Admin Action: Payment Received & Confirmed', adminHtml);
 
     } catch (err) {
       console.error('Failed to send payment confirmation email:', err);
@@ -396,5 +422,24 @@ export class BookingService {
         endDate: true
       }
     });
+  }
+
+  async findBySessionId(sessionId: string) {
+    const payment = await this.prisma.payment.findFirst({
+      where: { stripePaymentIntentId: sessionId },
+      include: {
+        booking: {
+          include: {
+            car: true
+          }
+        }
+      }
+    });
+
+    if (!payment || !payment.booking) {
+      throw new NotFoundException('Booking not found for this session');
+    }
+
+    return payment.booking;
   }
 }

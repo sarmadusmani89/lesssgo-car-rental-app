@@ -20,6 +20,8 @@ export function bookingConfirmationTemplate(data: {
   vehicleClass?: string | null;
   pickupLocation?: string | null;
   returnLocation?: string | null;
+  customTitle?: string;
+  customDescription?: string;
 }) {
   const statusColor = data.isConfirmed ? '#10b981' : '#f59e0b';
   const statusText = data.isConfirmed ? 'Confirmed' : 'Pending Confirmation';
@@ -30,7 +32,7 @@ export function bookingConfirmationTemplate(data: {
       Hi ${data.customerName},
     </p>
     <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #334155;">
-      ${data.isConfirmed ? 'Great news! Your booking is officially confirmed.' : 'We have received your booking request and it is currently being processed.'} 
+      ${data.customDescription || (data.isConfirmed ? 'Great news! Your booking is officially confirmed.' : 'We have received your booking request and it is currently being processed.')} 
       Below are your reservation details.
     </p>
     
@@ -143,5 +145,5 @@ export function bookingConfirmationTemplate(data: {
     </p>
   `;
 
-  return generateBaseTemplate(data.isConfirmed ? 'Booking Confirmed' : 'Booking Received', content);
+  return generateBaseTemplate(data.customTitle || (data.isConfirmed ? 'Booking Confirmed' : 'Booking Received'), content);
 }

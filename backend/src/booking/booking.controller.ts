@@ -93,4 +93,9 @@ export class BookingController {
   findByUser(@Param('userId') userId: string) {
     return this.bookingService.findByUser(userId);
   }
+
+  @Get('session/:sessionId')
+  findBySession(@Param('sessionId') sessionId: string) {
+    return this.bookingService.findBySessionId(sessionId);
+  }
 }

@@ -19,13 +19,15 @@ export function adminBookingNotificationTemplate(data: {
   returnLocation?: string | null;
   hp?: number | null;
   vehicleClass?: string | null;
+  customTitle?: string;
+  customDescription?: string;
 }) {
   const content = `
     <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #334155;">
       Hi Admin,
     </p>
     <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #334155;">
-      A new booking has been <strong>confirmed</strong> and requires your attention.
+      ${data.customDescription || 'A new booking has been <strong>confirmed</strong> and requires your attention.'}
     </p>
     
     <div style="background-color: #f8fafc; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
@@ -115,5 +117,5 @@ export function adminBookingNotificationTemplate(data: {
     </div>
   `;
 
-  return generateBaseTemplate('New Booking Alert', content);
+  return generateBaseTemplate(data.customTitle || 'New Booking Alert', content);
 }

@@ -1,21 +1,64 @@
 'use client';
 
-import { Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { CheckCircle2, Calendar, MapPin, CreditCard, ArrowRight, Home, ChevronRight, Car, Receipt, Clock } from 'lucide-react';
+import { CheckCircle2, Calendar, MapPin, CreditCard, ArrowRight, Home, ChevronRight, Car, Receipt, Clock, Loader2 } from 'lucide-react';
 import { formatPrice, formatDashboardDate } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
+import api from '@/lib/api';
+import { toast } from 'sonner';
 
 function ThankYouContent() {
     const searchParams = useSearchParams();
     const { currency, rates } = useSelector((state: RootState) => state.ui);
-    const { carName, startDate, endDate, total, payment } = Object.fromEntries(searchParams.entries());
+    const params = Object.fromEntries(searchParams.entries());
+
+    const [bookingData, setBookingData] = useState<any>(params);
+    const [loading, setLoading] = useState(!!params.session_id);
+
+    useEffect(() => {
+        const fetchSessionBooking = async () => {
+            if (!params.session_id) return;
+
+            try {
+                setLoading(true);
+                // Fetch booking details by session_id
+                const res = await api.get(`/booking/session/${params.session_id}`);
+                const b = res.data;
+
+                setBookingData({
+                    carName: `${b.car.brand} ${b.car.name}`,
+                    startDate: b.startDate,
+                    endDate: b.endDate,
+                    total: b.totalAmount.toString(),
+                    bond: (b.car.pricePerDay || 0).toString(),
+                    payment: b.paymentMethod
+                });
+            } catch (err) {
+                console.error("Failed to fetch booking from session:", err);
+                toast.error("Could not load latest booking details automatically.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSessionBooking();
+    }, [params.session_id]);
+
+    const { carName, startDate, endDate, total, bond, payment } = bookingData;
 
     const formatDate = (dateStr: string | null) => {
         if (!dateStr) return 'TBD';
         return formatDashboardDate(dateStr);
     };
+
+    if (loading) return (
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
+            <Loader2 className="animate-spin text-blue-600" size={48} />
+            <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Confirming your reservation...</p>
+        </div>
+    );
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 py-20 pb-40">
@@ -56,10 +99,15 @@ function ThankYouContent() {
                                         <Receipt size={24} />
                                     </div>
                                     <div>
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Investment Total</span>
-                                        <p className="text-xl font-black text-blue-600 font-outfit uppercase tracking-tight">
-                                            {formatPrice(Number(total || 0), currency as any, rates)}
-                                        </p>
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Grand Total (Paid)</span>
+                                        <div className="space-y-1">
+                                            <p className="text-2xl font-black text-blue-600 font-outfit uppercase tracking-tight">
+                                                {formatPrice(Number(total || 0) + Number(bond || 0), currency as any, rates)}
+                                            </p>
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">
+                                                (Rental: {formatPrice(Number(total || 0), currency as any, rates)} + Bond: {formatPrice(Number(bond || 0), currency as any, rates)})
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
