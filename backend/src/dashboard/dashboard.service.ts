@@ -20,10 +20,16 @@ export class DashboardService {
       console.log('Booking count:', bookingsCount);
 
       console.log('Querying Payments (status: PAID)...');
-      const payments = await this.prisma.payment.findMany({ where: { status: 'PAID' } });
+      const payments = await this.prisma.payment.findMany({
+        where: { status: 'PAID' },
+        include: { booking: true }
+      });
       console.log('Found payments:', payments.length);
 
-      const revenueOverall = payments.reduce((acc: number, p: any) => acc + Number(p.amount), 0);
+      const revenueOverall = payments.reduce((acc: number, p: any) => {
+        const bondAmount = p.booking?.bondAmount || 0;
+        return acc + (Number(p.amount) - bondAmount);
+      }, 0);
       console.log('Revenue overall:', revenueOverall);
 
       console.log('Querying available cars stats...');
@@ -61,9 +67,10 @@ export class DashboardService {
           status: 'PAID',
           createdAt: { gte: startDate },
         },
-        select: {
-          amount: true,
-          createdAt: true,
+        include: {
+          booking: {
+            select: { bondAmount: true }
+          }
         }
       });
       console.log('Monthly payments found:', monthlyPayments.length);
@@ -91,7 +98,9 @@ export class DashboardService {
       monthlyPayments.forEach((payment: any) => {
         const monthYear = new Date(payment.createdAt).toLocaleString('default', { month: 'short', year: 'numeric' });
         if (monthlyRevenueMap.has(monthYear)) {
-          monthlyRevenueMap.set(monthYear, (monthlyRevenueMap.get(monthYear) || 0) + Number(payment.amount));
+          const bondAmount = payment.booking?.bondAmount || 0;
+          const actualRevenue = Number(payment.amount) - bondAmount;
+          monthlyRevenueMap.set(monthYear, (monthlyRevenueMap.get(monthYear) || 0) + actualRevenue);
         }
       });
 
@@ -120,7 +129,7 @@ export class DashboardService {
     const bookings = await this.prisma.booking.findMany({ where: { userId } });
     const totalSpent = bookings.reduce((acc: number, b: any) => {
       if (b.paymentStatus === 'PAID') {
-        return acc + Number(b.totalAmount);
+        return acc + Number(b.totalAmount); // Since totalAmount is rental fee ONLY in Booking model
       }
       return acc;
     }, 0);

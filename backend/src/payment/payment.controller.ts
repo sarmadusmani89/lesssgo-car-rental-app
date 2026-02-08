@@ -74,4 +74,11 @@ export class PaymentController {
   remove(@Param('id') id: string) {
     return this.paymentService.remove(id);
   }
+
+  @Post('release-bond/:bookingId')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  releaseBond(@Param('bookingId') bookingId: string) {
+    return this.paymentService.releaseBond(bookingId);
+  }
 }

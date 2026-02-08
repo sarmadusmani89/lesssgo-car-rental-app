@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../lib/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
@@ -55,6 +55,17 @@ export class PaymentService {
             },
             quantity: 1,
           },
+          {
+            price_data: {
+              currency: currency,
+              product_data: {
+                name: 'Security Bond (Refundable)',
+                description: 'This deposit will be refunded after the vehicle is returned in good condition.',
+              },
+              unit_amount: Math.round(booking.bondAmount * 100),
+            },
+            quantity: 1,
+          },
         ],
         mode: 'payment',
         success_url: `${frontendUrl}/thank-you?bookingId=${booking.id}&session_id={CHECKOUT_SESSION_ID}&carName=${booking.car.name}&total=${booking.totalAmount}&startDate=${booking.startDate.toISOString()}&endDate=${booking.endDate.toISOString()}&payment=STRIPE`,
@@ -89,7 +100,7 @@ export class PaymentService {
         await this.prisma.payment.create({
           data: {
             bookingId: booking.id,
-            amount: booking.totalAmount,
+            amount: booking.totalAmount + booking.bondAmount,
             currency: currency,
             status: 'PENDING',
             stripePaymentIntentId: session.id,
@@ -118,7 +129,7 @@ export class PaymentService {
 
     try {
       const paymentIntent = await this.stripe.paymentIntents.create({
-        amount: Math.round(booking.totalAmount * 100), // Amount in cents
+        amount: Math.round((booking.totalAmount + booking.bondAmount) * 100), // Amount in cents
         currency: currency,
         metadata: { bookingId: booking.id, userId: booking.userId },
         description: `Car Rental - Booking #${booking.id}`,
@@ -134,6 +145,7 @@ export class PaymentService {
           where: { id: existingPayment.id },
           data: {
             stripePaymentIntentId: paymentIntent.id,
+            amount: booking.totalAmount + booking.bondAmount,
             status: 'PENDING',
             paymentMethod: 'ONLINE',
           },
@@ -142,7 +154,7 @@ export class PaymentService {
         await this.prisma.payment.create({
           data: {
             bookingId: booking.id,
-            amount: booking.totalAmount,
+            amount: booking.totalAmount + booking.bondAmount,
             currency: currency,
             status: 'PENDING',
             stripePaymentIntentId: paymentIntent.id,
@@ -181,6 +193,18 @@ export class PaymentService {
     } catch (err: any) {
       console.error('❌ Webhook signature verification failed:', err.message);
       throw new InternalServerErrorException(`Webhook Error: ${err.message}`);
+    }
+
+    if (event.type === 'charge.refunded') {
+      const charge = event.data.object as Stripe.Charge;
+      const bookingId = charge.metadata?.bookingId;
+      if (bookingId) {
+        await this.prisma.booking.update({
+          where: { id: bookingId },
+          data: { bondStatus: 'REFUNDED' }
+        });
+        console.log(`✅ Bond status updated to REFUNDED via webhook for booking: ${bookingId}`);
+      }
     }
 
     if (event.type === 'checkout.session.completed') {
@@ -227,7 +251,11 @@ export class PaymentService {
         // Update booking status
         const updatedBooking = await this.prisma.booking.update({
           where: { id: bookingId as string },
-          data: { paymentStatus: 'PAID', status: 'CONFIRMED' },
+          data: {
+            paymentStatus: 'PAID',
+            status: 'CONFIRMED',
+            bondStatus: 'PAID'
+          },
           include: { car: true, user: true }
         });
         console.log(`✅ Payment and booking status updated successfully`);
@@ -399,5 +427,46 @@ export class PaymentService {
   async remove(id: string) {
     await this.findOne(id);
     return this.prisma.payment.delete({ where: { id } });
+  }
+
+  async releaseBond(bookingId: string) {
+    const booking = await this.prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: { payments: true },
+    });
+
+    if (!booking) throw new NotFoundException('Booking not found');
+    if (booking.bondStatus !== 'PAID') throw new BadRequestException('Bond is not in PAID status');
+
+    // Find the Stripe Payment Intent from the payments
+    const stripePayment = booking.payments.find((p) => p.stripePaymentIntentId && p.status === 'PAID');
+
+    if (booking.paymentMethod === 'ONLINE' && stripePayment && stripePayment.stripePaymentIntentId) {
+      // Stripe Refund
+      try {
+        await this.stripe.refunds.create({
+          payment_intent: stripePayment.stripePaymentIntentId,
+          amount: Math.round(booking.bondAmount * 100),
+          metadata: { bookingId: booking.id, type: 'BOND_REFUND' },
+        });
+        // Status will be updated via webhook (charge.refunded), 
+        // but we update it now for better UI feedback
+        await this.prisma.booking.update({
+          where: { id: booking.id },
+          data: { bondStatus: 'REFUNDED' },
+        });
+      } catch (error) {
+        console.error('Stripe Refund Error:', error);
+        throw new InternalServerErrorException('Failed to process Stripe refund');
+      }
+    } else {
+      // Cash or no Stripe PI found - Manual marker
+      await this.prisma.booking.update({
+        where: { id: booking.id },
+        data: { bondStatus: 'REFUNDED' },
+      });
+    }
+
+    return { message: 'Bond released successfully' };
   }
 }

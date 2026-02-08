@@ -41,7 +41,9 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
   };
 
   const days = getDays();
-  const total = car ? car.pricePerDay * days : 0;
+  const rentalTotal = car ? car.pricePerDay * days : 0;
+  const bondAmount = car ? car.pricePerDay : 0;
+  const grandTotal = rentalTotal + bondAmount;
 
   const formatDate = (dateStr: string) => formatDashboardDate(dateStr);
 
@@ -135,11 +137,16 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
         </div>
       </div>
 
+      <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
+        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Security Bond (Refundable)</span>
+        <span className="font-black text-gray-900 uppercase text-xs tracking-widest">{formatPrice(bondAmount, currency, rates)}</span>
+      </div>
+
       <div className="pt-8 mt-4 border-t border-gray-100 flex justify-between items-end">
         <div>
           <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 leading-none">Total Investment</p>
           <p className="text-4xl font-black text-blue-600 font-outfit tracking-tighter">
-            {formatPrice(total, currency, rates)}
+            {formatPrice(grandTotal, currency, rates)}
           </p>
         </div>
         <div className="text-right">

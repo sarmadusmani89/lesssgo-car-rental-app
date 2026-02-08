@@ -49,6 +49,11 @@ export class BookingService {
       throw new ConflictException('Car is already booked for the selected dates');
     }
 
+    const car = await this.prisma.car.findUnique({ where: { id: carId } });
+    if (!car) throw new NotFoundException('Car not found');
+
+    const bondAmount = car.pricePerDay;
+
     // Auto-confirm CASH bookings
     if (createBookingDto.paymentMethod === 'CASH') {
       createBookingDto.status = 'CONFIRMED';
@@ -57,7 +62,11 @@ export class BookingService {
     const { customerName, customerEmail, customerPhone, ...bookingData } = createBookingDto;
 
     const booking = await this.prisma.booking.create({
-      data: bookingData,
+      data: {
+        ...bookingData,
+        bondAmount,
+        bondStatus: 'PENDING'
+      },
       include: { car: true, user: true }
     });
 
@@ -77,7 +86,7 @@ export class BookingService {
     // Create Payment Record (Essential for Stats)
     await this.prisma.payment.create({
       data: {
-        amount: createBookingDto.totalAmount,
+        amount: createBookingDto.totalAmount + bondAmount,
         currency: 'AUD', // Default currency
         paymentMethod: createBookingDto.paymentMethod,
         status: createBookingDto.paymentStatus, // Usually PENDING initially

@@ -74,6 +74,8 @@ model Booking {
   startDate       DateTime
   endDate         DateTime
   totalAmount     Float
+  bondAmount      Float           @default(0)
+  bondStatus      BondStatus      @default(PENDING)
   status          BookingStatus   @default(PENDING)
   paymentStatus   PaymentStatus   @default(PENDING)
   paymentMethod   PaymentMethod   @default(CASH)
@@ -100,6 +102,13 @@ enum PaymentStatus {
   PENDING
   PAID
   FAILED
+}
+
+enum BondStatus {
+  PENDING
+  PAID
+  REFUNDED
+  CLAIMED
 }
 
 enum PaymentMethod {
