@@ -211,6 +211,7 @@ function CheckoutContent() {
                   onConfirm={handleConfirmBooking}
                   paymentMethod={paymentMethod}
                   total={totalAmount}
+                  bondAmount={car?.pricePerDay || 0}
                 />
               )}
             </div>

@@ -10,6 +10,7 @@ interface Props {
   onConfirm: () => void;
   paymentMethod?: string;
   total?: number;
+  bondAmount?: number;
 }
 
 export default function ConfirmBookingButton({
@@ -17,17 +18,14 @@ export default function ConfirmBookingButton({
   onConfirm,
   paymentMethod,
   total,
+  bondAmount = 0,
 }: Props) {
   const { currency, rates } = useSelector((state: RootState) => state.ui);
-  const bondAmount = total || 0; // The total passed here is car.pricePerDay * days
-  const grandTotal = (total || 0) + (total ? (total / Math.max(1, (total / (total / 1)))) : 0);
-  // Wait, I don't have pricePerDay here directly. 
-  // Better to just pass the bond as a prop or calculate it if we assume total is rental.
 
-  // Actually, let's just use the total passed from page.tsx and add the bond there.
+  const grandTotal = (total || 0) + bondAmount;
 
   const label = paymentMethod === 'stripe'
-    ? `Pay Via Stripe (${formatPrice(grandTotal || 0, currency, rates)})`
+    ? `Pay Via Stripe (${formatPrice(grandTotal, currency, rates)})`
     : 'Confirm Reservation';
 
   return (
