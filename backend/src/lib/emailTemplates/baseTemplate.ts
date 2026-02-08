@@ -46,8 +46,8 @@ export const generateBaseTemplate = (title: string, content: string) => {
                 &copy; ${currentYear} LesssGo. All rights reserved.
               </p>
               <div style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
-                <p style="margin: 0;">Sydney, Australia</p>
-                <p style="margin: 4px 0 0;">Need help? <a href="mailto:support@lesssgo.com" style="color: #3b82f6; text-decoration: none; font-weight: 600;">Contact Support</a></p>
+                <p style="margin: 0;">Port Moresby, Papua New Guinea</p>
+                <p style="margin: 4px 0 0;">Need help? <a href="mailto:support@lesssgo.com" style="color: #3b82f6; text-decoration: none; font-weight: 700;">support@lesssgo.com</a></p>
               </div>
             </td>
           </tr>

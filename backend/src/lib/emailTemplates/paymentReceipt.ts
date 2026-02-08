@@ -46,9 +46,12 @@ export function paymentReceiptTemplate(data: {
       </table>
     </div>
     
-    <div style="padding: 20px; background: #f1f5f9; border-radius: 12px; text-align: center;">
-      <p style="margin: 0; font-size: 13px; font-weight: 600; color: #475569;">
-        Need a full VAT invoice? <a href="mailto:billing@lesssgo.com" style="color: #3b82f6; text-decoration: none;">Download from your dashboard</a>
+    <div style="padding: 24px; background: #f1f5f9; border-radius: 16px; text-align: center; border: 1px dashed #cbd5e1;">
+      <p style="margin: 0; font-size: 13px; font-weight: 700; color: #475569;">
+        Need a full VAT invoice for your records? 
+      </p>
+      <p style="margin: 4px 0 0; font-size: 11px; color: #64748b;">
+        Please contact <a href="mailto:billing@lesssgo.com" style="color: #3b82f6; text-decoration: none; font-weight: 700;">billing@lesssgo.com</a> with your Booking reference.
       </p>
     </div>
   `;
