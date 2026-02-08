@@ -46,7 +46,7 @@ export default function Footer() {
             <div className={`container ${styles.grid}`}>
                 <div className={styles.brand}>
                     <Link href="/" className={styles.logo}>
-                        <img src="/web-logo.jpg" alt="Lesssgo Logo" className={styles.logoImage} />
+                        <img src="/web-logo-dark.png" alt="Lesssgo Logo" className={styles.logoImage} />
                     </Link>
                     <p>Experience the ultimate freedom on the road with Lesssgo. We provide premium car rental services at competitive prices.</p>
                     <div className={styles.socials}>
