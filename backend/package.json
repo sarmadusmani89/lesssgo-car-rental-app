@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db:reset-admin": "npx ts-node prisma/reset.ts && npx ts-node prisma/create-admin.ts"
+    "db:reset-admin": "npx ts-node prisma/reset.ts && npx ts-node prisma/create-admin.ts",
+    "db:clear-bookings": "node prisma/clear-bookings.js"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
