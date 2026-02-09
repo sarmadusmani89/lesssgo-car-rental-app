@@ -35,7 +35,6 @@ export default function AdminLayout({
         { name: 'Cars', href: '/admin/cars', icon: <Car size={20} /> },
         { name: 'Users', href: '/admin/users', icon: <Users size={20} /> },
         { name: 'Bookings', href: '/admin/bookings', icon: <Calendar size={20} /> },
-        { name: 'Profile', href: '/dashboard/profile', icon: <User size={20} /> },
         { name: 'Newsletter', href: '/admin/newsletter', icon: <Mail size={20} /> },
         { name: 'Settings', href: '/admin/settings', icon: <Settings size={20} /> },
       ]}
