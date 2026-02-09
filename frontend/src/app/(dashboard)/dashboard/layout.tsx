@@ -36,6 +36,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
       sidebarTitle="Dashboard"
       topbarTitle="User Dashboard"
       userName={userName}
+      userRole="USER"
       links={[
         { name: 'Overview', href: '/dashboard', icon: <LayoutDashboard size={20} /> },
         { name: 'Profile', href: '/dashboard/profile', icon: <User size={20} /> },

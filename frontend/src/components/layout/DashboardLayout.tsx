@@ -9,6 +9,7 @@ interface DashboardLayoutProps {
     sidebarTitle: string;
     topbarTitle?: string;
     userName?: string;
+    userRole?: string;
     links: Array<{
         name: string;
         href: string;
@@ -20,6 +21,7 @@ export default function DashboardLayout({
     children,
     sidebarTitle,
     userName = 'User',
+    userRole = 'USER',
     links,
 }: DashboardLayoutProps) {
     const sidebarWidth = 256; // Sidebar width in px
@@ -51,7 +53,7 @@ export default function DashboardLayout({
                 className="flex-1 flex flex-col min-w-0"
                 style={{ marginLeft: sidebarWidth }}
             >
-                <Topbar user={{ name: userName }} />
+                <Topbar user={{ name: userName, role: userRole }} />
                 <main className="flex-1 p-8 overflow-y-auto">{children}</main>
             </div>
         </div>

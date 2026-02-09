@@ -128,15 +128,23 @@ export default function BookingForm({ car }: Props) {
     const calculateTotal = () => {
         if (!pickupDate || !returnDate) return 0;
 
-        // Get date parts only (ignore time for the daily count based on client request)
-        const start = new Date(pickupDate.getFullYear(), pickupDate.getMonth(), pickupDate.getDate());
-        const end = new Date(returnDate.getFullYear(), returnDate.getMonth(), returnDate.getDate());
+        // Combine date and time to get full timestamps
+        const [pHours, pMinutes] = pickupTime.split(':').map(Number);
+        const [rHours, rMinutes] = returnTime.split(':').map(Number);
 
-        const diffTime = Math.abs(end.getTime() - start.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const start = new Date(pickupDate);
+        start.setHours(pHours, pMinutes, 0, 0);
 
-        // Inclusive count: start date to end date (e.g., 9th to 19th is 11 days)
-        const totalDays = diffDays + 1;
+        const end = new Date(returnDate);
+        end.setHours(rHours, rMinutes, 0, 0);
+
+        const diffTime = end.getTime() - start.getTime();
+        const diffHours = diffTime / (1000 * 60 * 60);
+
+        // Calculate days based on 24-hour cycles
+        // Each fraction of a 24-hour period counts as a full day
+        // Ensure at least 1 day
+        const totalDays = Math.max(1, Math.ceil(diffHours / 24));
 
         return totalDays * car.pricePerDay;
     };

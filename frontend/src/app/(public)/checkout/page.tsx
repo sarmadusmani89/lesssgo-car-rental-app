@@ -82,13 +82,14 @@ function CheckoutContent() {
     const start = toUtcDate(startDate);
     const end = toUtcDate(endDate);
 
-    // Normalize to midnight UTC to calculate calendar days only
-    const startUTC = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
-    const endUTC = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate());
+    const diffTime = end.getTime() - start.getTime();
+    const diffHours = diffTime / (1000 * 60 * 60);
 
-    const diffTime = Math.abs(endUTC - startUTC);
-    const days = Math.round(diffTime / (1000 * 60 * 60 * 24));
-    return days >= 0 ? days + 1 : 0;
+    // Calculate days based on 24-hour cycles
+    // Each fraction of a 24-hour period counts as a full day
+    // Ensure at least 1 day
+    const days = Math.max(1, Math.ceil(diffHours / 24));
+    return days;
   };
 
   const days = calculateDays();

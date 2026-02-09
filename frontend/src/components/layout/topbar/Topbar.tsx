@@ -11,6 +11,7 @@ interface TopbarProps {
     user?: {
         name: string;
         image?: string;
+        role?: string;
     };
     title?: string;
     onMenuClick?: () => void;
