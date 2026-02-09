@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import api from '@/lib/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
+import { calculateRentalDays } from '@/lib/utils';
 
 // Sub-components
 import LocationField from './booking/LocationField';
@@ -138,13 +139,7 @@ export default function BookingForm({ car }: Props) {
         const end = new Date(returnDate);
         end.setHours(rHours, rMinutes, 0, 0);
 
-        const diffTime = end.getTime() - start.getTime();
-        const diffHours = diffTime / (1000 * 60 * 60);
-
-        // Calculate days based on 24-hour cycles
-        // Each fraction of a 24-hour period counts as a full day
-        // Ensure at least 1 day
-        const totalDays = Math.max(1, Math.ceil(diffHours / 24));
+        const totalDays = calculateRentalDays(start, end);
 
         return totalDays * car.pricePerDay;
     };

@@ -2,7 +2,7 @@
 
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
-import { formatPrice, toUtcDate, formatDashboardDate } from '@/lib/utils';
+import { formatPrice, toUtcDate, formatDashboardDate, calculateRentalDays } from '@/lib/utils';
 
 interface Props {
   car: {
@@ -27,20 +27,7 @@ interface Props {
 export default function BookingSummary({ car, startDate, endDate, pickupLocation, returnLocation }: Props) {
   const { currency, rates } = useSelector((state: RootState) => state.ui);
 
-  const getDays = () => {
-    if (!startDate || !endDate) return 0;
-    const start = toUtcDate(startDate);
-    const end = toUtcDate(endDate);
-
-    const startUTC = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
-    const endUTC = Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate());
-
-    const diff = Math.abs(endUTC - startUTC);
-    const days = Math.round(diff / (1000 * 60 * 60 * 24));
-    return days >= 0 ? days + 1 : 0;
-  };
-
-  const days = getDays();
+  const days = calculateRentalDays(startDate, endDate);
   const rentalTotal = car ? car.pricePerDay * days : 0;
   const bondAmount = car ? car.pricePerDay : 0;
   const grandTotal = rentalTotal + bondAmount;

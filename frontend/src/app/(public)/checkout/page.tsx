@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { toUtcDate } from '@/lib/utils';
+import { toUtcDate, calculateRentalDays } from '@/lib/utils';
 import BookingSummary from '@/components/pages/checkout/BookingSummary';
 import CustomerInformationForm from '@/components/pages/checkout/CustomerInformationForm';
 import PaymentMethodSelection from '@/components/pages/checkout/PaymentMethodSelection';
@@ -77,22 +77,7 @@ function CheckoutContent() {
     fetchData();
   }, [carId]);
 
-  const calculateDays = () => {
-    if (!startDate || !endDate) return 0;
-    const start = toUtcDate(startDate);
-    const end = toUtcDate(endDate);
-
-    const diffTime = end.getTime() - start.getTime();
-    const diffHours = diffTime / (1000 * 60 * 60);
-
-    // Calculate days based on 24-hour cycles
-    // Each fraction of a 24-hour period counts as a full day
-    // Ensure at least 1 day
-    const days = Math.max(1, Math.ceil(diffHours / 24));
-    return days;
-  };
-
-  const days = calculateDays();
+  const days = calculateRentalDays(startDate, endDate);
   const totalAmount = car ? car.pricePerDay * days : 0;
 
   const isFormValid = customerData.fullName && customerData.email && acceptedTerms && startDate && endDate;

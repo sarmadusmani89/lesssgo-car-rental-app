@@ -55,3 +55,18 @@ export function formatDashboardDate(dateStr: string, includeTime = true) {
     }
 }
 
+export function calculateRentalDays(startDate: string | Date, endDate: string | Date): number {
+    const start = typeof startDate === 'string' ? toUtcDate(startDate) : startDate;
+    const end = typeof endDate === 'string' ? toUtcDate(endDate) : endDate;
+
+    if (!start || !end || isNaN(start.getTime()) || isNaN(end.getTime())) return 0;
+
+    const diffTime = end.getTime() - start.getTime();
+    const diffHours = diffTime / (1000 * 60 * 60);
+
+    // Calculate days based on 24-hour cycles
+    // Each fraction of a 24-hour period counts as a full day
+    // Ensure at least 1 day
+    return Math.max(1, Math.ceil(diffHours / 24));
+}
+
