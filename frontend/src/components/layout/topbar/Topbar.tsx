@@ -83,13 +83,15 @@ export default function Topbar({ user, title, onMenuClick }: TopbarProps) {
 
                     {showDropdown && (
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg p-1 border z-50">
-                            <Link
-                                href="/dashboard/profile"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                onClick={() => setShowDropdown(false)}
-                            >
-                                View Profile
-                            </Link>
+                            {user?.role !== 'ADMIN' && (
+                                <Link
+                                    href="/dashboard/profile"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                    onClick={() => setShowDropdown(false)}
+                                >
+                                    View Profile
+                                </Link>
+                            )}
                             <button
                                 onClick={handleLogout}
                                 className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
