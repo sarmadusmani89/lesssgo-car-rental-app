@@ -9,7 +9,6 @@ interface FilterState {
     brand: string;
     type: string;
     transmission: string;
-    priceRange: string;
     pickup: string;
     return: string;
     vehicleClass: string;
@@ -28,12 +27,7 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
     const vehicleClasses = VEHICLE_CLASSES;
     const fuelTypes = VEHICLE_FUEL_TYPES;
     const locations = PREDEFINED_LOCATIONS;
-    const prices = [
-        { label: 'Under $500', value: '0-500' },
-        { label: '$500 - $1,000', value: '500-1000' },
-        { label: '$1,000 - $2,000', value: '1000-2000' },
-        { label: '$2,000+', value: '2000-99999' }
-    ];
+
 
     const updateFilter = (key: keyof FilterState, value: string) => {
         onChange({ ...filters, [key]: filters[key] === value ? '' : value });
@@ -44,7 +38,6 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
             brand: '',
             type: '',
             transmission: '',
-            priceRange: '',
             pickup: '',
             return: '',
             vehicleClass: '',
@@ -52,7 +45,7 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
         });
     };
 
-    const isFiltered = filters.brand || filters.type || filters.transmission || filters.priceRange || filters.pickup || filters.return || filters.vehicleClass || filters.fuelType;
+    const isFiltered = filters.brand || filters.type || filters.transmission || filters.pickup || filters.return || filters.vehicleClass || filters.fuelType;
 
     const FilterGroup = ({ title, options, activeValue, onSelect, valueKey = (opt: string) => opt }: any) => (
         <div className="space-y-4">
@@ -128,13 +121,7 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
                 onSelect={(val: string) => updateFilter('fuelType', val)}
             />
 
-            <FilterGroup
-                title="Daily Rate"
-                options={prices}
-                activeValue={filters.priceRange}
-                onSelect={(val: string) => updateFilter('priceRange', val)}
-                valueKey={(opt: any) => opt.value}
-            />
+
 
             <FilterGroup
                 title="Pickup Location"

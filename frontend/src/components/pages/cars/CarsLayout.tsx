@@ -36,7 +36,6 @@ export default function CarsLayout() {
         brand: searchParams.get('brand') || '',
         type: searchParams.get('type') || '',
         transmission: searchParams.get('transmission') || '',
-        priceRange: searchParams.get('price') || '',
         pickup: searchParams.get('pickup') || '',
         return: searchParams.get('return') || '',
         vehicleClass: searchParams.get('vehicleClass') || '',
@@ -83,10 +82,7 @@ export default function CarsLayout() {
         if (filters.transmission) {
             results = results.filter(car => car.transmission.toLowerCase() === filters.transmission.toLowerCase());
         }
-        if (filters.priceRange) {
-            const [min, max] = filters.priceRange.split('-').map(Number);
-            results = results.filter(car => car.pricePerDay >= min && car.pricePerDay <= max);
-        }
+
         if (filters.vehicleClass) {
             results = results.filter(car => (car as any).vehicleClass?.toLowerCase() === filters.vehicleClass.toLowerCase());
         }
