@@ -7,8 +7,8 @@ export default function HeroBackground() {
     return (
         <div className={styles.heroBackground}>
             <Image
-                src="/images/hero_bg.png"
-                alt="Luxury Car Background"
+                src="/images/hero-background.png"
+                alt="Haval Jolion Pro"
                 fill
                 priority
                 quality={100}
