@@ -85,11 +85,11 @@ export default function Footer() {
                         </li>
                         <li style={{ display: 'flex', gap: '8px', color: '#94a3b8', fontSize: '14px', marginBottom: '12px' }}>
                             <Phone size={18} />
-                            <span>+1 (555) 123-4567</span>
+                            <span>+675 83054576</span>
                         </li>
                         <li style={{ display: 'flex', gap: '8px', color: '#94a3b8', fontSize: '14px' }}>
                             <Mail size={18} />
-                            <span>hello@lesssgo.com</span>
+                            <span>ride@lessssgopng.com</span>
                         </li>
                     </ul>
                 </div>

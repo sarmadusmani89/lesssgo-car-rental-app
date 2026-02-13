@@ -11,12 +11,12 @@ const contactInfo = [
     {
         icon: Phone,
         title: 'Call Us',
-        content: '+1 (555) 123-4567',
+        content: '+675 83054576',
     },
     {
         icon: Mail,
         title: 'Email Us',
-        content: 'hello@lesssgo.com',
+        content: 'ride@lessssgopng.com',
     },
 ];
 

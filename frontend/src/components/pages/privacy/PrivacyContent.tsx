@@ -119,7 +119,7 @@ export default function PrivacyContent() {
                             <li><strong>Data Portability:</strong> Request a copy of your data in a structured format</li>
                         </ul>
                         <p>
-                            To exercise these rights, please contact us at privacy@lesssgo.com.
+                            To exercise these rights, please contact us at ride@lessssgopng.com.
                         </p>
                     </div>
 
@@ -169,8 +169,8 @@ export default function PrivacyContent() {
                             If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us at:
                         </p>
                         <p>
-                            Email: privacy@lesssgo.com<br />
-                            Phone: +1 (555) 123-4567<br />
+                            Email: ride@lessssgopng.com<br />
+                            Phone: +675 83054576<br />
                             Address: 1234 Sports Car Blvd, Beverly Hills, CA 90210
                         </p>
                     </div>

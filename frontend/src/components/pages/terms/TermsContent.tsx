@@ -132,8 +132,8 @@ export default function TermsContent() {
                             If you have any questions about these Terms and Conditions, please contact us at:
                         </p>
                         <p>
-                            Email: legal@lesssgo.com<br />
-                            Phone: +1 (555) 123-4567<br />
+                            Email: ride@lessssgopng.com<br />
+                            Phone: +675 83054576<br />
                             Address: 1234 Sports Car Blvd, Beverly Hills, CA 90210
                         </p>
                     </div>
