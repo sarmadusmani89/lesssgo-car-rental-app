@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronDown, Search, Loader2, MapPin } from 'lucide-react';
-import styles from '@/app/(public)/(home)/page.module.css';
 import { PREDEFINED_LOCATIONS } from '@/constants/locations';
 import { VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS } from '@/constants/car';
 
@@ -45,25 +44,25 @@ export default function HeroFilter() {
     };
 
     return (
-        <div className={`${styles.filterWidget} glass animate-slide-up`}>
-            <h2 className={styles.widgetTitle}>Find Your Drive</h2>
-            <div className={styles.searchInputs}>
+        <div className="w-full lg:w-[40%] max-w-full lg:max-w-[600px] p-8 rounded-[1.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.05)] border border-black/5 bg-white/70 backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <h2 className="text-xl font-extrabold mb-6 text-slate-900 tracking-tight">Find Your Drive</h2>
+            <div className="flex flex-col gap-4">
                 {/* Pickup Location Selection */}
-                <div className={styles.inputGroup}>
-                    <label className="flex items-center gap-1"><MapPin size={10} className="text-blue-600" /> Pickup Location</label>
+                <div className="flex flex-col gap-2">
+                    <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500"><MapPin size={10} className="text-blue-600" /> Pickup Location</label>
                     <div
-                        className={`${styles.selectWrapper} ${activeDropdown === 'pickup' ? styles.active : ''}`}
+                        className={`relative flex items-center justify-between bg-white/50 border border-black/5 p-3 rounded-xl cursor-pointer transition-all duration-200 hover:bg-white/80 hover:border-black/10 ${activeDropdown === 'pickup' ? 'ring-2 ring-blue-500/20 border-blue-500/50' : ''}`}
                         onClick={() => toggleDropdown('pickup')}
                     >
-                        <span>{selections.pickup || 'Select Pickup'}</span>
-                        <ChevronDown size={16} />
+                        <span className="font-semibold text-slate-900 text-sm">{selections.pickup || 'Select Pickup'}</span>
+                        <ChevronDown size={16} className="text-blue-600" />
                         {activeDropdown === 'pickup' && (
-                            <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
-                                <div className={styles.dropdownItem} onClick={() => handleSelect('pickup', '')}>Select Pickup</div>
+                            <div className="absolute top-[110%] left-0 w-full bg-white border border-black/5 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] max-h-[280px] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
+                                <div className="p-[14px_20px] text-[15px] text-slate-500 font-medium cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:text-blue-600 hover:pl-6" onClick={() => handleSelect('pickup', '')}>Select Pickup</div>
                                 {dropdownOptions.locations.map((opt: string) => (
                                     <div
                                         key={opt}
-                                        className={`${styles.dropdownItem} ${selections.pickup === opt ? styles.selected : ''}`}
+                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:text-blue-600 hover:pl-6 ${selections.pickup === opt ? 'bg-slate-100 text-slate-900 font-bold' : 'text-slate-600'}`}
                                         onClick={() => handleSelect('pickup', opt)}
                                     >
                                         {opt}
@@ -74,24 +73,24 @@ export default function HeroFilter() {
                     </div>
                 </div>
 
-                <div className={styles.divider} />
+                <div className="h-[1px] bg-black/5 my-1" />
 
                 {/* Return Location Selection */}
-                <div className={styles.inputGroup}>
-                    <label className="flex items-center gap-1"><MapPin size={10} className="text-red-500" /> Return Location</label>
+                <div className="flex flex-col gap-2">
+                    <label className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-slate-500"><MapPin size={10} className="text-red-500" /> Return Location</label>
                     <div
-                        className={`${styles.selectWrapper} ${activeDropdown === 'return' ? styles.active : ''}`}
+                        className={`relative flex items-center justify-between bg-white/50 border border-black/5 p-3 rounded-xl cursor-pointer transition-all duration-200 hover:bg-white/80 hover:border-black/10 ${activeDropdown === 'return' ? 'ring-2 ring-blue-500/20 border-blue-500/50' : ''}`}
                         onClick={() => toggleDropdown('return')}
                     >
-                        <span>{selections.return || 'Select Return'}</span>
-                        <ChevronDown size={16} />
+                        <span className="font-semibold text-slate-900 text-sm">{selections.return || 'Select Return'}</span>
+                        <ChevronDown size={16} className="text-blue-600" />
                         {activeDropdown === 'return' && (
-                            <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
-                                <div className={styles.dropdownItem} onClick={() => handleSelect('return', '')}>Select Return</div>
+                            <div className="absolute top-[110%] left-0 w-full bg-white border border-black/5 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] max-h-[280px] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
+                                <div className="p-[14px_20px] text-[15px] text-slate-500 font-medium cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:text-blue-600 hover:pl-6" onClick={() => handleSelect('return', '')}>Select Return</div>
                                 {dropdownOptions.locations.map((opt: string) => (
                                     <div
                                         key={opt}
-                                        className={`${styles.dropdownItem} ${selections.return === opt ? styles.selected : ''}`}
+                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:text-blue-600 hover:pl-6 ${selections.return === opt ? 'bg-slate-100 text-slate-900 font-bold' : 'text-slate-600'}`}
                                         onClick={() => handleSelect('return', opt)}
                                     >
                                         {opt}
@@ -102,24 +101,24 @@ export default function HeroFilter() {
                     </div>
                 </div>
 
-                <div className={styles.divider} />
+                <div className="h-[1px] bg-black/5 my-1" />
 
                 {/* Category Selection */}
-                <div className={styles.inputGroup}>
-                    <label>Category</label>
+                <div className="flex flex-col gap-2">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Category</label>
                     <div
-                        className={`${styles.selectWrapper} ${activeDropdown === 'category' ? styles.active : ''}`}
+                        className={`relative flex items-center justify-between bg-white/50 border border-black/5 p-3 rounded-xl cursor-pointer transition-all duration-200 hover:bg-white/80 hover:border-black/10 ${activeDropdown === 'category' ? 'ring-2 ring-blue-500/20 border-blue-500/50' : ''}`}
                         onClick={() => toggleDropdown('category')}
                     >
-                        <span>{selections.category || 'Any Category'}</span>
-                        <ChevronDown size={16} />
+                        <span className="font-semibold text-slate-900 text-sm">{selections.category || 'Any Category'}</span>
+                        <ChevronDown size={16} className="text-blue-600" />
                         {activeDropdown === 'category' && (
-                            <div className={styles.dropdownMenu} onClick={(e) => e.stopPropagation()}>
-                                <div className={styles.dropdownItem} onClick={() => handleSelect('category', '')}>Any Category</div>
+                            <div className="absolute top-[110%] left-0 w-full bg-white border border-black/5 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] max-h-[280px] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
+                                <div className="p-[14px_20px] text-[15px] text-slate-500 font-medium cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:text-blue-600 hover:pl-6" onClick={() => handleSelect('category', '')}>Any Category</div>
                                 {dropdownOptions.category.map((opt: string) => (
                                     <div
                                         key={opt}
-                                        className={`${styles.dropdownItem} ${selections.category === opt ? styles.selected : ''}`}
+                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:text-blue-600 hover:pl-6 ${selections.category === opt ? 'bg-slate-100 text-slate-900 font-bold' : 'text-slate-600'}`}
                                         onClick={() => handleSelect('category', opt)}
                                     >
                                         {opt}
@@ -130,24 +129,24 @@ export default function HeroFilter() {
                     </div>
                 </div>
 
-                <div className={styles.divider} />
+                <div className="h-[1px] bg-black/5 my-1" />
 
                 {/* Transmission Selection */}
-                <div className={styles.inputGroup}>
-                    <label>Transmission</label>
+                <div className="flex flex-col gap-2">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Transmission</label>
                     <div
-                        className={`${styles.selectWrapper} ${activeDropdown === 'transmission' ? styles.active : ''}`}
+                        className={`relative flex items-center justify-between bg-white/50 border border-black/5 p-3 rounded-xl cursor-pointer transition-all duration-200 hover:bg-white/80 hover:border-black/10 ${activeDropdown === 'transmission' ? 'ring-2 ring-blue-500/20 border-blue-500/50' : ''}`}
                         onClick={() => toggleDropdown('transmission')}
                     >
-                        <span>{selections.transmission || 'Any'}</span>
-                        <ChevronDown size={16} />
+                        <span className="font-semibold text-slate-900 text-sm">{selections.transmission || 'Any'}</span>
+                        <ChevronDown size={16} className="text-blue-600" />
                         {activeDropdown === 'transmission' && (
-                            <div className={styles.dropdownMenu}>
-                                <div className={styles.dropdownItem} onClick={() => handleSelect('transmission', '')}>Any</div>
+                            <div className="absolute top-[110%] left-0 w-full bg-white border border-black/5 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] max-h-[280px] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <div className="p-[14px_20px] text-[15px] text-slate-500 font-medium cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:text-blue-600 hover:pl-6" onClick={() => handleSelect('transmission', '')}>Any</div>
                                 {dropdownOptions.transmission.map((opt: string) => (
                                     <div
                                         key={opt}
-                                        className={`${styles.dropdownItem} ${selections.transmission === opt ? styles.selected : ''}`}
+                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:text-blue-600 hover:pl-6 ${selections.transmission === opt ? 'bg-slate-100 text-slate-900 font-bold' : 'text-slate-600'}`}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleSelect('transmission', opt);
@@ -163,7 +162,7 @@ export default function HeroFilter() {
 
                 <button
                     onClick={handleSearch}
-                    className={styles.searchButton}
+                    className="mt-3 bg-blue-600 text-white flex items-center justify-center gap-2 p-[14px] rounded-xl font-extrabold uppercase tracking-wider text-[13px] transition-all duration-300 shadow-[0_10px_20px_rgba(37,99,235,0.15)] hover:translate-y-[-2px] hover:shadow-[0_15px_30px_rgba(37,99,235,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={isLoading}
                 >
                     {isLoading ? (
