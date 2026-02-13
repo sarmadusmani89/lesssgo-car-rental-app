@@ -13,7 +13,6 @@ export default function HeroBackground() {
                 priority
                 quality={100}
             />
-            <div className={styles.heroOverlay} />
         </div>
     );
 }

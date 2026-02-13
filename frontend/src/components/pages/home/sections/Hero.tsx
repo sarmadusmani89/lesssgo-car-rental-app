@@ -2,7 +2,6 @@
 
 import styles from '@/app/(public)/(home)/page.module.css';
 import HeroBackground from '../components/HeroBackground';
-import HeroText from '../components/HeroText';
 import HeroFilter from '../components/HeroFilter';
 
 export default function Hero() {
@@ -11,7 +10,6 @@ export default function Hero() {
             <HeroBackground />
             <div className="container">
                 <div className={styles.heroContent}>
-                    <HeroText />
                     <HeroFilter />
                 </div>
             </div>

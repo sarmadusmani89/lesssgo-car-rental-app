@@ -24,27 +24,19 @@
 
 .heroBackground img {
     object-fit: cover;
+    object-position: left center;
     opacity: 1;
 }
 
-.heroOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 20%, rgba(255, 255, 255, 0) 100%);
-    z-index: 2;
-}
+
 
 .heroContent {
     position: relative;
     z-index: 10;
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    justify-content: flex-end;
     align-items: center;
-    gap: 4rem;
 }
 
 /* Left Column Styling */
@@ -121,7 +113,8 @@
     padding: 2rem;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(0, 0, 0, 0.03);
-    max-width: 480px;
+    width: 50%;
+    max-width: 600px;
 }
 
 .widgetTitle {
