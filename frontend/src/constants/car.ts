@@ -7,6 +7,7 @@ export const VEHICLE_BRANDS = [
     "Audi RS",
     "Toyota",
     "Hyundai",
+    "Haval",
     "Honda",
     "Land Rover",
     "Volvo"
