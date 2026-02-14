@@ -136,7 +136,7 @@ function SignupContent() {
                             {...register('phoneNumber', {
                                 required: 'Phone number is required',
                                 pattern: {
-                                    value: /^\d{8}$/,
+                                    value: /^\d{4}\s?\d{4}$|^\d{8}$/,
                                     message: 'Phone must be 8 digits'
                                 },
                                 onChange: (e) => {
