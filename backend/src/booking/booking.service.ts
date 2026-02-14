@@ -14,63 +14,72 @@ export class BookingService {
   ) { }
 
   async create(createBookingDto: CreateBookingDto) {
-    const { carId, startDate, endDate } = createBookingDto;
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const { carId, startDate, endDate, customerName, customerEmail, customerPhone } = createBookingDto;
 
-    const overlappingBooking = await this.prisma.booking.findFirst({
-      where: {
-        carId,
-        status: { not: 'CANCELLED' },
-        OR: [
-          {
-            AND: [
-              { startDate: { lte: start } },
-              { endDate: { gt: start } },
-            ],
+    // Use a transaction to prevent race conditions
+    const booking = await this.prisma.$transaction(async (tx) => {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      // Check for overlapping bookings - only CANCELLED bookings should NOT block
+      const overlappingBooking = await tx.booking.findFirst({
+        where: {
+          carId,
+          status: {
+            in: ['PENDING', 'CONFIRMED', 'COMPLETED'] // All these statuses block new bookings
           },
-          {
-            AND: [
-              { startDate: { lt: end } },
-              { endDate: { gte: end } },
-            ],
-          },
-          {
-            AND: [
-              { startDate: { gte: start } },
-              { endDate: { lte: end } },
-            ],
-          },
-        ],
-      },
-    });
+          OR: [
+            {
+              AND: [
+                { startDate: { lte: start } },
+                { endDate: { gt: start } },
+              ],
+            },
+            {
+              AND: [
+                { startDate: { lt: end } },
+                { endDate: { gte: end } },
+              ],
+            },
+            {
+              AND: [
+                { startDate: { gte: start } },
+                { endDate: { lte: end } },
+              ],
+            },
+          ],
+        },
+      });
 
-    if (overlappingBooking) {
-      throw new ConflictException('Car is already booked for the selected dates');
-    }
+      if (overlappingBooking) {
+        throw new ConflictException('Car is already booked for the selected dates');
+      }
 
-    const car = await this.prisma.car.findUnique({ where: { id: carId } });
-    if (!car) throw new NotFoundException('Car not found');
+      const car = await tx.car.findUnique({ where: { id: carId } });
+      if (!car) throw new NotFoundException('Car not found');
 
-    const bondAmount = car.pricePerDay;
+      const bondAmount = car.pricePerDay;
 
-    // Auto-confirm CASH bookings
-    if (createBookingDto.paymentMethod === 'CASH') {
-      createBookingDto.status = 'CONFIRMED';
-    }
+      // Auto-confirm CASH bookings
+      if (createBookingDto.paymentMethod === 'CASH') {
+        createBookingDto.status = 'CONFIRMED';
+      }
 
-    const { customerName, customerEmail, customerPhone, ...bookingData } = createBookingDto;
+      const { customerName: _customerName, customerEmail: _customerEmail, customerPhone: _customerPhone, ...bookingData } = createBookingDto;
 
-    const booking = await this.prisma.booking.create({
-      data: {
-        ...bookingData,
-        customerName,
-        customerEmail,
-        customerPhone,
-        bondAmount,
-        bondStatus: 'PENDING'
-      },
-      include: { car: true, user: true }
+      const newBooking = await tx.booking.create({
+        data: {
+          ...bookingData,
+          customerName,
+          customerEmail,
+          customerPhone,
+          bondAmount,
+          bondStatus: 'PENDING'
+        },
+        include: { car: true, user: true }
+      });
+
+      return newBooking;
     });
 
     // Sync User Profile (Name and Phone)
@@ -419,7 +428,9 @@ export class BookingService {
     return this.prisma.booking.findMany({
       where: {
         carId,
-        status: { not: 'CANCELLED' }
+        status: {
+          in: ['PENDING', 'CONFIRMED', 'COMPLETED'] // Only these block availability
+        }
       },
       select: {
         startDate: true,
