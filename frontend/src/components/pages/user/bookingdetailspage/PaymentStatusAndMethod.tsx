@@ -45,7 +45,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-black font-outfit uppercase tracking-tight text-gray-900">Payment & Settlement</h2>
         <div className="flex gap-2">
-          {isAdmin && booking.paymentMethod === 'CASH' && paymentStatus !== 'PAID' && (
+          {isAdmin && paymentStatus !== 'PAID' && (
             <button
               onClick={handleMarkAsPaid}
               disabled={loading}
