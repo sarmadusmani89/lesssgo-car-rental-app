@@ -11,7 +11,7 @@ export class AuthController {
 
   @Post('signup')
   signup(@Body() signupDto: SignupDto) {
-    return this.authService.signup(signupDto.email, signupDto.password, signupDto.name);
+    return this.authService.signup(signupDto.email, signupDto.password, signupDto.name, signupDto.phoneNumber);
   }
 
   @Post('login')
