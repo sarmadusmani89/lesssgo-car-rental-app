@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 
+import { useState, useEffect } from 'react';
+import api from '@/lib/api';
 import {
     LifeBuoy,
     MessageCircle,
@@ -11,14 +13,28 @@ import {
     ExternalLink,
     MessageSquare,
     ShieldCheck,
-    FileText
+    FileText,
+    MapPin
 } from 'lucide-react';
-import { useState } from 'react';
 
 export default function SupportPage() {
     const [openFaq, setOpenFaq] = useState<number | null>(0);
+    const [settings, setSettings] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await api.get('/settings');
+                setSettings(res.data);
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     const faqs = [
+        // ... (existing faqs)
         {
             q: "How do I cancel my booking?",
             a: "You can cancel your booking directly from the 'My Bookings' section. Cancellations made more than 48 hours before the pickup time are eligible for a full refund."
@@ -37,6 +53,14 @@ export default function SupportPage() {
         }
     ];
 
+    // Helper for WhatsApp link
+    const getWhatsAppLink = (phone?: string) => {
+        const defaultPhone = '67583054576';
+        if (!phone) return `https://wa.me/${defaultPhone}`;
+        const cleanPhone = phone.replace(/[^0-9]/g, '');
+        return `https://wa.me/${cleanPhone || defaultPhone}`;
+    };
+
     return (
         <div className="space-y-12 animate-in fade-in duration-500 pb-12">
             <div>
@@ -52,16 +76,18 @@ export default function SupportPage() {
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 font-outfit">Call Us</h3>
                     <p className="text-gray-500 text-sm mt-2">Available 24/7 for emergency roadside assistance.</p>
-                    <a href="tel:+67583054576" className="text-blue-600 font-bold mt-4 block">+675 8305 4576</a>
+                    <a href={`tel:${settings?.contactPhone?.replace(/\s/g, '') || '+67583054576'}`} className="text-blue-600 font-bold mt-4 block">
+                        {settings?.contactPhone || '+675 8305 4576'}
+                    </a>
                 </div>
 
                 <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:border-indigo-200 transition">
-                    <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 mb-6">
+                    <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 mb-6 font-bold">
                         <MessageSquare size={24} />
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 font-outfit">WhatsApp</h3>
                     <p className="text-gray-500 text-sm mt-2">Chat with our concierge team for quick queries.</p>
-                    <a href="https://wa.me/67583054576" target="_blank" className="text-indigo-600 font-bold mt-4 block">Open WhatsApp</a>
+                    <a href={getWhatsAppLink(settings?.contactWhatsApp)} target="_blank" className="text-indigo-600 font-bold mt-4 block">Open WhatsApp</a>
                 </div>
 
                 <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:border-violet-200 transition">
@@ -70,7 +96,20 @@ export default function SupportPage() {
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 font-outfit">Email Support</h3>
                     <p className="text-gray-500 text-sm mt-2">For non-urgent inquiries and documentation.</p>
-                    <a href="mailto:ride@lessssgopng.com" className="text-violet-600 font-bold mt-4 block">ride@lessssgopng.com</a>
+                    <a href={`mailto:${settings?.contactEmail || 'ride@lessssgopng.com'}`} className="text-violet-600 font-bold mt-4 block">
+                        {settings?.contactEmail || 'ride@lessssgopng.com'}
+                    </a>
+                </div>
+            </div>
+
+            {/* Address Section */}
+            <div className="bg-gray-50 p-8 rounded-3xl flex flex-col md:flex-row items-center gap-6 border border-gray-100 shadow-sm">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-gray-600 shadow-sm border border-gray-100">
+                    <MapPin size={24} />
+                </div>
+                <div>
+                    <h4 className="text-lg font-bold text-gray-900 font-outfit">Our Office</h4>
+                    <p className="text-gray-600">{settings?.contactAddress || '1234 Sports Car Blvd, Beverly Hills, CA 90210'}</p>
                 </div>
             </div>
 

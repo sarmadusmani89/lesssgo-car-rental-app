@@ -14,6 +14,10 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
     const [formData, setFormData] = useState({
         siteName: '',
         adminEmail: '',
+        contactEmail: '',
+        contactPhone: '',
+        contactWhatsApp: '',
+        contactAddress: '',
     });
     const [favicon, setFavicon] = useState<File | null>(null);
     const [faviconPreview, setFaviconPreview] = useState<string>('');
@@ -24,6 +28,10 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
             setFormData({
                 siteName: initialData.siteName || '',
                 adminEmail: initialData.adminEmail || '',
+                contactEmail: initialData.contactEmail || '',
+                contactPhone: initialData.contactPhone || '',
+                contactWhatsApp: initialData.contactWhatsApp || '',
+                contactAddress: initialData.contactAddress || '',
             });
             if (initialData.faviconUrl) {
                 setFaviconPreview(initialData.faviconUrl);
@@ -59,6 +67,10 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
             const data = new FormData();
             data.append('siteName', formData.siteName);
             data.append('adminEmail', formData.adminEmail);
+            data.append('contactEmail', formData.contactEmail);
+            data.append('contactPhone', formData.contactPhone);
+            data.append('contactWhatsApp', formData.contactWhatsApp);
+            data.append('contactAddress', formData.contactAddress);
             if (favicon) {
                 data.append('favicon', favicon);
             }
@@ -75,7 +87,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                     Site Name
@@ -90,21 +102,71 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                 />
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Admin Notification Email
+                    </label>
+                    <input
+                        type="email"
+                        value={formData.adminEmail}
+                        onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="admin@example.com"
+                        required
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Public Contact Email
+                    </label>
+                    <input
+                        type="email"
+                        value={formData.contactEmail}
+                        onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="info@example.com"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Contact Phone
+                    </label>
+                    <input
+                        type="text"
+                        value={formData.contactPhone}
+                        onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="+675 ..."
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        WhatsApp Number
+                    </label>
+                    <input
+                        type="text"
+                        value={formData.contactWhatsApp}
+                        onChange={(e) => setFormData({ ...formData, contactWhatsApp: e.target.value })}
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="+675 ..."
+                    />
+                </div>
+            </div>
+
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Admin Notification Email
+                    Business Address
                 </label>
-                <input
-                    type="email"
-                    value={formData.adminEmail}
-                    onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="e.g. admin@example.com"
-                    required
+                <textarea
+                    value={formData.contactAddress}
+                    onChange={(e) => setFormData({ ...formData, contactAddress: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px]"
+                    placeholder="Physical location..."
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                    Systems notifications and contact form messages will be sent to this address.
-                </p>
             </div>
 
             <div>
@@ -149,14 +211,11 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                             <Upload className="w-4 h-4" />
                             {faviconPreview ? 'Change Favicon' : 'Upload Favicon'}
                         </button>
-                        <p className="text-[10px] text-gray-500 mt-1">
-                            Recommended size: 32x32 or 48x48. PNG, ICO, or SVG.
-                        </p>
                     </div>
                 </div>
             </div>
 
-            <div className="pt-4 flex justify-end">
+            <div className="pt-4 flex justify-end sticky bottom-0 bg-white">
                 <button
                     type="submit"
                     disabled={loading}

@@ -148,8 +148,12 @@ model SystemSettings {
   id                String   @id @default(uuid())
   siteName          String   @default("Lesssgo Car Rental")
   adminEmail        String   @default("sarmadusmani598@gmail.com")
+  contactEmail      String   @default("ride@lessssgopng.com")
+  contactPhone      String   @default("+675 83054576")
+  contactWhatsApp   String   @default("+675 83054576")
+  contactAddress    String   @default("1234 Sports Car Blvd, Beverly Hills, CA 90210")
   maintenanceMode   Boolean  @default(false)
-  currency          String   @default("PGK")
+  currency          String   @default( "PGK")
   faviconUrl        String?
   passwordMinLength Int      @default(8)
   updatedAt         DateTime @updatedAt

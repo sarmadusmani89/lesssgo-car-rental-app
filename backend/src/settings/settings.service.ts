@@ -19,6 +19,10 @@ export class SettingsService {
                 data: {
                     siteName: 'Lesssgo Car Rental',
                     adminEmail: 'sarmadusmani598@gmail.com',
+                    contactEmail: 'ride@lessssgopng.com',
+                    contactPhone: '+675 83054576',
+                    contactWhatsApp: '+675 83054576',
+                    contactAddress: '1234 Sports Car Blvd, Beverly Hills, CA 90210',
                     maintenanceMode: false,
                     currency: 'PGK',
                 },

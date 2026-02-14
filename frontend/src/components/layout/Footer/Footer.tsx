@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner'; // Changed from react-hot-toast to sonner
 import api from '@/lib/api'; // New import for API utility
 import styles from './Footer.module.css';
@@ -10,13 +10,26 @@ import { Instagram, Twitter, Facebook, Linkedin, Mail, MapPin, Phone, ArrowRight
 export default function Footer() {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
+    const [settings, setSettings] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await api.get('/settings');
+                setSettings(res.data);
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     const handleSubscribe = async (e: React.FormEvent) => {
+        // ... (existing handleSubscribe logic)
         e.preventDefault();
         setLoading(true);
 
         try {
-            // Replace with your actual API endpoint for newsletter subscription
             const response = await fetch('/api/subscribe-newsletter', {
                 method: 'POST',
                 headers: {
@@ -29,7 +42,7 @@ export default function Footer() {
 
             if (response.ok) {
                 toast.success(data.message || 'Subscribed successfully!');
-                setEmail(''); // Clear email input on success
+                setEmail('');
             } else {
                 toast.error(data.message || 'Failed to subscribe. Please try again.');
             }
@@ -48,7 +61,7 @@ export default function Footer() {
                     <Link href="/" className={styles.logo}>
                         <img src="/web-logo-dark.png" alt="Lesssgo Logo" className={styles.logoImage} />
                     </Link>
-                    <p>Experience the ultimate freedom on the road with Lesssgo. We provide premium car rental services at competitive prices.</p>
+                    <p>Experience the ultimate freedom on the road with {settings?.siteName || 'Lesssgo'}. We provide premium car rental services at competitive prices.</p>
                     <div className={styles.socials}>
                         <Link href="#" className={styles.socialIcon}><Instagram size={20} /></Link>
                         <Link href="#" className={styles.socialIcon}><Twitter size={20} /></Link>
@@ -81,22 +94,22 @@ export default function Footer() {
                     <ul>
                         <li style={{ display: 'flex', gap: '8px', color: '#94a3b8', fontSize: '14px', marginBottom: '12px' }}>
                             <MapPin size={18} />
-                            <span>1234 Sports Car Blvd, Beverly Hills, CA 90210</span>
+                            <span>{settings?.contactAddress || '1234 Sports Car Blvd, Beverly Hills, CA 90210'}</span>
                         </li>
                         <li style={{ display: 'flex', gap: '8px', color: '#94a3b8', fontSize: '14px', marginBottom: '12px' }}>
                             <Phone size={18} />
-                            <span>+675 83054576</span>
+                            <span>{settings?.contactPhone || '+675 83054576'}</span>
                         </li>
                         <li style={{ display: 'flex', gap: '8px', color: '#94a3b8', fontSize: '14px' }}>
                             <Mail size={18} />
-                            <span>ride@lessssgopng.com</span>
+                            <span>{settings?.contactEmail || 'ride@lessssgopng.com'}</span>
                         </li>
                     </ul>
                 </div>
             </div>
             <div className={styles.bottom}>
                 <div className="container">
-                    <p>&copy; {new Date().getFullYear()} Lesssgo. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} {settings?.siteName || 'Lesssgo'}. All rights reserved.</p>
                 </div>
             </div>
         </footer>
