@@ -13,7 +13,7 @@ export class AuthService {
     private emailService: EmailService,
   ) { }
 
-  async signup(email: string, password: string, name: string) {
+  async signup(email: string, password: string, name: string, phoneNumber: string) {
     const existingUser = await this.usersService.findByEmail(email);
     if (existingUser) {
       throw new ConflictException('Email already exists');
@@ -25,6 +25,7 @@ export class AuthService {
       email,
       password: password, // usersService.create will handle hashing
       name,
+      phoneNumber,
       role: 'USER' as any, // Ensure default role is 'user'
       isVerified: false,
       verificationToken,

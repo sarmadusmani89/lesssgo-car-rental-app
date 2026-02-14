@@ -10,4 +10,7 @@ export class SignupDto {
 
     @IsString()
     name!: string;
+
+    @IsString()
+    phoneNumber!: string;
 }
