@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { ArrowRight, Loader2 } from 'lucide-react';
-import styles from '@/app/(public)/(home)/page.module.css';
 import CarCard from '@/components/ui/CarCard';
 import { useFeaturedCars } from '@/hooks/useFeaturedCars';
 
@@ -32,11 +31,11 @@ export default function FeaturedCars() {
     };
 
     return (
-        <section className={styles.carsSection}>
-            <div className="container">
-                <div className={styles.sectionHeaderCentered}>
-                    <h2 className={styles.sectionTitle}>Featured Cars</h2>
-                    <p className={styles.sectionSubtitle}>Discover our hand-picked selection of high-performance cars from our real-time fleet.</p>
+        <section className="py-[100px] bg-slate-50">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="text-center mb-16">
+                    <h2 className="text-5xl md:text-[4rem] font-extrabold mb-4 text-[#0f172a] tracking-tight">Featured Cars</h2>
+                    <p className="text-slate-500 text-lg max-w-[700px] mx-auto">Discover our hand-picked selection of high-performance cars from our real-time fleet.</p>
                 </div>
 
                 {loading ? (
@@ -45,7 +44,7 @@ export default function FeaturedCars() {
                         <p className="text-gray-500 font-medium font-outfit">Loading fleet...</p>
                     </div>
                 ) : cars.length > 0 ? (
-                    <div className={styles.carGrid}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {cars.map((car) => (
                             <CarCard key={car.id} {...mapCarToProps(car)} />
                         ))}
@@ -56,8 +55,8 @@ export default function FeaturedCars() {
                     </div>
                 )}
 
-                <div style={{ textAlign: 'center', marginTop: '5rem' }}>
-                    <Link href="/cars" className="btn btn-outline btn-lg">
+                <div className="text-center mt-20">
+                    <Link href="/cars" className="inline-flex items-center gap-2 px-8 py-4 border-2 border-[#0f172a] text-[#0f172a] rounded-xl font-bold transition-all hover:bg-[#0f172a] hover:text-white">
                         View All Cars <ArrowRight size={20} />
                     </Link>
                 </div>

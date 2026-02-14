@@ -1,4 +1,3 @@
-import styles from './Testimonials.module.css';
 import TestimonialCard from '@/components/common/TestimonialCard/TestimonialCard';
 
 const testimonials = [
@@ -30,14 +29,14 @@ const testimonials = [
 
 export default function Testimonials() {
     return (
-        <section className={styles.testimonials}>
-            <div className="container">
-                <div className={styles.headingWrapper}>
-                    <h2>Trusted by <span className="gradient-text">Excellence.</span></h2>
-                    <p>Don&apos;t just take our word for it. Here&apos;s what our premium clients have to say about their experience.</p>
+        <section className="py-32 bg-slate-50 relative overflow-hidden">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="text-center max-w-[800px] mx-auto mb-20">
+                    <h2 className="text-5xl font-extrabold text-[#0f172a] mb-6 tracking-tight">Trusted by <span className="text-blue-600">Excellence.</span></h2>
+                    <p className="text-[#64748b] text-lg lg:text-[1.125rem] leading-relaxed">Don&apos;t just take our word for it. Here&apos;s what our premium clients have to say about their experience.</p>
                 </div>
 
-                <div className={styles.grid}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {testimonials.map((testimonial) => (
                         <TestimonialCard key={testimonial.id} testimonial={testimonial} />
                     ))}
