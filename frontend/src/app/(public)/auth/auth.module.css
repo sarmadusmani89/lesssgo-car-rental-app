@@ -231,10 +231,6 @@
     font-weight: 700;
     font-size: 0.9375rem;
     color: #475569;
-    border-right: 1.5px solid #e2e8f0;
-    padding-right: 0.75rem;
-    height: 1.5rem;
-    line-height: normal;
     z-index: 10;
     pointer-events: none;
 }

@@ -1,4 +1,5 @@
-import { User, Mail, Shield } from 'lucide-react';
+import { User, Mail, Shield, Phone } from 'lucide-react';
+import { displayPhone } from '@/lib/utils';
 
 interface ProfileViewProps {
     user: any;
@@ -36,6 +37,14 @@ export default function ProfileView({ user }: ProfileViewProps) {
                         <div className="font-medium text-gray-900 flex items-center gap-2">
                             <Mail size={16} className="text-gray-400" />
                             {user.email}
+                        </div>
+                    </div>
+
+                    <div className="p-4 border border-gray-100 rounded-xl">
+                        <label className="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
+                        <div className="font-medium text-gray-900 flex items-center gap-2">
+                            <Phone size={16} className="text-gray-400" />
+                            {displayPhone(user.phoneNumber)}
                         </div>
                     </div>
 
