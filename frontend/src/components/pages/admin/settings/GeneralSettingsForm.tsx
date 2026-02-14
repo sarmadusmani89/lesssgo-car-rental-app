@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import api from '@/lib/api';
 import { Loader2, Save, Upload, X } from 'lucide-react';
 import Image from 'next/image';
-import { formatAustralianPhone, mapToAustralianPrefix } from '@/lib/utils';
+import { formatPNGPhone, mapToPNGPrefix } from '@/lib/utils';
 
 interface GeneralSettingsFormProps {
     onSaved: () => void;
@@ -26,18 +26,18 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
 
     useEffect(() => {
         if (initialData) {
-            // Remove +61 for display if present
+            // Remove +675 for display if present
             const displayPhone = (phone?: string) => {
                 if (!phone) return '';
-                return phone.startsWith('+61') ? phone.slice(3).trim() : phone;
+                return phone.startsWith('+675') ? phone.slice(4).trim() : phone;
             };
 
             setFormData({
                 siteName: initialData.siteName || '',
                 adminEmail: initialData.adminEmail || '',
                 contactEmail: initialData.contactEmail || '',
-                contactPhone: formatAustralianPhone(displayPhone(initialData.contactPhone)),
-                contactWhatsApp: formatAustralianPhone(displayPhone(initialData.contactWhatsApp)),
+                contactPhone: formatPNGPhone(displayPhone(initialData.contactPhone)),
+                contactWhatsApp: formatPNGPhone(displayPhone(initialData.contactWhatsApp)),
                 contactAddress: initialData.contactAddress || '',
             });
             if (initialData.faviconUrl) {
@@ -47,8 +47,8 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
     }, [initialData]);
 
     const handlePhoneChange = (field: 'contactPhone' | 'contactWhatsApp', value: string) => {
-        const formatted = formatAustralianPhone(value);
-        if (formatted.replace(/\s/g, '').length <= 10) {
+        const formatted = formatPNGPhone(value);
+        if (formatted.replace(/\s/g, '').length <= 8) {
             setFormData(prev => ({ ...prev, [field]: formatted }));
         }
     };
@@ -83,8 +83,8 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
             data.append('adminEmail', formData.adminEmail);
             data.append('contactEmail', formData.contactEmail);
 
-            data.append('contactPhone', mapToAustralianPrefix(formData.contactPhone));
-            data.append('contactWhatsApp', mapToAustralianPrefix(formData.contactWhatsApp));
+            data.append('contactPhone', mapToPNGPrefix(formData.contactPhone));
+            data.append('contactWhatsApp', mapToPNGPrefix(formData.contactWhatsApp));
             data.append('contactAddress', formData.contactAddress);
             if (favicon) {
                 data.append('favicon', favicon);
@@ -155,7 +155,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                         value={formData.contactPhone}
                         onChange={(e) => handlePhoneChange('contactPhone', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="04XX XXX XXX"
+                        placeholder="7XXX XXXX"
                     />
                 </div>
                 <div>
@@ -167,7 +167,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                         value={formData.contactWhatsApp}
                         onChange={(e) => handlePhoneChange('contactWhatsApp', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="04XX XXX XXX"
+                        placeholder="7XXX XXXX"
                     />
                 </div>
             </div>
