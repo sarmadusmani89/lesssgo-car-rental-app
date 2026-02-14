@@ -6,6 +6,7 @@ import UserBookingCard from './UserBookingCard';
 import CancelBookingModal from './CancelBookingModal';
 import { Loader2, CalendarX } from 'lucide-react';
 import { toast } from 'sonner';
+import { Pagination } from '@/components/ui/Pagination';
 
 export default function UserBookings() {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -162,28 +163,12 @@ export default function UserBookings() {
               ))}
             </div>
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex justify-center items-center space-x-2 pt-4">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Previous
-                </button>
-                <span className="text-sm text-gray-600">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-1 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </button>
-              </div>
-            )}
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filteredBookings.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+            />
           </>
         )}
       </div>
