@@ -93,14 +93,18 @@
     flex: 1;
     display: flex;
     align-items: center;
+    /* Keep centered, but top padding will push it down if needed */
     justify-content: center;
-    padding: 6rem 3rem 3rem;
+    padding: 8rem 3rem 4rem;
+    /* Increased top padding from 6rem to 8rem */
     background: white;
 }
 
 .authCard {
     width: 100%;
     max-width: 380px;
+    margin-top: 2rem;
+    /* Added margin to push content down further */
 }
 
 .authCard h2 {
@@ -210,6 +214,29 @@
     font-size: 1rem;
     font-weight: 500;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.inputWrapperWithPrefix input {
+    padding-left: 6.5rem;
+    /* Extra space for Icon (3.5rem) + Prefix (approx 3rem) */
+}
+
+.inputPrefix {
+    position: absolute;
+    left: 3.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: #475569;
+    border-right: 1.5px solid #e2e8f0;
+    padding-right: 0.75rem;
+    height: 1.5rem;
+    line-height: normal;
+    z-index: 10;
+    pointer-events: none;
 }
 
 .inputError input {

@@ -1,5 +1,4 @@
-// app/admin/bookings/ViewDetailsModal.tsx
-"use client";
+"use client"
 import { displayPhone } from "@/lib/utils";
 import { Booking } from "@/types/booking";
 

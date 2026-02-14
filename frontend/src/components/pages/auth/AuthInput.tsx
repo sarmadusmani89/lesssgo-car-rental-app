@@ -21,10 +21,10 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                 <label>
                     {label} {required ? <span className="text-red-500">*</span> : <span className="text-gray-400 font-normal italic lowercase ml-1">(optional)</span>}
                 </label>
-                <div className={`${styles.inputWrapper} ${error ? styles.inputError : ''} ${wrapperClassName || ''}`}>
+                <div className={`${styles.inputWrapper} ${prefix ? styles.inputWrapperWithPrefix : ''} ${error ? styles.inputError : ''} ${wrapperClassName || ''}`}>
                     <Icon size={18} />
                     {prefix && (
-                        <span className="flex items-center pl-1 pr-2 mr-2 border-r border-gray-100 text-gray-500 font-bold text-sm whitespace-nowrap">
+                        <span className={styles.inputPrefix}>
                             {prefix}
                         </span>
                     )}
