@@ -20,8 +20,8 @@ export default function PaymentMethodSelection({
           type="button"
           onClick={() => onChange('stripe')}
           className={`flex items-center gap-4 p-6 rounded-3xl border-2 transition-all duration-300 ${selected === 'stripe'
-              ? 'border-blue-600 bg-blue-50/50'
-              : 'border-gray-50 hover:border-gray-200 bg-gray-50/30'
+            ? 'border-blue-600 bg-blue-100 shadow-lg shadow-blue-200/50 scale-[1.02]'
+            : 'border-gray-50 hover:border-gray-200 bg-gray-50/30'
             }`}
         >
           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${selected === 'stripe' ? 'bg-blue-600 text-white' : 'bg-white text-gray-400'
@@ -38,8 +38,8 @@ export default function PaymentMethodSelection({
           type="button"
           onClick={() => onChange('pickup')}
           className={`flex items-center gap-4 p-6 rounded-3xl border-2 transition-all duration-300 ${selected === 'pickup'
-              ? 'border-blue-600 bg-blue-50/50'
-              : 'border-gray-50 hover:border-gray-200 bg-gray-50/30'
+            ? 'border-blue-600 bg-blue-100 shadow-lg shadow-blue-200/50 scale-[1.02]'
+            : 'border-gray-50 hover:border-gray-200 bg-gray-50/30'
             }`}
         >
           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${selected === 'pickup' ? 'bg-blue-600 text-white' : 'bg-white text-gray-400'
