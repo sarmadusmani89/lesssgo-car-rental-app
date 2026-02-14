@@ -8,10 +8,11 @@ interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     wrapperClassName?: string;
     required?: boolean;
     error?: string;
+    prefix?: string;
 }
 
 const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
-    ({ label, icon: Icon, wrapperClassName, type = 'text', required, error, ...props }, ref) => {
+    ({ label, icon: Icon, wrapperClassName, type = 'text', required, error, prefix, ...props }, ref) => {
         const [showPassword, setShowPassword] = useState(false);
         const isPassword = type === 'password';
 

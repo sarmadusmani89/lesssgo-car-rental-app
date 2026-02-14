@@ -102,7 +102,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
+        <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto px-1 pt-8">
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                     Site Name
@@ -150,25 +150,35 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Contact Phone
                     </label>
-                    <input
-                        type="text"
-                        value={formData.contactPhone}
-                        onChange={(e) => handlePhoneChange('contactPhone', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="7XXX XXXX"
-                    />
+                    <div className="flex">
+                        <span className="flex items-center px-4 py-2 border border-r-0 border-gray-200 rounded-l-lg bg-gray-50 text-gray-500 font-bold text-sm">
+                            +675
+                        </span>
+                        <input
+                            type="text"
+                            value={formData.contactPhone}
+                            onChange={(e) => handlePhoneChange('contactPhone', e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="7XXX XXXX"
+                        />
+                    </div>
                 </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         WhatsApp Number
                     </label>
-                    <input
-                        type="text"
-                        value={formData.contactWhatsApp}
-                        onChange={(e) => handlePhoneChange('contactWhatsApp', e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="7XXX XXXX"
-                    />
+                    <div className="flex">
+                        <span className="flex items-center px-4 py-2 border border-r-0 border-gray-200 rounded-l-lg bg-gray-50 text-gray-500 font-bold text-sm">
+                            +675
+                        </span>
+                        <input
+                            type="text"
+                            value={formData.contactWhatsApp}
+                            onChange={(e) => handlePhoneChange('contactWhatsApp', e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="7XXX XXXX"
+                        />
+                    </div>
                 </div>
             </div>
 
