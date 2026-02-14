@@ -48,7 +48,10 @@ export default function CarCard({
     const badgeText = isAvailable ? 'Instant Booking' : 'Reserved';
 
     return (
-        <div className="group bg-white rounded-[1.25rem] overflow-hidden border border-black/5 transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) relative flex flex-col hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-blue-600">
+        <Link
+            href={`/cars/${slug || id}`}
+            className="block group bg-white rounded-[1.25rem] overflow-hidden border border-black/5 transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) relative flex flex-col hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:border-blue-600 cursor-pointer"
+        >
             <div className="relative h-[240px] bg-[#fdfdfd] flex items-center justify-center overflow-hidden">
                 <div className={`absolute top-4 left-4 py-[0.4rem] px-[0.8rem] rounded-md text-[10px] font-black uppercase tracking-wider text-white z-[5] ${isAvailable ? 'bg-blue-600' : 'bg-slate-500'}`}>
                     {badgeText}
@@ -115,11 +118,10 @@ export default function CarCard({
                         {monthlyPrice && (
                             <span className="text-[14px] font-bold text-blue-600 mt-2">{formatPrice(monthlyPrice, currency, rates)} / month</span>
                         )}
-
                     </div>
-                    <Link href={`/cars/${slug || id}`} className="bg-[#0f172a] text-white px-6 py-[14px] rounded-[10px] font-extrabold text-[14px] flex items-center gap-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(15,23,42,0.4)]">
+                    <div className="bg-[#0f172a] text-white px-6 py-[14px] rounded-[10px] font-extrabold text-[14px] flex items-center gap-2 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_10px_25px_rgba(15,23,42,0.4)]">
                         Details <ArrowRight size={18} />
-                    </Link>
+                    </div>
                 </div>
 
                 {freeCancellation && (
@@ -128,6 +130,6 @@ export default function CarCard({
                     </div>
                 )}
             </div>
-        </div>
+        </Link>
     );
 }
