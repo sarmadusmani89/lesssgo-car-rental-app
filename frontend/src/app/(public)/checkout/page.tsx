@@ -139,7 +139,8 @@ function CheckoutContent() {
           endDate,
           total: totalAmount.toString(),
           bond: (car.pricePerDay || 0).toString(),
-          payment: 'CASH'
+          payment: 'CASH',
+          paymentStatus: 'PENDING'
         });
         router.push(`/thank-you?${params.toString()}`);
       }

@@ -33,7 +33,8 @@ function ThankYouContent() {
                     endDate: b.endDate,
                     total: b.totalAmount.toString(),
                     bond: (b.bondAmount || 0).toString(),
-                    payment: b.paymentMethod
+                    payment: b.paymentMethod,
+                    paymentStatus: b.paymentStatus
                 });
             } catch (err) {
                 console.error("Failed to fetch booking from session:", err);
@@ -99,7 +100,9 @@ function ThankYouContent() {
                                         <Receipt size={24} />
                                     </div>
                                     <div>
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Grand Total (Paid)</span>
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">
+                                            Grand Total {bookingData.paymentStatus === 'PAID' || bookingData.paymentStatus === 'CONFIRMED' ? '(Paid)' : '(To Be Paid)'}
+                                        </span>
                                         <div className="space-y-1">
                                             <p className="text-2xl font-black text-blue-600 font-outfit uppercase tracking-tight">
                                                 {formatPrice(Number(total || 0) + Number(bond || 0), currency as any, rates)}
