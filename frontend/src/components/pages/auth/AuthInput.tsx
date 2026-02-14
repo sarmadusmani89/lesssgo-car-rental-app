@@ -23,6 +23,11 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                 </label>
                 <div className={`${styles.inputWrapper} ${error ? styles.inputError : ''} ${wrapperClassName || ''}`}>
                     <Icon size={18} />
+                    {prefix && (
+                        <span className="flex items-center pl-1 pr-2 mr-2 border-r border-gray-100 text-gray-500 font-bold text-sm whitespace-nowrap">
+                            {prefix}
+                        </span>
+                    )}
                     <input
                         ref={ref}
                         type={isPassword ? (showPassword ? 'text' : 'password') : type}
