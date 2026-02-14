@@ -20,17 +20,17 @@ export default function PaymentMethodSelection({
           type="button"
           onClick={() => onChange('stripe')}
           className={`flex items-center gap-4 p-6 rounded-3xl border-2 transition-all duration-300 ${selected === 'stripe'
-            ? 'border-blue-600 bg-blue-100 shadow-lg shadow-blue-200/50 scale-[1.02]'
+            ? 'border-blue-600 bg-blue-600 shadow-xl shadow-blue-600/20 scale-[1.02] text-white'
             : 'border-gray-50 hover:border-gray-200 bg-gray-50/30'
             }`}
         >
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${selected === 'stripe' ? 'bg-blue-600 text-white' : 'bg-white text-gray-400'
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${selected === 'stripe' ? 'bg-white/20 text-white' : 'bg-white text-gray-400'
             }`}>
             <CreditCard size={24} />
           </div>
           <div className="text-left">
-            <p className={`font-black uppercase text-xs tracking-widest ${selected === 'stripe' ? 'text-blue-600' : 'text-gray-400'}`}>Pay Online</p>
-            <p className="font-bold text-gray-900">Stripe Secure</p>
+            <p className={`font-black uppercase text-xs tracking-widest ${selected === 'stripe' ? 'text-white/80' : 'text-gray-400'}`}>Pay Online</p>
+            <p className={`font-bold ${selected === 'stripe' ? 'text-white' : 'text-gray-900'}`}>Stripe Secure</p>
           </div>
         </button>
 
@@ -38,17 +38,17 @@ export default function PaymentMethodSelection({
           type="button"
           onClick={() => onChange('pickup')}
           className={`flex items-center gap-4 p-6 rounded-3xl border-2 transition-all duration-300 ${selected === 'pickup'
-            ? 'border-blue-600 bg-blue-100 shadow-lg shadow-blue-200/50 scale-[1.02]'
+            ? 'border-blue-600 bg-blue-600 shadow-xl shadow-blue-600/20 scale-[1.02] text-white'
             : 'border-gray-50 hover:border-gray-200 bg-gray-50/30'
             }`}
         >
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${selected === 'pickup' ? 'bg-blue-600 text-white' : 'bg-white text-gray-400'
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${selected === 'pickup' ? 'bg-white/20 text-white' : 'bg-white text-gray-400'
             }`}>
             <Truck size={24} />
           </div>
           <div className="text-left">
-            <p className={`font-black uppercase text-xs tracking-widest ${selected === 'pickup' ? 'text-blue-600' : 'text-gray-400'}`}>Pay at Office</p>
-            <p className="font-bold text-gray-900">Pickup Payment</p>
+            <p className={`font-black uppercase text-xs tracking-widest ${selected === 'pickup' ? 'text-white/80' : 'text-gray-400'}`}>Pay at Office</p>
+            <p className={`font-bold ${selected === 'pickup' ? 'text-white' : 'text-gray-900'}`}>Pickup Payment</p>
           </div>
         </button>
       </div>
