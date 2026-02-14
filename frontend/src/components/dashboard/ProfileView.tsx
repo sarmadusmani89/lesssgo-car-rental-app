@@ -44,7 +44,7 @@ export default function ProfileView({ user }: ProfileViewProps) {
                         <label className="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
                         <div className="font-medium text-gray-900 flex items-center gap-2">
                             <Phone size={16} className="text-gray-400" />
-                            {displayPhone(user.phoneNumber)}
+                            {user.phoneNumber ? `+675 ${displayPhone(user.phoneNumber)}` : 'N/A'}
                         </div>
                     </div>
 
