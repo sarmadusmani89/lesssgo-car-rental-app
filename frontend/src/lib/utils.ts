@@ -96,9 +96,9 @@ export function mapToAustralianPrefix(value: string) {
 export function displayPhone(phone?: string) {
     if (!phone) return 'N/A';
     const cleaned = phone.trim();
-    // If it starts with +61, strip it for local formatting (04XX...)
-    const local = cleaned.startsWith('+61') ? '0' + cleaned.slice(3).trim() : cleaned;
-    return formatAustralianPhone(local);
+    // If it starts with +675, strip it for local formatting (7XXX XXXX)
+    const local = cleaned.startsWith('+675') ? cleaned.slice(4).trim() : cleaned;
+    return formatPNGPhone(local);
 }
 
 // Papua New Guinea Phone Formatting (e.g. 7XXX XXXX)
