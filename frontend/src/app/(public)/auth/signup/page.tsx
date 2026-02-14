@@ -6,16 +6,18 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Mail, Lock, User, Loader2, CheckCircle } from 'lucide-react';
+import { Mail, Lock, User, Phone, Loader2, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import AuthSuccess from '@/components/pages/auth/AuthSuccess';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
+import { formatPNGPhone, mapToPNGPrefix } from '@/lib/utils';
 
 // Define the form inputs
 type SignupFormInputs = {
     name: string;
     email: string;
+    phoneNumber: string;
     password: string;
 };
 
@@ -33,7 +35,9 @@ function SignupContent() {
     const [success, setSuccess] = useState('');
     const router = useRouter();
 
-    const { register, handleSubmit, formState: { errors } } = useForm<SignupFormInputs>();
+    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<SignupFormInputs>();
+
+    const phoneValue = watch('phoneNumber');
 
     const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
         setLoading(true);
@@ -41,7 +45,12 @@ function SignupContent() {
         setSuccess('');
 
         try {
-            const res = await api.post<BackendResponse>('/auth/signup', data);
+            // Map phone to PNG format before sending
+            const formattedData = {
+                ...data,
+                phoneNumber: mapToPNGPrefix(data.phoneNumber)
+            };
+            const res = await api.post<BackendResponse>('/auth/signup', formattedData);
 
             // Show success toast instead of inline? Or both. User asked for error toast.
             // Let's stick to inline success for now as it redirects.
@@ -115,6 +124,29 @@ function SignupContent() {
                                 pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
                             })}
                             error={errors.email?.message}
+                        />
+
+                        <AuthInput
+                            label="Phone Number"
+                            icon={Phone}
+                            type="tel"
+                            placeholder="7XXX XXXX"
+                            required
+                            {...register('phoneNumber', {
+                                required: 'Phone number is required',
+                                pattern: {
+                                    value: /^\d{8}$/,
+                                    message: 'Phone must be 8 digits'
+                                },
+                                onChange: (e) => {
+                                    const formatted = formatPNGPhone(e.target.value);
+                                    if (formatted.replace(/\s/g, '').length <= 8) {
+                                        setValue('phoneNumber', formatted);
+                                    }
+                                }
+                            })}
+                            error={errors.phoneNumber?.message}
+                            maxLength={9}
                         />
 
                         <AuthInput

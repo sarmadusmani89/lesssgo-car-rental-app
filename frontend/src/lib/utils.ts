@@ -101,3 +101,19 @@ export function displayPhone(phone?: string) {
     return formatAustralianPhone(local);
 }
 
+// Papua New Guinea Phone Formatting (e.g. 7XXX XXXX)
+export function formatPNGPhone(value: string) {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 5) return phoneNumber;
+    return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 8)}`;
+}
+
+export function mapToPNGPrefix(value: string) {
+    const cleaned = stripPhone(value);
+    if (!cleaned) return '';
+    return `+675 ${cleaned}`;
+}
+
+
