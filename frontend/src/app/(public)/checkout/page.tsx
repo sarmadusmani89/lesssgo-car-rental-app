@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { toUtcDate, calculateRentalDays } from '@/lib/utils';
+import { toUtcDate, calculateRentalDays, mapToAustralianPrefix } from '@/lib/utils';
 import BookingSummary from '@/components/pages/checkout/BookingSummary';
 import CustomerInformationForm from '@/components/pages/checkout/CustomerInformationForm';
 import PaymentMethodSelection from '@/components/pages/checkout/PaymentMethodSelection';
@@ -116,7 +116,7 @@ function CheckoutContent() {
         paymentStatus: 'PENDING',
         customerName: customerData.fullName,
         customerEmail: customerData.email,
-        customerPhone: customerData.phoneNumber || '',
+        customerPhone: mapToAustralianPrefix(customerData.phoneNumber),
         paymentMethod: paymentMethod === 'stripe' ? 'ONLINE' : 'CASH',
         pickupLocation,
         returnLocation,

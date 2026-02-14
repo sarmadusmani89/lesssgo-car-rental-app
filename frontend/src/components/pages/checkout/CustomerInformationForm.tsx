@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin } from 'lucide-react';
+import { formatAustralianPhone } from '@/lib/utils';
 
 interface Props {
   initialData: any;
@@ -20,7 +21,7 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
       const newData = {
         fullName: initialData.fullName || initialData.customerName || '',
         email: initialData.email || initialData.customerEmail || '',
-        phoneNumber: initialData.phoneNumber || initialData.customerPhone || '',
+        phoneNumber: formatAustralianPhone(initialData.phoneNumber || initialData.customerPhone || ''),
       };
       setFormData(newData);
       // Notify parent of the merged/pre-filled state
@@ -29,15 +30,12 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
   }, [initialData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
 
-    // Australia phone validation (digits, +, spaces, dashes, parentheses)
     if (name === 'phoneNumber') {
-      const validCharRegex = /^[\d\s+\-()]*$/;
-      if (!validCharRegex.test(value)) return;
-
-      // Block if length exceeds 15
-      if (value.length > 15) return;
+      value = formatAustralianPhone(value);
+      // Block if stripped length exceeds 10 digits
+      if (value.replace(/\s/g, '').length > 10) return;
     }
 
     const updated = { ...formData, [name]: value };
@@ -94,11 +92,11 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
             <input
               name="phoneNumber"
               type="tel"
-              placeholder="+61 400 000 000"
+              placeholder="04XX XXX XXX"
               className={`${inputClasses} pl-12`}
               value={formData.phoneNumber}
               onChange={handleChange}
-              maxLength={15}
+              maxLength={12}
             />
           </div>
         </div>

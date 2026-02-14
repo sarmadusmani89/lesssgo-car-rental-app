@@ -70,3 +70,34 @@ export function calculateRentalDays(startDate: string | Date, endDate: string | 
     return Math.max(1, Math.ceil(diffHours / 24));
 }
 
+
+export function formatAustralianPhone(value: string) {
+    if (!value) return value;
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    const phoneNumberLength = phoneNumber.length;
+    if (phoneNumberLength < 5) return phoneNumber;
+    if (phoneNumberLength < 8) {
+        return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4)}`;
+    }
+    return `${phoneNumber.slice(0, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7, 10)}`;
+}
+
+export function stripPhone(value: string) {
+    return value.replace(/[^\d]/g, '');
+}
+
+export function mapToAustralianPrefix(value: string) {
+    const cleaned = stripPhone(value);
+    if (!cleaned) return '';
+    const final = cleaned.startsWith('0') ? cleaned.slice(1) : cleaned;
+    return `+61 ${final}`;
+}
+
+export function displayPhone(phone?: string) {
+    if (!phone) return 'N/A';
+    const cleaned = phone.trim();
+    // If it starts with +61, strip it for local formatting (04XX...)
+    const local = cleaned.startsWith('+61') ? '0' + cleaned.slice(3).trim() : cleaned;
+    return formatAustralianPhone(local);
+}
+
