@@ -131,6 +131,7 @@ function SignupContent() {
                             icon={Phone}
                             type="tel"
                             placeholder="7XXX XXXX"
+                            prefix="+675"
                             required
                             {...register('phoneNumber', {
                                 required: 'Phone number is required',
