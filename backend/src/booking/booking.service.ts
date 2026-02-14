@@ -231,7 +231,7 @@ export class BookingService {
         car: true,
         payments: true,
       },
-      orderBy: { startDate: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -453,7 +453,7 @@ export class BookingService {
         car: true,
         payments: true,
       },
-      orderBy: { startDate: 'desc' },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
