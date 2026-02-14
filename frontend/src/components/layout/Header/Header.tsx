@@ -84,9 +84,12 @@ export default function Header() {
 
         // Listen for storage events (logout/login in other tabs)
         window.addEventListener('storage', checkUser);
+        // Listen for internal auth-logout events (token expiration in same tab)
+        window.addEventListener('auth-logout', checkUser);
 
         return () => {
             window.removeEventListener('storage', checkUser);
+            window.removeEventListener('auth-logout', checkUser);
         };
     }, [pathname]); // Re-check on path change (e.g. after login redirect)
 

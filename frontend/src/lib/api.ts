@@ -22,7 +22,9 @@ api.interceptors.response.use(
     (error) => {
         if (error.response?.status === 401) {
             // Don't redirect if we're already on an auth page or the request is for auth
-            const isAuthRequest = error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/auth/signup');
+            const isAuthRequest = error.config?.url?.includes('/auth/login') ||
+                error.config?.url?.includes('/auth/signup') ||
+                error.config?.url?.includes('/auth/register');
 
             if (typeof window !== 'undefined' && !isAuthRequest) {
                 // Clear all auth data
@@ -31,8 +33,18 @@ api.interceptors.response.use(
                 document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
                 document.cookie = 'role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 
-                // Redirect to login
-                window.location.href = '/auth/login';
+                // Dispatch custom event for same-tab components to update (like Header)
+                window.dispatchEvent(new Event('auth-logout'));
+
+                // Define protected routes that require redirect
+                const protectedPaths = ['/dashboard', '/admin', '/checkout', '/profile', '/my-bookings'];
+                const currentPath = window.location.pathname;
+                const isProtectedRoute = protectedPaths.some(path => currentPath.startsWith(path));
+
+                if (isProtectedRoute) {
+                    // Redirect to login only if on a protected route
+                    window.location.href = '/auth/login?redirect=' + encodeURIComponent(currentPath);
+                }
             }
         }
         return Promise.reject(error);
