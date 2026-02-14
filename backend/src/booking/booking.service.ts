@@ -308,17 +308,6 @@ export class BookingService {
         });
 
         await this.emailService.sendEmail(customerEmailFinal, 'Booking Confirmed - LesssGo', userHtml);
-
-        // Notify Admin as well
-        const settings = await this.settingsService.getSettings();
-        await this.emailService.sendEmail(settings.adminEmail, `Booking Confirmed: #${updated.id.slice(-8).toUpperCase()}`, `
-          <h2>Booking Confirmed</h2>
-          <p>Booking #${updated.id.slice(-8).toUpperCase()} has been confirmed.</p>
-          <p><strong>Customer:</strong> ${customerNameFinal}</p>
-          <p><strong>Vehicle:</strong> ${car.brand} ${car.name}</p>
-          <p><strong>Payment Method:</strong> ${paymentMethod}</p>
-        `);
-
       } catch (err) {
         console.error('Failed to send confirmation email:', err);
       }
@@ -444,36 +433,6 @@ export class BookingService {
         this.emailService.sendEmail(customerEmailFinal, 'Booking & Payment Confirmed - LesssGo', userHtml),
         this.emailService.sendEmail(customerEmailFinal, 'Payment Receipt - LesssGo', receiptHtml)
       ]);
-
-      // Send to Admin (Confirmed)
-      const settings = await this.settingsService.getSettings();
-      const { adminBookingNotificationTemplate } = await import('../lib/emailTemplates/adminBookingNotification');
-      const adminHtml = adminBookingNotificationTemplate({
-        customerName: customerNameFinal,
-        customerEmail: customerEmailFinal,
-        customerPhone: updatedBooking.customerPhone || updatedBooking.user?.phoneNumber || 'N/A',
-        bookingId: updatedBooking.id,
-        brand: car.brand,
-        vehicleName: car.name,
-        startDate: start,
-        endDate: end,
-        totalAmount,
-        bondAmount: updatedBooking.bondAmount,
-        paymentMethod,
-        paymentStatus: descriptiveStatus,
-        hp: car.hp,
-        vehicleClass: car.vehicleClass,
-        transmission: car.transmission,
-        fuelType: car.fuelType,
-        pickupLocation: updatedBooking.pickupLocation,
-        returnLocation: updatedBooking.returnLocation,
-        customTitle: 'Payment Received & Confirmed',
-        customDescription: `Payment of <strong>${totalAmount + updatedBooking.bondAmount} PGK</strong> (including bond) has been verified for booking #${updatedBooking.id.slice(-8).toUpperCase()}.`,
-        isPaid: true
-      });
-
-      await this.emailService.sendEmail(settings.adminEmail, 'Payment Received & Booking Confirmed', adminHtml);
-
     } catch (err) {
       console.error('Failed to send payment confirmation email:', err);
     }
