@@ -98,7 +98,7 @@ export class BookingService {
     // Create Payment Record (Essential for Stats)
     await this.prisma.payment.create({
       data: {
-        amount: createBookingDto.totalAmount + bondAmount,
+        amount: createBookingDto.totalAmount + booking.bondAmount,
         currency: 'PGK',
         paymentMethod: createBookingDto.paymentMethod,
         status: createBookingDto.paymentStatus, // Usually PENDING initially
@@ -157,7 +157,7 @@ export class BookingService {
         startDate: start,
         endDate: end,
         totalAmount,
-        bondAmount,
+        bondAmount: booking.bondAmount,
         paymentMethod,
         isConfirmed: paymentMethod === 'CASH', // Cash is immediately confirmed
         hp: car.hp,
@@ -192,7 +192,7 @@ export class BookingService {
           startDate: start,
           endDate: end,
           totalAmount,
-          bondAmount,
+          bondAmount: booking.bondAmount,
           paymentMethod,
           paymentStatus: 'Pending (Cash on Pickup)',
           hp: car.hp,
