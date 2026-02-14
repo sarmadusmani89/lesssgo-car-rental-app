@@ -1,6 +1,7 @@
 // app/admin/bookings/ViewDetailsModal.tsx
 "use client";
 import { displayPhone } from "@/lib/utils";
+import { Booking } from "@/types/booking";
 
 type Props = {
   booking: Booking | null;
@@ -24,7 +25,7 @@ export default function ViewDetailsModal({ booking, onClose }: Props) {
           <p><span className="font-semibold">Booking ID:</span> {booking.id}</p>
           <p><span className="font-semibold">Customer:</span> {booking.customerName || booking.user?.name || 'N/A'}</p>
           <p><span className="font-semibold">Email:</span> {booking.customerEmail || booking.user?.email}</p>
-          <p><span className="font-semibold">Phone:</span> {displayPhone(booking.customerPhone || booking.user?.phoneNumber)}</p>
+          <p><span className="font-semibold">Phone:</span> {displayPhone(booking.customerPhone || booking.user?.phoneNumber || undefined)}</p>
           <p><span className="font-semibold">Vehicle:</span> {booking.car?.name || 'N/A'}</p>
           <p><span className="font-semibold">Status:</span> {booking.status}</p>
           <p><span className="font-semibold">Payment:</span> {booking.paymentStatus}</p>
