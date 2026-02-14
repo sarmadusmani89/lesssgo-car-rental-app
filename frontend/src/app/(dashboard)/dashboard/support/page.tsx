@@ -52,7 +52,7 @@ export default function SupportPage() {
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 font-outfit">Call Us</h3>
                     <p className="text-gray-500 text-sm mt-2">Available 24/7 for emergency roadside assistance.</p>
-                    <a href="tel:+67572497905" className="text-blue-600 font-bold mt-4 block">+675 7249 7905</a>
+                    <a href="tel:+67583054576" className="text-blue-600 font-bold mt-4 block">+675 8305 4576</a>
                 </div>
 
                 <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:border-indigo-200 transition">
@@ -61,7 +61,7 @@ export default function SupportPage() {
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 font-outfit">WhatsApp</h3>
                     <p className="text-gray-500 text-sm mt-2">Chat with our concierge team for quick queries.</p>
-                    <a href="https://wa.me/67572497905" target="_blank" className="text-indigo-600 font-bold mt-4 block">Open WhatsApp</a>
+                    <a href="https://wa.me/67583054576" target="_blank" className="text-indigo-600 font-bold mt-4 block">Open WhatsApp</a>
                 </div>
 
                 <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:border-violet-200 transition">
@@ -70,7 +70,7 @@ export default function SupportPage() {
                     </div>
                     <h3 className="text-lg font-bold text-gray-900 font-outfit">Email Support</h3>
                     <p className="text-gray-500 text-sm mt-2">For non-urgent inquiries and documentation.</p>
-                    <a href="mailto:cube360png@gmail.com" className="text-violet-600 font-bold mt-4 block">cube360png@gmail.com</a>
+                    <a href="mailto:ride@lessssgopng.com" className="text-violet-600 font-bold mt-4 block">ride@lessssgopng.com</a>
                 </div>
             </div>
 
