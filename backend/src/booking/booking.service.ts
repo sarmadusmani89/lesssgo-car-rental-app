@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../lib/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingDto } from './dto/update-booking.dto';
@@ -16,10 +16,17 @@ export class BookingService {
   async create(createBookingDto: CreateBookingDto) {
     const { carId, startDate, endDate, customerName, customerEmail, customerPhone } = createBookingDto;
 
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Enforce minimum 48-hour duration
+    const durationHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+    if (durationHours < 48) {
+      throw new BadRequestException('Minimum booking duration is 48 hours.');
+    }
+
     // Use a transaction to prevent race conditions
     const booking = await this.prisma.$transaction(async (tx) => {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
 
       // Check for overlapping bookings - only CANCELLED bookings should NOT block
       const overlappingBooking = await tx.booking.findFirst({

@@ -147,9 +147,29 @@ export default function BookingForm({ car }: Props) {
     const total = calculateTotal();
     const daysCount = total / car.pricePerDay;
 
+    // Validation for 48-hour minimum duration
+    const isDurationValid = useMemo(() => {
+        if (!pickupDate || !returnDate) return true;
+        const [pHours, pMinutes] = pickupTime.split(':').map(Number);
+        const [rHours, rMinutes] = returnTime.split(':').map(Number);
+        const start = new Date(pickupDate);
+        start.setHours(pHours, pMinutes, 0, 0);
+        const end = new Date(returnDate);
+        end.setHours(rHours, rMinutes, 0, 0);
+        const diffHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+        return diffHours >= 48;
+    }, [pickupDate, returnDate, pickupTime, returnTime]);
+
     const handleBooking = () => {
         if (!pickupDate || !returnDate || !pickupLocation || !returnLocation) {
             toast.error("Please complete all booking details");
+            return;
+        }
+
+        if (!isDurationValid) {
+            toast.error("Minimum booking duration is 48 hours", {
+                description: "Your selection is currently shorter than the required minimum period."
+            });
             return;
         }
 
@@ -229,6 +249,18 @@ export default function BookingForm({ car }: Props) {
                     selectsEnd
                 />
 
+                {!isDurationValid && pickupDate && returnDate && (
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl mb-6 animate-in fade-in slide-in-from-top-2">
+                        <p className="text-amber-800 text-xs font-bold flex items-center gap-2">
+                            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-200 text-amber-600 text-[10px]">!</span>
+                            Minimum 48 Hours Required
+                        </p>
+                        <p className="text-amber-600 text-[10px] mt-1 font-medium italic">
+                            The minimum booking duration for any vehicle is 2 days. Please adjust your return time.
+                        </p>
+                    </div>
+                )}
+
                 <PriceSummary
                     days={daysCount}
                     total={total}
@@ -239,6 +271,7 @@ export default function BookingForm({ car }: Props) {
                 <BookingButton
                     onClick={handleBooking}
                     label="Book Now"
+                    disabled={!isDurationValid}
                 />
 
                 <BookingFooter />
