@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin } from 'lucide-react';
-import { formatAustralianPhone } from '@/lib/utils';
+import { User, Mail, Phone } from 'lucide-react';
+import { formatPNGPhone, stripPhone } from '@/lib/utils';
 
 interface Props {
   initialData: any;
@@ -18,10 +18,14 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
 
   useEffect(() => {
     if (initialData) {
+      const rawPhone = initialData.phoneNumber || initialData.customerPhone || '';
+      // Strip +675 if present for local display/edit
+      const strippedPhone = rawPhone.startsWith('+675') ? rawPhone.slice(4).trim() : rawPhone;
+
       const newData = {
         fullName: initialData.fullName || initialData.customerName || '',
         email: initialData.email || initialData.customerEmail || '',
-        phoneNumber: formatAustralianPhone(initialData.phoneNumber || initialData.customerPhone || ''),
+        phoneNumber: formatPNGPhone(strippedPhone),
       };
       setFormData(newData);
       // Notify parent of the merged/pre-filled state
@@ -33,9 +37,9 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
     let { name, value } = e.target;
 
     if (name === 'phoneNumber') {
-      value = formatAustralianPhone(value);
-      // Block if stripped length exceeds 10 digits
-      if (value.replace(/\s/g, '').length > 10) return;
+      value = formatPNGPhone(value);
+      // PNG format is 8 digits (7XXX XXXX) which becomes 9 with the space
+      if (stripPhone(value).length > 8) return;
     }
 
     const updated = { ...formData, [name]: value };
@@ -86,17 +90,23 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
         </div>
 
         <div>
-          <label className={labelClasses}>Phone Number <span className="text-gray-400 font-normal italic lowercase ml-1">(optional)</span></label>
+          <label className={labelClasses}>Phone Number <span className="text-red-500">*</span></label>
           <div className="relative group">
             <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition-colors" size={18} />
+
+            {/* Added Prefix UI matching AuthInput style */}
+            <div className="absolute left-11 top-1/2 -translate-y-1/2 flex items-center h-full pointer-events-none border-r border-gray-100 pr-3">
+              <span className="text-sm font-black text-gray-400 tracking-tighter">+675</span>
+            </div>
+
             <input
               name="phoneNumber"
               type="tel"
-              placeholder="04XX XXX XXX"
-              className={`${inputClasses} pl-12`}
+              placeholder="7XXX XXXX"
+              className={`${inputClasses} pl-[5.5rem]`}
               value={formData.phoneNumber}
               onChange={handleChange}
-              maxLength={12}
+              maxLength={9}
             />
           </div>
         </div>

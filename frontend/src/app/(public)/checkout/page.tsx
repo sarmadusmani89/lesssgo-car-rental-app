@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { toUtcDate, calculateRentalDays, mapToAustralianPrefix } from '@/lib/utils';
+import { toUtcDate, calculateRentalDays, mapToPNGPrefix, stripPhone } from '@/lib/utils';
 import BookingSummary from '@/components/pages/checkout/BookingSummary';
 import CustomerInformationForm from '@/components/pages/checkout/CustomerInformationForm';
 import PaymentMethodSelection from '@/components/pages/checkout/PaymentMethodSelection';
@@ -80,7 +80,7 @@ function CheckoutContent() {
   const days = calculateRentalDays(startDate, endDate);
   const totalAmount = car ? car.pricePerDay * days : 0;
 
-  const isFormValid = customerData.fullName && customerData.email && acceptedTerms && startDate && endDate;
+  const isFormValid = customerData.fullName && customerData.email && stripPhone(customerData.phoneNumber).length === 8 && acceptedTerms && startDate && endDate;
 
   const handleConfirmBooking = async () => {
     if (!isFormValid) {
@@ -93,7 +93,8 @@ function CheckoutContent() {
 
       // 1. Create the booking FIRST
       const storedUser = localStorage.getItem('user');
-      const userId = storedUser ? JSON.parse(storedUser).id : null;
+      const user = storedUser ? JSON.parse(storedUser) : null;
+      const userId = user?.id;
 
       if (!userId) {
         toast.error("Please log in to complete your booking.");
@@ -106,17 +107,32 @@ function CheckoutContent() {
         return;
       }
 
+      const formattedPhone = mapToPNGPrefix(customerData.phoneNumber);
+
+      // --- Sync phone number to user profile if changed ---
+      if (formattedPhone !== user.phoneNumber) {
+        try {
+          await api.put(`/users/${userId}`, { phoneNumber: formattedPhone });
+          // Update local storage to keep it in sync
+          const updatedUser = { ...user, phoneNumber: formattedPhone };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+        } catch (profileErr) {
+          console.error("Failed to sync profile phone number:", profileErr);
+          // Continue booking anyway
+        }
+      }
+
       const bookingData = {
         userId,
         carId: carId as string,
-        startDate: startDate, // Already has Z from BookingForm
-        endDate: endDate,     // Already has Z from BookingForm
+        startDate: startDate,
+        endDate: endDate,
         totalAmount,
         status: 'PENDING',
         paymentStatus: 'PENDING',
         customerName: customerData.fullName,
         customerEmail: customerData.email,
-        customerPhone: mapToAustralianPrefix(customerData.phoneNumber),
+        customerPhone: formattedPhone,
         paymentMethod: paymentMethod === 'stripe' ? 'ONLINE' : 'CASH',
         pickupLocation,
         returnLocation,
