@@ -28,8 +28,8 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
     if (!confirm('Mark this booking and bond as PAID?')) return;
     try {
       setLoading(true);
-      // We assume there's an endpoint to mark as paid, or we use update booking
-      await api.put(`/booking/${booking.id}`, { paymentStatus: 'PAID', bondStatus: 'PAID' });
+      // Use the specialized confirm-payment endpoint to trigger specialized backend logic
+      await api.patch(`/booking/${booking.id}/confirm-payment`);
       setPaymentStatus('PAID');
       setBondStatus('PAID');
       toast.success('Payment and Bond marked as PAID');
