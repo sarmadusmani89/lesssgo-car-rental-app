@@ -70,6 +70,7 @@ export default function CustomerInformationForm({ initialData, onChange }: Props
           label="Email Address"
           icon={Mail}
           type="email"
+          required
           readOnly
           value={formData.email}
           name="email"

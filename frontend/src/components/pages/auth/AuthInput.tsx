@@ -19,7 +19,10 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
         return (
             <div className={`${styles.inputGroup} ${error ? styles.inputGroupWithError : ''}`}>
                 <label>
-                    {label} {required ? <span className="text-red-500">*</span> : <span className="text-gray-400 font-normal italic lowercase ml-1">(optional)</span>}
+                    {label}
+                    {required && <span className="text-red-500 ml-1">*</span>}
+                    {props.readOnly && <span className="text-gray-400 font-normal italic lowercase ml-1">(read-only)</span>}
+                    {!required && !props.readOnly && <span className="text-gray-400 font-normal italic lowercase ml-1">(optional)</span>}
                 </label>
                 <div className={`${styles.inputWrapper} ${prefix ? styles.inputWrapperWithPrefix : ''} ${error ? styles.inputError : ''} ${wrapperClassName || ''}`}>
                     <Icon size={18} />
