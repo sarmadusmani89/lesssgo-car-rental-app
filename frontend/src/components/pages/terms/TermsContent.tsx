@@ -1,6 +1,26 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import api from '@/lib/api';
 import styles from '@/app/(public)/terms/terms.module.css';
 
 export default function TermsContent() {
+    const [settings, setSettings] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await api.get('/settings');
+                setSettings(res.data);
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
+
+    const siteName = settings?.siteName || 'Lesssgo';
+
     return (
         <section className={styles.content}>
             <div className="container">
@@ -8,7 +28,7 @@ export default function TermsContent() {
                     <div className={styles.section}>
                         <h2>1. Agreement to Terms</h2>
                         <p>
-                            By accessing and using Lesssgo's car rental services, you agree to be bound by these Terms and Conditions.
+                            By accessing and using {siteName}'s car rental services, you agree to be bound by these Terms and Conditions.
                             If you do not agree to these terms, please do not use our services.
                         </p>
                     </div>
@@ -16,7 +36,7 @@ export default function TermsContent() {
                     <div className={styles.section}>
                         <h2>2. Rental Agreement</h2>
                         <p>
-                            When you rent a car from Lesssgo, you enter into a legally binding rental agreement. You must be at least
+                            When you rent a car from {siteName}, you enter into a legally binding rental agreement. You must be at least
                             21 years old and hold a valid driver's license to rent a car.
                         </p>
                         <p>
@@ -105,7 +125,7 @@ export default function TermsContent() {
                     <div className={styles.section}>
                         <h2>10. Limitation of Liability</h2>
                         <p>
-                            Lesssgo shall not be liable for any indirect, incidental, special, or consequential damages arising from your use
+                            {siteName} shall not be liable for any indirect, incidental, special, or consequential damages arising from your use
                             of our services. Our liability is limited to the rental charges paid.
                         </p>
                     </div>
@@ -132,9 +152,9 @@ export default function TermsContent() {
                             If you have any questions about these Terms and Conditions, please contact us at:
                         </p>
                         <p>
-                            Email: ride@lessssgopng.com<br />
-                            Phone: +675 83054576<br />
-                            Address: 1234 Sports Car Blvd, Beverly Hills, CA 90210
+                            Email: {settings?.contactEmail || 'ride@lessssgopng.com'}<br />
+                            Phone: {settings?.contactPhone || '+675 83054576'}<br />
+                            Address: {settings?.contactAddress || '1234 Sports Car Blvd, Beverly Hills, CA 90210'}
                         </p>
                     </div>
                 </div>

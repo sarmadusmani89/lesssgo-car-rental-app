@@ -1,13 +1,33 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import api from '@/lib/api';
 import styles from '@/app/(public)/privacy/privacy.module.css';
 
 export default function PrivacyContent() {
+    const [settings, setSettings] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await api.get('/settings');
+                setSettings(res.data);
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
+
+    const siteName = settings?.siteName || 'Lesssgo';
+
     return (
         <section className={styles.content}>
             <div className="container">
                 <div className={styles.legal}>
                     <div className={styles.intro}>
                         <p>
-                            At Lesssgo, we are committed to protecting your privacy and ensuring the security of your personal information.
+                            At {siteName}, we are committed to protecting your privacy and ensuring the security of your personal information.
                             This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our car rental services.
                         </p>
                     </div>
@@ -119,7 +139,7 @@ export default function PrivacyContent() {
                             <li><strong>Data Portability:</strong> Request a copy of your data in a structured format</li>
                         </ul>
                         <p>
-                            To exercise these rights, please contact us at ride@lessssgopng.com.
+                            To exercise these rights, please contact us at {settings?.contactEmail || 'ride@lessssgopng.com'}.
                         </p>
                     </div>
 
@@ -169,9 +189,9 @@ export default function PrivacyContent() {
                             If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us at:
                         </p>
                         <p>
-                            Email: ride@lessssgopng.com<br />
-                            Phone: +675 83054576<br />
-                            Address: 1234 Sports Car Blvd, Beverly Hills, CA 90210
+                            Email: {settings?.contactEmail || 'ride@lessssgopng.com'}<br />
+                            Phone: {settings?.contactPhone || '+675 83054576'}<br />
+                            Address: {settings?.contactAddress || '1234 Sports Car Blvd, Beverly Hills, CA 90210'}
                         </p>
                     </div>
                 </div>
