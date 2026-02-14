@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Mail } from 'lucide-react';
+import { User, Mail, Phone } from 'lucide-react';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import { toast } from 'sonner';
+import { formatPNGPhone, mapToPNGPrefix, stripPhone } from '@/lib/utils';
 
 export default function UpdateProfileForm() {
   const [loading, setLoading] = useState(false);
@@ -15,7 +16,14 @@ export default function UpdateProfileForm() {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const parsed = JSON.parse(storedUser);
-      setUser({ ...parsed });
+      // Strip prefix for display/edit if it exists
+      const rawPhone = parsed.phoneNumber || '';
+      const strippedPhone = rawPhone.startsWith('+675') ? rawPhone.slice(4).trim() : rawPhone;
+
+      setUser({
+        ...parsed,
+        phoneNumber: formatPNGPhone(strippedPhone)
+      });
     }
   }, []);
 
@@ -24,15 +32,17 @@ export default function UpdateProfileForm() {
     setLoading(true);
 
     try {
-      const { id, name, email } = user;
+      const { id, name, email, phoneNumber } = user;
+      const formattedPhone = mapToPNGPrefix(phoneNumber);
 
       await api.put(`/users/${id}`, {
         name,
         email,
+        phoneNumber: formattedPhone,
       });
 
       // Update localStorage with new values
-      const updatedUser = { ...user, name };
+      const updatedUser = { ...user, name, email, phoneNumber: formattedPhone };
 
       localStorage.setItem('user', JSON.stringify(updatedUser));
       window.dispatchEvent(new Event('storage'));
@@ -70,7 +80,22 @@ export default function UpdateProfileForm() {
           maxLength={100}
         />
 
-        {/* Phone not in backend yet, skipping or just UI */}
+        <AuthInput
+          label="Phone Number"
+          icon={Phone}
+          type="tel"
+          placeholder="7XXX XXXX"
+          prefix="+675"
+          required
+          value={user.phoneNumber || ''}
+          onChange={(e) => {
+            const formatted = formatPNGPhone(e.target.value);
+            if (stripPhone(formatted).length <= 8) {
+              setUser({ ...user, phoneNumber: formatted });
+            }
+          }}
+          maxLength={9}
+        />
 
         <div className="flex justify-end mt-4">
           <Button
