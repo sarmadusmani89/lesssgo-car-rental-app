@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { CreateTestimonialDto, Testimonial, UpdateTestimonialDto } from '@/types/testimonial';
 import RatingSelector from './RatingSelector';
+import FormInput from '@/components/ui/FormInput';
 
 interface TestimonialFormProps {
     onSubmit: (data: CreateTestimonialDto | UpdateTestimonialDto) => Promise<void>;
@@ -54,50 +55,37 @@ export default function TestimonialForm({
     return (
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700">Author Name</label>
-                    <input
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                        placeholder="e.g. John Doe"
-                    />
-                </div>
-                <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700">Role / Position</label>
-                    <input
-                        type="text"
-                        value={formData.role}
-                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                        className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                        placeholder="e.g. CEO at Company"
-                    />
-                </div>
-            </div>
-
-            <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-gray-700">Content</label>
-                <textarea
+                <FormInput
+                    label="Author Name"
                     required
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all min-h-[100px]"
-                    placeholder="What did they say?"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="e.g. John Doe"
+                />
+                <FormInput
+                    label="Role / Position"
+                    value={formData.role}
+                    onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                    placeholder="e.g. CEO at Company"
                 />
             </div>
 
-            <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-gray-700">Avatar URL (Optional)</label>
-                <input
-                    type="url"
-                    value={formData.avatar}
-                    onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-                    className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                    placeholder="https://example.com/avatar.jpg"
-                />
-            </div>
+            <FormInput
+                label="Content"
+                required
+                isTextArea
+                value={formData.content}
+                onChange={(e) => setFormData({ ...formData, content: (e.target as HTMLTextAreaElement).value })}
+                placeholder="What did they say?"
+            />
+
+            <FormInput
+                label="Avatar URL (Optional)"
+                type="url"
+                value={formData.avatar}
+                onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
+                placeholder="https://example.com/avatar.jpg"
+            />
 
             <RatingSelector
                 rating={formData.rating || 5}
