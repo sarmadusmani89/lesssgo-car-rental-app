@@ -1,33 +1,41 @@
-import TestimonialCard from '@/components/common/TestimonialCard/TestimonialCard';
+'use client';
 
-const testimonials = [
-    {
-        id: 1,
-        name: "Sarah Johnson",
-        role: "Business Executive",
-        image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&q=80",
-        quote: "The service was absolutely impeccable. The car was pristine, and the delivery was right on time. Highly recommended for business travel.",
-        rating: 5
-    },
-    {
-        id: 2,
-        name: "Michael Chen",
-        role: "Car Enthusiast",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&q=80",
-        quote: "I've rented from many agencies, but the fleet quality here is unmatched. Driving the Porsche 911 was a dream come true.",
-        rating: 5
-    },
-    {
-        id: 3,
-        name: "Emily Davis",
-        role: "Travel Blogger",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=128&q=80",
-        quote: "Seamless booking process and incredible support. They made our road trip strictly unforgettable with the perfect convertible.",
-        rating: 5
-    }
-];
+import { useState, useEffect } from 'react';
+import TestimonialCard from '@/components/common/TestimonialCard/TestimonialCard';
+import api from '@/lib/api';
+import { Testimonial } from '@/types/testimonial';
+import { Loader2 } from 'lucide-react';
 
 export default function Testimonials() {
+    const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchTestimonials = async () => {
+            try {
+                const res = await api.get('/testimonials');
+                setTestimonials(res.data);
+            } catch (error) {
+                console.error('Failed to fetch testimonials:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchTestimonials();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="py-32 bg-slate-50 flex items-center justify-center">
+                <Loader2 className="animate-spin text-blue-600" size={40} />
+            </div>
+        );
+    }
+
+    if (testimonials.length === 0) {
+        return null; // Don't show the section if no testimonials
+    }
+
     return (
         <section className="py-32 bg-slate-50 relative overflow-hidden">
             <div className="container mx-auto px-4 md:px-6">
