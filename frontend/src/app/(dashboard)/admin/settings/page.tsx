@@ -82,8 +82,6 @@ export default function AdminSettings() {
             onClick: handleOpen('maintenance')
         },
         { title: 'Email Notifications', desc: 'Configure SMTP and automated alerts', icon: Bell, onClick: () => alert('Coming soon') },
-        { title: 'API Integration', desc: 'External services and webhook settings', icon: Globe, onClick: () => alert('Coming soon') },
-        { title: 'Appearance & UI', desc: 'Customize themes and branding assets', icon: Moon, onClick: () => alert('Coming soon') },
     ];
 
     return (
