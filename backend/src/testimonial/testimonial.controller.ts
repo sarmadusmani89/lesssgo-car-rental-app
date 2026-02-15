@@ -15,6 +15,8 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UseInterceptors, UploadedFile } from '@nestjs/common';
 
 @Controller('testimonials')
 export class TestimonialController {
@@ -23,8 +25,12 @@ export class TestimonialController {
     @Post()
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
-    create(@Body() createTestimonialDto: CreateTestimonialDto) {
-        return this.testimonialService.create(createTestimonialDto);
+    @UseInterceptors(FileInterceptor('image'))
+    create(
+        @UploadedFile() file: Express.Multer.File,
+        @Body() createTestimonialDto: CreateTestimonialDto
+    ) {
+        return this.testimonialService.create(createTestimonialDto, file);
     }
 
     @Get()
@@ -40,11 +46,13 @@ export class TestimonialController {
     @Patch(':id')
     @UseGuards(AuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
+    @UseInterceptors(FileInterceptor('image'))
     update(
         @Param('id') id: string,
+        @UploadedFile() file: Express.Multer.File,
         @Body() updateTestimonialDto: UpdateTestimonialDto,
     ) {
-        return this.testimonialService.update(id, updateTestimonialDto);
+        return this.testimonialService.update(id, updateTestimonialDto, file);
     }
 
     @Delete(':id')
