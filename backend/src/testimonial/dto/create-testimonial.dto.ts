@@ -2,14 +2,14 @@ import { IsString, IsOptional, IsInt, Min, Max, IsUrl } from 'class-validator';
 
 export class CreateTestimonialDto {
     @IsString()
-    name: string;
+    name!: string;
 
     @IsString()
     @IsOptional()
     role?: string;
 
     @IsString()
-    content: string;
+    content!: string;
 
     @IsString()
     @IsOptional()

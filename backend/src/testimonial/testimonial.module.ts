@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TestimonialService } from './testimonial.service';
 import { TestimonialController } from './testimonial.controller';
-import { LibModule } from '../lib/lib.module';
+import { PrismaService } from '../lib/prisma.service';
 
 @Module({
-    imports: [LibModule],
     controllers: [TestimonialController],
-    providers: [TestimonialService],
+    providers: [TestimonialService, PrismaService],
     exports: [TestimonialService],
 })
 export class TestimonialModule { }
