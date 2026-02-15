@@ -11,6 +11,7 @@ import { CronModule } from './cron/cron.module';
 import { ContactModule } from './contact/contact.module';
 import { SettingsModule } from './settings/settings.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
+import { TestimonialModule } from './testimonial/testimonial.module';
 import { PrismaService } from './lib/prisma.service';
 
 @Module({
@@ -27,6 +28,7 @@ import { PrismaService } from './lib/prisma.service';
     ContactModule,
     SettingsModule,
     NewsletterModule,
+    TestimonialModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
