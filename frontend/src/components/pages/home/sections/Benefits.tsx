@@ -10,7 +10,7 @@ const features = [
     {
         icon: Star,
         title: "Exclusive Cars",
-        description: "A curated selection of the latest models from Ferrari, Lamborghini, Porsche, and more."
+        description: "A curated selection of the latest models from the Current PNG dealers"
     },
     {
         icon: Zap,
