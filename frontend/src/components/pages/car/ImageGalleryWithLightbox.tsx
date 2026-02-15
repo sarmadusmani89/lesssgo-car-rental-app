@@ -27,7 +27,7 @@ export default function ImageGalleryWithLightbox({ images }: Props) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className="w-full h-full object-contain p-4 md:p-8"
+            className="w-full h-full object-contain"
           />
         </AnimatePresence>
 
@@ -46,14 +46,6 @@ export default function ImageGalleryWithLightbox({ images }: Props) {
             <ChevronRight size={24} />
           </button>
         </div>
-
-        {/* Zoom Button Overlay */}
-        <button
-          className="absolute top-6 right-6 p-3 rounded-2xl bg-white/80 backdrop-blur-md border border-white/50 text-gray-600 hover:text-blue-600 hover:scale-110 transition-all opacity-0 group-hover:opacity-100 shadow-sm"
-          onClick={() => alert('Opening Fullscreen (implement lightbox if needed)')}
-        >
-          <Maximize2 size={20} />
-        </button>
       </div>
 
       {/* Thumbnails Navigation */}
@@ -63,8 +55,8 @@ export default function ImageGalleryWithLightbox({ images }: Props) {
             key={i}
             onClick={() => setSelected(i)}
             className={`relative w-24 aspect-[4/3] rounded-2xl overflow-hidden transition-all duration-300 ${i === selected
-                ? 'ring-4 ring-blue-600/20 border-2 border-blue-600 ring-offset-2 scale-105'
-                : 'border-2 border-transparent hover:border-gray-200 grayscale-[50%] hover:grayscale-0'
+              ? 'ring-4 ring-blue-600/20 border-2 border-blue-600 ring-offset-2 scale-105'
+              : 'border-2 border-transparent hover:border-gray-200 grayscale-[50%] hover:grayscale-0'
               }`}
           >
             <img
