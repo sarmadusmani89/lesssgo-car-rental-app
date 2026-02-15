@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Loader2, Upload, Image as ImageIcon, X } from 'lucide-react';
 import { CreateTestimonialDto, Testimonial, UpdateTestimonialDto } from '@/types/testimonial';
 import RatingSelector from './RatingSelector';
 import FormInput from '@/components/ui/FormInput';
 
 interface TestimonialFormProps {
-    onSubmit: (data: CreateTestimonialDto | UpdateTestimonialDto) => Promise<void>;
+    onSubmit: (data: CreateTestimonialDto | UpdateTestimonialDto, imageFile?: File) => Promise<void>;
     onCancel: () => void;
     testimonial?: Testimonial | null;
     isSubmitting: boolean;
@@ -27,6 +27,10 @@ export default function TestimonialForm({
         rating: 5
     });
 
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string>('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     useEffect(() => {
         if (testimonial) {
             setFormData({
@@ -36,6 +40,7 @@ export default function TestimonialForm({
                 avatar: testimonial.avatar || '',
                 rating: testimonial.rating
             });
+            setImagePreview(testimonial.avatar || '');
         } else {
             setFormData({
                 name: '',
@@ -44,12 +49,26 @@ export default function TestimonialForm({
                 avatar: '',
                 rating: 5
             });
+            setImagePreview('');
+            setImageFile(null);
         }
     }, [testimonial]);
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setImageFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(formData);
+        onSubmit(formData, imageFile || undefined);
     };
 
     return (
@@ -79,13 +98,57 @@ export default function TestimonialForm({
                 placeholder="What did they say?"
             />
 
-            <FormInput
-                label="Avatar URL (Optional)"
-                type="url"
-                value={formData.avatar}
-                onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-                placeholder="https://example.com/avatar.jpg"
-            />
+            <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-gray-700">Author Photo</label>
+                <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-2xl p-4 transition-all hover:border-blue-400 hover:bg-blue-50/50"
+                >
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="hidden"
+                    />
+
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-100">
+                            {imagePreview ? (
+                                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                            ) : (
+                                <ImageIcon size={24} className="text-gray-400" />
+                            )}
+                        </div>
+
+                        <div className="flex-1">
+                            <p className="font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">
+                                {imageFile ? imageFile.name : 'Click to upload photo'}
+                            </p>
+                            <p className="text-sm text-gray-500">PNG, JPG or WebP (Max. 5MB)</p>
+                        </div>
+
+                        <div className="p-2 rounded-lg bg-gray-50 text-gray-400 group-hover:bg-blue-100 group-hover:text-blue-600 transition-all">
+                            <Upload size={20} />
+                        </div>
+                    </div>
+
+                    {imagePreview && (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setImageFile(null);
+                                setImagePreview('');
+                                if (fileInputRef.current) fileInputRef.current.value = '';
+                            }}
+                            className="absolute -top-2 -right-2 p-1 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition-colors shadow-sm"
+                        >
+                            <X size={14} />
+                        </button>
+                    )}
+                </div>
+            </div>
 
             <RatingSelector
                 rating={formData.rating || 5}

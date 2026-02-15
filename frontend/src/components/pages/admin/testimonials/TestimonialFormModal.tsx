@@ -7,7 +7,7 @@ import TestimonialForm from './components/TestimonialForm';
 interface TestimonialFormModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (data: CreateTestimonialDto | UpdateTestimonialDto) => Promise<void>;
+    onSubmit: (data: CreateTestimonialDto | UpdateTestimonialDto, imageFile?: File) => Promise<void>;
     testimonial?: Testimonial | null;
     isSubmitting: boolean;
 }

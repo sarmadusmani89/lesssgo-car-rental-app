@@ -23,12 +23,12 @@ export default function AdminTestimonialsPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
 
-    const handleCreateOrUpdate = async (data: CreateTestimonialDto | UpdateTestimonialDto) => {
+    const handleCreateOrUpdate = async (data: CreateTestimonialDto | UpdateTestimonialDto, imageFile?: File) => {
         try {
             if (editingTestimonial) {
-                await updateTestimonial(editingTestimonial.id, data as UpdateTestimonialDto);
+                await updateTestimonial(editingTestimonial.id, data as UpdateTestimonialDto, imageFile);
             } else {
-                await createTestimonial(data as CreateTestimonialDto);
+                await createTestimonial(data as CreateTestimonialDto, imageFile);
             }
             setIsModalOpen(false);
             setEditingTestimonial(null);

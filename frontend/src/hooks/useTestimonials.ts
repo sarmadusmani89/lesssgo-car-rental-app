@@ -27,10 +27,20 @@ export function useTestimonials() {
         fetchTestimonials();
     }, [fetchTestimonials]);
 
-    const createTestimonial = async (data: CreateTestimonialDto) => {
+    const createTestimonial = async (data: CreateTestimonialDto, imageFile?: File) => {
         setIsSubmitting(true);
         try {
-            const newTestimonial = await adminApi.createTestimonial(data);
+            const formData = new FormData();
+            Object.entries(data).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                    formData.append(key, value.toString());
+                }
+            });
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            const newTestimonial = await adminApi.createTestimonial(formData);
             toast.success('Testimonial created successfully');
             setTestimonials(prev => [newTestimonial, ...prev]);
             return newTestimonial;
@@ -42,10 +52,20 @@ export function useTestimonials() {
         }
     };
 
-    const updateTestimonial = async (id: string, data: UpdateTestimonialDto) => {
+    const updateTestimonial = async (id: string, data: UpdateTestimonialDto, imageFile?: File) => {
         setIsSubmitting(true);
         try {
-            const updated = await adminApi.updateTestimonial(id, data);
+            const formData = new FormData();
+            Object.entries(data).forEach(([key, value]) => {
+                if (value !== undefined && value !== null) {
+                    formData.append(key, value.toString());
+                }
+            });
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            const updated = await adminApi.updateTestimonial(id, formData);
             toast.success('Testimonial updated successfully');
             setTestimonials(prev => prev.map(t => t.id === id ? updated : t));
             return updated;
