@@ -93,6 +93,12 @@ export const adminApi = {
     updateBooking: (id: string, data: any) => api.put(`/booking/${id}`, data).then(res => res.data),
     deleteBooking: (id: string) => api.delete(`/booking/${id}`).then(res => res.data),
     confirmPayment: (id: string) => api.patch(`/booking/${id}/confirm-payment`).then(res => res.data),
+
+    // Testimonials
+    listTestimonials: () => api.get('/testimonials').then(res => res.data),
+    createTestimonial: (data: any) => api.post('/testimonials', data).then(res => res.data),
+    updateTestimonial: (id: string, data: any) => api.patch(`/testimonials/${id}`, data).then(res => res.data),
+    deleteTestimonial: (id: string) => api.delete(`/testimonials/${id}`).then(res => res.data),
 };
 
 export const newsletterApi = {
