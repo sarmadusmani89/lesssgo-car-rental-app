@@ -156,6 +156,15 @@ model SystemSettings {
   currency          String   @default( "PGK")
   faviconUrl        String?
   passwordMinLength Int      @default(8)
+  
+  // Dynamic Option Lists
+  locations         String[] @default(["Port Moresby", "Lae", "Mt Hagen", "Kokopo", "Kavieng", "Manus", "Kimbe", "Mendi", "Tari", "Madang", "Goroka", "Wabag", "Alotau", "Popondetta"])
+  brands           String[] @default(["Toyota", "Hyundai", "Haval", "Honda", "Land Rover", "Volvo"])
+  categories       String[] @default(["Supercar", "Sports Car", "Luxury Sedan", "SUV", "Convertible"])
+  transmissions    String[] @default(["Automatic", "Manual"])
+  fuelTypes        String[] @default(["Petrol", "Diesel", "Electricity"])
+  vehicleClasses   String[] @default(["Economy", "Standard", "Luxury"])
+
   updatedAt         DateTime @updatedAt
 }
 
