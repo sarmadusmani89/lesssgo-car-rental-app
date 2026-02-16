@@ -8,13 +8,13 @@ export default function BookingStatusTimeline({ booking }: { booking: any }) {
     {
       title: 'Status: ' + booking.status,
       status: booking.status === 'CANCELLED' ? 'cancelled' : (booking.status === 'CONFIRMED' || booking.status === 'COMPLETED' ? 'completed' : 'active'),
-      date: new Date(booking.updatedAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short', hour12: false })
+      date: new Date(booking.updatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false })
     },
     { title: 'Payment: ' + booking.paymentStatus, status: booking.paymentStatus === 'PAID' ? 'completed' : 'active', date: new Date(booking.updatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false }) },
   ];
 
   if (booking.status === 'COMPLETED') {
-    steps.push({ title: 'Trip Finished', status: 'completed', date: new Date(booking.endDate).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short', hour12: false }) });
+    steps.push({ title: 'Trip Finished', status: 'completed', date: new Date(booking.updatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false }) });
   }
 
   return (
