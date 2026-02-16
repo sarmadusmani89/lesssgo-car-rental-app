@@ -133,6 +133,15 @@ export default function EditBookingModal({
                                 >
                                     Save Changes
                                 </Button>
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={onClose}
+                                    className="px-8 rounded-2xl h-14 uppercase tracking-widest text-sm"
+                                    disabled={isSubmitting}
+                                >
+                                    Cancel
+                                </Button>
                             </div>
                         </form>
                     </motion.div>
