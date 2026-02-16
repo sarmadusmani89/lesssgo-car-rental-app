@@ -251,18 +251,52 @@ export class BookingService {
 
   async update(id: string, updateBookingDto: UpdateBookingDto) {
     const booking = await this.findOne(id);
-    const data: any = { ...updateBookingDto };
     const now = new Date();
 
-    if (updateBookingDto.status === 'CONFIRMED' && booking.status !== 'CONFIRMED') {
+    // Pick only valid Prisma fields to avoid "unknown property" errors (like timezoneOffset)
+    const {
+      status,
+      paymentStatus,
+      startDate,
+      endDate,
+      totalAmount,
+      bondAmount,
+      bondStatus,
+      paymentMethod,
+      customerName,
+      customerEmail,
+      customerPhone,
+      pickupLocation,
+      returnLocation,
+    } = updateBookingDto;
+
+    const data: any = {};
+    if (status !== undefined) data.status = status;
+    if (paymentStatus !== undefined) data.paymentStatus = paymentStatus;
+    if (totalAmount !== undefined) data.totalAmount = totalAmount;
+    if (bondAmount !== undefined) data.bondAmount = bondAmount;
+    if (bondStatus !== undefined) data.bondStatus = bondStatus;
+    if (paymentMethod !== undefined) data.paymentMethod = paymentMethod;
+    if (customerName !== undefined) data.customerName = customerName;
+    if (customerEmail !== undefined) data.customerEmail = customerEmail;
+    if (customerPhone !== undefined) data.customerPhone = customerPhone;
+    if (pickupLocation !== undefined) data.pickupLocation = pickupLocation;
+    if (returnLocation !== undefined) data.returnLocation = returnLocation;
+
+    // Convert dates if provided
+    if (startDate) data.startDate = new Date(startDate);
+    if (endDate) data.endDate = new Date(endDate);
+
+    // Track status change timestamps
+    if (status === 'CONFIRMED' && booking.status !== 'CONFIRMED') {
       data.confirmedAt = now;
-    } else if (updateBookingDto.status === 'CANCELLED' && booking.status !== 'CANCELLED') {
+    } else if (status === 'CANCELLED' && booking.status !== 'CANCELLED') {
       data.cancelledAt = now;
-    } else if (updateBookingDto.status === 'COMPLETED' && booking.status !== 'COMPLETED') {
+    } else if (status === 'COMPLETED' && booking.status !== 'COMPLETED') {
       data.completedAt = now;
     }
 
-    if (updateBookingDto.paymentStatus === 'PAID' && booking.paymentStatus !== 'PAID') {
+    if (paymentStatus === 'PAID' && booking.paymentStatus !== 'PAID') {
       data.paidAt = now;
     }
 
