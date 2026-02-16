@@ -1,7 +1,23 @@
-import { Wrench, Mail, Phone, Car } from 'lucide-react';
+'use client';
+
+import { Wrench, Mail, Phone } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export default function MaintenancePage() {
+    const [settings, setSettings] = useState<any>(null);
+
+    useEffect(() => {
+        // Fetch settings from the public API
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/settings`)
+            .then(res => res.json())
+            .then(data => setSettings(data))
+            .catch(err => console.error('Failed to fetch settings:', err));
+    }, []);
+
+    const displayEmail = settings?.adminEmail || 'support@lesssgo.com';
+    const displayPhone = settings?.phoneNumber || '+675 1234 5678';
+
     return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4 text-center relative overflow-hidden">
             {/* Background Blobs */}
@@ -36,7 +52,7 @@ export default function MaintenancePage() {
                         </div>
                         <div className="text-left">
                             <div className="text-xs font-bold text-gray-400 uppercase">Email Us</div>
-                            <div className="text-sm font-bold text-gray-900">support@lesssgo.com</div>
+                            <div className="text-sm font-bold text-gray-900">{displayEmail}</div>
                         </div>
                     </div>
                     <div className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex items-center gap-3">
@@ -45,7 +61,7 @@ export default function MaintenancePage() {
                         </div>
                         <div className="text-left">
                             <div className="text-xs font-bold text-gray-400 uppercase">Call Support</div>
-                            <div className="text-sm font-bold text-gray-900">+675 1234 5678</div>
+                            <div className="text-sm font-bold text-gray-900">{displayPhone}</div>
                         </div>
                     </div>
                 </div>
