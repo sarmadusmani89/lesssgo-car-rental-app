@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, AlertTriangle, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User } from '../../../../types/user';
@@ -14,12 +15,18 @@ interface DeleteUserModalProps {
 }
 
 export default function DeleteUserModal({ isOpen, onClose, onConfirm, user, isSubmitting }: DeleteUserModalProps) {
-    if (!user) return null;
+    const [mounted, setMounted] = useState(false);
 
-    return (
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!user || !mounted) return null;
+
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -39,19 +46,23 @@ export default function DeleteUserModal({ isOpen, onClose, onConfirm, user, isSu
                                 <AlertTriangle className="text-rose-600" size={40} />
                             </div>
 
-                            <h3 className="text-2xl font-black text-slate-900 tracking-tight italic mb-2">
+                            <h3 className="text-2xl font-black text-slate-900 tracking-tight italic mb-2 uppercase">
                                 Delete <span className="text-rose-600">User</span>?
                             </h3>
 
-                            <p className="text-slate-500 text-sm font-medium mb-6">
-                                You are about to permanently remove <span className="text-slate-900 font-bold">{user.name || user.email}</span>. This action cannot be undone.
-                            </p>
+                            <div className="text-slate-500 text-sm font-medium mb-6 space-y-1">
+                                <p>You are about to permanently remove</p>
+                                <p className="text-slate-900 font-bold">{user.name || user.email}</p>
+                                <div className="mt-4 p-3 bg-rose-50/50 rounded-xl border border-rose-100 text-[10px] text-rose-700 font-bold uppercase tracking-wider">
+                                    This action cannot be undone
+                                </div>
+                            </div>
 
                             <div className="space-y-3">
                                 <button
                                     onClick={onConfirm}
                                     disabled={isSubmitting}
-                                    className="w-full py-4 bg-rose-600 text-white rounded-2xl font-black text-sm uppercase tracking-wider hover:bg-rose-700 transition-all shadow-lg shadow-rose-100 disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-rose-600 text-white rounded-2xl font-black text-sm uppercase tracking-wider hover:bg-rose-700 transition-all shadow-lg shadow-rose-100 disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.98]"
                                 >
                                     {isSubmitting ? 'Deleting...' : (
                                         <>
@@ -64,7 +75,7 @@ export default function DeleteUserModal({ isOpen, onClose, onConfirm, user, isSu
                                 <button
                                     onClick={onClose}
                                     disabled={isSubmitting}
-                                    className="w-full py-4 bg-slate-50 text-slate-500 rounded-2xl font-bold text-sm hover:bg-slate-100 transition-all"
+                                    className="w-full py-4 bg-slate-50 text-slate-500 rounded-2xl font-bold text-sm hover:bg-slate-100 transition-all active:scale-[0.98]"
                                 >
                                     Cancel
                                 </button>
@@ -80,6 +91,7 @@ export default function DeleteUserModal({ isOpen, onClose, onConfirm, user, isSu
                     </motion.div>
                 </div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }
