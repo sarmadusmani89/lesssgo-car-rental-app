@@ -1,6 +1,6 @@
-"use client";
-
 import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import FormInput from "@/components/ui/FormInput";
 
 interface Props {
     value: string;
@@ -12,22 +12,20 @@ interface Props {
 export default function OptionInput({ value, onChange, onAdd, placeholder }: Props) {
     return (
         <div className="flex gap-3 mb-8">
-            <input
-                type="text"
+            <FormInput
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && onAdd()}
-                className="flex-1 px-5 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition font-medium text-sm"
+                onKeyDown={(e) => e.key === 'Enter' && onAdd()}
                 placeholder={placeholder}
             />
-            <button
+            <Button
                 onClick={onAdd}
                 disabled={!value.trim()}
-                className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold text-sm hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg shadow-gray-200"
+                className="whitespace-nowrap"
             >
-                <Plus size={18} />
+                <Plus size={18} className="mr-2" />
                 Add
-            </button>
+            </Button>
         </div>
     );
 }

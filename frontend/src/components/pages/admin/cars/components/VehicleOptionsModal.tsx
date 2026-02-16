@@ -1,9 +1,11 @@
-"use client";
-
 import { useState, useEffect } from "react";
-import { X, Plus, Trash2, Loader2, Save, MapPin, Tag, Layout, Settings2, Fuel, Cog } from "lucide-react";
+import { X, Loader2, Save, Plus, Trash2, MapPin, Tag, Layout, Settings2, Fuel, Cog } from "lucide-react";
 import api from "@/lib/api";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/Button";
+import OptionSidebar from "./vehicle-options/OptionSidebar";
+import OptionInput from "./vehicle-options/OptionInput";
+import OptionList from "./vehicle-options/OptionList";
 
 interface Props {
     isOpen: boolean;
@@ -117,8 +119,8 @@ export default function VehicleOptionsModal({ isOpen, onClose }: Props) {
                                             setNewItem("");
                                         }}
                                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === type.key
-                                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-100'
-                                                : 'text-gray-500 hover:bg-white hover:text-blue-600'
+                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-100'
+                                            : 'text-gray-500 hover:bg-white hover:text-blue-600'
                                             }`}
                                     >
                                         <Icon size={18} />
@@ -190,20 +192,21 @@ export default function VehicleOptionsModal({ isOpen, onClose }: Props) {
 
                 {/* Footer Actions */}
                 <div className="p-6 border-t border-gray-100 bg-white flex justify-end gap-3 sticky bottom-0 z-10">
-                    <button
+                    <Button
+                        variant="secondary"
                         onClick={onClose}
-                        className="px-8 py-3 rounded-xl border border-gray-200 text-gray-400 font-bold text-sm uppercase tracking-widest hover:bg-gray-50 transition"
+                        className="px-8 font-bold text-sm uppercase tracking-widest"
                     >
                         Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         onClick={handleSave}
-                        disabled={saving || loading}
-                        className="flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-xl font-bold text-sm uppercase tracking-widest hover:bg-blue-700 transition shadow-xl shadow-blue-100 disabled:opacity-70"
+                        isLoading={saving}
+                        disabled={loading}
+                        className="px-8 font-bold text-sm uppercase tracking-widest"
                     >
-                        {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
                         Save All Changes
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
