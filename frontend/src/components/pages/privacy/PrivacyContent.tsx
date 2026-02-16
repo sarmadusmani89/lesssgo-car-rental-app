@@ -191,7 +191,7 @@ export default function PrivacyContent() {
                         <p>
                             Email: {settings?.contactEmail || 'ride@lessssgopng.com'}<br />
                             Phone: {settings?.contactPhone || '+675 83054576'}<br />
-                            Address: {settings?.contactAddress || '1234 Sports Car Blvd, Beverly Hills, CA 90210'}
+                            Address: {settings?.contactAddress || 'Port Moresby, Papua New Guinea'}
                         </p>
                     </div>
                 </div>

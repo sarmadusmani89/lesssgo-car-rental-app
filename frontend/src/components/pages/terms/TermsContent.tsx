@@ -133,8 +133,8 @@ export default function TermsContent() {
                     <div className={styles.section}>
                         <h2>11. Governing Law</h2>
                         <p>
-                            These Terms and Conditions are governed by and construed in accordance with the laws of California, United States.
-                            Any disputes shall be subject to the exclusive jurisdiction of the courts of California.
+                            These Terms and Conditions are governed by and construed in accordance with the laws of Papua New Guinea.
+                            Any disputes shall be subject to the exclusive jurisdiction of the courts of Papua New Guinea.
                         </p>
                     </div>
 
@@ -154,7 +154,7 @@ export default function TermsContent() {
                         <p>
                             Email: {settings?.contactEmail || 'ride@lessssgopng.com'}<br />
                             Phone: {settings?.contactPhone || '+675 83054576'}<br />
-                            Address: {settings?.contactAddress || '1234 Sports Car Blvd, Beverly Hills, CA 90210'}
+                            Address: {settings?.contactAddress || 'Port Moresby, Papua New Guinea'}
                         </p>
                     </div>
                 </div>
