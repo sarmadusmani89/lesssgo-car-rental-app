@@ -70,11 +70,6 @@ export default function EditBookingModal({
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        handleDirectChange(name, value);
-    };
-
     const handleDirectChange = (name: string, value: string) => {
         setFormData(prev => ({
             ...prev,
@@ -133,9 +128,9 @@ export default function EditBookingModal({
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="p-8 overflow-y-auto max-h-[70vh]">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <CustomerInfoFields formData={formData} onChange={handleChange} />
-                                <RentalPeriodFields formData={formData} onChange={handleChange} />
-                                <PricingFields formData={formData} onChange={handleChange} />
+                                <CustomerInfoFields formData={formData} onChange={handleDirectChange} />
+                                <RentalPeriodFields formData={formData} onChange={handleDirectChange} />
+                                <PricingFields formData={formData} onChange={handleDirectChange} />
                                 <StatusFields formData={formData} onChange={handleDirectChange} />
                                 <LocationFields
                                     formData={formData}
