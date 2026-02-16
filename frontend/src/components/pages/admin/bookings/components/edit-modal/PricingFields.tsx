@@ -7,10 +7,14 @@ import { UpdateBookingDto } from '@/types/booking';
 
 interface Props {
     formData: UpdateBookingDto;
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+    onChange: (name: string, value: string) => void;
 }
 
 export default function PricingFields({ formData, onChange }: Props) {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        onChange(e.target.name, e.target.value);
+    };
+
     return (
         <div className="space-y-4">
             <h4 className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest pt-2">
@@ -22,7 +26,7 @@ export default function PricingFields({ formData, onChange }: Props) {
                     name="totalAmount"
                     type="number"
                     value={formData.totalAmount || 0}
-                    onChange={onChange}
+                    onChange={handleInputChange}
                     required
                 />
                 <FormInput
@@ -30,7 +34,7 @@ export default function PricingFields({ formData, onChange }: Props) {
                     name="bondAmount"
                     type="number"
                     value={formData.bondAmount || 0}
-                    onChange={onChange}
+                    onChange={handleInputChange}
                     required
                 />
             </div>

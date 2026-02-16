@@ -7,10 +7,14 @@ import { UpdateBookingDto } from '@/types/booking';
 
 interface Props {
     formData: UpdateBookingDto;
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+    onChange: (name: string, value: string) => void;
 }
 
 export default function CustomerInfoFields({ formData, onChange }: Props) {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        onChange(e.target.name, e.target.value);
+    };
+
     return (
         <div className="space-y-4 md:col-span-2">
             <h4 className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest">
@@ -21,7 +25,7 @@ export default function CustomerInfoFields({ formData, onChange }: Props) {
                     label="Name"
                     name="customerName"
                     value={formData.customerName || ''}
-                    onChange={onChange}
+                    onChange={handleInputChange}
                     required
                 />
                 <FormInput
@@ -29,14 +33,14 @@ export default function CustomerInfoFields({ formData, onChange }: Props) {
                     name="customerEmail"
                     type="email"
                     value={formData.customerEmail || ''}
-                    onChange={onChange}
+                    onChange={handleInputChange}
                     required
                 />
                 <FormInput
                     label="Phone"
                     name="customerPhone"
                     value={formData.customerPhone || ''}
-                    onChange={onChange}
+                    onChange={handleInputChange}
                     required
                 />
             </div>
