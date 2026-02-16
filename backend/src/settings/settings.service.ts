@@ -44,6 +44,14 @@ export class SettingsService {
             data.passwordMinLength = parseInt(data.passwordMinLength, 10);
         }
 
+        // Handle array fields from multipart/form-data or JSON
+        const arrayFields = ['locations', 'brands', 'categories', 'transmissions', 'fuelTypes', 'vehicleClasses'];
+        arrayFields.forEach(field => {
+            if (typeof data[field] === 'string') {
+                data[field] = data[field].split(',').map(s => s.trim()).filter(Boolean);
+            }
+        });
+
         if (favicon) {
             try {
                 const upload = await this.cloudinary.uploadFile(favicon);

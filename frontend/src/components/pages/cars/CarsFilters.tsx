@@ -1,8 +1,9 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { X, Check, MapPin } from 'lucide-react';
+import api from '@/lib/api';
 import { PREDEFINED_LOCATIONS } from '@/constants/locations';
-
 import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS, VEHICLE_CLASSES, VEHICLE_FUEL_TYPES } from '@/constants/car';
 
 interface FilterState {
@@ -21,12 +22,26 @@ interface CarsFiltersProps {
 }
 
 export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
-    const brands = VEHICLE_BRANDS;
-    const types = VEHICLE_CATEGORIES;
-    const transmissions = VEHICLE_TRANSMISSIONS;
-    const vehicleClasses = VEHICLE_CLASSES;
-    const fuelTypes = VEHICLE_FUEL_TYPES;
-    const locations = PREDEFINED_LOCATIONS;
+    const [settings, setSettings] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await api.get('/settings');
+                setSettings(res.data);
+            } catch (error) {
+                console.error("Failed to fetch settings:", error);
+            }
+        };
+        fetchSettings();
+    }, []);
+
+    const brands = settings?.brands || VEHICLE_BRANDS;
+    const types = settings?.categories || VEHICLE_CATEGORIES;
+    const transmissions = settings?.transmissions || VEHICLE_TRANSMISSIONS;
+    const vehicleClasses = settings?.vehicleClasses || VEHICLE_CLASSES;
+    const fuelTypes = settings?.fuelTypes || VEHICLE_FUEL_TYPES;
+    const locations = settings?.locations || PREDEFINED_LOCATIONS;
 
 
     const updateFilter = (key: keyof FilterState, value: string) => {

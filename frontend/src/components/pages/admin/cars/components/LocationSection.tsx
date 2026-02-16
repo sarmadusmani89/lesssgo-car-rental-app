@@ -8,9 +8,10 @@ import { PREDEFINED_LOCATIONS } from "@/constants/locations";
 interface Props {
     control: Control<any>;
     errors: FieldErrors<any>;
+    locations?: string[];
 }
 
-export default function LocationSection({ control, errors }: Props) {
+export default function LocationSection({ control, errors, locations = PREDEFINED_LOCATIONS }: Props) {
     return (
         <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100 space-y-4">
             <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Location Details</h3>
@@ -24,7 +25,7 @@ export default function LocationSection({ control, errors }: Props) {
                         control={control}
                         render={({ field }) => (
                             <MultiSelect
-                                options={PREDEFINED_LOCATIONS}
+                                options={locations}
                                 value={field.value}
                                 onChange={field.onChange}
                                 placeholder="Select pickup locations..."
@@ -44,7 +45,7 @@ export default function LocationSection({ control, errors }: Props) {
                         control={control}
                         render={({ field }) => (
                             <MultiSelect
-                                options={PREDEFINED_LOCATIONS}
+                                options={locations}
                                 value={field.value}
                                 onChange={field.onChange}
                                 placeholder="Select return locations..."

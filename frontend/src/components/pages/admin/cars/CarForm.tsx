@@ -67,6 +67,19 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
   const [imagePreview, setImagePreview] = useState<string>(editingCar?.imageUrl || "");
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>(editingCar?.gallery || []);
+  const [settings, setSettings] = useState<any>(null);
+
+  useState(() => {
+    const fetchSettings = async () => {
+      try {
+        const { data } = await api.get('/settings');
+        setSettings(data);
+      } catch (error) {
+        console.error("Failed to fetch settings:", error);
+      }
+    };
+    fetchSettings();
+  });
 
   const {
     register,
@@ -132,12 +145,12 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
     { value: "RENTED", label: "Rented" }
   ];
 
-  const brandOptions = VEHICLE_BRANDS.map(brand => ({ label: brand, value: brand }));
-  const categoryOptions = VEHICLE_CATEGORIES.map(cat => ({ label: cat, value: cat }));
-  const transmissionOptions = VEHICLE_TRANSMISSIONS.map(trans => ({ label: trans, value: trans }));
-  const fuelOptions = VEHICLE_FUEL_TYPES.map(fuel => ({ label: fuel, value: fuel }));
+  const brandOptions = (settings?.brands || VEHICLE_BRANDS).map((brand: any) => ({ label: brand, value: brand }));
+  const categoryOptions = (settings?.categories || VEHICLE_CATEGORIES).map((cat: any) => ({ label: cat, value: cat }));
+  const transmissionOptions = (settings?.transmissions || VEHICLE_TRANSMISSIONS).map((trans: any) => ({ label: trans, value: trans }));
+  const fuelOptions = (settings?.fuelTypes || VEHICLE_FUEL_TYPES).map((fuel: any) => ({ label: fuel, value: fuel }));
 
-  const classOptions = VEHICLE_CLASSES.map(cls => ({ label: cls, value: cls }));
+  const classOptions = (settings?.vehicleClasses || VEHICLE_CLASSES).map((cls: any) => ({ label: cls, value: cls }));
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -241,7 +254,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
               categoryOptions={categoryOptions}
               classOptions={classOptions}
             />
-            <LocationSection control={control} errors={errors} />
+            <LocationSection control={control} errors={errors} locations={settings?.locations} />
           </div>
 
           {/* RIGHT COLUMN */}

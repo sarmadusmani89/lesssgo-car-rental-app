@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronDown, Search, Loader2, MapPin } from 'lucide-react';
+import api from '@/lib/api';
 import { PREDEFINED_LOCATIONS } from '@/constants/locations';
 import { VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS } from '@/constants/car';
 
@@ -10,12 +11,25 @@ export default function HeroFilter() {
     const router = useRouter();
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [settings, setSettings] = useState<any>(null);
     const [selections, setSelections] = useState({
         category: '',
         transmission: '',
         pickup: '',
         return: ''
     });
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await api.get('/settings');
+                setSettings(res.data);
+            } catch (error) {
+                console.error("Failed to fetch settings:", error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     const toggleDropdown = (key: string) => {
         setActiveDropdown(activeDropdown === key ? null : key);
@@ -38,9 +52,9 @@ export default function HeroFilter() {
     };
 
     const dropdownOptions = {
-        category: VEHICLE_CATEGORIES,
-        transmission: VEHICLE_TRANSMISSIONS,
-        locations: PREDEFINED_LOCATIONS
+        category: settings?.categories || VEHICLE_CATEGORIES,
+        transmission: settings?.transmissions || VEHICLE_TRANSMISSIONS,
+        locations: settings?.locations || PREDEFINED_LOCATIONS
     };
 
     return (
