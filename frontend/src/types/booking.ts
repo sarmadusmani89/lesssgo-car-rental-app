@@ -93,4 +93,15 @@ export interface BookingsResponse {
 export interface UpdateBookingDto {
     status?: BookingStatus;
     paymentStatus?: PaymentStatus;
+    startDate?: string;
+    endDate?: string;
+    totalAmount?: number;
+    bondAmount?: number;
+    bondStatus?: BondStatus;
+    paymentMethod?: PaymentMethod;
+    customerName?: string;
+    customerEmail?: string;
+    customerPhone?: string;
+    pickupLocation?: string;
+    returnLocation?: string;
 }
