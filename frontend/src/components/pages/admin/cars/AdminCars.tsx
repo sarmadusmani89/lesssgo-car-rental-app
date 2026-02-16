@@ -26,12 +26,14 @@ import AdminCarsHeader from './components/AdminCarsHeader';
 import AdminCarSearch from './components/AdminCarSearch';
 import AdminCarTable from './components/AdminCarTable';
 import DeleteCarModal from './DeleteCarModal';
+import VehicleOptionsModal from './components/VehicleOptionsModal';
 
 export default function AdminCars() {
     const [cars, setCars] = useState<Car[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [showAvailability, setShowAvailability] = useState(false);
+    const [showOptions, setShowOptions] = useState(false);
     const [selectedCar, setSelectedCar] = useState<Car | null>(null);
     const [carToDelete, setCarToDelete] = useState<{ id: string; name: string; brand: string } | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -100,7 +102,10 @@ export default function AdminCars() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <AdminCarsHeader onAddClick={() => router.push('/admin/cars/add')} />
+            <AdminCarsHeader
+                onAddClick={() => router.push('/admin/cars/add')}
+                onOptionsClick={() => setShowOptions(true)}
+            />
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <AdminCarSearch search={search} onSearchChange={setSearch} />
@@ -142,6 +147,11 @@ export default function AdminCars() {
                     isDeleting={isDeleting}
                 />
             )}
+
+            <VehicleOptionsModal
+                isOpen={showOptions}
+                onClose={() => setShowOptions(false)}
+            />
         </div>
     );
 }
