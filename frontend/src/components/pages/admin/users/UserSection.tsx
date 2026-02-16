@@ -1,21 +1,33 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { UserPlus, Filter, RefreshCw } from 'lucide-react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Filter, RefreshCw } from 'lucide-react';
 import { useUsers } from '../../../../hooks/useUsers';
 import UserTable from './UserTable';
+import UserFormModal from './UserFormModal';
 import { UserFilters } from './UserFilters';
 import { Pagination } from '../../../ui/Pagination';
 import { TableSkeleton } from '../../../ui/Skeletons';
 import { toast } from 'sonner';
-import { UserRole } from '../../../../types/user';
+import { User, UserRole } from '../../../../types/user';
 
 export default function UserSection() {
-    const { users, isLoading, refreshUsers, deleteUser } = useUsers();
+    const { users, isLoading, refreshUsers, deleteUser, updateUser } = useUsers();
     const [search, setSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState<UserRole | 'ALL'>('ALL');
     const [currentPage, setCurrentPage] = useState(1);
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setCurrentUserId(JSON.parse(storedUser).id);
+        }
+    }, []);
 
     const itemsPerPage = 8;
 
@@ -47,19 +59,38 @@ export default function UserSection() {
     };
 
     const handleDelete = async (id: string) => {
-        toast.info('Delete functionality coming soon');
-        // if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-        //     try {
-        //         await deleteUser(id);
-        //         toast.success('User deleted successfully');
-        //     } catch (err) {
-        //         toast.error('Failed to delete user');
-        //     }
-        // }
+        if (id === currentUserId) {
+            toast.error("You cannot delete your own administrative account.");
+            return;
+        }
+
+        if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+            try {
+                await deleteUser(id);
+                toast.success('User deleted successfully');
+            } catch (err) {
+                toast.error('Failed to delete user');
+            }
+        }
     };
 
-    const handleEdit = (user: any) => {
-        toast.info(`Editing ${user.name || user.email} (Coming soon)`);
+    const handleEdit = (user: User) => {
+        setEditingUser(user);
+        setIsModalOpen(true);
+    };
+
+    const handleUpdate = async (id: string, data: any) => {
+        setIsSubmitting(true);
+        try {
+            await updateUser(id, data);
+            toast.success('User updated successfully');
+            setIsModalOpen(false);
+            setEditingUser(null);
+        } catch (err) {
+            toast.error('Failed to update user');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (isLoading && users.length === 0) {
@@ -87,10 +118,6 @@ export default function UserSection() {
                     >
                         <RefreshCw size={20} className={isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'} />
                     </button>
-                    <button className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-blue-200/50">
-                        <UserPlus size={20} />
-                        Add User
-                    </button>
                 </div>
             </div>
 
@@ -107,6 +134,7 @@ export default function UserSection() {
                 <>
                     <UserTable
                         users={paginatedUsers}
+                        currentUserId={currentUserId}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                     />
@@ -135,6 +163,14 @@ export default function UserSection() {
                     </button>
                 </div>
             )}
+
+            <UserFormModal
+                isOpen={isModalOpen}
+                onClose={() => { setIsModalOpen(false); setEditingUser(null); }}
+                user={editingUser}
+                onSubmit={handleUpdate}
+                isSubmitting={isSubmitting}
+            />
         </div>
     );
 }

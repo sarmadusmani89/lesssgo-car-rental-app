@@ -8,11 +8,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface UserTableProps {
     users: User[];
+    currentUserId: string | null;
     onEdit: (user: User) => void;
     onDelete: (id: string) => void;
 }
 
-const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
+const UserTable: React.FC<UserTableProps> = ({ users, currentUserId, onEdit, onDelete }) => {
     return (
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
@@ -83,13 +84,15 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
                                             >
                                                 <Edit size={18} />
                                             </button>
-                                            <button
-                                                onClick={() => onDelete(user.id)}
-                                                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
-                                                title="Delete User"
-                                            >
-                                                <Trash2 size={18} />
-                                            </button>
+                                            {user.id !== currentUserId && (
+                                                <button
+                                                    onClick={() => onDelete(user.id)}
+                                                    className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                                                    title="Delete User"
+                                                >
+                                                    <Trash2 size={18} />
+                                                </button>
+                                            )}
                                         </div>
                                         <div className="group-hover:hidden">
                                             <MoreHorizontal size={18} className="text-slate-300 ml-auto" />
