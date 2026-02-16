@@ -19,13 +19,13 @@ import api from '@/lib/api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import AvailabilityCalendar from "@/components/pages/admin/dashboard/AvailabilityCalendar";
-import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import Image from 'next/image';
 import { Car } from './type';
 
 import AdminCarsHeader from './components/AdminCarsHeader';
 import AdminCarSearch from './components/AdminCarSearch';
 import AdminCarTable from './components/AdminCarTable';
+import DeleteCarModal from './DeleteCarModal';
 
 export default function AdminCars() {
     const [cars, setCars] = useState<Car[]>([]);
@@ -133,11 +133,12 @@ export default function AdminCars() {
             )}
 
             {carToDelete && (
-                <DeleteConfirmationModal
+                <DeleteCarModal
                     isOpen={true}
                     onClose={() => setCarToDelete(null)}
                     onConfirm={handleDelete}
-                    carName={`${carToDelete.brand} ${carToDelete.name}`}
+                    carBrand={carToDelete.brand}
+                    carName={carToDelete.name}
                     isDeleting={isDeleting}
                 />
             )}

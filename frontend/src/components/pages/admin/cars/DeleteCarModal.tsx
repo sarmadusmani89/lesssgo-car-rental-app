@@ -14,7 +14,7 @@ type Props = {
     isDeleting: boolean;
 };
 
-export default function DeleteConfirmationModal({ isOpen, onClose, onConfirm, carBrand, carName, isDeleting }: Props) {
+export default function DeleteCarModal({ isOpen, onClose, onConfirm, carBrand, carName, isDeleting }: Props) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -49,11 +49,11 @@ export default function DeleteConfirmationModal({ isOpen, onClose, onConfirm, ca
                             </div>
 
                             <h3 className="text-2xl font-black text-slate-900 tracking-tight italic mb-2 uppercase">
-                                Delete <span className="text-rose-600">Vehicle</span>?
+                                Delete <span className="text-rose-600">Car</span>?
                             </h3>
 
                             <div className="text-slate-500 text-sm font-medium mb-6 space-y-1">
-                                <p>Are you sure you want to remove this vehicle?</p>
+                                <p>Are you sure you want to remove this car?</p>
                                 <div className="text-slate-900 font-bold">
                                     {carBrand && <span className="text-[10px] text-slate-400 block uppercase tracking-widest leading-none mb-1">{carBrand}</span>}
                                     {carName}
