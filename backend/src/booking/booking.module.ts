@@ -16,6 +16,6 @@ import { BookingValidationService } from './services/booking.validation.service'
     BookingEmailService,
     BookingValidationService
   ],
-  exports: [BookingService],
+  exports: [BookingService, BookingEmailService, BookingValidationService],
 })
 export class BookingModule { }
