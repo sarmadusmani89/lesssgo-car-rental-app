@@ -154,6 +154,89 @@ export class BookingEmailService {
         }
     }
 
+    async sendStripePaymentConfirmation(booking: any, transactionId: string) {
+        try {
+            const { user, car, startDate, endDate, totalAmount, customerName: snapName, customerEmail: snapEmail } = booking;
+            const customerName = snapName || user?.name || 'Valued Customer';
+            const customerEmail = snapEmail || user?.email;
+
+            const { start, end } = this.formatDates(startDate, endDate);
+
+            const { bookingConfirmationTemplate } = await import('../../lib/emailTemplates/bookingConfirmation');
+            const { paymentReceiptTemplate } = await import('../../lib/emailTemplates/paymentReceipt');
+            const { adminBookingNotificationTemplate } = await import('../../lib/emailTemplates/adminBookingNotification');
+
+            const confirmHtml = bookingConfirmationTemplate({
+                customerName,
+                bookingId: booking.id,
+                brand: car.brand,
+                vehicleName: car.name,
+                startDate: start,
+                endDate: end,
+                totalAmount,
+                bondAmount: booking.bondAmount,
+                paymentMethod: 'ONLINE',
+                isConfirmed: true,
+                hp: car.hp,
+                passengers: car.passengers,
+                fuelType: car.fuelType,
+                transmission: car.transmission,
+                airConditioner: car.airConditioner,
+                gps: car.gps,
+                vehicleClass: car.vehicleClass,
+                pickupLocation: booking.pickupLocation,
+                returnLocation: booking.returnLocation,
+                customTitle: 'Booking Confirmed',
+                customDescription: 'Great news! Your online payment was successful and your booking is officially confirmed.',
+                paymentStatus: 'Paid'
+            });
+
+            const receiptHtml = paymentReceiptTemplate({
+                customerName,
+                amount: totalAmount,
+                bondAmount: booking.bondAmount,
+                bookingId: booking.id,
+                paymentMethod: 'Stripe Online',
+                transactionId,
+                date: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }),
+            });
+
+            const settings = await this.settingsService.getSettings();
+
+            const adminHtml = adminBookingNotificationTemplate({
+                customerName,
+                customerEmail,
+                customerPhone: user?.phoneNumber || 'N/A',
+                bookingId: booking.id,
+                brand: car.brand,
+                vehicleName: car.name,
+                startDate: start,
+                endDate: end,
+                totalAmount,
+                bondAmount: booking.bondAmount,
+                paymentMethod: 'ONLINE',
+                paymentStatus: 'Confirmed (Paid via Stripe)',
+                hp: car.hp,
+                vehicleClass: car.vehicleClass,
+                transmission: car.transmission,
+                fuelType: car.fuelType,
+                pickupLocation: booking.pickupLocation,
+                returnLocation: booking.returnLocation,
+                customTitle: 'Booking Paid - Stripe',
+                customDescription: `Online payment received via Stripe for booking #${booking.id.slice(-8).toUpperCase()}. Booking is now fully confirmed.`,
+                isPaid: true
+            });
+
+            await Promise.all([
+                this.emailService.sendEmail(customerEmail, 'Booking & Payment Confirmed - LesssGo', confirmHtml),
+                this.emailService.sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml),
+                this.emailService.sendEmail(settings.adminEmail, 'Booking Paid: Stripe Payment Received', adminHtml)
+            ]);
+        } catch (err) {
+            console.error('Failed to send Stripe payment confirmation emails:', err);
+        }
+    }
+
     async sendCancellationEmail(booking: any) {
         try {
             const { user, car, customerEmail } = booking;
