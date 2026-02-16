@@ -72,11 +72,27 @@ export default function EditBookingModal({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        handleDirectChange(name, value);
+    };
+
+    const handleDirectChange = (name: string, value: string) => {
         setFormData(prev => ({
             ...prev,
             [name]: name.includes('Amount') ? parseFloat(value) : value
         }));
     };
+
+    // Extract car locations for dropdowns
+    const pickupLocations = booking?.car?.pickupLocation || [];
+    const returnLocations = booking?.car?.returnLocation || [];
+
+    const pickupOptions = pickupLocations.length > 0
+        ? pickupLocations.map(l => ({ label: l, value: l }))
+        : (formData.pickupLocation ? [{ label: formData.pickupLocation, value: formData.pickupLocation }] : []);
+
+    const returnOptions = returnLocations.length > 0
+        ? returnLocations.map(l => ({ label: l, value: l }))
+        : (formData.returnLocation ? [{ label: formData.returnLocation, value: formData.returnLocation }] : []);
 
     return createPortal(
         <AnimatePresence>
@@ -120,8 +136,13 @@ export default function EditBookingModal({
                                 <CustomerInfoFields formData={formData} onChange={handleChange} />
                                 <RentalPeriodFields formData={formData} onChange={handleChange} />
                                 <PricingFields formData={formData} onChange={handleChange} />
-                                <StatusFields formData={formData} onChange={handleChange} />
-                                <LocationFields formData={formData} onChange={handleChange} />
+                                <StatusFields formData={formData} onChange={handleDirectChange} />
+                                <LocationFields
+                                    formData={formData}
+                                    pickupOptions={pickupOptions}
+                                    returnOptions={returnOptions}
+                                    onChange={handleDirectChange}
+                                />
                             </div>
 
                             {/* Actions */}
