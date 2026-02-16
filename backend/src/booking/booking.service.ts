@@ -70,6 +70,7 @@ export class BookingService {
       // Auto-confirm CASH bookings
       if (createBookingDto.paymentMethod === 'CASH') {
         createBookingDto.status = 'CONFIRMED';
+        (createBookingDto as any).confirmedAt = new Date();
       }
 
       const { customerName: _customerName, customerEmail: _customerEmail, customerPhone: _customerPhone, ...bookingData } = createBookingDto;
@@ -250,9 +251,24 @@ export class BookingService {
 
   async update(id: string, updateBookingDto: UpdateBookingDto) {
     const booking = await this.findOne(id);
+    const data: any = { ...updateBookingDto };
+    const now = new Date();
+
+    if (updateBookingDto.status === 'CONFIRMED' && booking.status !== 'CONFIRMED') {
+      data.confirmedAt = now;
+    } else if (updateBookingDto.status === 'CANCELLED' && booking.status !== 'CANCELLED') {
+      data.cancelledAt = now;
+    } else if (updateBookingDto.status === 'COMPLETED' && booking.status !== 'COMPLETED') {
+      data.completedAt = now;
+    }
+
+    if (updateBookingDto.paymentStatus === 'PAID' && booking.paymentStatus !== 'PAID') {
+      data.paidAt = now;
+    }
+
     const updated = await this.prisma.booking.update({
       where: { id },
-      data: updateBookingDto as any,
+      data,
       include: {
         car: true,
         user: true,
@@ -341,7 +357,9 @@ export class BookingService {
       data: {
         paymentStatus: 'PAID',
         bondStatus: 'PAID',
-        status: 'CONFIRMED'
+        status: 'CONFIRMED',
+        paidAt: new Date(),
+        confirmedAt: booking.confirmedAt || new Date() // Don't overwrite if already confirmed
       },
       include: { car: true, user: true }
     });

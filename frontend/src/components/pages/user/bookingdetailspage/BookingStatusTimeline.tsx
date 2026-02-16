@@ -4,17 +4,34 @@ export default function BookingStatusTimeline({ booking }: { booking: any }) {
   if (!booking) return null;
 
   const steps = [
-    { title: 'Booking Request', status: 'completed', date: new Date(booking.createdAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false }) },
+    {
+      title: 'Booking Request',
+      status: 'completed',
+      date: new Date(booking.createdAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false })
+    },
     {
       title: 'Status: ' + booking.status,
       status: booking.status === 'CANCELLED' ? 'cancelled' : (booking.status === 'CONFIRMED' || booking.status === 'COMPLETED' ? 'completed' : 'active'),
-      date: new Date(booking.updatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false })
+      date: new Date(
+        booking.status === 'CANCELLED' ? (booking.cancelledAt || booking.updatedAt) :
+          booking.status === 'COMPLETED' ? (booking.completedAt || booking.updatedAt) :
+            booking.status === 'CONFIRMED' ? (booking.confirmedAt || booking.updatedAt) :
+              booking.updatedAt
+      ).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false })
     },
-    { title: 'Payment: ' + booking.paymentStatus, status: booking.paymentStatus === 'PAID' ? 'completed' : 'active', date: new Date(booking.updatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false }) },
+    {
+      title: 'Payment: ' + booking.paymentStatus,
+      status: booking.paymentStatus === 'PAID' ? 'completed' : 'active',
+      date: new Date(booking.paidAt || booking.updatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false })
+    },
   ];
 
   if (booking.status === 'COMPLETED') {
-    steps.push({ title: 'Trip Finished', status: 'completed', date: new Date(booking.updatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false }) });
+    steps.push({
+      title: 'Trip Finished',
+      status: 'completed',
+      date: new Date(booking.completedAt || booking.updatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short', hour12: false })
+    });
   }
 
   return (
