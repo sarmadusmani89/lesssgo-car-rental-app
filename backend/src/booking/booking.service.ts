@@ -118,10 +118,17 @@ export class BookingService {
       await this.validationService.checkAvailability(booking.carId, data.startDate || booking.startDate, data.endDate, id);
     }
 
-    if (status === 'CONFIRMED' && booking.status !== 'CONFIRMED') data.confirmedAt = now;
-    if (status === 'CANCELLED' && booking.status !== 'CANCELLED') data.cancelledAt = now;
-    if (status === 'COMPLETED' && booking.status !== 'COMPLETED') data.completedAt = now;
-    if (paymentStatus === 'PAID' && booking.paymentStatus !== 'PAID') data.paidAt = now;
+    // Track when status fields are changed
+    if (status !== undefined && status !== booking.status) {
+      if (status === 'CONFIRMED') data.confirmedAt = now;
+      if (status === 'CANCELLED') data.cancelledAt = now;
+      if (status === 'COMPLETED') data.completedAt = now;
+    }
+
+    // Track when payment status is changed (to any value)
+    if (paymentStatus !== undefined && paymentStatus !== booking.paymentStatus) {
+      data.paidAt = now;
+    }
 
     const updated = await this.prisma.booking.update({
       where: { id },
