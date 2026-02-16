@@ -8,6 +8,7 @@ import TestimonialHeader from '@/components/pages/admin/testimonials/components/
 import TestimonialSearch from '@/components/pages/admin/testimonials/components/TestimonialSearch';
 import TestimonialTable from '@/components/pages/admin/testimonials/TestimonialTable';
 import TestimonialFormModal from '@/components/pages/admin/testimonials/TestimonialFormModal';
+import DeleteTestimonialModal from '@/components/pages/admin/testimonials/components/DeleteTestimonialModal';
 
 export default function AdminTestimonialsPage() {
     const {
@@ -22,6 +23,7 @@ export default function AdminTestimonialsPage() {
     const [search, setSearch] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
+    const [testimonialToDelete, setTestimonialToDelete] = useState<Testimonial | null>(null);
 
     const handleCreateOrUpdate = async (data: CreateTestimonialDto | UpdateTestimonialDto, imageFile?: File) => {
         try {
@@ -34,6 +36,16 @@ export default function AdminTestimonialsPage() {
             setEditingTestimonial(null);
         } catch (error) {
             // Error handling is managed in the hook (toast)
+        }
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!testimonialToDelete) return;
+        try {
+            await deleteTestimonial(testimonialToDelete.id);
+            setTestimonialToDelete(null);
+        } catch (error) {
+            // Error handling is managed in the hook
         }
     };
 
@@ -72,7 +84,10 @@ export default function AdminTestimonialsPage() {
                         setEditingTestimonial(t);
                         setIsModalOpen(true);
                     }}
-                    onDelete={deleteTestimonial}
+                    onDelete={(id) => {
+                        const t = testimonials.find(item => item.id === id);
+                        if (t) setTestimonialToDelete(t);
+                    }}
                 />
             </div>
 
@@ -84,6 +99,14 @@ export default function AdminTestimonialsPage() {
                 }}
                 onSubmit={handleCreateOrUpdate}
                 testimonial={editingTestimonial}
+                isSubmitting={isSubmitting}
+            />
+
+            <DeleteTestimonialModal
+                isOpen={!!testimonialToDelete}
+                onClose={() => setTestimonialToDelete(null)}
+                onConfirm={handleDeleteConfirm}
+                testimonialName={testimonialToDelete?.name || ''}
                 isSubmitting={isSubmitting}
             />
         </div>

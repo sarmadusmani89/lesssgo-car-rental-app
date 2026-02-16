@@ -78,7 +78,6 @@ export function useTestimonials() {
     };
 
     const deleteTestimonial = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this testimonial?')) return;
         try {
             await adminApi.deleteTestimonial(id);
             toast.success('Testimonial deleted successfully');
