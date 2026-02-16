@@ -1,5 +1,5 @@
 import { Injectable, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../lib/prisma.service';
+import { PrismaService } from '../../lib/prisma.service';
 
 @Injectable()
 export class BookingValidationService {

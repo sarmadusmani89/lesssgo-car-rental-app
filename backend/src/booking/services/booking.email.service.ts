@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EmailService } from '../email/email.service';
-import { SettingsService } from '../settings/settings.service';
+import { EmailService } from '../../email/email.service';
+import { SettingsService } from '../../settings/settings.service';
 import { Booking, Car } from '@prisma/client';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class BookingEmailService {
             const { car, startDate, endDate, totalAmount, customerName, customerEmail, paymentMethod } = booking;
             const { start, end } = this.formatDates(startDate, endDate);
 
-            const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
+            const { bookingConfirmationTemplate } = await import('../../lib/emailTemplates/bookingConfirmation');
 
             const isCash = paymentMethod === 'CASH';
             const emailSubject = isCash ? 'Booking Confirmed - LesssGo' : 'Booking Received - Awaiting Payment - LesssGo';
@@ -84,7 +84,7 @@ export class BookingEmailService {
             const { car, startDate, endDate, totalAmount, customerName, customerEmail, customerPhone, paymentMethod } = booking;
             const { start, end } = this.formatDates(startDate, endDate);
 
-            const { adminBookingNotificationTemplate } = await import('../lib/emailTemplates/adminBookingNotification');
+            const { adminBookingNotificationTemplate } = await import('../../lib/emailTemplates/adminBookingNotification');
 
             const html = adminBookingNotificationTemplate({
                 customerName: customerName || 'Valued Customer',
@@ -121,7 +121,7 @@ export class BookingEmailService {
             const { car, startDate, endDate, totalAmount, paymentMethod, customerName, customerEmail } = booking;
             const { start, end } = this.formatDates(startDate, endDate);
 
-            const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
+            const { bookingConfirmationTemplate } = await import('../../lib/emailTemplates/bookingConfirmation');
 
             const html = bookingConfirmationTemplate({
                 customerName: customerName || 'Valued Customer',
@@ -157,7 +157,7 @@ export class BookingEmailService {
     async sendCancellationEmail(booking: any) {
         try {
             const { user, car, customerEmail } = booking;
-            const { cancellationNoticeTemplate } = await import('../lib/emailTemplates/cancellationNotice');
+            const { cancellationNoticeTemplate } = await import('../../lib/emailTemplates/cancellationNotice');
 
             const html = cancellationNoticeTemplate({
                 name: booking.customerName || user?.name || 'Valued Customer',
@@ -177,8 +177,8 @@ export class BookingEmailService {
             const { car, startDate, endDate, totalAmount, paymentMethod, customerName, customerEmail } = booking;
             const { start, end } = this.formatDates(startDate, endDate);
 
-            const { bookingConfirmationTemplate } = await import('../lib/emailTemplates/bookingConfirmation');
-            const { paymentReceiptTemplate } = await import('../lib/emailTemplates/paymentReceipt');
+            const { bookingConfirmationTemplate } = await import('../../lib/emailTemplates/bookingConfirmation');
+            const { paymentReceiptTemplate } = await import('../../lib/emailTemplates/paymentReceipt');
 
             const descriptiveStatus = paymentMethod === 'CASH' ? 'Paid (Cash on Pickup)' : 'Paid (Verified by Admin)';
 
