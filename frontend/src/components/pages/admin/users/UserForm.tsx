@@ -16,7 +16,8 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        role: UserRole.USER
+        role: UserRole.USER,
+        isVerified: false
     });
 
     useEffect(() => {
@@ -24,7 +25,8 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
             setFormData({
                 name: user.name || '',
                 email: user.email,
-                role: user.role
+                role: user.role,
+                isVerified: user.isVerified
             });
         }
     }, [user]);
@@ -37,7 +39,7 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
     };
 
     return (
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="px-8 pt-2 pb-8 space-y-5">
             <div className="space-y-4">
                 <FormInput
                     label="Full Name"
@@ -60,7 +62,7 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                 <div className="space-y-1.5">
                     <label className="text-sm font-semibold text-slate-700 ml-1 flex items-center gap-1.5">
                         <Shield size={14} className="text-slate-400" />
-                        Access Level
+                        Access & Status
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                         <button
@@ -87,6 +89,30 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                             <Shield size={24} className={formData.role === UserRole.ADMIN ? 'text-blue-600' : 'text-slate-300'} />
                             <span className="mt-2 font-bold text-sm tracking-tight">System Admin</span>
                             <span className="text-[10px] opacity-60 font-medium">Full access</span>
+                        </button>
+                    </div>
+
+                    <div className="pt-2">
+                        <button
+                            type="button"
+                            onClick={() => setFormData({ ...formData, isVerified: !formData.isVerified })}
+                            className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${formData.isVerified
+                                ? 'border-emerald-500 bg-emerald-50/50 text-emerald-700 shadow-sm'
+                                : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+                                }`}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.isVerified ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                                    <Shield size={20} />
+                                </div>
+                                <div className="text-left">
+                                    <p className="font-bold text-sm">Account Verification</p>
+                                    <p className="text-[10px] opacity-60 font-medium">{formData.isVerified ? 'Verified Account' : 'Pending Verification'}</p>
+                                </div>
+                            </div>
+                            <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${formData.isVerified ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${formData.isVerified ? 'translate-x-6' : 'translate-x-0'}`} />
+                            </div>
                         </button>
                     </div>
                 </div>

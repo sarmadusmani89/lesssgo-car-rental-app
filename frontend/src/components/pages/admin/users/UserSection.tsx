@@ -5,6 +5,7 @@ import { Filter, RefreshCw } from 'lucide-react';
 import { useUsers } from '../../../../hooks/useUsers';
 import UserTable from './UserTable';
 import UserFormModal from './UserFormModal';
+import DeleteUserModal from './DeleteUserModal';
 import { UserFilters } from './UserFilters';
 import { Pagination } from '../../../ui/Pagination';
 import { TableSkeleton } from '../../../ui/Skeletons';
@@ -19,7 +20,10 @@ export default function UserSection() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [userToDelete, setUserToDelete] = useState<User | null>(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -58,19 +62,31 @@ export default function UserSection() {
         }
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDeleteClick = (id: string) => {
         if (id === currentUserId) {
             toast.error("You cannot delete your own administrative account.");
             return;
         }
+        const user = users.find(u => u.id === id);
+        if (user) {
+            setUserToDelete(user);
+            setIsDeleteModalOpen(true);
+        }
+    };
 
-        if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-            try {
-                await deleteUser(id);
-                toast.success('User deleted successfully');
-            } catch (err) {
-                toast.error('Failed to delete user');
-            }
+    const handleConfirmDelete = async () => {
+        if (!userToDelete) return;
+
+        setIsDeleting(true);
+        try {
+            await deleteUser(userToDelete.id);
+            toast.success('User deleted successfully');
+            setIsDeleteModalOpen(false);
+            setUserToDelete(null);
+        } catch (err) {
+            toast.error('Failed to delete user');
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -136,7 +152,7 @@ export default function UserSection() {
                         users={paginatedUsers}
                         currentUserId={currentUserId}
                         onEdit={handleEdit}
-                        onDelete={handleDelete}
+                        onDelete={handleDeleteClick}
                     />
 
                     <Pagination
@@ -170,6 +186,14 @@ export default function UserSection() {
                 user={editingUser}
                 onSubmit={handleUpdate}
                 isSubmitting={isSubmitting}
+            />
+
+            <DeleteUserModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => { setIsDeleteModalOpen(false); setUserToDelete(null); }}
+                onConfirm={handleConfirmDelete}
+                user={userToDelete}
+                isSubmitting={isDeleting}
             />
         </div>
     );
