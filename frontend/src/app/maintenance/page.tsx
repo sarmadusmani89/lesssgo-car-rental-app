@@ -15,8 +15,8 @@ export default function MaintenancePage() {
             .catch(err => console.error('Failed to fetch settings:', err));
     }, []);
 
-    const displayEmail = settings?.adminEmail || 'support@lesssgo.com';
-    const displayPhone = settings?.phoneNumber || '+675 1234 5678';
+    const displayEmail = settings?.contactEmail || 'support@lesssgo.com';
+    const displayPhone = settings?.contactPhone || '+675 1234 5678';
 
     return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4 text-center relative overflow-hidden">
