@@ -55,9 +55,18 @@ export class BookingController {
       }
 
       // 2. Check 48h notice
+      // DB stores dates as "Wall-Clock UTC" (e.g. 10:00 AM PNG -> 10:00 UTC)
+      // Since server runs on Absolute UTC, we adjust the clock to the user's wall-clock
+      // Using the provided timezoneOffset (in minutes, e.g., -600 for +10h).
       const pickupDate = new Date(booking.startDate);
       const now = new Date();
-      const hoursDifference = (pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+      // Default to 0 if not provided, otherwise shift server UTC clock to user Wall-Clock
+      // Javascript offset is (UTC - Local) in minutes, so we subtract it to get Local from UTC.
+      const userOffset = updateBookingDto.timezoneOffset ?? 0;
+      const userWallClockNow = new Date(now.getTime() - (userOffset * 60 * 1000));
+
+      const hoursDifference = (pickupDate.getTime() - userWallClockNow.getTime()) / (1000 * 60 * 60);
 
       if (hoursDifference < 48) {
         throw new ForbiddenException('Cancellations are only allowed 48 hours before pickup.');

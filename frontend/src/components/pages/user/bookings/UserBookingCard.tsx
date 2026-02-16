@@ -53,10 +53,21 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
     // 3. Must be at least 48 hours before pickup
     const carAllowsCancel = booking.car?.freeCancellation ?? true;
 
-    // Time calculation (UTC safe)
+    // Time calculation (Wall-Clock safe)
+    // We get the numbers on the user's clock (regardless of timezone) 
+    // and treat them as UTC to match the DB storage format.
+    const localNow = new Date();
+    const wallClockNow = new Date(Date.UTC(
+        localNow.getFullYear(),
+        localNow.getMonth(),
+        localNow.getDate(),
+        localNow.getHours(),
+        localNow.getMinutes(),
+        localNow.getSeconds()
+    ));
+
     const pickupDate = new Date(booking.startDate);
-    const now = new Date();
-    const hoursDifference = (pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursDifference = (pickupDate.getTime() - wallClockNow.getTime()) / (1000 * 60 * 60);
     const isBefore48h = hoursDifference >= 48;
 
     const canCancel = (status.toLowerCase() === 'pending' || status.toLowerCase() === 'confirmed') && carAllowsCancel && isBefore48h;
@@ -127,8 +138,8 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
                                 onClick={() => onCancel(booking.id)}
                                 disabled={cancellingId === booking.id || !canCancel}
                                 className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 font-bold rounded-xl transition-all shadow-sm ${canCancel
-                                        ? 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
-                                        : 'bg-slate-50 text-slate-400 border border-slate-100 cursor-not-allowed'
+                                    ? 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
+                                    : 'bg-slate-50 text-slate-400 border border-slate-100 cursor-not-allowed'
                                     }`}
                                 title={restrictionMessage}
                             >

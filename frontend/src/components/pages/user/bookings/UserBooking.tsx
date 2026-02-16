@@ -74,7 +74,10 @@ export default function UserBookings() {
       // For now, I'll simulate it or use a generic update if I can't check
       // Actually, I should verify the endpoint. But for the modal UI implementation, I can place the call structure.
 
-      await api.patch(`/booking/${bookingToCancel.id}`, { status: 'CANCELLED' });
+      await api.patch(`/booking/${bookingToCancel.id}`, {
+        status: 'CANCELLED',
+        timezoneOffset: new Date().getTimezoneOffset()
+      });
 
       toast.success('Booking cancelled successfully');
 
