@@ -16,7 +16,7 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        role: 'USER' as UserRole
+        role: UserRole.USER
     });
 
     useEffect(() => {
@@ -65,26 +65,26 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                     <div className="grid grid-cols-2 gap-3">
                         <button
                             type="button"
-                            onClick={() => setFormData({ ...formData, role: 'USER' })}
-                            className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${formData.role === 'USER'
-                                    ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm'
-                                    : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+                            onClick={() => setFormData({ ...formData, role: UserRole.USER })}
+                            className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${formData.role === UserRole.USER
+                                ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm'
+                                : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
                                 }`}
                         >
-                            <UserIcon size={24} className={formData.role === 'USER' ? 'text-blue-600' : 'text-slate-300'} />
+                            <UserIcon size={24} className={formData.role === UserRole.USER ? 'text-blue-600' : 'text-slate-300'} />
                             <span className="mt-2 font-bold text-sm tracking-tight">Standard User</span>
                             <span className="text-[10px] opacity-60 font-medium">Limited access</span>
                         </button>
 
                         <button
                             type="button"
-                            onClick={() => setFormData({ ...formData, role: 'ADMIN' })}
-                            className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${formData.role === 'ADMIN'
-                                    ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm'
-                                    : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+                            onClick={() => setFormData({ ...formData, role: UserRole.ADMIN })}
+                            className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${formData.role === UserRole.ADMIN
+                                ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm'
+                                : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
                                 }`}
                         >
-                            <Shield size={24} className={formData.role === 'ADMIN' ? 'text-blue-600' : 'text-slate-300'} />
+                            <Shield size={24} className={formData.role === UserRole.ADMIN ? 'text-blue-600' : 'text-slate-300'} />
                             <span className="mt-2 font-bold text-sm tracking-tight">System Admin</span>
                             <span className="text-[10px] opacity-60 font-medium">Full access</span>
                         </button>
