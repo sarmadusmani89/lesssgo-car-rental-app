@@ -82,11 +82,11 @@ export default function EditBookingModal({
     const returnLocations = booking?.car?.returnLocation || [];
 
     const pickupOptions = pickupLocations.length > 0
-        ? pickupLocations.map(l => ({ label: l, value: l }))
+        ? pickupLocations.map((l: string) => ({ label: l, value: l }))
         : (formData.pickupLocation ? [{ label: formData.pickupLocation, value: formData.pickupLocation }] : []);
 
     const returnOptions = returnLocations.length > 0
-        ? returnLocations.map(l => ({ label: l, value: l }))
+        ? returnLocations.map((l: string) => ({ label: l, value: l }))
         : (formData.returnLocation ? [{ label: formData.returnLocation, value: formData.returnLocation }] : []);
 
     return createPortal(

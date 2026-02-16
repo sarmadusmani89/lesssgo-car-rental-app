@@ -34,6 +34,8 @@ export interface Car {
     pricePerDay: number;
     vehicleClass: string;
     freeCancellation: boolean;
+    pickupLocation?: string[];
+    returnLocation?: string[];
 }
 
 export interface BookingUser {
