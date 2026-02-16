@@ -45,7 +45,29 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
     const status = booking.status || 'Pending';
     const isCompleted = status.toLowerCase() === 'completed';
     const isCancelled = status.toLowerCase() === 'cancelled';
-    const canCancel = !isCompleted && !isCancelled;
+    const isConfirmed = status.toLowerCase() === 'confirmed';
+
+    // Cancellation Rules:
+    // 1. Must be Pending or Confirmed
+    // 2. Car must allow free cancellation
+    // 3. Must be at least 48 hours before pickup
+    const carAllowsCancel = booking.car?.freeCancellation ?? true;
+
+    // Time calculation (UTC safe)
+    const pickupDate = new Date(booking.startDate);
+    const now = new Date();
+    const hoursDifference = (pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const isBefore48h = hoursDifference >= 48;
+
+    const canCancel = (status.toLowerCase() === 'pending' || status.toLowerCase() === 'confirmed') && carAllowsCancel && isBefore48h;
+
+    // Determine restriction message
+    let restrictionMessage = '';
+    if (!canCancel && !isCompleted && !isCancelled) {
+        if (!carAllowsCancel) restrictionMessage = 'Non-refundable booking';
+        else if (!isBefore48h) restrictionMessage = 'Inside 48h window';
+        else restrictionMessage = 'Cancellation restricted';
+    }
 
     return (
         <div className="bg-white rounded-2xl border border-slate-100 p-6 transition-all hover:shadow-xl hover:shadow-slate-200/50 group">
@@ -99,19 +121,30 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
                         Details
                     </Link>
 
-                    {canCancel && (
-                        <button
-                            onClick={() => onCancel(booking.id)}
-                            disabled={cancellingId === booking.id}
-                            className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 bg-red-50 text-red-600 font-bold rounded-xl hover:bg-red-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {cancellingId === booking.id ? (
-                                <Loader2 className="animate-spin" size={18} />
-                            ) : (
-                                <AlertCircle size={18} />
+                    {!isCompleted && !isCancelled && (
+                        <div className="flex-1 md:flex-none flex flex-col items-center gap-1">
+                            <button
+                                onClick={() => onCancel(booking.id)}
+                                disabled={cancellingId === booking.id || !canCancel}
+                                className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 font-bold rounded-xl transition-all shadow-sm ${canCancel
+                                        ? 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
+                                        : 'bg-slate-50 text-slate-400 border border-slate-100 cursor-not-allowed'
+                                    }`}
+                                title={restrictionMessage}
+                            >
+                                {cancellingId === booking.id ? (
+                                    <Loader2 className="animate-spin" size={18} />
+                                ) : (
+                                    <AlertCircle size={18} />
+                                )}
+                                Cancel
+                            </button>
+                            {restrictionMessage && (
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                                    {restrictionMessage}
+                                </span>
                             )}
-                            Cancel
-                        </button>
+                        </div>
                     )}
                 </div>
             </div>
