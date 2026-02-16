@@ -33,7 +33,7 @@ export default function UserFormModal({ isOpen, onClose, user, onSubmit, isSubmi
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl shadow-slate-900/20 overflow-hidden"
                     >
-                        <div className="px-8 py-6 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
+                        <div className="p-8 pt-7 text-center">
                             <div>
                                 <h3 className="text-2xl font-black text-slate-900 tracking-tight italic">
                                     Edit <span className="text-blue-600">User</span>
