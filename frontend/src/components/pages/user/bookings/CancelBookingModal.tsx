@@ -41,7 +41,7 @@ export default function CancelBookingModal({
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
                         className="relative w-full max-w-sm bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
                     >
-                        <div className="p-8 text-center">
+                        <div className="p-8 pt-11 text-center">
                             <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
                                 <AlertTriangle className="text-amber-600" size={40} />
                             </div>
