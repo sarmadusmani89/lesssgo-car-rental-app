@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, AlertTriangle, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -19,10 +20,18 @@ export default function DeleteTestimonialModal({
     testimonialName,
     isSubmitting
 }: DeleteTestimonialModalProps) {
-    return (
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
+
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -46,9 +55,13 @@ export default function DeleteTestimonialModal({
                                 Delete <span className="text-rose-600">Testimonial</span>?
                             </h3>
 
-                            <p className="text-slate-500 text-sm font-medium mb-6">
-                                You are about to permanently remove the testimonial from <span className="text-slate-900 font-bold">{testimonialName}</span>. This action cannot be undone.
-                            </p>
+                            <div className="text-slate-500 text-sm font-medium mb-6 space-y-1">
+                                <p>You are about to permanently remove the testimonial from</p>
+                                <p className="text-slate-900 font-bold">{testimonialName}</p>
+                                <div className="mt-4 p-3 bg-rose-50/50 rounded-xl border border-rose-100 text-[10px] text-rose-700 font-bold uppercase tracking-wider">
+                                    This action cannot be undone
+                                </div>
+                            </div>
 
                             <div className="space-y-3">
                                 <button
@@ -83,6 +96,7 @@ export default function DeleteTestimonialModal({
                     </motion.div>
                 </div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }

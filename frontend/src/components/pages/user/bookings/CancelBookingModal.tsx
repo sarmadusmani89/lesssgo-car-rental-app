@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, AlertTriangle, CalendarX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -21,7 +22,15 @@ export default function CancelBookingModal({
     carName,
     isCancelling
 }: Props) {
-    return (
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
+
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4">
@@ -96,6 +105,7 @@ export default function CancelBookingModal({
                     </motion.div>
                 </div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     );
 }
