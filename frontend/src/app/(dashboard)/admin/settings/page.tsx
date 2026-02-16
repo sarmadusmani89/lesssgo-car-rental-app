@@ -81,7 +81,7 @@ export default function AdminSettings() {
             icon: AlertTriangle,
             onClick: handleOpen('maintenance')
         },
-        { title: 'Email Notifications', desc: 'Configure SMTP and automated alerts', icon: Bell, onClick: () => alert('Coming soon') },
+        // { title: 'Email Notifications', desc: 'Configure SMTP and automated alerts', icon: Bell, onClick: () => alert('Coming soon') },
     ];
 
     return (
