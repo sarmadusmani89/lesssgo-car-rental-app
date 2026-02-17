@@ -8,6 +8,7 @@ export interface User {
     id: string;
     email: string;
     name: string | null;
+    phoneNumber: string | null;
     role: UserRole;
     isVerified: boolean;
     createdAt: string;
@@ -24,6 +25,7 @@ export interface CreateUserDto {
 export interface UpdateUserDto {
     email?: string;
     name?: string;
+    phoneNumber?: string;
     role?: UserRole;
     isVerified?: boolean;
 }

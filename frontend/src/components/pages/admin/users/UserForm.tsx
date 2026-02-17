@@ -16,6 +16,7 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        phoneNumber: '',
         role: UserRole.USER,
         isVerified: false
     });
@@ -25,6 +26,7 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
             setFormData({
                 name: user.name || '',
                 email: user.email,
+                phoneNumber: user.phoneNumber || '',
                 role: user.role,
                 isVerified: user.isVerified
             });
@@ -56,7 +58,14 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="user@example.com"
                     required
-                    disabled // Email shouldn't be editable for existing users usually
+                />
+
+                <FormInput
+                    label="Phone Number"
+                    type="tel"
+                    value={formData.phoneNumber}
+                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    placeholder="+675 7000 0000"
                 />
 
                 <div className="space-y-1.5">
