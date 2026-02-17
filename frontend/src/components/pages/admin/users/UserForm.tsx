@@ -66,6 +66,7 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                     value={formData.phoneNumber}
                     onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                     placeholder="+675 7000 0000"
+                    required
                 />
 
                 <div className="space-y-1.5">
