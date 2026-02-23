@@ -62,11 +62,6 @@ export default function Footer() {
                         <img src="/web-logo-dark.png" alt="Lesssgo Logo" className={styles.logoImage} />
                     </Link>
                     <p>Experience the ultimate freedom on the road with {settings?.siteName || 'Lesssgo'}. We provide premium car rental services at competitive prices.</p>
-                    <div className={styles.socials}>
-                        <Link href="#" className={styles.socialIcon}><Instagram size={20} /></Link>
-                        <Link href="#" className={styles.socialIcon}><Twitter size={20} /></Link>
-                        <Link href="#" className={styles.socialIcon}><Facebook size={20} /></Link>
-                    </div>
                 </div>
 
 
