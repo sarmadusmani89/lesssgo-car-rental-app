@@ -76,28 +76,34 @@ const UserTable: React.FC<UserTableProps> = ({ users, currentUserId, onEdit, onD
                                         </p>
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button
-                                                onClick={() => onEdit(user)}
-                                                className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                                                title="Edit User"
-                                            >
-                                                <Edit size={18} />
-                                            </button>
-                                            {user.id !== currentUserId && (
+                                        <div className="relative flex items-center justify-end h-10">
+                                            {/* Action Buttons - Shown on Hover */}
+                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
                                                 <button
-                                                    onClick={() => onDelete(user.id)}
-                                                    className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
-                                                    title="Delete User"
+                                                    onClick={() => onEdit(user)}
+                                                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                    title="Edit User"
                                                 >
-                                                    <Trash2 size={18} />
+                                                    <Edit size={18} />
                                                 </button>
-                                            )}
-                                        </div>
-                                        <div className="group-hover:hidden">
-                                            <MoreHorizontal size={18} className="text-slate-300 ml-auto" />
+                                                {user.id !== currentUserId && (
+                                                    <button
+                                                        onClick={() => onDelete(user.id)}
+                                                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                                                        title="Delete User"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            {/* Static Icon - Hidden on Hover but takes no extra space */}
+                                            <div className="absolute right-0 group-hover:opacity-0 transition-opacity duration-200 pointer-events-none">
+                                                <MoreHorizontal size={18} className="text-slate-300" />
+                                            </div>
                                         </div>
                                     </td>
+
                                 </motion.tr>
                             ))}
                         </AnimatePresence>
