@@ -338,6 +338,11 @@
         flex-direction: column;
         height: auto;
         max-width: 500px;
+        border-radius: 2.5rem;
+        /* Added border-radius */
+        margin: 0 auto;
+        /* Center container in authPage */
+        min-height: auto;
     }
 
     .sideSection {
@@ -345,6 +350,25 @@
     }
 
     .authPage {
-        padding: 4rem 1.5rem;
+        padding: 2rem 1rem;
+        /* Reduced top padding */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .formSection {
+        padding: 3rem 1.5rem;
+        /* Reduced padding */
+    }
+
+    .authCard {
+        margin-top: 0;
+        /* Removed extra margin */
+    }
+
+    .authCard h2 {
+        font-size: 2rem;
+        /* Slightly smaller title on mobile */
     }
 }
