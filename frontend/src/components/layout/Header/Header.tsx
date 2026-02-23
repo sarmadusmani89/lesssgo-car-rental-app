@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './Header.module.css';
-import { Car, User, Menu, X, LayoutDashboard, Globe } from 'lucide-react';
+import { Car, User, Menu, X, LayoutDashboard, Globe, Search, MapPin, Phone, Mail, Instagram, Twitter, Facebook } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { setCurrency } from '@/lib/store/slices/uiSlice';
@@ -180,25 +180,53 @@ export default function Header() {
 
             {/* Mobile Menu Drawer */}
             <div className={`${styles.mobileDrawer} ${isMenuOpen ? styles.mobileDrawerOpen : ''}`}>
-                <nav className={styles.mobileNav}>
-                    <div className="px-4 py-4 border-b border-gray-100 mb-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Currency</label>
-                        <div className="grid grid-cols-3 gap-2">
-                            {(['AUD', 'USD', 'PGK'] as const).map((curr) => (
-                                <button
-                                    key={curr}
-                                    onClick={() => handleCurrencyChange(curr)}
-                                    className={`py-2 rounded-lg text-xs font-bold border transition-all ${currency === curr ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-gray-50 border-gray-100 text-gray-500'}`}
-                                >
-                                    {curr}
-                                </button>
-                            ))}
-                        </div>
+                <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-4 py-2 flex-1">
+                        <Search size={18} className="text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Search cars..."
+                            className="bg-transparent border-none outline-none text-white text-sm w-full"
+                        />
                     </div>
+                    <button onClick={() => setIsMenuOpen(false)} className="ml-4 p-2 text-white/50 hover:text-white">
+                        <X size={24} />
+                    </button>
+                </div>
 
+                <nav className={styles.mobileNav}>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 block">Menu</label>
                     <Link href="/cars" onClick={() => setIsMenuOpen(false)}>Find Cars</Link>
                     <Link href="/how-it-works" onClick={() => setIsMenuOpen(false)}>How it Works</Link>
                     <Link href="/about" onClick={() => setIsMenuOpen(false)}>About Us</Link>
+
+                    <div className="mt-8">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 block">Support</label>
+                        <div className="flex flex-col gap-4">
+                            <Link href="/faq" className="text-gray-400 hover:text-white text-sm" onClick={() => setIsMenuOpen(false)}>FAQs</Link>
+                            <Link href="/terms" className="text-gray-400 hover:text-white text-sm" onClick={() => setIsMenuOpen(false)}>Terms & Conditions</Link>
+                            <Link href="/privacy" className="text-gray-400 hover:text-white text-sm" onClick={() => setIsMenuOpen(false)}>Privacy Policy</Link>
+                        </div>
+                    </div>
+
+                    <div className="mt-8">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 block">Contact Us</label>
+                        <div className="flex flex-col gap-4">
+                            <div className="flex items-start gap-3 text-gray-400 text-sm">
+                                <MapPin size={18} className="text-blue-500 shrink-0" />
+                                <span>Vanama Crescent off Lawes Road, Konedobu</span>
+                            </div>
+                            <div className="flex items-center gap-3 text-gray-400 text-sm">
+                                <Phone size={18} className="text-blue-500 shrink-0" />
+                                <span>+675 72497905</span>
+                            </div>
+                            <div className="flex items-center gap-3 text-gray-400 text-sm">
+                                <Mail size={18} className="text-blue-500 shrink-0" />
+                                <span>ride@lessssgopng.com</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className={styles.mobileAuth}>
                         {user ? (
                             <Link href={dashboardLink} className="btn btn-primary w-full flex items-center justify-center gap-2" onClick={() => setIsMenuOpen(false)}>
@@ -206,11 +234,20 @@ export default function Header() {
                                 Dashboard
                             </Link>
                         ) : (
-                            <>
-                                <Link href="/auth/login" className="btn btn-outline w-full" onClick={() => setIsMenuOpen(false)}>Log in</Link>
+                            <div className="grid grid-cols-2 gap-3">
+                                <Link href="/auth/login" className="btn bg-white/5 border border-white/10 text-white w-full" onClick={() => setIsMenuOpen(false)}>Log in</Link>
                                 <Link href="/auth/signup" className="btn btn-primary w-full" onClick={() => setIsMenuOpen(false)}>Sign up</Link>
-                            </>
+                            </div>
                         )}
+                    </div>
+
+                    <div className="mt-auto pt-8 border-t border-white/5 flex flex-col gap-4">
+                        <div className="flex gap-4">
+                            <Link href="#" className="p-2 bg-white/5 rounded-lg text-gray-400 hover:text-white"><Instagram size={18} /></Link>
+                            <Link href="#" className="p-2 bg-white/5 rounded-lg text-gray-400 hover:text-white"><Twitter size={18} /></Link>
+                            <Link href="#" className="p-2 bg-white/5 rounded-lg text-gray-400 hover:text-white"><Facebook size={18} /></Link>
+                        </div>
+                        <p className="text-[10px] text-gray-600">© 2026 Lesssgo Car Rental. All rights reserved.</p>
                     </div>
                 </nav>
             </div>
