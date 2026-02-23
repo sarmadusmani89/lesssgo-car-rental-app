@@ -26,6 +26,19 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
     const sidebarWidth = 256; // Sidebar width in px
 
+    const handleLogout = () => {
+        // Clear auth tokens
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = 'role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+
+        // Trigger storage event for other components (like Header)
+        window.dispatchEvent(new Event('storage'));
+
+        window.location.href = '/auth/login';
+    };
+
     return (
         <div className="flex min-h-screen bg-gray-50">
             {/* Sidebar */}
@@ -39,7 +52,7 @@ export default function DashboardLayout({
                 {/* Logout */}
                 <div className="px-4 py-4">
                     <button
-                        onClick={() => (window.location.href = '/login')}
+                        onClick={handleLogout}
                         className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition"
                     >
                         <LogOut size={20} className="text-gray-400 group-hover:text-blue-500" />
@@ -47,6 +60,7 @@ export default function DashboardLayout({
                     </button>
                 </div>
             </div>
+
 
             {/* Main content */}
             <div
