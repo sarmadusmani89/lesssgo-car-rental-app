@@ -189,9 +189,17 @@
 
 @media (max-width: 1024px) {
     .header {
-        width: 95%;
-        padding: 0.25rem 0.5rem;
+        width: 92%;
+        /* Slightly smaller width for safety */
+        padding: 0.25rem 1rem;
         top: 16px;
+        overflow: hidden;
+        /* Prevent internal overflow from showing */
+    }
+
+    .nav {
+        max-width: 100%;
+        gap: 0.5rem;
     }
 
     .desktopNav,
@@ -203,6 +211,7 @@
         display: flex;
     }
 }
+
 
 .currencyWrapper {
     position: relative;

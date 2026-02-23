@@ -1,12 +1,14 @@
 /* Topbar container */
 .topbar {
-    @apply h-20 w-full sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200/50 flex items-center justify-between px-8 shadow-sm;
+    @apply h-20 w-full sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200/50 flex items-center justify-between px-4 md:px-8 shadow-sm overflow-hidden;
 }
 
 /* Title */
 .title {
-    @apply text-2xl font-bold text-gray-800;
+    @apply text-xl md:text-2xl font-bold text-gray-800 truncate;
+    min-width: 0;
 }
+
 
 /* Right section */
 .right {
