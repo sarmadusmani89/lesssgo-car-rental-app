@@ -193,8 +193,7 @@
         /* Slightly smaller width for safety */
         padding: 0.25rem 1rem;
         top: 16px;
-        overflow: hidden;
-        /* Prevent internal overflow from showing */
+        /* Removed overflow: hidden to allow mobile drawer to be visible */
     }
 
     .nav {
