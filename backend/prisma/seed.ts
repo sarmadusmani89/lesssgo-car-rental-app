@@ -19,20 +19,6 @@ async function main() {
 
     console.log('Admin user created:', admin.email);
 
-    // 2. Create Default System Settings
-    const settingsCount = await prisma.systemSettings.count();
-    if (settingsCount === 0) {
-        await prisma.systemSettings.create({
-            data: {
-                siteName: 'Lesssgo Car Rental',
-                maintenanceMode: false,
-                currency: 'USD',
-                passwordMinLength: 8,
-            },
-        });
-        console.log('Default system settings created.');
-    }
-
     console.log('Seeding complete.');
 }
 
