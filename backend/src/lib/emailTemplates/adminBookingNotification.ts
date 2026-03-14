@@ -23,7 +23,7 @@ export function adminBookingNotificationTemplate(data: {
   customDescription?: string;
   isPaid?: boolean;
 }) {
-  const isPaid = data.isPaid ?? (data.paymentStatus.toLowerCase().includes('paid') || data.paymentStatus.toLowerCase().includes('verified') || data.paymentStatus.toLowerCase().includes('online'));
+  const isPaid = data.isPaid ?? (data.paymentStatus.toLowerCase().includes('paid') || data.paymentStatus.toLowerCase().includes('verified') || data.paymentStatus.toLowerCase().includes('online') || data.paymentStatus.toLowerCase().includes('stripe'));
   const totalLabel = isPaid ? 'Total Received' : 'Total to be Received';
   const totalColor = isPaid ? '#10b981' : '#3b82f6';
   const statusColor = isPaid ? '#10b981' : '#f59e0b';

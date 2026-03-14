@@ -77,7 +77,9 @@ export function bookingConfirmationTemplate(data: {
             </td>
             <td width="50%" align="right">
                <p style="margin: 0; font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;">Payment Method</p>
-               <p style="margin: 4px 0 0; font-size: 14px; font-weight: 700; color: #334155;">${data.paymentMethod === 'ONLINE' ? 'Pay via Stripe (Online)' : 'Cash on Pickup'}</p>
+               <p style="margin: 4px 0 0; font-size: 14px; font-weight: 700; color: #334155;">
+                 ${data.paymentMethod === 'ONLINE' ? 'Pay via Stripe (Online)' : data.paymentMethod === 'CARD' ? 'Pay via Card (Bank)' : 'Cash on Pickup'}
+               </p>
             </td>
           </tr>
           ${(data.pickupLocation || data.returnLocation) ? `

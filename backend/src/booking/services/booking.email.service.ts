@@ -263,7 +263,7 @@ export class BookingEmailService {
             const { bookingConfirmationTemplate } = await import('../../lib/emailTemplates/bookingConfirmation');
             const { paymentReceiptTemplate } = await import('../../lib/emailTemplates/paymentReceipt');
 
-            const descriptiveStatus = paymentMethod === 'CASH' ? 'Paid (Cash on Pickup)' : 'Paid (Verified by Admin)';
+            const descriptiveStatus = paymentMethod === 'CASH' ? 'Paid (Cash on Pickup)' : paymentMethod === 'ONLINE' ? 'Paid (Stripe Online)' : 'Paid (Verified Card)';
 
             const confirmationHtml = bookingConfirmationTemplate({
                 customerName: customerName || 'Valued Customer',
@@ -295,7 +295,7 @@ export class BookingEmailService {
                 amount: totalAmount,
                 bondAmount: booking.bondAmount,
                 bookingId: booking.id,
-                paymentMethod: paymentMethod === 'CASH' ? 'Cash/Manual' : 'Online Payment',
+                paymentMethod: paymentMethod === 'CASH' ? 'Cash/Manual' : paymentMethod === 'ONLINE' ? 'Stripe Payment' : 'Card Payment',
                 transactionId: 'MANUAL-CONFIRM',
                 date: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }),
             });
