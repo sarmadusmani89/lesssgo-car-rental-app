@@ -105,11 +105,23 @@ export class PaymentService {
         TIMESTAMP, NONCE, P_SIGN,
       } = body;
 
+      const kinaMerchantId = this.configService.get<string>('KINA_MERCHANT_ID');
+
       // ── 1. Verify HMAC signature ──────────────────────────────────────────
       const macString = this.kinaHmacService.buildResponseMacString({
-        TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
-        ACTION, RC, APPROVAL, RRN, INT_REF,
-        TIMESTAMP, NONCE,
+        ACTION,
+        RC,
+        APPROVAL,
+        CURRENCY,
+        AMOUNT,
+        TERMINAL,
+        TRTYPE,
+        ORDER,
+        RRN,
+        MERCHANT: kinaMerchantId,
+        TIMESTAMP,
+        INT_REF,
+        NONCE,
       });
 
       const isValid = this.kinaHmacService.verifySignature(macString, P_SIGN);

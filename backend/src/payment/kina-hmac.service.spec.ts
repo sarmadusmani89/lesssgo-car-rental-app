@@ -146,17 +146,18 @@ describe('KinaHmacService', () => {
     it('handles null/undefined optional fields gracefully', () => {
       expect(() =>
         service.buildResponseMacString({
-          TERMINAL: 'T001',
-          TRTYPE: '1',
-          AMOUNT: '250.00',
-          CURRENCY: 'PGK',
-          ORDER: '12345678901234',
           ACTION: '0',
           RC: '00',
           APPROVAL: null,       // may be absent on some declined txns
+          CURRENCY: 'PGK',
+          AMOUNT: '250.00',
+          TERMINAL: 'T001',
+          TRTYPE: '1',
+          ORDER: '12345678901234',
           RRN: '123456789012',
-          INT_REF: 'INTREF001',
+          MERCHANT: 'M001',
           TIMESTAMP: '20260314123456',
+          INT_REF: 'INTREF001',
           NONCE: 'AABBCCDD11223344AABBCCDD11223344',
         }),
       ).not.toThrow();
@@ -164,17 +165,18 @@ describe('KinaHmacService', () => {
 
     it('produces a deterministic result', () => {
       const fields = {
-        TERMINAL: 'T001',
-        TRTYPE: '1',
-        AMOUNT: '250.00',
-        CURRENCY: 'PGK',
-        ORDER: '12345678901234',
         ACTION: '0',
         RC: '00',
         APPROVAL: 'A12345',
+        CURRENCY: 'PGK',
+        AMOUNT: '250.00',
+        TERMINAL: 'T001',
+        TRTYPE: '1',
+        ORDER: '12345678901234',
         RRN: '123456789012',
-        INT_REF: 'INTREF001',
+        MERCHANT: 'M001',
         TIMESTAMP: '20260314123456',
+        INT_REF: 'INTREF001',
         NONCE: 'AABBCCDD11223344AABBCCDD11223344',
       };
 
