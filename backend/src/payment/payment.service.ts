@@ -38,7 +38,8 @@ export class PaymentService {
       throw new InternalServerErrorException('Kina Gateway configuration is incomplete');
     }
 
-    const orderId = `LG${booking.id.split('-')[0]}${Math.floor(Date.now() / 1000)}`.toUpperCase();
+    // Kina Bank strictly requires numeric Order ID (6-20 digits)
+    const orderId = `${booking.id.replace(/\D/g, '').substring(0, 10)}${Math.floor(Date.now() / 1000)}`.substring(0, 20);
     const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
     const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14); // YYYYMMDDHHMMSS
 
@@ -56,6 +57,8 @@ export class PaymentService {
       TIMESTAMP: timestamp,
       NONCE: nonce,
       BACKREF: backref,
+      COUNTRY: '',
+      MERCH_GMT: '',
     };
 
     const macString = this.kinaHmacService.buildRequestMacString(fields);
@@ -91,6 +94,7 @@ export class PaymentService {
 
   async handleKinaCallback(body: any) {
     this.logger.log('📨 KINA CALLBACK RECEIVED');
+    this.logger.debug(`Callback Body: ${JSON.stringify(body, null, 2)}`);
     
     const {
       ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
