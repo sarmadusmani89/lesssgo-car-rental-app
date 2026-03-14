@@ -38,13 +38,13 @@ export class PaymentService {
       throw new InternalServerErrorException('Kina Gateway configuration is incomplete');
     }
 
-    const orderId = `LG-${Date.now()}-${booking.id.split('-')[0]}`.toUpperCase();
+    const orderId = `LG${booking.id.split('-')[0]}${Math.floor(Date.now() / 1000)}`.toUpperCase();
     const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
     const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14); // YYYYMMDDHHMMSS
 
     const fields = {
       TERMINAL: terminal,
-      TRTYPE: '0', // 0 for Sales
+      TRTYPE: '1', // 1 for Sales (Retail Financial Request)
       AMOUNT: (booking.totalAmount + booking.bondAmount).toFixed(2),
       CURRENCY: 'PGK',
       ORDER: orderId,

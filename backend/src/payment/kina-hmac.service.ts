@@ -97,10 +97,10 @@ export class KinaHmacService {
    */
   computeHmac(macString: string): string {
     if (!this.secretKey) throw new Error('KINA_SECRET_KEY missing');
-    
+
     // Secret key is provided as a HEX string in the Kina docs
     const keyBuffer = Buffer.from(this.secretKey, 'hex');
-    
+
     return crypto
       .createHmac('sha256', keyBuffer)
       .update(macString)
@@ -113,7 +113,7 @@ export class KinaHmacService {
    */
   verifySignature(macString: string, receivedPSign: string): boolean {
     const computedSignature = this.computeHmac(macString);
-    
+
     this.logger.debug(`MAC String: ${macString}`);
     this.logger.debug(`Computed Signature: ${computedSignature}`);
     this.logger.debug(`Received Signature: ${receivedPSign}`);
