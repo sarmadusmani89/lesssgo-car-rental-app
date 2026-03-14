@@ -87,7 +87,7 @@ function SuccessContent() {
                     footerSubtitle="Check your email for full details"
                     actions={[
                         {
-                            label: 'Manage Bookings',
+                            label: 'See My Bookings',
                             onClick: () => window.location.href = '/dashboard/bookings',
                             variant: 'primary',
                             colorClass: 'bg-gray-900',
