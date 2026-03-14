@@ -16,6 +16,7 @@ function ThankYouContent() {
 
     const [bookingData, setBookingData] = useState<any>(params);
     const [loading, setLoading] = useState(!!params.session_id);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchSessionBooking = async () => {
@@ -38,6 +39,7 @@ function ThankYouContent() {
                 });
             } catch (err) {
                 console.error("Failed to fetch booking from session:", err);
+                setError("Could not load latest booking details automatically. Please check your bookings page.");
                 toast.error("Could not load latest booking details automatically.");
             } finally {
                 setLoading(false);
@@ -58,6 +60,24 @@ function ThankYouContent() {
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
             <Loader2 className="animate-spin text-blue-600" size={48} />
             <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Confirming your reservation...</p>
+        </div>
+    );
+
+    if (error) return (
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+            <div className="max-w-md w-full bg-white p-12 rounded-[3.5rem] shadow-2xl border border-white text-center">
+                <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center text-red-500 mx-auto mb-8">
+                    <Receipt size={40} />
+                </div>
+                <h1 className="text-2xl font-black font-outfit uppercase tracking-tight text-gray-900 mb-4">Something went wrong</h1>
+                <p className="text-gray-500 text-sm mb-8 leading-relaxed font-medium">{error}</p>
+                <button
+                    onClick={() => window.location.href = '/dashboard/bookings'}
+                    className="w-full py-5 bg-gray-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-600 transition-all shadow-xl"
+                >
+                    Review My Bookings
+                </button>
+            </div>
         </div>
     );
 
@@ -141,7 +161,7 @@ function ThankYouContent() {
                                     </div>
                                     <div>
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Settlement Method</span>
-                                        <p className="text-xl font-black text-gray-900 font-outfit uppercase tracking-tight">{payment === 'CASH' ? 'Pay on Collection' : 'Online Payment'}</p>
+                                        <p className="text-xl font-black text-gray-900 font-outfit uppercase tracking-tight">{payment === 'CASH' ? 'Pay on Collection' : 'Pay Via Card'}</p>
                                     </div>
                                 </div>
                             </div>

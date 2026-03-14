@@ -49,27 +49,24 @@ export class BookingController {
 
     // Check cancellation rules if status is CANCELLED
     if (updateBookingDto.status === 'CANCELLED' && user.role !== Role.ADMIN) {
-      // 1. Check if car allows free cancellation
-      if (!booking.car.freeCancellation) {
-        throw new ForbiddenException('This car does not allow free cancellation.');
-      }
+      // Only apply strict rules if the booking was already CONFIRMED/PAID
+      // If it's still PENDING (like during a failed checkout), let them cancel.
+      if (booking.status !== 'PENDING') {
+        // 1. Check if car allows free cancellation
+        if (!booking.car.freeCancellation) {
+          throw new ForbiddenException('This car does not allow free cancellation.');
+        }
 
-      // 2. Check 48h notice
-      // DB stores dates as "Wall-Clock UTC" (e.g. 10:00 AM PNG -> 10:00 UTC)
-      // Since server runs on Absolute UTC, we adjust the clock to the user's wall-clock
-      // Using the provided timezoneOffset (in minutes, e.g., -600 for +10h).
-      const pickupDate = new Date(booking.startDate);
-      const now = new Date();
+        // 2. Check 48h notice
+        const pickupDate = new Date(booking.startDate);
+        const now = new Date();
+        const userOffset = updateBookingDto.timezoneOffset ?? 0;
+        const userWallClockNow = new Date(now.getTime() - (userOffset * 60 * 1000));
+        const hoursDifference = (pickupDate.getTime() - userWallClockNow.getTime()) / (1000 * 60 * 60);
 
-      // Default to 0 if not provided, otherwise shift server UTC clock to user Wall-Clock
-      // Javascript offset is (UTC - Local) in minutes, so we subtract it to get Local from UTC.
-      const userOffset = updateBookingDto.timezoneOffset ?? 0;
-      const userWallClockNow = new Date(now.getTime() - (userOffset * 60 * 1000));
-
-      const hoursDifference = (pickupDate.getTime() - userWallClockNow.getTime()) / (1000 * 60 * 60);
-
-      if (hoursDifference < 48) {
-        throw new ForbiddenException('Cancellations are only allowed 48 hours before pickup.');
+        if (hoursDifference < 48) {
+          throw new ForbiddenException('Confirmed reservations can only be cancelled 48 hours before pickup.');
+        }
       }
     }
 

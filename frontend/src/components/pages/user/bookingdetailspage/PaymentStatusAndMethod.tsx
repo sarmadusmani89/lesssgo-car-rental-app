@@ -15,8 +15,8 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
     try {
       setLoading(true);
       await api.post(`/payment/release-bond/${booking.id}`);
-      setBondStatus('REFUNDED');
-      toast.success('Bond released successfully');
+      setBondStatus('REFUND_PENDING');
+      toast.success('Bond refund initiated — awaiting confirmation');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to release bond');
     } finally {
@@ -68,7 +68,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
             <div>
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5 block">Method</span>
               <p className="font-bold text-gray-900 text-sm">
-                {booking.paymentMethod === 'ONLINE' ? 'Pay via Stripe' : 'Cash on Collection'}
+                {booking.paymentMethod === 'ONLINE' ? 'Pay Via Card' : 'Cash on Collection'}
               </p>
             </div>
           </div>
@@ -88,8 +88,8 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
 
         <div className="space-y-4 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 relative overflow-hidden">
           <div className="flex items-center gap-3 relative z-10">
-            <div className={`w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm ${bondStatus === 'PAID' ? 'text-blue-600' : bondStatus === 'REFUNDED' ? 'text-green-500' : 'text-gray-400'}`}>
-              <Receipt size={20} />
+            <div className={`w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm ${bondStatus === 'PAID' ? 'text-blue-600' : bondStatus === 'REFUNDED' ? 'text-green-500' : bondStatus === 'REFUND_PENDING' ? 'text-yellow-500' : 'text-gray-400'}`}>
+              <Receipt size={20} className={bondStatus === 'REFUND_PENDING' ? 'animate-pulse' : ''} />
             </div>
             <div className="flex-1">
               <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-0.5 block">Security Bond</span>
@@ -104,6 +104,12 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
                     <RefreshCw size={10} className={loading ? 'animate-spin' : ''} />
                     {booking.paymentMethod === 'ONLINE' ? 'Refund Bond' : 'Mark Bond Refunded'}
                   </button>
+                )}
+                {isAdmin && bondStatus === 'REFUND_PENDING' && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-yellow-50 text-yellow-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-yellow-100 italic transition-all shadow-sm">
+                    <RefreshCw size={10} className="animate-spin" />
+                    Refund Pending...
+                  </div>
                 )}
               </div>
             </div>

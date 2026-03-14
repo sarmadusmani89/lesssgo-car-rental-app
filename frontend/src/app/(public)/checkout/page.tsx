@@ -33,7 +33,7 @@ function CheckoutContent() {
     phoneNumber: '',
   });
   const [initialUserData, setInitialUserData] = useState<any>(null);
-  const [paymentMethod, setPaymentMethod] = useState<string>('stripe');
+  const [paymentMethod, setPaymentMethod] = useState<string>('ONLINE');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
@@ -133,7 +133,7 @@ function CheckoutContent() {
         customerName: customerData.fullName,
         customerEmail: customerData.email,
         customerPhone: formattedPhone,
-        paymentMethod: paymentMethod === 'stripe' ? 'ONLINE' : 'CASH',
+        paymentMethod: paymentMethod === 'ONLINE' ? 'ONLINE' : 'CASH',
         pickupLocation,
         returnLocation,
       };
@@ -142,10 +142,17 @@ function CheckoutContent() {
       const newBookingId = bookingRes.data.id;
       setBookingId(newBookingId);
 
-      if (paymentMethod === 'stripe') {
+      if (paymentMethod === 'ONLINE') {
         // 2. Create Stripe Checkout Session
-        const sessionRes = await api.post('/payment/create-session', { bookingId: newBookingId });
-        window.location.href = sessionRes.data.url; // Redirect to hosted Stripe page
+        try {
+          const sessionRes = await api.post('/payment/create-session', { bookingId: newBookingId });
+          window.location.href = sessionRes.data.url; // Redirect to hosted Stripe page
+        } catch (sessionErr) {
+          console.error("Payment session error:", sessionErr);
+          // H2 — Cleanup: Cancel the orphaned booking so it doesn't block the car
+          await api.patch(`/booking/${newBookingId}`, { status: 'CANCELLED' }).catch(e => console.error("Cleanup failed:", e));
+          throw sessionErr; // re-throw to be caught by main catch
+        }
       } else {
         // Cash payment direct success
         toast.success('✅ Reservation confirmed successfully!');
@@ -169,7 +176,7 @@ function CheckoutContent() {
         toast.error(error.response?.data?.message || "Booking failed! Please try again.");
       }
     } finally {
-      if (paymentMethod !== 'stripe') setLoading(false);
+      if (paymentMethod !== 'ONLINE') setLoading(false);
     }
   };
 

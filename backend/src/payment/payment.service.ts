@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../lib/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
@@ -10,6 +10,7 @@ import { BookingEmailService } from '../booking/services/booking.email.service';
 
 @Injectable()
 export class PaymentService {
+  private readonly logger = new Logger(PaymentService.name);
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
@@ -32,6 +33,7 @@ export class PaymentService {
     const currency = 'pgk'; // Force PGK
 
     try {
+      // H1 — idempotency key: same bookingId always produces the same session
       const session = await this.stripeService.createCheckoutSession({
         payment_method_types: ['card'],
         line_items: [
@@ -72,7 +74,7 @@ export class PaymentService {
             userId: booking.userId,
           },
         },
-      });
+      }, `checkout-${booking.id}`); // deterministic idempotency key
 
       // Check for existing payment record (usually created during booking)
       const existingPayment = await this.prisma.payment.findFirst({
@@ -198,8 +200,16 @@ export class PaymentService {
       case 'checkout.session.completed':
         await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
         break;
+      // H3 — handle session expiry (customer abandoned payment page)
+      case 'checkout.session.expired':
+        await this.handleSessionExpired(event.data.object as Stripe.Checkout.Session);
+        break;
+      // H3 — handle card-declined / payment failure inside the hosted page
+      case 'payment_intent.payment_failed':
+        await this.handlePaymentFailed(event.data.object as Stripe.PaymentIntent);
+        break;
       default:
-        console.log(`ℹ️  Unhandled event type: ${event.type} - Ignoring`);
+        this.logger.log(`ℹ️  Unhandled Stripe event: ${event.type}`);
     }
 
     console.log('========================================');
@@ -235,11 +245,11 @@ export class PaymentService {
   }
 
   private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-    console.log('💳 Processing checkout.session.completed event');
+    this.logger.log('💳 Processing checkout.session.completed event');
     const bookingId = session.metadata?.bookingId;
 
     if (!bookingId) {
-      console.error('❌ No bookingId found in session metadata');
+      this.logger.error('❌ No bookingId found in session metadata');
       return;
     }
 
@@ -285,11 +295,51 @@ export class PaymentService {
         include: { car: true, user: true }
       });
 
-      console.log(`✅ Payment and booking status updated successfully`);
+      this.logger.log(`✅ Payment and booking status updated successfully`);
       await this.bookingEmailService.sendStripePaymentConfirmation(updatedBooking, session.payment_intent as string);
     } catch (err) {
-      console.error('❌ Failed to update booking/payment status:', err);
+      this.logger.error('❌ Failed to update booking/payment status:', err);
       throw err;
+    }
+  }
+
+  // H3 — session expired (customer left the Stripe hosted page without paying)
+  private async handleSessionExpired(session: Stripe.Checkout.Session) {
+    const bookingId = session.metadata?.bookingId;
+    if (!bookingId) return;
+
+    try {
+      await this.prisma.payment.updateMany({
+        where: { bookingId, status: 'PENDING' },
+        data: { status: 'FAILED' },
+      });
+      await this.prisma.booking.update({
+        where: { id: bookingId },
+        data: { paymentStatus: 'FAILED', status: 'CANCELLED', cancelledAt: new Date() },
+      });
+      this.logger.warn(`⏰ Session expired — booking ${bookingId} cancelled`);
+    } catch (err) {
+      this.logger.error(`❌ handleSessionExpired failed for booking ${bookingId}:`, err);
+    }
+  }
+
+  // H3 — payment intent failed (card declined etc.)
+  private async handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
+    const bookingId = paymentIntent.metadata?.bookingId;
+    if (!bookingId) return;
+
+    try {
+      await this.prisma.payment.updateMany({
+        where: { bookingId, status: 'PENDING' },
+        data: { status: 'FAILED' },
+      });
+      await this.prisma.booking.update({
+        where: { id: bookingId },
+        data: { paymentStatus: 'FAILED' },
+      });
+      this.logger.warn(`💳 Payment failed — booking ${bookingId} marked FAILED. Reason: ${paymentIntent.last_payment_error?.message}`);
+    } catch (err) {
+      this.logger.error(`❌ handlePaymentFailed failed for booking ${bookingId}:`, err);
     }
   }
 

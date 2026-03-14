@@ -16,9 +16,12 @@ export class StripeService {
         });
     }
 
-    async createCheckoutSession(params: Stripe.Checkout.SessionCreateParams) {
+    async createCheckoutSession(params: Stripe.Checkout.SessionCreateParams, idempotencyKey?: string) {
         try {
-            return await this.stripe.checkout.sessions.create(params);
+            const requestOptions: Stripe.RequestOptions = idempotencyKey
+                ? { idempotencyKey }
+                : {};
+            return await this.stripe.checkout.sessions.create(params, requestOptions);
         } catch (error) {
             console.error('Stripe Checkout Session Error:', error);
             throw new InternalServerErrorException('Failed to create checkout session');
