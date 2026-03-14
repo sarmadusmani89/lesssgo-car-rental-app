@@ -68,7 +68,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
             <div>
               <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5 block">Method</span>
               <p className="font-bold text-gray-900 text-sm">
-                {booking.paymentMethod === 'ONLINE' ? 'Pay Via Card' : 'Cash on Collection'}
+                {booking.paymentMethod === 'ONLINE' ? 'Pay via Stripe' : 'Cash on Collection'}
               </p>
             </div>
           </div>

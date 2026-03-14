@@ -47,7 +47,6 @@ export default function RootLayout({
             {children}
           </MaintenanceGuard>
         </Providers>
-        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

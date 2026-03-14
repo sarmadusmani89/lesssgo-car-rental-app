@@ -29,7 +29,7 @@ export default function PaymentMethodSelection({
             <CreditCard size={24} />
           </div>
           <div className="text-left">
-            <p className={`font-black uppercase text-xs tracking-widest ${selected === 'ONLINE' ? 'text-white/80' : 'text-gray-400'}`}>Pay Via Card</p>
+            <p className={`font-black uppercase text-xs tracking-widest ${selected === 'ONLINE' ? 'text-white/80' : 'text-gray-400'}`}>Pay via Stripe</p>
             <p className={`font-bold ${selected === 'ONLINE' ? 'text-white' : 'text-gray-900'}`}>Secure Transaction</p>
           </div>
         </button>
