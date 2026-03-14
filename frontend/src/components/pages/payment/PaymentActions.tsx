@@ -37,7 +37,7 @@ export default function PaymentActions({
                     </div>
                 )}
                 
-                <div className="flex gap-4 w-full md:w-auto">
+                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                     {actions.map((action, idx) => {
                         const Icon = action.icon;
                         
@@ -46,7 +46,7 @@ export default function PaymentActions({
                                 <button
                                     key={idx}
                                     onClick={action.onClick}
-                                    className={`flex-1 md:flex-none px-8 py-5 ${action.colorClass || 'bg-gray-900'} text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:opacity-90 transition-all shadow-xl shadow-gray-200 flex items-center justify-center gap-3`}
+                                    className={`flex-1 sm:flex-none px-8 py-5 ${action.colorClass || 'bg-gray-900'} text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:opacity-90 transition-all shadow-xl shadow-gray-200 flex items-center justify-center gap-3`}
                                 >
                                     {Icon && <Icon size={16} />}
                                     {action.label}
@@ -59,7 +59,7 @@ export default function PaymentActions({
                                 <button
                                     key={idx}
                                     onClick={action.onClick}
-                                    className="px-8 py-5 bg-white text-gray-900 rounded-2xl font-black border border-gray-100 hover:bg-gray-50 transition-all shadow-xl shadow-gray-50 flex items-center justify-center gap-3"
+                                    className="flex-1 sm:flex-none px-8 py-5 bg-white text-gray-900 rounded-2xl font-black border border-gray-100 hover:bg-gray-50 transition-all shadow-xl shadow-gray-50 flex items-center justify-center gap-3"
                                 >
                                     {Icon && <Icon size={16} />}
                                     <span className="uppercase text-[10px] tracking-widest">{action.label}</span>
@@ -72,7 +72,7 @@ export default function PaymentActions({
                                 <button
                                     key={idx}
                                     onClick={action.onClick}
-                                    className="p-5 bg-white text-gray-900 rounded-2xl font-black border border-gray-100 hover:bg-gray-50 transition-all shadow-xl shadow-gray-50"
+                                    className="p-5 bg-white text-gray-900 rounded-2xl font-black border border-gray-100 hover:bg-gray-50 transition-all shadow-xl shadow-gray-50 flex items-center justify-center"
                                 >
                                     {Icon && <Icon size={20} />}
                                 </button>

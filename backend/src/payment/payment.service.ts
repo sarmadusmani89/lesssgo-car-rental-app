@@ -227,7 +227,19 @@ export class PaymentService {
         });
 
         this.logger.warn(`⚠️  Kina payment ${status} for Order: ${ORDER} (RC: ${RC})`);
-        return `${frontendUrl}/payment/${status.toLowerCase()}?order=${ORDER}`;
+
+        // Pass checkout parameters back so the frontend can reconstruct the "Try Again" URL
+        const b = payment.booking;
+        const params = new URLSearchParams({
+          order: ORDER,
+          id: b.carId,
+          startDate: b.startDate.toISOString(),
+          endDate: b.endDate.toISOString(),
+          pickupLocation: b.pickupLocation || '',
+          returnLocation: b.returnLocation || '',
+        });
+
+        return `${frontendUrl}/payment/${status.toLowerCase()}?${params.toString()}`;
       }
     } catch (err: any) {
       this.logger.error(`💥 Unhandled exception in Kina callback: ${err.message}`, err.stack);
