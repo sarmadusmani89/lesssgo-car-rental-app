@@ -145,7 +145,7 @@ export class PaymentService {
       });
 
       await this.bookingEmailService.sendKinaPaymentConfirmation(updatedBooking, INT_REF); // Reuse logic for now
-      return `${this.configService.get('FRONTEND_URL')}/thank-you?bookingId=${payment.bookingId}&payment=KINA`;
+      return `${this.configService.get('FRONTEND_URL')}/thank-you?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
     } else {
       const status = ACTION === '2' ? 'DECLINED' : 'FAILED';
       await this.prisma.payment.update({
@@ -272,7 +272,7 @@ export class PaymentService {
       // and mark the status as pending admin verification
       await this.prisma.booking.update({
         where: { id: booking.id },
-        data: { bondStatus: 'REFUND_PENDING_KINA' as any },
+        data: { bondStatus: 'REFUND_PENDING' },
       });
 
       return {

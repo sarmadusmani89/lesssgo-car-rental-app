@@ -119,7 +119,6 @@ enum BondStatus {
   PENDING
   PAID
   REFUND_PENDING
-  REFUND_PENDING_KINA // Specific to Kina reversal request
   REFUNDED
   CLAIMED
 }
