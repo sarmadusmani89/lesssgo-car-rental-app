@@ -112,6 +112,7 @@ enum PaymentStatus {
   PENDING
   PAID
   FAILED
+  DECLINED
 }
 
 enum BondStatus {

@@ -232,15 +232,17 @@ export class PaymentService {
       return;
     }
 
-    // Only update if we're in the expected intermediate state
-    if (booking.bondStatus !== 'REFUND_PENDING') {
-      console.warn(`⚠️ charge.refunded: booking ${bookingId} bondStatus is '${booking.bondStatus}', expected 'REFUND_PENDING'. Skipping.`);
+    // Only update if we're in the expected intermediate state (PAID or REFUND_PENDING)
+    if (booking.bondStatus !== 'REFUND_PENDING' && booking.bondStatus !== 'PAID') {
+      console.warn(`⚠️ charge.refunded: booking ${bookingId} bondStatus is '${booking.bondStatus}', expected 'PAID' or 'REFUND_PENDING'. Skipping.`);
       return;
     }
 
     await this.prisma.booking.update({
       where: { id: bookingId },
-      data: { bondStatus: 'REFUNDED' }
+      data: { 
+        bondStatus: 'REFUNDED' as any // Use as any to bypass potential lingering type sync issues
+      }
     });
     console.log(`✅ Bond status confirmed REFUNDED via Stripe webhook for booking: ${bookingId}`);
   }
@@ -474,7 +476,7 @@ export class PaymentService {
       // charge.refunded webhook (single source of truth)
       await this.prisma.booking.update({
         where: { id: booking.id },
-        data: { bondStatus: 'REFUND_PENDING' },
+        data: { bondStatus: 'REFUND_PENDING' as any },
       });
 
       return {
