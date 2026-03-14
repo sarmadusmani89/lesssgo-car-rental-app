@@ -12,6 +12,19 @@ import PaymentActions from '@/components/pages/payment/PaymentActions';
 function PaymentFailedContent() {
     const searchParams = useSearchParams();
     const order = searchParams.get('order');
+    const carId = searchParams.get('id');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    const pickupLocation = searchParams.get('pickupLocation');
+    const returnLocation = searchParams.get('returnLocation');
+
+    const checkoutUrl = `/checkout?${new URLSearchParams({
+        id: carId || '',
+        startDate: startDate || '',
+        endDate: endDate || '',
+        pickupLocation: pickupLocation || '',
+        returnLocation: returnLocation || '',
+    }).toString()}`;
 
     return (
         <PaymentStatusLayout maxWidth="max-w-2xl">
@@ -47,8 +60,8 @@ function PaymentFailedContent() {
                 <PaymentActions
                     actions={[
                         {
-                            label: 'Return to Checkout',
-                            onClick: () => window.location.href = '/checkout',
+                            label: 'Try Reservation Again',
+                            onClick: () => window.location.href = checkoutUrl,
                             variant: 'primary',
                             colorClass: 'bg-gray-900',
                             icon: ArrowLeft
