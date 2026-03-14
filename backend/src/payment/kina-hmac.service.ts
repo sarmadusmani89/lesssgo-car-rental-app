@@ -81,32 +81,30 @@ export class KinaHmacService {
   //   TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, TIMESTAMP, NONCE
   // ---------------------------------------------------------------------------
   buildResponseMacString(fields: {
-    ACTION: string | null | undefined;
-    RC: string | null | undefined;
-    APPROVAL: string | null | undefined;
-    STAN: string | null | undefined;
-    RRN: string | null | undefined;
-    INT_REF: string | null | undefined;
     TERMINAL: string | null | undefined;
     TRTYPE: string | null | undefined;
     AMOUNT: string | null | undefined;
     CURRENCY: string | null | undefined;
     ORDER: string | null | undefined;
+    ACTION: string | null | undefined;
+    RC: string | null | undefined;
+    APPROVAL: string | null | undefined;
+    RRN: string | null | undefined;
+    INT_REF: string | null | undefined;
     TIMESTAMP: string | null | undefined;
     NONCE: string | null | undefined;
   }): string {
     const values = [
-      fields.ACTION,
-      fields.RC,
-      fields.APPROVAL,
-      fields.STAN,
-      fields.RRN,
-      fields.INT_REF,
       fields.TERMINAL,
       fields.TRTYPE,
       fields.AMOUNT,
       fields.CURRENCY,
       fields.ORDER,
+      fields.ACTION,
+      fields.RC,
+      fields.APPROVAL,
+      fields.RRN,
+      fields.INT_REF,
       fields.TIMESTAMP,
       fields.NONCE,
     ];

@@ -100,22 +100,22 @@ export class PaymentService {
       this.logger.log(`[RAW BODY] ${JSON.stringify(body)}`);
 
       const {
-        ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
+        ACTION, RC, APPROVAL, RRN, INT_REF,
         TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
         TIMESTAMP, NONCE, P_SIGN,
       } = body;
 
       // ── 1. Verify HMAC signature ──────────────────────────────────────────
       const macString = this.kinaHmacService.buildResponseMacString({
-        ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
         TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
+        ACTION, RC, APPROVAL, RRN, INT_REF,
         TIMESTAMP, NONCE,
       });
 
       const isValid = this.kinaHmacService.verifySignature(macString, P_SIGN);
       if (!isValid) {
         this.logger.error(`❌ Kina HMAC verification FAILED for Order: ${ORDER}`);
-        this.logger.error(`   Raw body fields: ACTION=${ACTION} RC=${RC} APPROVAL=${APPROVAL} STAN=${STAN} ORDER=${ORDER}`);
+        this.logger.error(`   Raw body fields: ACTION=${ACTION} RC=${RC} APPROVAL=${APPROVAL} ORDER=${ORDER}`);
         return `${frontendUrl}/payment/error?reason=signature_mismatch`;
       }
 
