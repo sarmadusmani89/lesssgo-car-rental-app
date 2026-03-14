@@ -112,6 +112,10 @@ export class KinaHmacService {
   verifySignature(macString: string, receivedPSign: string): boolean {
     const computedSignature = this.computeHmac(macString);
     
+    this.logger.debug(`MAC String: ${macString}`);
+    this.logger.debug(`Computed Signature: ${computedSignature}`);
+    this.logger.debug(`Received Signature: ${receivedPSign}`);
+
     try {
       return crypto.timingSafeEqual(
         Buffer.from(computedSignature, 'hex'),
