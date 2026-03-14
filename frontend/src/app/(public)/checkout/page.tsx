@@ -146,8 +146,8 @@ function CheckoutContent() {
       if (paymentMethod === 'kina') {
         // 2. Initialize Kina Bank Payment
         const sessionRes = await api.post('/payment/initialize', { bookingId: newBookingId });
-        const { url, fields } = sessionRes.data;
-        submitKinaPaymentForm(url, fields);
+        const { gatewayUrl, fields } = sessionRes.data;
+        submitKinaPaymentForm(gatewayUrl, fields);
       } else {
         // Cash payment direct success
         toast.success('✅ Reservation confirmed successfully!');
