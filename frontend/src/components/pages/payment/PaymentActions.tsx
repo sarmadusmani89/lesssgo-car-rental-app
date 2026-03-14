@@ -36,30 +36,30 @@ export default function PaymentActions({
                         </div>
                     </div>
                 )}
-                
+
                 <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                     {actions.map((action, idx) => {
                         const Icon = action.icon;
-                        
+
                         if (action.variant === 'primary') {
                             return (
                                 <button
                                     key={idx}
                                     onClick={action.onClick}
-                                    className={`flex-1 sm:flex-1 px-8 py-5 ${action.colorClass || 'bg-gray-900'} text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:opacity-90 transition-all shadow-xl shadow-gray-200 flex items-center justify-center gap-3`}
+                                    className={`flex-1 px-8 py-5 ${action.colorClass || 'bg-gray-900'} text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:opacity-90 transition-all shadow-xl shadow-gray-200 flex items-center justify-center gap-3`}
                                 >
                                     {Icon && <Icon size={16} />}
                                     {action.label}
                                 </button>
                             );
                         }
-                        
+
                         if (action.variant === 'secondary') {
                             return (
                                 <button
                                     key={idx}
                                     onClick={action.onClick}
-                                    className="flex-1 sm:flex-1 px-8 py-5 bg-white text-gray-900 rounded-2xl font-black border border-gray-200 hover:bg-gray-50 transition-all shadow-xl shadow-gray-50 flex items-center justify-center gap-3"
+                                    className="flex-1 px-8 py-5 bg-white text-gray-900 rounded-2xl font-black border border-gray-200 hover:bg-gray-50 transition-all shadow-xl shadow-gray-50 flex items-center justify-center gap-3"
                                 >
                                     {Icon && <Icon size={16} />}
                                     <span className="uppercase text-[10px] tracking-widest">{action.label}</span>
