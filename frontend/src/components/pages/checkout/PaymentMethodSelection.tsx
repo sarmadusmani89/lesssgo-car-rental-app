@@ -18,19 +18,19 @@ export default function PaymentMethodSelection({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <button
           type="button"
-          onClick={() => onChange('stripe')}
-          className={`flex items-center gap-4 p-6 rounded-3xl border-2 transition-all duration-300 ${selected === 'stripe'
+          onClick={() => onChange('kina')}
+          className={`flex items-center gap-4 p-6 rounded-3xl border-2 transition-all duration-300 ${selected === 'kina'
             ? 'border-blue-600 bg-blue-600 shadow-xl shadow-blue-600/20 scale-[1.02] text-white'
             : 'border-gray-50 hover:border-gray-200 bg-gray-50/30'
             }`}
         >
-          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${selected === 'stripe' ? 'bg-white/20 text-white' : 'bg-white text-gray-400'
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${selected === 'kina' ? 'bg-white/20 text-white' : 'bg-white text-gray-400'
             }`}>
             <CreditCard size={24} />
           </div>
           <div className="text-left">
-            <p className={`font-black uppercase text-xs tracking-widest ${selected === 'stripe' ? 'text-white/80' : 'text-gray-400'}`}>Pay Online</p>
-            <p className={`font-bold ${selected === 'stripe' ? 'text-white' : 'text-gray-900'}`}>Stripe Secure</p>
+            <p className={`font-black uppercase text-xs tracking-widest ${selected === 'kina' ? 'text-white/80' : 'text-gray-400'}`}>Pay Online</p>
+            <p className={`font-bold ${selected === 'kina' ? 'text-white' : 'text-gray-900'}`}>Kina Bank Online</p>
           </div>
         </button>
 

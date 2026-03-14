@@ -112,11 +112,14 @@ enum PaymentStatus {
   PENDING
   PAID
   FAILED
+  DECLINED
 }
 
 enum BondStatus {
   PENDING
   PAID
+  REFUND_PENDING
+  REFUND_PENDING_KINA // Specific to Kina reversal request
   REFUNDED
   CLAIMED
 }
@@ -135,6 +138,16 @@ model Payment {
   paymentMethod          PaymentMethod       @default(ONLINE)
   stripePaymentIntentId  String?
   stripeSessionId        String?
+  
+  // Kina Bank Fields
+  kinaOrderId            String?             @unique
+  kinaIntRef             String?
+  kinaRrn                String?
+  kinaActionCode         String?
+  kinaResponseCode       String?
+  kinaApprovalCode       String?
+  kinaNonce              String?
+
   status                 PaymentStatus       @default(PENDING)
   metadata               Json?
   createdAt              DateTime            @default(now())

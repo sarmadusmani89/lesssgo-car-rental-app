@@ -14,6 +14,7 @@ import LoadingStatesDuringPayment from '@/components/pages/checkout/LoadingState
 import api from '@/lib/api';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
+import { submitKinaPaymentForm } from '@/lib/kinaPayment';
 
 // Internal component with the logic
 function CheckoutContent() {
@@ -33,7 +34,7 @@ function CheckoutContent() {
     phoneNumber: '',
   });
   const [initialUserData, setInitialUserData] = useState<any>(null);
-  const [paymentMethod, setPaymentMethod] = useState<string>('stripe');
+  const [paymentMethod, setPaymentMethod] = useState<string>('kina');
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
@@ -133,7 +134,7 @@ function CheckoutContent() {
         customerName: customerData.fullName,
         customerEmail: customerData.email,
         customerPhone: formattedPhone,
-        paymentMethod: paymentMethod === 'stripe' ? 'ONLINE' : 'CASH',
+        paymentMethod: paymentMethod === 'kina' ? 'ONLINE' : 'CASH',
         pickupLocation,
         returnLocation,
       };
@@ -142,10 +143,11 @@ function CheckoutContent() {
       const newBookingId = bookingRes.data.id;
       setBookingId(newBookingId);
 
-      if (paymentMethod === 'stripe') {
-        // 2. Create Stripe Checkout Session
-        const sessionRes = await api.post('/payment/create-session', { bookingId: newBookingId });
-        window.location.href = sessionRes.data.url; // Redirect to hosted Stripe page
+      if (paymentMethod === 'kina') {
+        // 2. Initialize Kina Bank Payment
+        const sessionRes = await api.post('/payment/initialize', { bookingId: newBookingId });
+        const { url, fields } = sessionRes.data;
+        submitKinaPaymentForm(url, fields);
       } else {
         // Cash payment direct success
         toast.success('✅ Reservation confirmed successfully!');
@@ -169,7 +171,7 @@ function CheckoutContent() {
         toast.error(error.response?.data?.message || "Booking failed! Please try again.");
       }
     } finally {
-      if (paymentMethod !== 'stripe') setLoading(false);
+      if (paymentMethod !== 'kina') setLoading(false);
     }
   };
 

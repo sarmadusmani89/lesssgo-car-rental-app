@@ -154,7 +154,7 @@ export class BookingEmailService {
         }
     }
 
-    async sendStripePaymentConfirmation(booking: any, transactionId: string) {
+    async sendKinaPaymentConfirmation(booking: any, kinaOrderId: string) {
         try {
             const { user, car, startDate, endDate, totalAmount, customerName: snapName, customerEmail: snapEmail } = booking;
             const customerName = snapName || user?.name || 'Valued Customer';
@@ -196,8 +196,8 @@ export class BookingEmailService {
                 amount: totalAmount,
                 bondAmount: booking.bondAmount,
                 bookingId: booking.id,
-                paymentMethod: 'Stripe Online',
-                transactionId,
+                paymentMethod: 'Kina Bank Online',
+                transactionId: kinaOrderId,
                 date: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }),
             });
 
@@ -215,25 +215,25 @@ export class BookingEmailService {
                 totalAmount,
                 bondAmount: booking.bondAmount,
                 paymentMethod: 'ONLINE',
-                paymentStatus: 'Confirmed (Paid via Stripe)',
+                paymentStatus: 'Confirmed (Paid via Kina Bank)',
                 hp: car.hp,
                 vehicleClass: car.vehicleClass,
                 transmission: car.transmission,
                 fuelType: car.fuelType,
                 pickupLocation: booking.pickupLocation,
                 returnLocation: booking.returnLocation,
-                customTitle: 'Booking Paid - Stripe',
-                customDescription: `Online payment received via Stripe for booking #${booking.id.slice(-8).toUpperCase()}. Booking is now fully confirmed.`,
+                customTitle: 'Booking Paid - Kina Bank',
+                customDescription: `Online payment received via Kina Bank IPG for booking #${booking.id.slice(-8).toUpperCase()}. Booking is now fully confirmed.`,
                 isPaid: true
             });
 
             await Promise.all([
                 this.emailService.sendEmail(customerEmail, 'Booking & Payment Confirmed - LesssGo', confirmHtml),
                 this.emailService.sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml),
-                this.emailService.sendEmail(settings.adminEmail, 'Booking Paid: Stripe Payment Received', adminHtml)
+                this.emailService.sendEmail(settings.adminEmail, 'Booking Paid: Kina Bank Payment Received', adminHtml)
             ]);
         } catch (err) {
-            console.error('Failed to send Stripe payment confirmation emails:', err);
+            console.error('Failed to send Kina payment confirmation emails:', err);
         }
     }
 

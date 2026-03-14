@@ -1,24 +1,25 @@
-import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, InternalServerErrorException, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../lib/prisma.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { ConfigService } from '@nestjs/config';
-import Stripe from 'stripe';
+import * as nodeCrypto from 'crypto';
 import { SettingsService } from '../settings/settings.service';
-import { StripeService } from './stripe.service';
 import { BookingEmailService } from '../booking/services/booking.email.service';
+import { KinaHmacService } from './kina-hmac.service';
 
 @Injectable()
 export class PaymentService {
+  private readonly logger = new Logger(PaymentService.name);
   constructor(
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
     private readonly settingsService: SettingsService,
-    private readonly stripeService: StripeService,
+    private readonly kinaHmacService: KinaHmacService,
     private readonly bookingEmailService: BookingEmailService,
   ) { }
 
-  async createCheckoutSession(bookingId: string) {
+  async initializeKinaPayment(bookingId: string) {
     const booking = await this.prisma.booking.findUnique({
       where: { id: bookingId },
       include: { car: true, user: true },
@@ -26,255 +27,137 @@ export class PaymentService {
 
     if (!booking) throw new NotFoundException('Booking not found');
 
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
+    const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
+    const merchant = this.configService.get<string>('KINA_MERCHANT_ID');
+    const merchName = this.configService.get<string>('KINA_MERCH_NAME') || 'LesssGo Car Rental';
+    const merchUrl = this.configService.get<string>('KINA_MERCH_URL') || 'https://lesssgo.com';
+    const backref = this.configService.get<string>('KINA_BACKREF_URL');
 
-    const settings = await this.settingsService.getSettings();
-    const currency = 'pgk'; // Force PGK
-
-    try {
-      const session = await this.stripeService.createCheckoutSession({
-        payment_method_types: ['card'],
-        line_items: [
-          {
-            price_data: {
-              currency: currency,
-              product_data: {
-                name: booking.car.name,
-                description: `Car Rental from ${booking.startDate.toISOString().split('T')[0]} to ${booking.endDate.toISOString().split('T')[0]}`,
-                images: booking.car.imageUrl ? [booking.car.imageUrl] : [],
-              },
-              unit_amount: Math.round(booking.totalAmount * 100),
-            },
-            quantity: 1,
-          },
-          {
-            price_data: {
-              currency: currency,
-              product_data: {
-                name: 'Security Bond (Refundable)',
-                description: 'This deposit will be refunded after the vehicle is returned in good condition.',
-              },
-              unit_amount: Math.round(booking.bondAmount * 100),
-            },
-            quantity: 1,
-          },
-        ],
-        mode: 'payment',
-        success_url: `${frontendUrl}/thank-you?bookingId=${booking.id}&session_id={CHECKOUT_SESSION_ID}&carName=${booking.car.name}&total=${booking.totalAmount}&startDate=${booking.startDate.toISOString()}&endDate=${booking.endDate.toISOString()}&payment=STRIPE`,
-        cancel_url: `${frontendUrl}/checkoutpage?id=${booking.carId}&error=payment_cancelled`,
-        metadata: {
-          bookingId: booking.id,
-          userId: booking.userId,
-        },
-        payment_intent_data: {
-          metadata: {
-            bookingId: booking.id,
-            userId: booking.userId,
-          },
-        },
-      });
-
-      // Check for existing payment record (usually created during booking)
-      const existingPayment = await this.prisma.payment.findFirst({
-        where: { bookingId: booking.id },
-      });
-
-      if (existingPayment) {
-        await this.prisma.payment.update({
-          where: { id: existingPayment.id },
-          data: {
-            stripePaymentIntentId: session.id, // Keeping this for backward compatibility or initial tracking
-            stripeSessionId: session.id,
-            status: 'PENDING',
-            paymentMethod: 'ONLINE',
-            currency: 'PGK',
-          },
-        });
-      } else {
-        await this.prisma.payment.create({
-          data: {
-            bookingId: booking.id,
-            amount: booking.totalAmount + booking.bondAmount,
-            currency: 'PGK',
-            status: 'PENDING',
-            stripePaymentIntentId: session.id,
-            stripeSessionId: session.id,
-            paymentMethod: 'ONLINE',
-          },
-        });
-      }
-
-      return { url: session.url };
-    } catch (error) {
-      console.error('Stripe Checkout Session Error:', error);
-      throw new InternalServerErrorException('Failed to create checkout session');
+    if (!gatewayUrl || !terminal || !merchant || !backref) {
+      throw new InternalServerErrorException('Kina Gateway configuration is incomplete');
     }
-  }
 
-  async createPaymentIntent(bookingId: string) {
-    const booking = await this.prisma.booking.findUnique({
-      where: { id: bookingId },
-      include: { user: true },
+    const orderId = `LG-${Date.now()}-${booking.id.split('-')[0]}`.toUpperCase();
+    const nonce = crypto.randomBytes(16).toString('hex').toUpperCase();
+    const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14); // YYYYMMDDHHMMSS
+
+    const fields = {
+      TERMINAL: terminal,
+      TRTYPE: '0', // 0 for Sales
+      AMOUNT: (booking.totalAmount + booking.bondAmount).toFixed(2),
+      CURRENCY: 'PGK',
+      ORDER: orderId,
+      DESC: `Car Rental - ${booking.car.name}`,
+      MERCH_NAME: merchName,
+      MERCH_URL: merchUrl,
+      MERCHANT: merchant,
+      EMAIL: booking.user.email,
+      TIMESTAMP: timestamp,
+      NONCE: nonce,
+      BACKREF: backref,
+    };
+
+    const macString = this.kinaHmacService.buildRequestMacString(fields);
+    const pSign = this.kinaHmacService.computeHmac(macString);
+
+    // Create or update payment record
+    await this.prisma.payment.upsert({
+      where: { kinaOrderId: orderId },
+      update: {
+        status: 'PENDING',
+        amount: booking.totalAmount + booking.bondAmount,
+        kinaNonce: nonce,
+      },
+      create: {
+        bookingId: booking.id,
+        amount: booking.totalAmount + booking.bondAmount,
+        currency: 'PGK',
+        status: 'PENDING',
+        kinaOrderId: orderId,
+        kinaNonce: nonce,
+        paymentMethod: 'ONLINE',
+      },
     });
 
-    if (!booking) throw new NotFoundException('Booking not found');
-
-    const settings = await this.settingsService.getSettings();
-    const currency = 'pgk'; // Force PGK
-
-    try {
-      const paymentIntent = await this.stripeService.createPaymentIntent({
-        amount: Math.round((booking.totalAmount + booking.bondAmount) * 100), // Amount in cents
-        currency: currency,
-        metadata: { bookingId: booking.id, userId: booking.userId },
-        description: `Car Rental - Booking #${booking.id}`,
-      });
-
-      // Check for existing payment record
-      const existingPayment = await this.prisma.payment.findFirst({
-        where: { bookingId: booking.id },
-      });
-
-      if (existingPayment) {
-        await this.prisma.payment.update({
-          where: { id: existingPayment.id },
-          data: {
-            stripePaymentIntentId: paymentIntent.id,
-            amount: booking.totalAmount + booking.bondAmount,
-            status: 'PENDING',
-            paymentMethod: 'ONLINE',
-            currency: 'PGK'
-          },
-        });
-      } else {
-        await this.prisma.payment.create({
-          data: {
-            bookingId: booking.id,
-            amount: booking.totalAmount + booking.bondAmount,
-            currency: 'PGK',
-            status: 'PENDING',
-            stripePaymentIntentId: paymentIntent.id,
-            paymentMethod: 'ONLINE',
-          },
-        });
-      }
-
-      return {
-        clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id,
-      };
-    } catch (error) {
-      console.error('Stripe Payment Intent Error:', error);
-      throw new InternalServerErrorException('Failed to create payment intent');
-    }
+    return {
+      gatewayUrl,
+      fields: {
+        ...fields,
+        P_SIGN: pSign,
+      },
+    };
   }
 
-  async handleWebhook(signature: string, payload: Buffer) {
-    console.log('========================================');
-    console.log('📨 STRIPE WEBHOOK RECEIVED');
-    console.log('========================================');
+  async handleKinaCallback(body: any) {
+    this.logger.log('📨 KINA CALLBACK RECEIVED');
+    
+    const {
+      ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
+      TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
+      TIMESTAMP, NONCE, P_SIGN,
+    } = body;
 
-    const webhookSecret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
-    if (!webhookSecret) {
-      console.error('❌ Webhook secret not configured');
-      throw new InternalServerErrorException('Stripe webhook secret not configured');
-    }
-    let event: Stripe.Event;
+    const macString = this.kinaHmacService.buildResponseMacString({
+      ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
+      TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
+      TIMESTAMP, NONCE,
+    });
 
-    try {
-      event = this.stripeService.constructEvent(payload, signature, webhookSecret);
-      console.log(`✅ Webhook signature verified`);
-      console.log(`📋 Event Type: ${event.type}`);
-      console.log(`🆔 Event ID: ${event.id}`);
-    } catch (err: any) {
-      console.error('❌ Webhook signature verification failed:', err.message);
-      throw new InternalServerErrorException(`Webhook Error: ${err.message}`);
-    }
-
-    switch (event.type) {
-      case 'charge.refunded':
-        await this.handleChargeRefunded(event.data.object as Stripe.Charge);
-        break;
-      case 'checkout.session.completed':
-        await this.handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
-        break;
-      default:
-        console.log(`ℹ️  Unhandled event type: ${event.type} - Ignoring`);
+    const isValid = this.kinaHmacService.verifySignature(macString, P_SIGN);
+    if (!isValid) {
+      this.logger.error(`❌ Kina HMAC verification FAILED for Order: ${ORDER}`);
+      return `${this.configService.get('FRONTEND_URL')}/payment/error?reason=signature_mismatch`;
     }
 
-    console.log('========================================');
-    console.log('✅ WEBHOOK PROCESSING COMPLETE');
-    console.log('========================================');
-    return { received: true };
-  }
+    const payment = await this.prisma.payment.findUnique({
+      where: { kinaOrderId: ORDER },
+      include: { booking: { include: { car: true, user: true } } },
+    });
 
-  private async handleChargeRefunded(charge: Stripe.Charge) {
-    const bookingId = charge.metadata?.bookingId;
-    if (bookingId) {
-      await this.prisma.booking.update({
-        where: { id: bookingId },
-        data: { bondStatus: 'REFUNDED' }
-      });
-      console.log(`✅ Bond status updated to REFUNDED via webhook for booking: ${bookingId}`);
-    }
-  }
-
-  private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-    console.log('💳 Processing checkout.session.completed event');
-    const bookingId = session.metadata?.bookingId;
-
-    if (!bookingId) {
-      console.error('❌ No bookingId found in session metadata');
-      return;
+    if (!payment) {
+      this.logger.error(`❌ Payment record not found for Kina Order: ${ORDER}`);
+      return `${this.configService.get('FRONTEND_URL')}/payment/error?reason=order_not_found`;
     }
 
-    try {
-      console.log(`🔄 Updating payment and booking status for booking: ${bookingId}`);
-      // Check for existing payment
-      const existingPayment = await this.prisma.payment.findFirst({
-        where: { bookingId: bookingId as string }
+    // ACTION: 0=Success, 1=Duplicate, 2=Declined, 3=Other Error
+    if (ACTION === '0') {
+      await this.prisma.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: 'PAID',
+          kinaIntRef: INT_REF,
+          kinaRrn: RRN,
+          kinaActionCode: ACTION,
+          kinaResponseCode: RC,
+          kinaApprovalCode: APPROVAL,
+        },
       });
 
-      if (existingPayment) {
-        await this.prisma.payment.update({
-          where: { id: existingPayment.id },
-          data: {
-            status: 'PAID',
-            stripePaymentIntentId: session.payment_intent as string,
-            stripeSessionId: session.id
-          }
-        });
-      } else {
-        // Create missing payment record
-        await this.prisma.payment.create({
-          data: {
-            bookingId: bookingId as string,
-            amount: session.amount_total ? session.amount_total / 100 : 0,
-            currency: 'PGK',
-            status: 'PAID',
-            stripePaymentIntentId: session.payment_intent as string,
-            stripeSessionId: session.id,
-            paymentMethod: 'ONLINE'
-          }
-        });
-      }
-
-      // Update booking status
       const updatedBooking = await this.prisma.booking.update({
-        where: { id: bookingId as string },
+        where: { id: payment.bookingId },
         data: {
           paymentStatus: 'PAID',
           status: 'CONFIRMED',
-          bondStatus: 'PAID'
+          bondStatus: 'PAID',
         },
-        include: { car: true, user: true }
+        include: { car: true, user: true },
       });
 
-      console.log(`✅ Payment and booking status updated successfully`);
-      await this.bookingEmailService.sendStripePaymentConfirmation(updatedBooking, session.payment_intent as string);
-    } catch (err) {
-      console.error('❌ Failed to update booking/payment status:', err);
-      throw err;
+      await this.bookingEmailService.sendKinaPaymentConfirmation(updatedBooking, INT_REF); // Reuse logic for now
+      return `${this.configService.get('FRONTEND_URL')}/thank-you?bookingId=${payment.bookingId}&payment=KINA`;
+    } else {
+      const status = ACTION === '2' ? 'DECLINED' : 'FAILED';
+      await this.prisma.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: status as any,
+          kinaActionCode: ACTION,
+          kinaResponseCode: RC,
+        },
+      });
+
+      return `${this.configService.get('FRONTEND_URL')}/payment/${status.toLowerCase()}?order=${ORDER}`;
     }
   }
 
@@ -355,37 +238,64 @@ export class PaymentService {
     });
 
     if (!booking) throw new NotFoundException('Booking not found');
-    if (booking.bondStatus !== 'PAID') throw new BadRequestException('Bond is not in PAID status');
+    
+    // Guard: prevent repeat reversals
+    if (booking.bondStatus === 'REFUNDED') {
+      throw new BadRequestException('Bond has already been refunded');
+    }
 
-    // Find the Stripe Payment Intent from the payments
-    const stripePayment = booking.payments.find((p) => p.stripePaymentIntentId && p.status === 'PAID');
+    const kinaPayment = booking.payments.find((p) => p.kinaOrderId && p.status === 'PAID');
 
-    if (booking.paymentMethod === 'ONLINE' && stripePayment && stripePayment.stripePaymentIntentId) {
-      // Stripe Refund
-      try {
-        await this.stripeService.createRefund({
-          payment_intent: stripePayment.stripePaymentIntentId,
-          amount: Math.round(booking.bondAmount * 100),
-          metadata: { bookingId: booking.id, type: 'BOND_REFUND' },
-        });
-        // Status will be updated via webhook (charge.refunded), 
-        // but we update it now for better UI feedback
-        await this.prisma.booking.update({
-          where: { id: booking.id },
-          data: { bondStatus: 'REFUNDED' },
-        });
-      } catch (error) {
-        console.error('Stripe Refund Error:', error);
-        throw new InternalServerErrorException('Failed to process Stripe refund');
-      }
+    if (booking.paymentMethod === 'ONLINE' && kinaPayment?.kinaOrderId) {
+      // Build Reversal Request (TRTYPE 24)
+      const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
+      const merchant = this.configService.get<string>('KINA_MERCHANT_ID');
+      const backref = this.configService.get<string>('KINA_BACKREF_URL');
+      
+      const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
+      const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
+
+      const fields = {
+        TERMINAL: terminal,
+        TRTYPE: '24', // Reversal
+        AMOUNT: booking.bondAmount.toFixed(2),
+        CURRENCY: 'PGK',
+        ORDER: kinaPayment.kinaOrderId,
+        RRN: kinaPayment.kinaRrn,
+        INT_REF: kinaPayment.kinaIntRef,
+        TIMESTAMP: timestamp,
+        NONCE: nonce,
+        BACKREF: backref,
+      };
+
+      // Since reversals on the gateway need to be a form post, we return the fields
+      // and mark the status as pending admin verification
+      await this.prisma.booking.update({
+        where: { id: booking.id },
+        data: { bondStatus: 'REFUND_PENDING_KINA' as any },
+      });
+
+      return {
+        isKinaReversal: true,
+        gatewayUrl: this.configService.get('KINA_GATEWAY_URL'),
+        fields: {
+          ...fields,
+          P_SIGN: this.kinaHmacService.computeHmac(
+            // Order for reversal MAC is different in some versions, but standard IPG order:
+            // TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, RRN, INT_REF, TIMESTAMP, NONCE, BACKREF
+            [fields.TERMINAL, fields.TRTYPE, fields.AMOUNT, fields.CURRENCY, fields.ORDER, fields.RRN, fields.INT_REF, fields.TIMESTAMP, fields.NONCE, fields.BACKREF]
+              .map(val => (val ? `${val.length}${val}` : '-'))
+              .join('')
+          ),
+        },
+      };
     } else {
-      // Cash or no Stripe PI found - Manual marker
+      // Cash/Manual Bond Release
       await this.prisma.booking.update({
         where: { id: booking.id },
         data: { bondStatus: 'REFUNDED' },
       });
+      return { message: 'Bond marked as refunded (Manual/Cash)' };
     }
-
-    return { message: 'Bond released successfully' };
   }
 }

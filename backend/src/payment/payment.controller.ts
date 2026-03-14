@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, Headers, Req, RawBodyRequest, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Headers, Req, RawBodyRequest, UseGuards, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
@@ -12,27 +13,16 @@ import { Role } from '@prisma/client';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) { }
 
-  @Post('create-session')
+  @Post('initialize')
   @UseGuards(AuthGuard)
-  createSession(@Body('bookingId') bookingId: string) {
-    return this.paymentService.createCheckoutSession(bookingId);
+  initialize(@Body('bookingId') bookingId: string) {
+    return this.paymentService.initializeKinaPayment(bookingId);
   }
 
-  @Post('create-intent')
-  @UseGuards(AuthGuard)
-  createIntent(@Body('bookingId') bookingId: string) {
-    return this.paymentService.createPaymentIntent(bookingId);
-  }
-
-  @Post('webhook')
-  async webhook(
-    @Headers('stripe-signature') signature: string,
-    @Req() req: RawBodyRequest<Request>,
-  ) {
-    if (!req.rawBody) {
-      throw new Error('Raw body not found');
-    }
-    return this.paymentService.handleWebhook(signature, req.rawBody);
+  @Post('callback')
+  async callback(@Body() body: any, @Res() res: Response) {
+    const redirectUrl = await this.paymentService.handleKinaCallback(body);
+    return res.redirect(redirectUrl);
   }
 
   @Post()
