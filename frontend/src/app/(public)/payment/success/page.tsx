@@ -96,7 +96,7 @@ function SuccessContent() {
                         {
                             label: 'Home',
                             onClick: () => window.location.href = '/',
-                            variant: 'icon',
+                            variant: 'secondary',
                             icon: Home
                         }
                     ]}
