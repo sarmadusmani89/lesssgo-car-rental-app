@@ -185,11 +185,12 @@ export class PaymentService {
 
     try {
       event = this.stripeService.constructEvent(payload, signature, webhookSecret);
-      console.log(`✅ Webhook signature verified`);
-      console.log(`📋 Event Type: ${event.type}`);
-      console.log(`🆔 Event ID: ${event.id}`);
+      console.log(`✅ Webhook signature verified for event: ${event.type}`);
     } catch (err: any) {
-      console.error('❌ Webhook signature verification failed:', err.message);
+      console.error('❌ Webhook signature verification failed!');
+      console.error('Error:', err.message);
+      console.log('Received signature:', signature);
+      console.log('Using secret:', webhookSecret.substring(0, 10) + '...');
       throw new InternalServerErrorException(`Webhook Error: ${err.message}`);
     }
 

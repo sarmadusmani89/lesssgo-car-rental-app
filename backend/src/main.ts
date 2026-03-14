@@ -13,6 +13,7 @@ async function bootstrap() {
     limit: '50mb',
     verify: (req: any, res, buf) => {
       if (req.url && req.url.includes('/payment/webhook')) {
+        console.log('📦 Webhook bytes received:', buf.length);
         req.rawBody = buf;
       }
     }
