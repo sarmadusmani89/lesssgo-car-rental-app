@@ -6,7 +6,6 @@ import { store } from '@/lib/store';
 import { Toaster } from 'sonner';
 import { initializeWishlist } from '@/lib/store/slices/wishlistSlice';
 import { userApi } from '@/lib/api';
-import styles from './Providers.module.css';
 
 function WishlistInitializer() {
     const dispatch = useDispatch();
@@ -47,7 +46,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         <Provider store={store}>
             <WishlistInitializer />
             <AuthInitializer />
-            <div className={styles.wrapper}>
+            <div>
                 {children}
                 <Toaster position="top-right" richColors closeButton />
             </div>
