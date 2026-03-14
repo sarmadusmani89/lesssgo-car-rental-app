@@ -210,13 +210,28 @@ export class PaymentService {
 
   private async handleChargeRefunded(charge: Stripe.Charge) {
     const bookingId = charge.metadata?.bookingId;
-    if (bookingId) {
-      await this.prisma.booking.update({
-        where: { id: bookingId },
-        data: { bondStatus: 'REFUNDED' }
-      });
-      console.log(`✅ Bond status updated to REFUNDED via webhook for booking: ${bookingId}`);
+    if (!bookingId) {
+      console.warn('⚠️ charge.refunded webhook missing bookingId in metadata');
+      return;
     }
+
+    const booking = await this.prisma.booking.findUnique({ where: { id: bookingId } });
+    if (!booking) {
+      console.error(`❌ charge.refunded: booking not found for id: ${bookingId}`);
+      return;
+    }
+
+    // Only update if we're in the expected intermediate state
+    if (booking.bondStatus !== 'REFUND_PENDING') {
+      console.warn(`⚠️ charge.refunded: booking ${bookingId} bondStatus is '${booking.bondStatus}', expected 'REFUND_PENDING'. Skipping.`);
+      return;
+    }
+
+    await this.prisma.booking.update({
+      where: { id: bookingId },
+      data: { bondStatus: 'REFUNDED' }
+    });
+    console.log(`✅ Bond status confirmed REFUNDED via Stripe webhook for booking: ${bookingId}`);
   }
 
   private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
@@ -355,37 +370,74 @@ export class PaymentService {
     });
 
     if (!booking) throw new NotFoundException('Booking not found');
-    if (booking.bondStatus !== 'PAID') throw new BadRequestException('Bond is not in PAID status');
 
-    // Find the Stripe Payment Intent from the payments
+    // Guard: prevent duplicate refund attempts
+    if (booking.bondStatus === 'REFUNDED') {
+      throw new BadRequestException('Bond has already been refunded');
+    }
+    if (booking.bondStatus === 'REFUND_PENDING') {
+      throw new BadRequestException('Bond refund is already in progress — awaiting Stripe confirmation');
+    }
+    if (booking.bondStatus !== 'PAID') {
+      throw new BadRequestException(`Cannot release bond — current status is '${booking.bondStatus}'`);
+    }
+
     const stripePayment = booking.payments.find((p) => p.stripePaymentIntentId && p.status === 'PAID');
 
-    if (booking.paymentMethod === 'ONLINE' && stripePayment && stripePayment.stripePaymentIntentId) {
-      // Stripe Refund
+    if (booking.paymentMethod === 'ONLINE' && stripePayment?.stripePaymentIntentId) {
+      // ── Production-grade Stripe refund ──────────────────────────────────────
+      // Idempotency key: deterministic per booking so retrying this endpoint
+      // returns the existing refund instead of creating a second charge.
+      const idempotencyKey = `bond-refund-${booking.id}`;
+
+      let refund: Stripe.Refund;
       try {
-        await this.stripeService.createRefund({
-          payment_intent: stripePayment.stripePaymentIntentId,
-          amount: Math.round(booking.bondAmount * 100),
-          metadata: { bookingId: booking.id, type: 'BOND_REFUND' },
-        });
-        // Status will be updated via webhook (charge.refunded), 
-        // but we update it now for better UI feedback
-        await this.prisma.booking.update({
-          where: { id: booking.id },
-          data: { bondStatus: 'REFUNDED' },
-        });
+        refund = await this.stripeService.createRefund(
+          {
+            payment_intent: stripePayment.stripePaymentIntentId,
+            amount: Math.round(booking.bondAmount * 100),
+            metadata: { bookingId: booking.id, type: 'BOND_REFUND' },
+          },
+          idempotencyKey,
+        );
       } catch (error) {
         console.error('Stripe Refund Error:', error);
-        throw new InternalServerErrorException('Failed to process Stripe refund');
+        throw new InternalServerErrorException('Failed to initiate Stripe refund');
       }
+
+      console.log(`🔄 Stripe refund initiated: refundId=${refund.id}, status=${refund.status}`);
+
+      // Store refundId for audit trail
+      await this.prisma.payment.update({
+        where: { id: stripePayment.id },
+        data: {
+          metadata: {
+            ...(stripePayment.metadata as object ?? {}),
+            stripeRefundId: refund.id,
+            refundInitiatedAt: new Date().toISOString(),
+          },
+        },
+      });
+
+      // Intermediate state: REFUND_PENDING → set to REFUNDED only by the
+      // charge.refunded webhook (single source of truth)
+      await this.prisma.booking.update({
+        where: { id: booking.id },
+        data: { bondStatus: 'REFUND_PENDING' },
+      });
+
+      return {
+        message: 'Bond refund initiated. Status will update to REFUNDED once Stripe confirms.',
+        refundId: refund.id,
+        refundStatus: refund.status,
+      };
     } else {
-      // Cash or no Stripe PI found - Manual marker
+      // Cash booking or no Stripe PI — admin manually returning cash, mark directly
       await this.prisma.booking.update({
         where: { id: booking.id },
         data: { bondStatus: 'REFUNDED' },
       });
+      return { message: 'Bond marked as refunded (cash/manual payment)' };
     }
-
-    return { message: 'Bond released successfully' };
   }
 }

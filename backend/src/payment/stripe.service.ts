@@ -34,9 +34,12 @@ export class StripeService {
         }
     }
 
-    async createRefund(params: Stripe.RefundCreateParams) {
+    async createRefund(params: Stripe.RefundCreateParams, idempotencyKey?: string) {
         try {
-            return await this.stripe.refunds.create(params);
+            const requestOptions: Stripe.RequestOptions = idempotencyKey
+                ? { idempotencyKey }
+                : {};
+            return await this.stripe.refunds.create(params, requestOptions);
         } catch (error) {
             console.error('Stripe Refund Error:', error);
             throw new InternalServerErrorException('Failed to process Stripe refund');

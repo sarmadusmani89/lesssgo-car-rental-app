@@ -117,6 +117,7 @@ enum PaymentStatus {
 enum BondStatus {
   PENDING
   PAID
+  REFUND_PENDING
   REFUNDED
   CLAIMED
 }
