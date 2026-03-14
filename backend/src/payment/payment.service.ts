@@ -39,7 +39,7 @@ export class PaymentService {
     }
 
     const orderId = `LG-${Date.now()}-${booking.id.split('-')[0]}`.toUpperCase();
-    const nonce = crypto.randomBytes(16).toString('hex').toUpperCase();
+    const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
     const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14); // YYYYMMDDHHMMSS
 
     const fields = {
