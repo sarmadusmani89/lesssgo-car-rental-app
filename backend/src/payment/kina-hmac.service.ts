@@ -39,14 +39,16 @@ export class KinaHmacService {
       fields.AMOUNT,
       fields.CURRENCY,
       fields.ORDER,
-      fields.DESC,
-      fields.MERCH_NAME,
-      fields.MERCH_URL,
       fields.MERCHANT,
       fields.EMAIL,
-      fields.TIMESTAMP,
-      fields.NONCE,
       fields.BACKREF,
+      fields.TIMESTAMP,
+      fields.MERCH_NAME,
+      '', // COUNTRY (Field 11 - Absent)
+      fields.MERCH_URL,
+      '', // MERCH_GMT (Field 13 - Absent)
+      fields.DESC,
+      fields.NONCE,
     ];
 
     return values.map(val => (val ? `${val.length}${val}` : '-')).join('');
