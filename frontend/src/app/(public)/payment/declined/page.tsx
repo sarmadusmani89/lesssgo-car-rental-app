@@ -12,19 +12,6 @@ import PaymentActions from '@/components/pages/payment/PaymentActions';
 function PaymentDeclinedContent() {
     const searchParams = useSearchParams();
     const order = searchParams.get('order');
-    const carId = searchParams.get('id');
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
-    const pickupLocation = searchParams.get('pickupLocation');
-    const returnLocation = searchParams.get('returnLocation');
-
-    const checkoutUrl = `/checkout?${new URLSearchParams({
-        id: carId || '',
-        startDate: startDate || '',
-        endDate: endDate || '',
-        pickupLocation: pickupLocation || '',
-        returnLocation: returnLocation || '',
-    }).toString()}`;
 
     return (
         <PaymentStatusLayout maxWidth="max-w-2xl">
@@ -60,8 +47,8 @@ function PaymentDeclinedContent() {
                 <PaymentActions
                     actions={[
                         {
-                            label: 'Use Another Card',
-                            onClick: () => window.location.href = checkoutUrl,
+                            label: 'View My Bookings',
+                            onClick: () => window.location.href = '/dashboard/bookings',
                             variant: 'primary',
                             colorClass: 'bg-gray-900',
                             icon: ArrowLeft
