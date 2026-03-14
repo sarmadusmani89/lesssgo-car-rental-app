@@ -22,11 +22,19 @@ export class PaymentService {
   async initializeKinaPayment(bookingId: string) {
     const booking = await this.prisma.booking.findUnique({
       where: { id: bookingId },
-      include: { car: true, user: true },
+      include: { car: true, user: true, payments: true },
     });
 
     if (!booking) throw new NotFoundException('Booking not found');
 
+    // ── 1. Production Guard: Prevent Double Charges ─────────────────────────
+    const existingPaid = booking.payments.find(p => p.status === 'PAID');
+    if (existingPaid) {
+      throw new BadRequestException('This booking has already been paid.');
+    }
+
+    const existingPending = booking.payments.find(p => p.status === 'PENDING' && p.kinaOrderId);
+    
     const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
     const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
     const merchant = this.configService.get<string>('KINA_MERCHANT_ID');
@@ -38,14 +46,21 @@ export class PaymentService {
       throw new InternalServerErrorException('Kina Gateway configuration is incomplete');
     }
 
-    // Kina Bank strictly requires numeric Order ID (6-20 digits)
-    const orderId = `${booking.id.replace(/\D/g, '').substring(0, 10)}${Math.floor(Date.now() / 1000)}`.substring(0, 20);
-    const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
-    const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14); // YYYYMMDDHHMMSS
+    // ── 2. Robust Order ID Generation ───────────────────────────────────────
+    // If we have a pending payment, REUSE its Order ID to prevent gateway-side duplicates
+    // Otherwise, generate a fresh one: Timestamp (14) + Random (4-6)
+    const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
+    const orderId = existingPending?.kinaOrderId || 
+      `${timestamp}${nodeCrypto.randomInt(100000, 999999)}`.substring(0, 20);
+    
+    const nonce = existingPending?.kinaNonce || 
+      nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
+
+    this.logger.log(`[INIT] Booking: ${bookingId} | OrderID: ${orderId} | Amount: ${booking.totalAmount + booking.bondAmount}`);
 
     const fields = {
       TERMINAL: terminal,
-      TRTYPE: '1', // 1 for Sales (Retail Financial Request)
+      TRTYPE: '1',
       AMOUNT: (booking.totalAmount + booking.bondAmount).toFixed(2),
       CURRENCY: 'PGK',
       ORDER: orderId,
@@ -64,7 +79,7 @@ export class PaymentService {
     const macString = this.kinaHmacService.buildRequestMacString(fields);
     const pSign = this.kinaHmacService.computeHmac(macString);
 
-    // Create or update payment record
+    // ── 3. Upsert Payment State ─────────────────────────────────────────────
     await this.prisma.payment.upsert({
       where: { kinaOrderId: orderId },
       update: {
@@ -125,15 +140,27 @@ export class PaymentService {
       });
 
       const isValid = this.kinaHmacService.verifySignature(macString, P_SIGN);
-      if (!isValid) {
-        this.logger.error(`❌ Kina HMAC verification FAILED for Order: ${ORDER}`);
-        this.logger.error(`   Raw body fields: ACTION=${ACTION} RC=${RC} APPROVAL=${APPROVAL} ORDER=${ORDER}`);
+
+      // ── 2. Performance Logic: Strict for Success, Tolerant for Fails ──────
+      // If payment is SUCCESSFUL (ACTION=0), signature verification is MANDATORY.
+      if (!isValid && ACTION === '0') {
+        this.logger.error(`❌ CRITICAL: Kina HMAC verification FAILED for SUCCESSFUL Order: ${ORDER}`);
+        this.logger.error(`   Potential tampering detected for Order: ${ORDER}`);
         return `${frontendUrl}/payment/error?reason=signature_mismatch`;
       }
 
-      this.logger.log(`✅ HMAC signature verified for Order: ${ORDER}`);
+      // If payment FAILED or was DECLINED, we log the mismatch but still redirect.
+      // This is because Kina sandbox sometimes signs Fails/Declined with a different logic.
+      if (!isValid) {
+        this.logger.warn(
+          `⚠️ Kina HMAC mismatch on non-success callback (ACTION=${ACTION} RC=${RC}). ` +
+          `Proceeding with redirect as transaction is already failed/declined.`,
+        );
+      } else {
+        this.logger.log(`✅ HMAC signature verified for Order: ${ORDER}`);
+      }
 
-      // ── 2. Locate payment record ──────────────────────────────────────────
+      // ── 3. Locate payment record ──────────────────────────────────────────
       const payment = await this.prisma.payment.findUnique({
         where: { kinaOrderId: ORDER },
         include: { booking: { include: { car: true, user: true } } },
@@ -150,37 +177,40 @@ export class PaymentService {
         return `${frontendUrl}/thank-you?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
       }
 
-      // ── 4. Process result ─────────────────────────────────────────────────
-      // ACTION: 0=Success, 1=Duplicate, 2=Declined, 3=Other Error
+      // ── 5. Atomic State Transition (Prisma Transaction) ──────────────────
       if (ACTION === '0') {
-        await this.prisma.payment.update({
-          where: { id: payment.id },
-          data: {
-            status: 'PAID',
-            kinaIntRef: INT_REF,
-            kinaRrn: RRN,
-            kinaActionCode: ACTION,
-            kinaResponseCode: RC,
-            kinaApprovalCode: APPROVAL,
-          },
-        });
+        const result = await this.prisma.$transaction(async (tx) => {
+          const updatedPayment = await tx.payment.update({
+            where: { id: payment.id },
+            data: {
+              status: 'PAID',
+              kinaIntRef: INT_REF,
+              kinaRrn: RRN,
+              kinaActionCode: ACTION,
+              kinaResponseCode: RC,
+              kinaApprovalCode: APPROVAL,
+            },
+          });
 
-        const updatedBooking = await this.prisma.booking.update({
-          where: { id: payment.bookingId },
-          data: {
-            paymentStatus: 'PAID',
-            status: 'CONFIRMED',
-            bondStatus: 'PAID',
-            paidAt: new Date(),
-            confirmedAt: new Date(),
-          },
-          include: { car: true, user: true },
+          const updatedBooking = await tx.booking.update({
+            where: { id: payment.bookingId },
+            data: {
+              paymentStatus: 'PAID',
+              status: 'CONFIRMED',
+              bondStatus: 'PAID',
+              paidAt: new Date(),
+              confirmedAt: new Date(),
+            },
+            include: { car: true, user: true },
+          });
+
+          return { updatedPayment, updatedBooking };
         });
 
         this.logger.log(`✅ Booking ${payment.bookingId} confirmed & paid via Kina Bank (INT_REF: ${INT_REF})`);
 
-        // Fire emails asynchronously — don't let email failure block the redirect
-        this.bookingEmailService.sendKinaPaymentConfirmation(updatedBooking, INT_REF).catch((err) =>
+        // Fire emails asynchronously — outside the transaction context
+        this.bookingEmailService.sendKinaPaymentConfirmation(result.updatedBooking, INT_REF).catch((err) =>
           this.logger.error(`📧 Email send failed (non-blocking): ${err.message}`),
         );
 
