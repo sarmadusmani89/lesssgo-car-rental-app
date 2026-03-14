@@ -30,7 +30,7 @@ export default function PaymentMethodSelection({
           </div>
           <div className="text-left">
             <p className={`font-black uppercase text-xs tracking-widest ${selected === 'kina' ? 'text-white/80' : 'text-gray-400'}`}>Pay Online</p>
-            <p className={`font-bold ${selected === 'kina' ? 'text-white' : 'text-gray-900'}`}>Kina Bank Online</p>
+            <p className={`font-bold ${selected === 'kina' ? 'text-white' : 'text-gray-900'}`}>Local Debit/Credit Card</p>
           </div>
         </button>
 

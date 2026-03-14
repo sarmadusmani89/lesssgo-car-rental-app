@@ -25,7 +25,7 @@ export default function ConfirmBookingButton({
   const grandTotal = (total || 0) + bondAmount;
 
   const label = paymentMethod === 'kina'
-    ? `Pay Via Kina Bank Online (${formatPrice(grandTotal, currency, rates)})`
+    ? `Pay Via Debit/Credit Card (${formatPrice(grandTotal, currency, rates)})`
     : 'Confirm Reservation';
 
   return (
