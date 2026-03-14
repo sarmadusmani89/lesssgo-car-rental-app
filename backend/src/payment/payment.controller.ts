@@ -8,6 +8,8 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { Throttle } from '@nestjs/throttler';
+import { KinaCallbackThrottlerGuard } from './kina-callback-throttler.guard';
 
 @Controller('payment')
 export class PaymentController {
@@ -19,10 +21,25 @@ export class PaymentController {
     return this.paymentService.initializeKinaPayment(bookingId);
   }
 
+  // ──────────────────────────────────────────────────────────────────────────
+  // Kina Bank IPG callback endpoint.
+  //
+  // SECURITY NOTE: This endpoint MUST be restricted to Kina Bank's known IP
+  // ranges at the reverse-proxy (nginx) or firewall level in production.
+  // The HMAC P_SIGN check inside the service is our second layer of defence.
+  //
+  // PROTOCOL NOTE: Kina's IPG POSTs the result to BACKREF. We respond 200 OK
+  // and include the redirect URL in the body. The user's browser redirect is
+  // handled independently by Kina's hosted payment page (not this server POST).
+  // ──────────────────────────────────────────────────────────────────────────
   @Post('callback')
+  @UseGuards(KinaCallbackThrottlerGuard)
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
   async callback(@Body() body: any, @Res() res: Response) {
     const redirectUrl = await this.paymentService.handleKinaCallback(body);
-    return res.redirect(redirectUrl);
+    // Respond 200 OK to Kina's server-to-server POST.
+    // Do NOT use res.redirect() — Kina's server does not follow browser redirects.
+    return res.status(200).json({ redirectUrl });
   }
 
   @Post()

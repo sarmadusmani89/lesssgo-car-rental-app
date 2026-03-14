@@ -92,76 +92,104 @@ export class PaymentService {
     };
   }
 
-  async handleKinaCallback(body: any) {
-    this.logger.log('📨 KINA CALLBACK RECEIVED');
-    this.logger.debug(`Callback Body: ${JSON.stringify(body, null, 2)}`);
-    
-    const {
-      ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
-      TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
-      TIMESTAMP, NONCE, P_SIGN,
-    } = body;
+  async handleKinaCallback(body: any): Promise<string> {
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL');
 
-    const macString = this.kinaHmacService.buildResponseMacString({
-      ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
-      TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
-      TIMESTAMP, NONCE,
-    });
+    try {
+      this.logger.log('📨 KINA CALLBACK RECEIVED');
+      this.logger.log(`[RAW BODY] ${JSON.stringify(body)}`);
 
-    const isValid = this.kinaHmacService.verifySignature(macString, P_SIGN);
-    if (!isValid) {
-      this.logger.error(`❌ Kina HMAC verification FAILED for Order: ${ORDER}`);
-      return `${this.configService.get('FRONTEND_URL')}/payment/error?reason=signature_mismatch`;
-    }
+      const {
+        ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
+        TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
+        TIMESTAMP, NONCE, P_SIGN,
+      } = body;
 
-    const payment = await this.prisma.payment.findUnique({
-      where: { kinaOrderId: ORDER },
-      include: { booking: { include: { car: true, user: true } } },
-    });
-
-    if (!payment) {
-      this.logger.error(`❌ Payment record not found for Kina Order: ${ORDER}`);
-      return `${this.configService.get('FRONTEND_URL')}/payment/error?reason=order_not_found`;
-    }
-
-    // ACTION: 0=Success, 1=Duplicate, 2=Declined, 3=Other Error
-    if (ACTION === '0') {
-      await this.prisma.payment.update({
-        where: { id: payment.id },
-        data: {
-          status: 'PAID',
-          kinaIntRef: INT_REF,
-          kinaRrn: RRN,
-          kinaActionCode: ACTION,
-          kinaResponseCode: RC,
-          kinaApprovalCode: APPROVAL,
-        },
+      // ── 1. Verify HMAC signature ──────────────────────────────────────────
+      const macString = this.kinaHmacService.buildResponseMacString({
+        ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
+        TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
+        TIMESTAMP, NONCE,
       });
 
-      const updatedBooking = await this.prisma.booking.update({
-        where: { id: payment.bookingId },
-        data: {
-          paymentStatus: 'PAID',
-          status: 'CONFIRMED',
-          bondStatus: 'PAID',
-        },
-        include: { car: true, user: true },
+      const isValid = this.kinaHmacService.verifySignature(macString, P_SIGN);
+      if (!isValid) {
+        this.logger.error(`❌ Kina HMAC verification FAILED for Order: ${ORDER}`);
+        this.logger.error(`   Raw body fields: ACTION=${ACTION} RC=${RC} APPROVAL=${APPROVAL} STAN=${STAN} ORDER=${ORDER}`);
+        return `${frontendUrl}/payment/error?reason=signature_mismatch`;
+      }
+
+      this.logger.log(`✅ HMAC signature verified for Order: ${ORDER}`);
+
+      // ── 2. Locate payment record ──────────────────────────────────────────
+      const payment = await this.prisma.payment.findUnique({
+        where: { kinaOrderId: ORDER },
+        include: { booking: { include: { car: true, user: true } } },
       });
 
-      await this.bookingEmailService.sendKinaPaymentConfirmation(updatedBooking, INT_REF); // Reuse logic for now
-      return `${this.configService.get('FRONTEND_URL')}/thank-you?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
-    } else {
-      const status = ACTION === '2' ? 'DECLINED' : 'FAILED';
-      await this.prisma.payment.update({
-        where: { id: payment.id },
-        data: {
-          status: status as any,
-          kinaActionCode: ACTION,
-          kinaResponseCode: RC,
-        },
-      });
+      if (!payment) {
+        this.logger.error(`❌ Payment record not found for Kina Order: ${ORDER}`);
+        return `${frontendUrl}/payment/error?reason=order_not_found`;
+      }
 
-      return `${this.configService.get('FRONTEND_URL')}/payment/${status.toLowerCase()}?order=${ORDER}`;
+      // ── 3. Idempotency guard — ignore duplicate callbacks ─────────────────
+      if (payment.status === 'PAID') {
+        this.logger.warn(`⚠️  Duplicate callback received for already-PAID Order: ${ORDER}. Ignoring.`);
+        return `${frontendUrl}/thank-you?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
+      }
+
+      // ── 4. Process result ─────────────────────────────────────────────────
+      // ACTION: 0=Success, 1=Duplicate, 2=Declined, 3=Other Error
+      if (ACTION === '0') {
+        await this.prisma.payment.update({
+          where: { id: payment.id },
+          data: {
+            status: 'PAID',
+            kinaIntRef: INT_REF,
+            kinaRrn: RRN,
+            kinaActionCode: ACTION,
+            kinaResponseCode: RC,
+            kinaApprovalCode: APPROVAL,
+          },
+        });
+
+        const updatedBooking = await this.prisma.booking.update({
+          where: { id: payment.bookingId },
+          data: {
+            paymentStatus: 'PAID',
+            status: 'CONFIRMED',
+            bondStatus: 'PAID',
+            paidAt: new Date(),
+            confirmedAt: new Date(),
+          },
+          include: { car: true, user: true },
+        });
+
+        this.logger.log(`✅ Booking ${payment.bookingId} confirmed & paid via Kina Bank (INT_REF: ${INT_REF})`);
+
+        // Fire emails asynchronously — don't let email failure block the redirect
+        this.bookingEmailService.sendKinaPaymentConfirmation(updatedBooking, INT_REF).catch((err) =>
+          this.logger.error(`📧 Email send failed (non-blocking): ${err.message}`),
+        );
+
+        return `${frontendUrl}/thank-you?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
+      } else {
+        const status = ACTION === '2' ? 'DECLINED' : 'FAILED';
+        await this.prisma.payment.update({
+          where: { id: payment.id },
+          data: {
+            status: status as any,
+            kinaActionCode: ACTION,
+            kinaResponseCode: RC,
+          },
+        });
+
+        this.logger.warn(`⚠️  Kina payment ${status} for Order: ${ORDER} (RC: ${RC})`);
+        return `${frontendUrl}/payment/${status.toLowerCase()}?order=${ORDER}`;
+      }
+    } catch (err: any) {
+      this.logger.error(`💥 Unhandled exception in Kina callback: ${err.message}`, err.stack);
+      return `${frontendUrl}/payment/error?reason=server_error`;
     }
   }
 
@@ -253,14 +281,17 @@ export class PaymentService {
     if (booking.paymentMethod === 'ONLINE' && kinaPayment?.kinaOrderId) {
       // Build Reversal Request (TRTYPE 24)
       const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
-      const merchant = this.configService.get<string>('KINA_MERCHANT_ID');
       const backref = this.configService.get<string>('KINA_BACKREF_URL');
-      
+
+      if (!terminal || !backref) {
+        throw new InternalServerErrorException('Kina reversal configuration (TERMINAL_ID or BACKREF_URL) is missing');
+      }
+
       const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
       const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
 
       const fields = {
-        TERMINAL: terminal,
+        TERMINAL: terminal,  // confirmed non-null above
         TRTYPE: '24', // Reversal
         AMOUNT: booking.bondAmount.toFixed(2),
         CURRENCY: 'PGK',
@@ -269,7 +300,7 @@ export class PaymentService {
         INT_REF: kinaPayment.kinaIntRef,
         TIMESTAMP: timestamp,
         NONCE: nonce,
-        BACKREF: backref,
+        BACKREF: backref,  // confirmed non-null above
       };
 
       // Since reversals on the gateway need to be a form post, we return the fields
@@ -279,18 +310,25 @@ export class PaymentService {
         data: { bondStatus: 'REFUND_PENDING' },
       });
 
+      const reversalMacString = this.kinaHmacService.buildReversalMacString({
+        TERMINAL: fields.TERMINAL,
+        TRTYPE: fields.TRTYPE,
+        AMOUNT: fields.AMOUNT,
+        CURRENCY: fields.CURRENCY,
+        ORDER: fields.ORDER,
+        RRN: fields.RRN,
+        INT_REF: fields.INT_REF,
+        TIMESTAMP: fields.TIMESTAMP,
+        NONCE: fields.NONCE,
+        BACKREF: fields.BACKREF,
+      });
+
       return {
         isKinaReversal: true,
         gatewayUrl: this.configService.get('KINA_GATEWAY_URL'),
         fields: {
           ...fields,
-          P_SIGN: this.kinaHmacService.computeHmac(
-            // Order for reversal MAC is different in some versions, but standard IPG order:
-            // TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, RRN, INT_REF, TIMESTAMP, NONCE, BACKREF
-            [fields.TERMINAL, fields.TRTYPE, fields.AMOUNT, fields.CURRENCY, fields.ORDER, fields.RRN, fields.INT_REF, fields.TIMESTAMP, fields.NONCE, fields.BACKREF]
-              .map(val => (val ? `${val.length}${val}` : '-'))
-              .join('')
-          ),
+          P_SIGN: this.kinaHmacService.computeHmac(reversalMacString),
         },
       };
     } else {

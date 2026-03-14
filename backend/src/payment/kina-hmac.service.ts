@@ -10,14 +10,30 @@ export class KinaHmacService {
   constructor(private readonly configService: ConfigService) {
     this.secretKey = this.configService.get<string>('KINA_SECRET_KEY') || '';
     if (!this.secretKey) {
-      this.logger.error('KINA_SECRET_KEY is not defined in environment variables');
+      this.logger.error('❌ KINA_SECRET_KEY is not defined — payment signatures will fail');
     }
   }
 
-  /**
-   * Assembles the MAC source string for a payment request.
-   * Order is CRITICAL based on Kina Bank specification.
-   */
+  // ---------------------------------------------------------------------------
+  // ENCODING RULE (Kina Bank IPG spec)
+  //   present field  → "<length><value>"   e.g.  "3PGK"
+  //   absent/empty   → "-"
+  // ---------------------------------------------------------------------------
+  private encodeField(val: string | null | undefined): string {
+    if (val === null || val === undefined || val === '') return '-';
+    return `${val.length}${val}`;
+  }
+
+  private buildMacString(values: (string | null | undefined)[]): string {
+    return values.map((v) => this.encodeField(v)).join('');
+  }
+
+  // ---------------------------------------------------------------------------
+  // REQUEST MAC  (merchant → IPG, with P_SIGN in the POST form)
+  // Field order per Kina Bank IPG Integration Guide:
+  //   TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, MERCHANT, EMAIL,
+  //   BACKREF, TIMESTAMP, MERCH_NAME, COUNTRY, MERCH_URL, MERCH_GMT, DESC, NONCE
+  // ---------------------------------------------------------------------------
   buildRequestMacString(fields: {
     TERMINAL: string;
     TRTYPE: string;
@@ -32,6 +48,8 @@ export class KinaHmacService {
     TIMESTAMP: string;
     NONCE: string;
     BACKREF: string;
+    COUNTRY?: string;
+    MERCH_GMT?: string;
   }): string {
     const values = [
       fields.TERMINAL,
@@ -44,34 +62,38 @@ export class KinaHmacService {
       fields.BACKREF,
       fields.TIMESTAMP,
       fields.MERCH_NAME,
-      '', // COUNTRY (Field 11 - Absent)
+      fields.COUNTRY ?? '',    // absent → "-"
       fields.MERCH_URL,
-      '', // MERCH_GMT (Field 13 - Absent)
+      fields.MERCH_GMT ?? '',  // absent → "-"
       fields.DESC,
       fields.NONCE,
     ];
 
-    return values.map(val => (val ? `${val.length}${val}` : '-')).join('');
+    const macString = this.buildMacString(values);
+    this.logger.debug(`[REQUEST MAC] String: ${macString}`);
+    return macString;
   }
 
-  /**
-   * Assembles the MAC source string for a payment response/callback.
-   * Order is CRITICAL based on Kina Bank specification.
-   */
+  // ---------------------------------------------------------------------------
+  // RESPONSE MAC  (IPG → merchant, verified by us)
+  // Field order per Kina Bank IPG Integration Guide:
+  //   ACTION, RC, APPROVAL, STAN, RRN, INT_REF,
+  //   TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, TIMESTAMP, NONCE
+  // ---------------------------------------------------------------------------
   buildResponseMacString(fields: {
-    ACTION: string;
-    RC: string;
-    APPROVAL: string;
-    STAN: string;
-    RRN: string;
-    INT_REF: string;
-    TERMINAL: string;
-    TRTYPE: string;
-    AMOUNT: string;
-    CURRENCY: string;
-    ORDER: string;
-    TIMESTAMP: string;
-    NONCE: string;
+    ACTION: string | null | undefined;
+    RC: string | null | undefined;
+    APPROVAL: string | null | undefined;
+    STAN: string | null | undefined;
+    RRN: string | null | undefined;
+    INT_REF: string | null | undefined;
+    TERMINAL: string | null | undefined;
+    TRTYPE: string | null | undefined;
+    AMOUNT: string | null | undefined;
+    CURRENCY: string | null | undefined;
+    ORDER: string | null | undefined;
+    TIMESTAMP: string | null | undefined;
+    NONCE: string | null | undefined;
   }): string {
     const values = [
       fields.ACTION,
@@ -89,42 +111,90 @@ export class KinaHmacService {
       fields.NONCE,
     ];
 
-    return values.map(val => (val ? `${val.length}${val}` : '-')).join('');
+    const macString = this.buildMacString(values);
+    this.logger.debug(`[RESPONSE MAC] String: ${macString}`);
+    return macString;
   }
 
-  /**
-   * Computes HMAC-SHA256 signature using the hex secret key.
-   */
-  computeHmac(macString: string): string {
-    if (!this.secretKey) throw new Error('KINA_SECRET_KEY missing');
+  // ---------------------------------------------------------------------------
+  // REVERSAL MAC  (TRTYPE=24, merchant → IPG)
+  // Field order: TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, RRN, INT_REF, TIMESTAMP, NONCE, BACKREF
+  // ---------------------------------------------------------------------------
+  buildReversalMacString(fields: {
+    TERMINAL: string;
+    TRTYPE: string;
+    AMOUNT: string;
+    CURRENCY: string;
+    ORDER: string;
+    RRN: string | null | undefined;
+    INT_REF: string | null | undefined;
+    TIMESTAMP: string;
+    NONCE: string;
+    BACKREF: string;
+  }): string {
+    const values = [
+      fields.TERMINAL,
+      fields.TRTYPE,
+      fields.AMOUNT,
+      fields.CURRENCY,
+      fields.ORDER,
+      fields.RRN,
+      fields.INT_REF,
+      fields.TIMESTAMP,
+      fields.NONCE,
+      fields.BACKREF,
+    ];
 
-    // Secret key is provided as a HEX string in the Kina docs
+    const macString = this.buildMacString(values);
+    this.logger.debug(`[REVERSAL MAC] String: ${macString}`);
+    return macString;
+  }
+
+  // ---------------------------------------------------------------------------
+  // HMAC-SHA256 computation
+  // The secret key is provided as a HEX string per Kina Bank documentation.
+  // ---------------------------------------------------------------------------
+  computeHmac(macString: string): string {
+    if (!this.secretKey) throw new Error('KINA_SECRET_KEY is missing — cannot compute HMAC');
+
     const keyBuffer = Buffer.from(this.secretKey, 'hex');
 
     return crypto
       .createHmac('sha256', keyBuffer)
-      .update(macString)
+      .update(macString, 'utf8')
       .digest('hex')
       .toUpperCase();
   }
 
-  /**
-   * Verifies a received signature against a computed one.
-   */
+  // ---------------------------------------------------------------------------
+  // Constant-time signature comparison to prevent timing attacks.
+  // ---------------------------------------------------------------------------
   verifySignature(macString: string, receivedPSign: string): boolean {
+    if (!receivedPSign) {
+      this.logger.error('❌ P_SIGN is missing in callback body');
+      return false;
+    }
+
     const computedSignature = this.computeHmac(macString);
 
-    this.logger.debug(`MAC String: ${macString}`);
-    this.logger.debug(`Computed Signature: ${computedSignature}`);
-    this.logger.debug(`Received Signature: ${receivedPSign}`);
+    this.logger.debug(`[VERIFY] MAC String        : ${macString}`);
+    this.logger.debug(`[VERIFY] Computed Signature : ${computedSignature}`);
+    this.logger.debug(`[VERIFY] Received Signature : ${receivedPSign.toUpperCase()}`);
 
     try {
-      return crypto.timingSafeEqual(
-        Buffer.from(computedSignature, 'hex'),
-        Buffer.from(receivedPSign.toUpperCase(), 'hex')
-      );
+      const computedBuf = Buffer.from(computedSignature, 'hex');
+      const receivedBuf = Buffer.from(receivedPSign.toUpperCase(), 'hex');
+
+      if (computedBuf.length !== receivedBuf.length) {
+        this.logger.error(
+          `❌ Signature length mismatch: computed=${computedBuf.length} received=${receivedBuf.length}`,
+        );
+        return false;
+      }
+
+      return crypto.timingSafeEqual(computedBuf, receivedBuf);
     } catch (e: any) {
-      this.logger.error(`Signature verification failed: ${e.message}`);
+      this.logger.error(`❌ Signature verification threw: ${e.message}`);
       return false;
     }
   }
