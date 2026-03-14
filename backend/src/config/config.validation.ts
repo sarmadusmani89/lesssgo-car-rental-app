@@ -25,8 +25,8 @@ export const configValidationSchema = Joi.object({
   }),
 
   // ── JWT Auth ───────────────────────────────────────────────────────────────
-  JWT_SECRET: Joi.string().min(32).required().messages({
-    'string.min': 'JWT_SECRET must be at least 32 characters long for security',
+  JWT_SECRET: Joi.string().min(16).required().messages({
+    'string.min': 'JWT_SECRET must be at least 16 characters long',
     'any.required': 'JWT_SECRET is required',
   }),
 
@@ -57,7 +57,7 @@ export const configValidationSchema = Joi.object({
 
   // ── Kina Bank IPG ─────────────────────────────────────────────────────────
   //    All four are REQUIRED for the payment flow to work.
-  //    KINA_SECRET_KEY must be exactly 64 hex characters (32-byte HMAC key).
+  //    KINA_SECRET_KEY must be a valid HEX string.
   KINA_GATEWAY_URL: Joi.string().uri().required().messages({
     'string.uri': 'KINA_GATEWAY_URL must be a valid URL pointing to the Kina IPG endpoint',
     'any.required': 'KINA_GATEWAY_URL is required for Kina Bank payment processing',
@@ -72,11 +72,11 @@ export const configValidationSchema = Joi.object({
   }),
 
   KINA_SECRET_KEY: Joi.string()
-    .pattern(/^[0-9a-fA-F]{64}$/)
+    .pattern(/^[0-9a-fA-F]{32,128}$/)
     .required()
     .messages({
       'string.pattern.base':
-        'KINA_SECRET_KEY must be exactly 64 hexadecimal characters (a 32-byte HMAC key provided by Kina Bank)',
+        'KINA_SECRET_KEY must be a valid hexadecimal string (typically 48 or 64 characters long)',
       'any.required': 'KINA_SECRET_KEY is required for HMAC signature verification',
     }),
 
