@@ -160,7 +160,7 @@ function CheckoutContent() {
           payment: 'CASH',
           paymentStatus: 'PENDING'
         });
-        router.push(`/thank-you?${params.toString()}`);
+        router.push(`/payment/success?${params.toString()}`);
       }
 
     } catch (error: any) {

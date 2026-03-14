@@ -174,7 +174,7 @@ export class PaymentService {
       // ── 3. Idempotency guard — ignore duplicate callbacks ─────────────────
       if (payment.status === 'PAID') {
         this.logger.warn(`⚠️  Duplicate callback received for already-PAID Order: ${ORDER}. Ignoring.`);
-        return `${frontendUrl}/thank-you?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
+        return `${frontendUrl}/payment/success?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
       }
 
       // ── 5. Atomic State Transition (Prisma Transaction) ──────────────────
@@ -214,7 +214,7 @@ export class PaymentService {
           this.logger.error(`📧 Email send failed (non-blocking): ${err.message}`),
         );
 
-        return `${frontendUrl}/thank-you?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
+        return `${frontendUrl}/payment/success?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
       } else {
         const status = ACTION === '2' ? 'DECLINED' : 'FAILED';
         await this.prisma.payment.update({
