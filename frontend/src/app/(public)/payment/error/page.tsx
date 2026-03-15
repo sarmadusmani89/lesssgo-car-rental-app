@@ -8,10 +8,14 @@ import PaymentStatusLayout from '@/components/pages/payment/PaymentStatusLayout'
 import PaymentStatusHeader from '@/components/pages/payment/PaymentStatusHeader';
 import PaymentAdvice from '@/components/pages/payment/PaymentAdvice';
 import PaymentActions from '@/components/pages/payment/PaymentActions';
+import { getKinaError } from '@/lib/kina-errors';
 
 function PaymentErrorContent() {
     const searchParams = useSearchParams();
     const reason = searchParams.get('reason');
+    const rc = searchParams.get('rc');
+
+    const { title: rcTitle, message: rcMessage } = getKinaError(rc);
 
     const errorMap: Record<string, { title: string, message: string }> = {
         'signature_mismatch': {
@@ -32,7 +36,7 @@ function PaymentErrorContent() {
         }
     };
 
-    const { title, message } = errorMap[reason || 'default'] || errorMap['default'];
+    const { title, message } = errorMap[reason || 'default'] || (rc ? { title: rcTitle, message: rcMessage } : errorMap['default']);
 
     return (
         <PaymentStatusLayout maxWidth="max-w-2xl">

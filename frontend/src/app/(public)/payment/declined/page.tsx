@@ -13,6 +13,7 @@ import { getKinaError } from '@/lib/kina-errors';
 function PaymentDeclinedContent() {
     const searchParams = useSearchParams();
     const order = searchParams.get('order');
+    const rc = searchParams.get('rc');
     const { message: rcMessage } = getKinaError(rc);
     const displayMessage = rc ? rcMessage : "Your card issuer has declined this transaction. Common reasons include insufficient funds, card limits, or international transaction restrictions.";
 
