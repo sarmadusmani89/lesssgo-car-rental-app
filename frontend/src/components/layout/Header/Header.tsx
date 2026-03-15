@@ -8,6 +8,7 @@ import { Car, User, Menu, X, LayoutDashboard, Globe } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { setCurrency } from '@/lib/store/slices/uiSlice';
+import { logout } from '@/lib/api';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -65,17 +66,33 @@ export default function Header() {
     }, [isCurrencyOpen]);
 
     useEffect(() => {
-        // Check for user in localStorage
+        // Check for user and token in localStorage with expiration check
         const checkUser = () => {
             const storedUser = localStorage.getItem('user');
-            if (storedUser) {
+            const storedToken = localStorage.getItem('token');
+
+            if (storedUser && storedToken) {
                 try {
+                    // Basic JWT expiration check
+                    const payloadBase64 = storedToken.split('.')[1];
+                    if (payloadBase64) {
+                        const decodedPayload = JSON.parse(atob(payloadBase64));
+                        const isExpired = decodedPayload.exp * 1000 < Date.now();
+                        
+                        if (isExpired) {
+                            console.warn("Session expired, logging out...");
+                            logout();
+                            return;
+                        }
+                    }
+                    
                     setUser(JSON.parse(storedUser));
                 } catch (e) {
-                    console.error("Failed to parse user", e);
-                    setUser(null);
+                    console.error("Failed to validate session", e);
+                    logout();
                 }
             } else {
+                // If either is missing, ensure state is null
                 setUser(null);
             }
         };

@@ -4,6 +4,18 @@ const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://lesssgo.com/api',
 });
 
+// Centralized logout function to clear all auth data
+export const logout = () => {
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        document.cookie = 'role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        // Dispatch custom event for same-tab components to update (like Header)
+        window.dispatchEvent(new Event('auth-logout'));
+    }
+};
+
 api.interceptors.request.use((config) => {
     if (typeof window !== 'undefined') {
         const token = localStorage.getItem('token');
@@ -27,14 +39,8 @@ api.interceptors.response.use(
                 error.config?.url?.includes('/auth/register');
 
             if (typeof window !== 'undefined' && !isAuthRequest) {
-                // Clear all auth data
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-                document.cookie = 'role=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-
-                // Dispatch custom event for same-tab components to update (like Header)
-                window.dispatchEvent(new Event('auth-logout'));
+                // Clear all auth data using centralized helper
+                logout();
 
                 // Define protected routes that require redirect
                 const protectedPaths = ['/dashboard', '/admin', '/checkout', '/profile', '/my-bookings'];
@@ -54,7 +60,18 @@ api.interceptors.response.use(
 export const authApi = {
     login: (data: any) => api.post('/auth/login', data).then(res => res.data),
     register: (data: any) => api.post('/auth/register', data).then(res => res.data),
-    logout: () => api.post('/auth/logout').then(res => res.data),
+    logout: () => {
+        // First try to call backend logout, but always clear local data
+        return api.post('/auth/logout')
+            .then(res => {
+                logout();
+                return res.data;
+            })
+            .catch(err => {
+                logout();
+                throw err;
+            });
+    },
     forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }).then(res => res.data),
     resetPassword: (data: any) => api.post('/auth/reset-password', data).then(res => res.data),
     verifyResetToken: (token: string) => api.get(`/auth/verify-reset-token?token=${token}`).then(res => res.data),
