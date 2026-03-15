@@ -226,6 +226,22 @@ export class PaymentService {
 
         return `${frontendUrl}/payment/success?bookingId=${payment.bookingId}&payment=KINA&paymentStatus=PAID`;
       } else {
+        const b = payment.booking;
+
+        // --- Robust Failure Handling for Reversals (Refunds) ---
+        if (TRTYPE === '24') {
+          this.logger.error(`❌ Kina Reversal FAILED for Order: ${ORDER} (RC: ${RC})`);
+          
+          // Revert bond status to PAID so it's not stuck in REFUND_PENDING
+          await this.prisma.booking.update({
+            where: { id: b.id },
+            data: { bondStatus: 'PAID' }
+          });
+
+          // Redirect to Admin dashboard with error info
+          return `${frontendUrl}/admin/bookings/${b.id}?error=refund_failed&rc=${RC}`;
+        }
+
         const status = ACTION === '2' ? 'DECLINED' : 'FAILED';
         await this.prisma.payment.update({
           where: { id: payment.id },
@@ -239,7 +255,6 @@ export class PaymentService {
         this.logger.warn(`⚠️  Kina payment ${status} for Order: ${ORDER} (RC: ${RC})`);
 
         // Pass checkout parameters back so the frontend can reconstruct the "Try Again" URL
-        const b = payment.booking;
         const params = new URLSearchParams({
           order: ORDER,
           id: b.carId,
