@@ -57,7 +57,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: sh -c "npx prisma db push && npm run start:prod"
+    command: sh -c "npx prisma db push --accept-data-loss && npm run start:prod"
     networks:
       - app_network
 

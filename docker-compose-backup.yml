@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: transport_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-transportuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-strong_transport_password}
+      POSTGRES_DB: ${POSTGRES_DB:-transport_db}
+    volumes:
+      - transport_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-transportuser} -d ${POSTGRES_DB:-transport_db}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - transport_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: transport_backend
+    restart: always
+    ports:
+      - "3003:3001" # External port 3003 -> Internal container port 3001
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-transportuser}:${POSTGRES_PASSWORD:-strong_transport_password}@db:5432/${POSTGRES_DB:-transport_db}?schema=public
+      PORT: ${PORT:-3003}
+      FRONTEND_URL: ${FRONTEND_URL:-https://transport.wameblood.com.pg}
+      NODE_ENV: ${NODE_ENV:-production}
+      JWT_SECRET: ${JWT_SECRET:-change_this_secret}
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://transport.wameblood.com.pg}
+      SMTP_HOST: ${SMTP_HOST:-smtp-relay.brevo.com}
+      SMTP_PORT: ${SMTP_PORT:-2525}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL:-}
+
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_dummy}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_dummy}
+
+      # Cloudinary
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "npx prisma db push --accept-data-loss && npm run start:prod"
+    networks:
+      - transport_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: transport_frontend
+    restart: always
+    ports:
+      - "3002:3000" # Frontend app exposed on 3002
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://transport.wameblood.com.pg/api}
+      BACKEND_INTERNAL_URL: http://transport_backend:3001
+    depends_on:
+      - backend
+    networks:
+      - transport_network
+
+volumes:
+  transport_postgres_data:
+
+
+networks:
+  transport_network:
+    driver: bridge

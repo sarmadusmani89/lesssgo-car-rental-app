@@ -8,17 +8,26 @@ import PaymentStatusLayout from '@/components/pages/payment/PaymentStatusLayout'
 import PaymentStatusHeader from '@/components/pages/payment/PaymentStatusHeader';
 import PaymentAdvice from '@/components/pages/payment/PaymentAdvice';
 import PaymentActions from '@/components/pages/payment/PaymentActions';
+import { getKinaError } from '@/lib/kina-errors';
 
 function PaymentFailedContent() {
     const searchParams = useSearchParams();
     const order = searchParams.get('order');
+    const rc = searchParams.get('rc');
+
+    const { title, message } = getKinaError(rc);
+
+    // Override generic subtitle for specific cases if desired
+    let subtitle = "A technical error occurred";
+    if (rc === '-25') subtitle = "Transaction stopped by user";
+    if (rc === '-19') subtitle = "Security check failed";
 
     return (
         <PaymentStatusLayout maxWidth="max-w-2xl">
             <PaymentStatusHeader
                 icon={XCircle}
-                title="Payment Failed"
-                subtitle="A technical error occurred"
+                title={title}
+                subtitle={subtitle}
                 variant="failed"
                 iconRotate="-rotate-12"
             />
@@ -27,9 +36,9 @@ function PaymentFailedContent() {
                 <PaymentAdvice
                     variant="failed"
                     contextIcon={ShieldAlert}
-                    contextTitle="Technical details"
-                    contextText="We're sorry, but your transaction could not be processed at this time. This is often due to a temporary connection issue with the bank's authorization system."
-                    orderId={order}
+                    contextTitle="Specific Details"
+                    contextText={message}
+                    orderId={order || undefined}
                     adviceItems={[
                         {
                             icon: RefreshCcw,

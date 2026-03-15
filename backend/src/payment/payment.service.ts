@@ -180,6 +180,8 @@ export class PaymentService {
           endDate: result.endDate?.toISOString() || '',
           pickupLocation: result.pickupLocation || '',
           returnLocation: result.returnLocation || '',
+          action: result.action || '',
+          rc: result.rc || '',
         });
 
         return `${frontendUrl}/payment/${result.status?.toLowerCase()}?${params.toString()}`;
@@ -202,6 +204,7 @@ export class PaymentService {
   }
 
   private async processPaymentResult(body: any): Promise<any> {
+    this.logger.log(`🔍 DEBUG: Kina Webhook/Callback Full Body: ${JSON.stringify(body)}`);
     const {
       ACTION, RC, APPROVAL, RRN, INT_REF,
       TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,

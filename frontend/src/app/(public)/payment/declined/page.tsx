@@ -8,10 +8,13 @@ import PaymentStatusLayout from '@/components/pages/payment/PaymentStatusLayout'
 import PaymentStatusHeader from '@/components/pages/payment/PaymentStatusHeader';
 import PaymentAdvice from '@/components/pages/payment/PaymentAdvice';
 import PaymentActions from '@/components/pages/payment/PaymentActions';
+import { getKinaError } from '@/lib/kina-errors';
 
 function PaymentDeclinedContent() {
     const searchParams = useSearchParams();
     const order = searchParams.get('order');
+    const { message: rcMessage } = getKinaError(rc);
+    const displayMessage = rc ? rcMessage : "Your card issuer has declined this transaction. Common reasons include insufficient funds, card limits, or international transaction restrictions.";
 
     return (
         <PaymentStatusLayout maxWidth="max-w-2xl">
@@ -28,8 +31,8 @@ function PaymentDeclinedContent() {
                     variant="declined"
                     contextIcon={CreditCard}
                     contextTitle="Why was this declined?"
-                    contextText="Your card issuer has declined this transaction. Common reasons include insufficient funds, card limits, or international transaction restrictions."
-                    orderId={order}
+                    contextText={displayMessage}
+                    orderId={order || undefined}
                     adviceItems={[
                         {
                             icon: Calculator,

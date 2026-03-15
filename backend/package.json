@@ -22,7 +22,7 @@
     "db:clear-bookings": "node prisma/clear-bookings.js"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "node -r ts-node/register prisma/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
