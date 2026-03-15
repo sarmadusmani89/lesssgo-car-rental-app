@@ -184,10 +184,9 @@ export class PaymentService {
 
     // ── 1. Verify HMAC signature ──────────────────────────────────────────
     const macString = this.kinaHmacService.buildResponseMacString({
-      ACTION, RC, APPROVAL, CURRENCY, AMOUNT,
-      TERMINAL, TRTYPE, ORDER, RRN,
-      MERCHANT: kinaMerchantId,
-      TIMESTAMP, INT_REF, NONCE,
+      TERMINAL, TRTYPE, ORDER, AMOUNT, CURRENCY,
+      ACTION, RC, APPROVAL, RRN, INT_REF,
+      TIMESTAMP, NONCE,
     });
 
     const isValid = this.kinaHmacService.verifySignature(macString, P_SIGN);
@@ -343,25 +342,35 @@ export class PaymentService {
     const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
     const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
 
-    const fields = {
-      TERMINAL: terminal,
-      TRTYPE: '21', // Capture
+    const macString = this.kinaHmacService.buildManagementMacString({
+      ORDER: payment.kinaOrderId,
       AMOUNT: rentalAmount.toFixed(2),
       CURRENCY: 'PGK',
-      ORDER: payment.kinaOrderId,
       RRN: authBody.RRN,
       INT_REF: authBody.INT_REF,
+      TRTYPE: '21',
+      TERMINAL: terminal,
       TIMESTAMP: timestamp,
       NONCE: nonce,
-      BACKREF: backref,
-    };
-
-    const macString = this.kinaHmacService.buildManagementMacString(fields as any);
+    });
     const pSign = this.kinaHmacService.computeHmac(macString);
 
     // Perform Server-to-Server POST to Kina Gateway
     try {
       if (!gatewayUrl) throw new Error('Kina Gateway URL is not configured');
+
+      const fields = {
+        TERMINAL: terminal,
+        TRTYPE: '21',
+        AMOUNT: rentalAmount.toFixed(2),
+        CURRENCY: 'PGK',
+        ORDER: payment.kinaOrderId,
+        RRN: authBody.RRN,
+        INT_REF: authBody.INT_REF,
+        TIMESTAMP: timestamp,
+        NONCE: nonce,
+        BACKREF: backref,
+      };
 
       const params: Record<string, string> = {};
       Object.entries({ ...fields, P_SIGN: pSign }).forEach(([k, v]) => {
@@ -505,16 +514,15 @@ export class PaymentService {
       });
 
       const reversalMacString = this.kinaHmacService.buildManagementMacString({
-        TERMINAL: fields.TERMINAL,
-        TRTYPE: fields.TRTYPE,
+        ORDER: fields.ORDER,
         AMOUNT: fields.AMOUNT,
         CURRENCY: fields.CURRENCY,
-        ORDER: fields.ORDER,
         RRN: fields.RRN,
         INT_REF: fields.INT_REF,
+        TRTYPE: fields.TRTYPE,
+        TERMINAL: fields.TERMINAL,
         TIMESTAMP: fields.TIMESTAMP,
         NONCE: fields.NONCE,
-        BACKREF: fields.BACKREF,
       });
 
       return {
@@ -578,7 +586,17 @@ export class PaymentService {
       BACKREF: backref,
     };
 
-    const macString = this.kinaHmacService.buildManagementMacString(fields as any);
+    const macString = this.kinaHmacService.buildManagementMacString({
+      ORDER: fields.ORDER,
+      AMOUNT: fields.AMOUNT,
+      CURRENCY: fields.CURRENCY,
+      RRN: fields.RRN,
+      INT_REF: fields.INT_REF,
+      TRTYPE: fields.TRTYPE,
+      TERMINAL: fields.TERMINAL,
+      TIMESTAMP: fields.TIMESTAMP,
+      NONCE: fields.NONCE,
+    });
     const pSign = this.kinaHmacService.computeHmac(macString);
 
     return {

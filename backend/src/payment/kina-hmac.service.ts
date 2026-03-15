@@ -35,8 +35,6 @@ export class KinaHmacService {
   //   BACKREF, TIMESTAMP, MERCH_NAME, COUNTRY, MERCH_URL, MERCH_GMT, DESC, NONCE
   // ---------------------------------------------------------------------------
   buildRequestMacString(fields: {
-    TERMINAL: string;
-    TRTYPE: string;
     AMOUNT: string;
     CURRENCY: string;
     ORDER: string;
@@ -44,7 +42,9 @@ export class KinaHmacService {
     MERCH_NAME: string;
     MERCH_URL: string;
     MERCHANT: string;
+    TERMINAL: string;
     EMAIL: string;
+    TRTYPE: string;
     TIMESTAMP: string;
     NONCE: string;
     BACKREF: string;
@@ -52,21 +52,21 @@ export class KinaHmacService {
     MERCH_GMT?: string;
   }): string {
     const values = [
-      fields.TERMINAL,
-      fields.TRTYPE,
       fields.AMOUNT,
       fields.CURRENCY,
       fields.ORDER,
-      fields.MERCHANT,
-      fields.EMAIL,
-      fields.BACKREF,
-      fields.TIMESTAMP,
-      fields.MERCH_NAME,
-      fields.COUNTRY ?? '',    // absent → "-"
-      fields.MERCH_URL,
-      fields.MERCH_GMT ?? '',  // absent → "-"
       fields.DESC,
+      fields.MERCH_NAME,
+      fields.MERCH_URL,
+      fields.MERCHANT,
+      fields.TERMINAL,
+      fields.EMAIL,
+      fields.TRTYPE,
+      fields.COUNTRY ?? '',
+      fields.MERCH_GMT ?? '',
+      fields.TIMESTAMP,
       fields.NONCE,
+      fields.BACKREF,
     ];
 
     const macString = this.buildMacString(values);
@@ -81,33 +81,31 @@ export class KinaHmacService {
   //   TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, TIMESTAMP, NONCE
   // ---------------------------------------------------------------------------
   buildResponseMacString(fields: {
-    ACTION: string | null | undefined;
-    RC: string | null | undefined;
-    APPROVAL: string | null | undefined;
-    CURRENCY: string | null | undefined;
-    AMOUNT: string | null | undefined;
     TERMINAL: string | null | undefined;
     TRTYPE: string | null | undefined;
     ORDER: string | null | undefined;
+    AMOUNT: string | null | undefined;
+    CURRENCY: string | null | undefined;
+    ACTION: string | null | undefined;
+    RC: string | null | undefined;
+    APPROVAL: string | null | undefined;
     RRN: string | null | undefined;
-    MERCHANT: string | null | undefined;
-    TIMESTAMP: string | null | undefined;
     INT_REF: string | null | undefined;
+    TIMESTAMP: string | null | undefined;
     NONCE: string | null | undefined;
   }): string {
     const values = [
-      fields.ACTION,
-      fields.RC,
-      fields.APPROVAL,
-      fields.CURRENCY,
-      fields.AMOUNT,
       fields.TERMINAL,
       fields.TRTYPE,
       fields.ORDER,
+      fields.AMOUNT,
+      fields.CURRENCY,
+      fields.ACTION,
+      fields.RC,
+      fields.APPROVAL,
       fields.RRN,
-      fields.MERCHANT,
-      fields.TIMESTAMP,
       fields.INT_REF,
+      fields.TIMESTAMP,
       fields.NONCE,
     ];
 
@@ -121,28 +119,26 @@ export class KinaHmacService {
   // Field order: TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, RRN, INT_REF, TIMESTAMP, NONCE, BACKREF
   // ---------------------------------------------------------------------------
   buildManagementMacString(fields: {
-    TERMINAL: string | undefined;
-    TRTYPE: string;
+    ORDER: string | null;
     AMOUNT: string;
     CURRENCY: string;
-    ORDER: string | null;
     RRN: string | null | undefined;
     INT_REF: string | null | undefined;
+    TRTYPE: string;
+    TERMINAL: string | undefined;
     TIMESTAMP: string;
     NONCE: string;
-    BACKREF: string | undefined;
   }): string {
     const values = [
-      fields.TERMINAL,
-      fields.TRTYPE,
+      fields.ORDER,
       fields.AMOUNT,
       fields.CURRENCY,
-      fields.ORDER,
       fields.RRN,
       fields.INT_REF,
+      fields.TRTYPE,
+      fields.TERMINAL,
       fields.TIMESTAMP,
       fields.NONCE,
-      fields.BACKREF,
     ];
 
     const macString = this.buildMacString(values);
