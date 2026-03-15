@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -27,78 +24,142 @@ model User {
   reviews           Review[]
 }
 
+model Car {
+  id               String    @id @default(uuid())
+  name             String
+  brand            String
+  type             String
+  transmission     String
+  fuelCapacity     Int
+  pricePerDay      Float
+  imageUrl         String?
+  description      String?
+  status           CarStatus @default(AVAILABLE)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  hp               Int       @default(0)
+  airConditioner   Boolean   @default(true)
+  freeCancellation Boolean   @default(true)
+  fuelType         String?   @default("Petrol")
+  gallery          String[]  @default([])
+  gps              Boolean   @default(true)
+  passengers       Int       @default(4)
+  pickupLocation   String[]  @default([])
+  returnLocation   String[]  @default([])
+  slug             String    @unique
+  vehicleClass     String    @default("Standard")
+  bookings         Booking[]
+}
+
+model Booking {
+  id             String        @id @default(uuid())
+  userId         String
+  startDate      DateTime
+  endDate        DateTime
+  status         BookingStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  carId          String
+  customerEmail  String
+  customerName   String
+  customerPhone  String
+  paymentMethod  PaymentMethod @default(CASH)
+  paymentStatus  PaymentStatus @default(PENDING)
+  totalAmount    Float
+  bondAmount     Float         @default(0)
+  bondStatus     BondStatus    @default(PENDING)
+  cancelledAt    DateTime?
+  completedAt    DateTime?
+  confirmedAt    DateTime?
+  paidAt         DateTime?
+  pickupLocation String?
+  returnLocation String?
+  car            Car           @relation(fields: [carId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments       Payment[]
+
+  @@index([userId])
+  @@index([carId])
+}
+
+model Payment {
+  id                    String        @id @default(uuid())
+  bookingId             String
+  amount                Float
+  currency              String
+  paymentMethod         PaymentMethod @default(ONLINE)
+  stripePaymentIntentId String?
+  status                PaymentStatus @default(PENDING)
+  metadata              Json?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+  kinaActionCode        String?
+  kinaApprovalCode      String?
+  kinaIntRef            String?
+  kinaNonce             String?
+  kinaOrderId           String?       @unique
+  kinaResponseCode      String?
+  kinaRrn               String?
+  stripeSessionId       String?
+  booking               Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model SystemSettings {
+  id                String   @id @default(uuid())
+  siteName          String   @default("Lesssgo Car Rental")
+  maintenanceMode   Boolean  @default(false)
+  currency          String   @default("PGK")
+  passwordMinLength Int      @default(8)
+  updatedAt         DateTime @updatedAt
+  adminEmail        String   @default("sarmadusmani598@gmail.com")
+  brands            String[] @default(["Toyota", "Hyundai", "Haval", "Honda", "Land Rover", "Volvo"])
+  categories        String[] @default(["Supercar", "Sports Car", "Luxury Sedan", "SUV", "Convertible"])
+  contactAddress    String   @default("Port Moresby, Papua New Guinea")
+  contactEmail      String   @default("ride@lessssgopng.com")
+  contactPhone      String   @default("+675 7000 0000")
+  contactWhatsApp   String   @default("+675 7000 0000")
+  faviconUrl        String?
+  fuelTypes         String[] @default(["Petrol", "Diesel", "Electricity"])
+  locations         String[] @default(["Port Moresby", "Lae", "Mt Hagen", "Kokopo", "Kavieng", "Manus", "Kimbe", "Mendi", "Tari", "Madang", "Goroka", "Wabag", "Alotau", "Popondetta"])
+  transmissions     String[] @default(["Automatic", "Manual"])
+  vehicleClasses    String[] @default(["Economy", "Standard", "Luxury"])
+}
+
+model NewsletterSubscriber {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  subscribedAt DateTime @default(now())
+}
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  name      String
+  role      String?
+  content   String
+  avatar    String?
+  rating    Int      @default(5)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum Role {
   USER
   ADMIN
-}
-
-model Car {
-  id            String    @id @default(uuid())
-  name          String
-  slug          String    @unique
-  brand         String
-  type          String
-  transmission  String
-  fuelCapacity  Int
-  pricePerDay   Float
-  hp            Int       @default(0) // Default for existing records
-  imageUrl      String?
-  description   String?   @db.Text
-  status        CarStatus @default(AVAILABLE)
-  vehicleClass  String    @default("Standard")
-  
-  // New Metadata Fields
-  pickupLocation   String[]  @default([])
-  returnLocation   String[]  @default([])
-  passengers       Int       @default(4)
-  freeCancellation Boolean   @default(true) // Default 48h policy
-  fuelType         String?   @default("Petrol")
-  airConditioner   Boolean   @default(true)
-  gps              Boolean   @default(true)
-  gallery       String[]  @default([])
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  bookings      Booking[]
 }
 
 enum CarStatus {
   AVAILABLE
   RENTED
   MAINTENANCE
-}
-
-model Booking {
-  id              String          @id @default(uuid())
-  userId          String
-  carId           String
-  startDate       DateTime
-  endDate         DateTime
-  totalAmount     Float
-  bondAmount      Float           @default(0)
-  bondStatus      BondStatus      @default(PENDING)
-  status          BookingStatus   @default(PENDING)
-  paymentStatus   PaymentStatus   @default(PENDING)
-  paymentMethod   PaymentMethod   @default(CASH)
-  customerName    String
-  customerEmail   String
-  customerPhone   String
-  pickupLocation  String?
-  returnLocation  String?
-  
-  // Historical Timestamps
-  confirmedAt     DateTime?
-  cancelledAt     DateTime?
-  completedAt     DateTime?
-  paidAt          DateTime?
-  
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  car             Car             @relation(fields: [carId], references: [id], onDelete: Cascade)
-  payments        Payment[]
-
-  @@index([userId])
-  @@index([carId])
 }
 
 enum BookingStatus {
@@ -127,79 +188,4 @@ enum PaymentMethod {
   CASH
   CARD
   ONLINE
-}
-
-model Payment {
-  id                     String              @id @default(uuid())
-  bookingId              String
-  amount                 Float
-  currency               String
-  paymentMethod          PaymentMethod       @default(ONLINE)
-  stripePaymentIntentId  String?
-  stripeSessionId        String?
-  
-  // Kina Bank Fields
-  kinaOrderId            String?             @unique
-  kinaIntRef             String?
-  kinaRrn                String?
-  kinaActionCode         String?
-  kinaResponseCode       String?
-  kinaApprovalCode       String?
-  kinaNonce              String?
-
-  status                 PaymentStatus       @default(PENDING)
-  metadata               Json?
-  createdAt              DateTime            @default(now())
-  updatedAt              DateTime            @updatedAt
-  booking                Booking             @relation(fields: [bookingId], references: [id], onDelete: Cascade)
-}
-
-model Review {
-  id        String   @id @default(uuid())
-  userId    String
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-model SystemSettings {
-  id                String   @id @default(uuid())
-  siteName          String   @default("Lesssgo Car Rental")
-  adminEmail        String   @default("sarmadusmani598@gmail.com")
-  contactEmail      String   @default("ride@lessssgopng.com")
-  contactPhone      String   @default("+675 7000 0000")
-  contactWhatsApp   String   @default("+675 7000 0000")
-  contactAddress    String   @default("Port Moresby, Papua New Guinea")
-  maintenanceMode   Boolean  @default(false)
-  currency          String   @default( "PGK")
-  faviconUrl        String?
-  passwordMinLength Int      @default(8)
-  
-  // Dynamic Option Lists
-  locations         String[] @default(["Port Moresby", "Lae", "Mt Hagen", "Kokopo", "Kavieng", "Manus", "Kimbe", "Mendi", "Tari", "Madang", "Goroka", "Wabag", "Alotau", "Popondetta"])
-  brands           String[] @default(["Toyota", "Hyundai", "Haval", "Honda", "Land Rover", "Volvo"])
-  categories       String[] @default(["Supercar", "Sports Car", "Luxury Sedan", "SUV", "Convertible"])
-  transmissions    String[] @default(["Automatic", "Manual"])
-  fuelTypes        String[] @default(["Petrol", "Diesel", "Electricity"])
-  vehicleClasses   String[] @default(["Economy", "Standard", "Luxury"])
-
-  updatedAt         DateTime @updatedAt
-}
-
-model NewsletterSubscriber {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  subscribedAt DateTime @default(now())
-}
-
-model Testimonial {
-  id        String   @id @default(uuid())
-  name      String
-  role      String?
-  content   String   @db.Text
-  avatar    String?
-  rating    Int      @default(5)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
