@@ -19,7 +19,7 @@ export class PaymentService {
     private readonly bookingEmailService: BookingEmailService,
   ) { }
 
-  async initializeKinaPayment(bookingId: string, paymentType: 'RENTAL' | 'BOND' = 'RENTAL') {
+  async initializeKinaPayment(bookingId: string, paymentType: 'RENTAL' | 'BOND' | 'FULL' = 'RENTAL') {
     const booking = await this.prisma.booking.findUnique({
       where: { id: bookingId },
       include: { car: true, user: true, payments: true },
@@ -30,19 +30,21 @@ export class PaymentService {
     // ── 1. Production Guard: Prevent Double Charges ─────────────────────────
     // Check for existing PAID payments of the same type
     const isBond = paymentType === 'BOND';
+    const isFull = paymentType === 'FULL';
+
     const existingPaid = booking.payments.find(p => 
       p.status === 'PAID' && 
-      (isBond ? p.kinaOrderId?.endsWith('-B') : !p.kinaOrderId?.endsWith('-B'))
+      (isBond ? p.kinaOrderId?.endsWith('-B') : p.kinaOrderId?.endsWith('-F') ? true : !p.kinaOrderId?.endsWith('-B'))
     );
 
     if (existingPaid) {
-      throw new BadRequestException(`This ${paymentType.toLowerCase()} has already been paid/authorized.`);
+      throw new BadRequestException(`This ${paymentType.toLowerCase()} payment has already been processed.`);
     }
 
     const existingPending = booking.payments.find(p => 
       p.status === 'PENDING' && 
       p.kinaOrderId &&
-      (isBond ? p.kinaOrderId.endsWith('-B') : !p.kinaOrderId.endsWith('-B'))
+      (isBond ? p.kinaOrderId.endsWith('-B') : p.kinaOrderId.endsWith('-F') ? true : !p.kinaOrderId.endsWith('-B'))
     );
     
     const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
@@ -60,16 +62,23 @@ export class PaymentService {
     // Always generate a FRESH numeric Order ID to avoid signature/duplicate conflicts.
     // Format: YYYYMMDDHHMMSS (14) + Type (1) + Random (5) = 20 Digits
     const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
-    const typeDigit = isBond ? '9' : '0'; // 9 for Bond, 0 for Rental
+    // 0 = Rental, 9 = Bond, 1 = Full
+    const typeDigit = isFull ? '1' : (isBond ? '9' : '0'); 
     const randomSuffix = nodeCrypto.randomInt(10000, 99999).toString();
     const orderId = `${timestamp}${typeDigit}${randomSuffix}`;
     
     const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
 
-    const amount = isBond ? booking.bondAmount : booking.totalAmount;
-    const trType = isBond ? '0' : '1'; // 0 = Auth, 1 = Purchase
+    // FULL flow authorizes BOTH amounts at once
+    const amount = isFull ? (booking.totalAmount + booking.bondAmount) : (isBond ? booking.bondAmount : booking.totalAmount);
+    // FULL and BOND use TRTYPE 0 (Authorization), RENTAL uses TRTYPE 1 (Purchase)
+    const trType = (isFull || isBond) ? '0' : '1'; 
 
     this.logger.log(`[INIT ${paymentType}] Booking: ${bookingId} | OrderID: ${orderId} | Amount: ${amount}`);
+
+    const desc = isFull 
+      ? `Rental + Security Bond - ${booking.car.name}` 
+      : (isBond ? `Security Bond - ${booking.car.name}` : `Rental Fee - ${booking.car.name}`);
 
     const fields = {
       TERMINAL: terminal,
@@ -77,7 +86,7 @@ export class PaymentService {
       AMOUNT: amount.toFixed(2),
       CURRENCY: 'PGK',
       ORDER: orderId,
-      DESC: isBond ? `Security Bond - ${booking.car.name}` : `Rental Fee - ${booking.car.name}`,
+      DESC: desc,
       MERCH_NAME: merchName,
       MERCH_URL: merchUrl,
       MERCHANT: merchant,
@@ -103,6 +112,7 @@ export class PaymentService {
         kinaOrderId: orderId,
         kinaNonce: nonce,
         paymentMethod: 'ONLINE',
+        metadata: { paymentType, originalRentalAmount: booking.totalAmount, originalBondAmount: booking.bondAmount }
       },
     });
 
@@ -205,7 +215,8 @@ export class PaymentService {
     }
 
     // ── 3. Idempotency guard ──────────────────────────────────────────────
-    if (payment.status === 'PAID') {
+    // For TRTYPE 0 (Auth) we allow multiple hits if the second one is a Capture (21)
+    if (payment.status === 'PAID' && TRTYPE !== '21') {
       this.logger.warn(`⚠️ Duplicate notification for already-PAID Order: ${ORDER}.`);
       return { success: true, bookingId: payment.bookingId, orderId: ORDER };
     }
@@ -213,6 +224,7 @@ export class PaymentService {
     // ── 4. Atomic State Transition ────────────────────────────────────────
     if (ACTION === '0') {
       const result = await this.prisma.$transaction(async (tx) => {
+        // Update the specific payment record
         await tx.payment.update({
           where: { id: payment.id },
           data: {
@@ -226,10 +238,28 @@ export class PaymentService {
         });
 
         const bookingData: any = {};
+        const metadata = payment.metadata as any;
+        const isFullAuth = metadata?.paymentType === 'FULL' && TRTYPE === '0';
+
         if (TRTYPE === '24') bookingData.bondStatus = 'REFUNDED';
-        else if (TRTYPE === '21') bookingData.bondStatus = 'CLAIMED';
-        else if (TRTYPE === '0') bookingData.bondStatus = 'PAID';
+        else if (TRTYPE === '21') {
+          // If this is a Capture, it marks the Rental Fee as PAID
+          bookingData.paymentStatus = 'PAID';
+          bookingData.status = 'CONFIRMED';
+          bookingData.paidAt = new Date();
+          bookingData.confirmedAt = new Date();
+          // If it was part of a FULL flow, the bond is ALREADY marked as PAID by the Auth
+        }
+        else if (TRTYPE === '0') {
+          // Authorization marks the bond as secured
+          bookingData.bondStatus = 'PAID';
+          // If it's a RENTAL ONLY Auth (unlikely in current config), it wouldn't confirm booking yet
+          if (isFullAuth) {
+            // We'll trigger the background capture for the rental fee right after this transaction
+          }
+        }
         else {
+          // Standard Purchase (TRTYPE 1)
           bookingData.paymentStatus = 'PAID';
           bookingData.status = 'CONFIRMED';
           bookingData.paidAt = new Date();
@@ -242,10 +272,17 @@ export class PaymentService {
           include: { car: true, user: true },
         });
 
-        return { updatedBooking };
+        return { updatedBooking, isFullAuth };
       });
 
-      this.logger.log(`✅ Booking ${payment.bookingId} confirmed/updated via Kina Bank`);
+      this.logger.log(`✅ Booking ${payment.bookingId} processed via Kina Bank (TRTYPE: ${TRTYPE})`);
+
+      // ── 5. Background Capture for Unified Flow ──────────────────────────
+      if (result.isFullAuth) {
+        this.triggerBackgroundCapture(payment, body).catch(err => 
+          this.logger.error(`❌ Background Capture failed: ${err.message}`)
+        );
+      }
 
       this.bookingEmailService.sendKinaPaymentConfirmation(result.updatedBooking, INT_REF).catch((err) =>
         this.logger.error(`📧 Email send failed: ${err.message}`),
@@ -286,6 +323,67 @@ export class PaymentService {
         action: ACTION,
         rc: RC
       };
+    }
+  }
+
+  private async triggerBackgroundCapture(payment: any, authBody: any) {
+    this.logger.log(`🚀 Triggering Background Capture for Booking: ${payment.bookingId}`);
+    
+    const metadata = payment.metadata as any;
+    const rentalAmount = metadata?.originalRentalAmount;
+    if (!rentalAmount) {
+      this.logger.error('❌ Cannot capture: originalRentalAmount missing in metadata');
+      return;
+    }
+
+    const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
+    const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
+    const backref = this.configService.get<string>('KINA_BACKREF_URL');
+
+    const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
+    const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
+
+    const fields = {
+      TERMINAL: terminal,
+      TRTYPE: '21', // Capture
+      AMOUNT: rentalAmount.toFixed(2),
+      CURRENCY: 'PGK',
+      ORDER: payment.kinaOrderId,
+      RRN: authBody.RRN,
+      INT_REF: authBody.INT_REF,
+      TIMESTAMP: timestamp,
+      NONCE: nonce,
+      BACKREF: backref,
+    };
+
+    const macString = this.kinaHmacService.buildManagementMacString(fields as any);
+    const pSign = this.kinaHmacService.computeHmac(macString);
+
+    // Perform Server-to-Server POST to Kina Gateway
+    try {
+      if (!gatewayUrl) throw new Error('Kina Gateway URL is not configured');
+
+      const params: Record<string, string> = {};
+      Object.entries({ ...fields, P_SIGN: pSign }).forEach(([k, v]) => {
+        params[k] = v as string;
+      });
+      const formBody = new URLSearchParams(params);
+      
+      const response = await fetch(gatewayUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formBody.toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Kina Gateway responded with ${response.status}`);
+      }
+
+      this.logger.log(`✅ Background Capture request submitted for Order: ${payment.kinaOrderId}`);
+      // The gateway will normally send a separate callback/webhook for this Capture request,
+      // which we will handle in processPaymentResult (TRTYPE 21 logic).
+    } catch (error: any) {
+      this.logger.error(`💥 Background Capture request failed: ${error.message}`);
     }
   }
 
