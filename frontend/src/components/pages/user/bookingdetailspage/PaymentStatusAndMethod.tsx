@@ -2,6 +2,7 @@ import { CreditCard, Sparkles, Receipt, RefreshCw, Banknote } from 'lucide-react
 import { useState } from 'react';
 import api from '@/lib/api';
 import { toast } from 'sonner';
+import { submitKinaPaymentForm } from '@/lib/kinaPayment';
 
 export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { booking: any; isAdmin?: boolean }) {
   const [loading, setLoading] = useState(false);
@@ -14,9 +15,16 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
     if (!confirm('Are you sure you want to release this bond?')) return;
     try {
       setLoading(true);
-      await api.post(`/payment/release-bond/${booking.id}`);
-      setBondStatus('REFUNDED');
-      toast.success('Bond released successfully');
+      const res = await api.post(`/payment/release-bond/${booking.id}`);
+      
+      if (res.data.isKinaReversal) {
+        setBondStatus('REFUND_PENDING');
+        toast.success('Redirecting to Payment Gateway for refund...');
+        submitKinaPaymentForm(res.data.gatewayUrl, res.data.fields);
+      } else {
+        setBondStatus('REFUNDED');
+        toast.success('Bond released successfully');
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to release bond');
     } finally {
