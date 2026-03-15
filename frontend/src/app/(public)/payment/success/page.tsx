@@ -102,8 +102,6 @@ function SuccessContent() {
         </div>
     );
 
-    const needsBondAuthorization = bookingData.payment === 'ONLINE' && bookingData.bondStatus === 'PENDING';
-
     return (
         <PaymentStatusLayout maxWidth="max-w-4xl">
             <PaymentStatusHeader
