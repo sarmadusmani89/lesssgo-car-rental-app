@@ -23,7 +23,7 @@ export default function PaymentActions({
     footerSubtitle
 }: PaymentActionsProps) {
     return (
-        <div className="border-t border-gray-100 pt-12">
+        <div className="border-t border-gray-100 pt-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                 {(footerTitle || footerSubtitle) && (
                     <div className="flex items-center gap-4">
@@ -37,7 +37,7 @@ export default function PaymentActions({
                     </div>
                 )}
 
-                <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                <div className="flex flex-col sm:flex-row gap-4 w-full">
                     {actions.map((action, idx) => {
                         const Icon = action.icon;
 
