@@ -19,9 +19,10 @@ export class KinaHmacService {
   //   present field  → "<length><value>"   e.g.  "3PGK"
   //   absent/empty   → "-"
   // ---------------------------------------------------------------------------
-  private encodeField(val: string | null | undefined): string {
+  private encodeField(val: any): string {
     if (val === null || val === undefined || val === '') return '-';
-    return `${val.length}${val}`;
+    const str = String(val);
+    return `${str.length}${str}`;
   }
 
   private buildMacString(values: (string | null | undefined)[]): string {
@@ -35,38 +36,38 @@ export class KinaHmacService {
   //   BACKREF, TIMESTAMP, MERCH_NAME, COUNTRY, MERCH_URL, MERCH_GMT, DESC, NONCE
   // ---------------------------------------------------------------------------
   buildRequestMacString(fields: {
+    TERMINAL: string;
+    TRTYPE: string;
     AMOUNT: string;
     CURRENCY: string;
     ORDER: string;
-    DESC: string;
-    MERCH_NAME: string;
-    MERCH_URL: string;
     MERCHANT: string;
-    TERMINAL: string;
     EMAIL: string;
-    TRTYPE: string;
-    TIMESTAMP: string;
-    NONCE: string;
     BACKREF: string;
+    TIMESTAMP: string;
+    MERCH_NAME: string;
     COUNTRY?: string;
+    MERCH_URL: string;
     MERCH_GMT?: string;
+    DESC: string;
+    NONCE: string;
   }): string {
     const values = [
+      fields.TERMINAL,
+      fields.TRTYPE,
       fields.AMOUNT,
       fields.CURRENCY,
       fields.ORDER,
-      fields.DESC,
-      fields.MERCH_NAME,
-      fields.MERCH_URL,
       fields.MERCHANT,
-      fields.TERMINAL,
       fields.EMAIL,
-      fields.TRTYPE,
-      fields.COUNTRY ?? '',
-      fields.MERCH_GMT ?? '',
-      fields.TIMESTAMP,
-      fields.NONCE,
       fields.BACKREF,
+      fields.TIMESTAMP,
+      fields.MERCH_NAME,
+      fields.COUNTRY ?? '',
+      fields.MERCH_URL,
+      fields.MERCH_GMT ?? '',
+      fields.DESC,
+      fields.NONCE,
     ];
 
     const macString = this.buildMacString(values);
@@ -81,31 +82,33 @@ export class KinaHmacService {
   //   TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, TIMESTAMP, NONCE
   // ---------------------------------------------------------------------------
   buildResponseMacString(fields: {
-    TERMINAL: string | null | undefined;
-    TRTYPE: string | null | undefined;
-    ORDER: string | null | undefined;
-    AMOUNT: string | null | undefined;
-    CURRENCY: string | null | undefined;
     ACTION: string | null | undefined;
     RC: string | null | undefined;
     APPROVAL: string | null | undefined;
+    CURRENCY: string | null | undefined;
+    AMOUNT: string | null | undefined;
+    TERMINAL: string | null | undefined;
+    TRTYPE: string | null | undefined;
+    ORDER: string | null | undefined;
     RRN: string | null | undefined;
-    INT_REF: string | null | undefined;
+    MERCHANT: string | null | undefined;
     TIMESTAMP: string | null | undefined;
+    INT_REF: string | null | undefined;
     NONCE: string | null | undefined;
   }): string {
     const values = [
-      fields.TERMINAL,
-      fields.TRTYPE,
-      fields.ORDER,
-      fields.AMOUNT,
-      fields.CURRENCY,
       fields.ACTION,
       fields.RC,
       fields.APPROVAL,
+      fields.CURRENCY,
+      fields.AMOUNT,
+      fields.TERMINAL,
+      fields.TRTYPE,
+      fields.ORDER,
       fields.RRN,
-      fields.INT_REF,
+      fields.MERCHANT,
       fields.TIMESTAMP,
+      fields.INT_REF,
       fields.NONCE,
     ];
 
@@ -176,6 +179,11 @@ export class KinaHmacService {
     this.logger.debug(`[VERIFY] MAC String        : ${macString}`);
     this.logger.debug(`[VERIFY] Computed Signature : ${computedSignature}`);
     this.logger.debug(`[VERIFY] Received Signature : ${receivedPSign.toUpperCase()}`);
+
+    // If there is a mismatch, we log the fields to help identify the discrepancy
+    if (computedSignature !== receivedPSign.toUpperCase()) {
+      this.logger.warn(`[VERIFY] Signature mismatch detected. MAC String used: "${macString}"`);
+    }
 
     try {
       const computedBuf = Buffer.from(computedSignature, 'hex');

@@ -15,6 +15,7 @@ export enum PaymentStatus {
 export enum BondStatus {
     PENDING = 'PENDING',
     PAID = 'PAID',
+    REFUND_PENDING = 'REFUND_PENDING',
     REFUNDED = 'REFUNDED',
     CLAIMED = 'CLAIMED',
 }

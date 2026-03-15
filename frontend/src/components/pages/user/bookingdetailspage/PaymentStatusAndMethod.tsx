@@ -17,14 +17,10 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
       setLoading(true);
       const res = await api.post(`/payment/release-bond/${booking.id}`);
       
-      if (res.data.isKinaReversal) {
-        setBondStatus('REFUND_PENDING');
-        toast.success('Redirecting to Payment Gateway for refund...');
-        submitKinaPaymentForm(res.data.gatewayUrl, res.data.fields);
-      } else {
-        setBondStatus('REFUNDED');
-        toast.success('Bond released successfully');
+      if (res.data.status) {
+        setBondStatus(res.data.status);
       }
+      toast.success(res.data.message || 'Refund request processed');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to release bond');
     } finally {
@@ -54,13 +50,10 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
       setLoading(true);
       const res = await api.post(`/payment/capture-bond/${booking.id}`);
       
-      if (res.data.gatewayUrl) {
-        toast.success('Redirecting to Payment Gateway to capture bond...');
-        submitKinaPaymentForm(res.data.gatewayUrl, res.data.fields);
-      } else {
-        setBondStatus('CLAIMED');
-        toast.success('Bond captured successfully');
+      if (res.data.status) {
+        setBondStatus(res.data.status);
       }
+      toast.success(res.data.message || 'Bond capture processed');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Failed to capture bond');
     } finally {
@@ -116,7 +109,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
 
         <div className="space-y-4 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 relative overflow-hidden">
           <div className="flex items-center gap-3 relative z-10">
-            <div className={`w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm ${bondStatus === 'PAID' ? 'text-blue-600' : bondStatus === 'REFUNDED' ? 'text-green-500' : bondStatus === 'CLAIMED' ? 'text-red-500' : 'text-gray-400'}`}>
+            <div className={`w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm ${bondStatus === 'PAID' ? 'text-blue-600' : bondStatus === 'REFUNDED' ? 'text-green-500' : bondStatus === 'CLAIMED' ? 'text-red-500' : bondStatus === 'REFUND_PENDING' ? 'text-yellow-500' : 'text-gray-400'}`}>
               <Receipt size={20} />
             </div>
             <div className="flex-1">

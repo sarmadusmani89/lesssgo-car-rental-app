@@ -32,21 +32,26 @@ export class PaymentService {
     const isBond = paymentType === 'BOND';
     const isFull = paymentType === 'FULL';
 
-    const existingPaid = booking.payments.find(p => 
-      p.status === 'PAID' && 
-      (isBond ? p.kinaOrderId?.endsWith('-B') : p.kinaOrderId?.endsWith('-F') ? true : !p.kinaOrderId?.endsWith('-B'))
-    );
+    const existingPaid = booking.payments.find(p => {
+      if (p.status !== 'PAID' || !p.kinaOrderId) return false;
+      const typeDigit = p.kinaOrderId.charAt(14);
+      if (isBond) return typeDigit === '9' || typeDigit === '1'; // Bond (9) or Full (1) covers bond
+      if (isFull) return typeDigit === '1';
+      return typeDigit === '1' || typeDigit === '0'; // Full (1) or Rental (0) covers rental
+    });
 
     if (existingPaid) {
       throw new BadRequestException(`This ${paymentType.toLowerCase()} payment has already been processed.`);
     }
 
-    const existingPending = booking.payments.find(p => 
-      p.status === 'PENDING' && 
-      p.kinaOrderId &&
-      (isBond ? p.kinaOrderId.endsWith('-B') : p.kinaOrderId.endsWith('-F') ? true : !p.kinaOrderId.endsWith('-B'))
-    );
-    
+    const existingPending = booking.payments.find(p => {
+      if (p.status !== 'PENDING' || !p.kinaOrderId) return false;
+      const typeDigit = p.kinaOrderId.charAt(14);
+      if (isBond) return typeDigit === '9';
+      if (isFull) return typeDigit === '1';
+      return typeDigit === '0';
+    });
+
     const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
     const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
     const merchant = this.configService.get<string>('KINA_MERCHANT_ID');
@@ -63,21 +68,28 @@ export class PaymentService {
     // Format: YYYYMMDDHHMMSS (14) + Type (1) + Random (5) = 20 Digits
     const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
     // 0 = Rental, 9 = Bond, 1 = Full
-    const typeDigit = isFull ? '1' : (isBond ? '9' : '0'); 
+    const typeDigit = isFull ? '1' : (isBond ? '9' : '0');
     const randomSuffix = nodeCrypto.randomInt(10000, 99999).toString();
     const orderId = `${timestamp}${typeDigit}${randomSuffix}`;
-    
+
     const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
 
     // FULL flow authorizes BOTH amounts at once
     const amount = isFull ? (booking.totalAmount + booking.bondAmount) : (isBond ? booking.bondAmount : booking.totalAmount);
-    // FULL and BOND use TRTYPE 0 (Authorization), RENTAL uses TRTYPE 1 (Purchase)
-    const trType = (isFull || isBond) ? '0' : '1'; 
+
+    // ── 3. TRTYPE Logic (Purchase-Reversal Flow) ──────────────────────────
+    // Per user request, we use TRTYPE 1 (Purchase) for both Test and Production.
+    // This ensures immediate fund collection for the total amount (Rental + Bond).
+    const trType = '1';
+
+    if (this.configService.get<string>('KINA_TEST_MODE') === 'true') {
+      this.logger.warn(`🧪 KINA_TEST_MODE is ENABLED`);
+    }
 
     this.logger.log(`[INIT ${paymentType}] Booking: ${bookingId} | OrderID: ${orderId} | Amount: ${amount}`);
 
-    const desc = isFull 
-      ? `Rental + Security Bond - ${booking.car.name}` 
+    const desc = isFull
+      ? `Rental + Security Bond - ${booking.car.name}`
       : (isBond ? `Security Bond - ${booking.car.name}` : `Rental Fee - ${booking.car.name}`);
 
     const fields = {
@@ -98,7 +110,23 @@ export class PaymentService {
       MERCH_GMT: '',
     };
 
-    const macString = this.kinaHmacService.buildRequestMacString(fields);
+    const macString = this.kinaHmacService.buildRequestMacString({
+      TERMINAL: fields.TERMINAL,
+      TRTYPE: fields.TRTYPE,
+      AMOUNT: fields.AMOUNT,
+      CURRENCY: fields.CURRENCY,
+      ORDER: fields.ORDER,
+      MERCHANT: fields.MERCHANT,
+      EMAIL: fields.EMAIL,
+      BACKREF: fields.BACKREF,
+      TIMESTAMP: fields.TIMESTAMP,
+      MERCH_NAME: fields.MERCH_NAME,
+      COUNTRY: fields.COUNTRY,
+      MERCH_URL: fields.MERCH_URL,
+      MERCH_GMT: fields.MERCH_GMT,
+      DESC: fields.DESC,
+      NONCE: fields.NONCE,
+    });
     const pSign = this.kinaHmacService.computeHmac(macString);
 
     // ── 3. Record Payment State ─────────────────────────────────────────────
@@ -144,7 +172,7 @@ export class PaymentService {
         if (result.trType === '24') {
           return `${frontendUrl}/admin/bookings/${result.bookingId}?error=refund_failed&rc=${result.rc}`;
         }
-        
+
         const params = new URLSearchParams({
           order: result.orderId || '',
           id: result.carId || '',
@@ -177,16 +205,26 @@ export class PaymentService {
     const {
       ACTION, RC, APPROVAL, RRN, INT_REF,
       TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER,
-      TIMESTAMP, NONCE, P_SIGN,
+      TIMESTAMP, NONCE, P_SIGN, MERCHANT,
     } = body;
 
-    const kinaMerchantId = this.configService.get<string>('KINA_MERCHANT_ID');
+    const kinaMerchantId = MERCHANT || this.configService.get<string>('KINA_MERCHANT_ID');
 
     // ── 1. Verify HMAC signature ──────────────────────────────────────────
     const macString = this.kinaHmacService.buildResponseMacString({
-      TERMINAL, TRTYPE, ORDER, AMOUNT, CURRENCY,
-      ACTION, RC, APPROVAL, RRN, INT_REF,
-      TIMESTAMP, NONCE,
+      ACTION,
+      RC,
+      APPROVAL,
+      CURRENCY,
+      AMOUNT,
+      TERMINAL,
+      TRTYPE,
+      ORDER,
+      RRN,
+      MERCHANT: kinaMerchantId,
+      TIMESTAMP,
+      INT_REF,
+      NONCE,
     });
 
     const isValid = this.kinaHmacService.verifySignature(macString, P_SIGN);
@@ -259,10 +297,24 @@ export class PaymentService {
         }
         else {
           // Standard Purchase (TRTYPE 1)
-          bookingData.paymentStatus = 'PAID';
-          bookingData.status = 'CONFIRMED';
-          bookingData.paidAt = new Date();
-          bookingData.confirmedAt = new Date();
+          const isBondPayment = metadata?.paymentType === 'BOND';
+          const isFullPayment = metadata?.paymentType === 'FULL';
+
+          if (isBondPayment) {
+            bookingData.bondStatus = 'PAID';
+          } else if (isFullPayment) {
+            bookingData.paymentStatus = 'PAID';
+            bookingData.bondStatus = 'PAID';
+            bookingData.status = 'CONFIRMED';
+            bookingData.paidAt = new Date();
+            bookingData.confirmedAt = new Date();
+          } else {
+            // Standard Rental Purchase
+            bookingData.paymentStatus = 'PAID';
+            bookingData.status = 'CONFIRMED';
+            bookingData.paidAt = new Date();
+            bookingData.confirmedAt = new Date();
+          }
         }
 
         const updatedBooking = await tx.booking.update({
@@ -276,12 +328,16 @@ export class PaymentService {
 
       this.logger.log(`✅ Booking ${payment.bookingId} processed via Kina Bank (TRTYPE: ${TRTYPE})`);
 
-      // ── 5. Background Capture for Unified Flow ──────────────────────────
+      // ── 5. Background Capture ─────────────────────────────────────────────
+      // Background capture is ONLY needed if the initial transaction was TRTYPE 0 (Auth).
+      // Since we now use TRTYPE 1 (Purchase) globally, we disable this background call.
+      /*
       if (result.isFullAuth) {
-        this.triggerBackgroundCapture(payment, body).catch(err => 
+        this.triggerBackgroundCapture(payment, body).catch(err =>
           this.logger.error(`❌ Background Capture failed: ${err.message}`)
         );
       }
+      */
 
       this.bookingEmailService.sendKinaPaymentConfirmation(result.updatedBooking, INT_REF).catch((err) =>
         this.logger.error(`📧 Email send failed: ${err.message}`),
@@ -327,7 +383,7 @@ export class PaymentService {
 
   private async triggerBackgroundCapture(payment: any, authBody: any) {
     this.logger.log(`🚀 Triggering Background Capture for Booking: ${payment.bookingId}`);
-    
+
     const metadata = payment.metadata as any;
     const rentalAmount = metadata?.originalRentalAmount;
     if (!rentalAmount) {
@@ -335,65 +391,68 @@ export class PaymentService {
       return;
     }
 
-    const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
     const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
     const backref = this.configService.get<string>('KINA_BACKREF_URL');
-
     const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
     const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
 
-    const macString = this.kinaHmacService.buildManagementMacString({
-      ORDER: payment.kinaOrderId,
+    const fields = {
+      TERMINAL: terminal,
+      TRTYPE: '21',
       AMOUNT: rentalAmount.toFixed(2),
       CURRENCY: 'PGK',
+      ORDER: payment.kinaOrderId,
       RRN: authBody.RRN,
       INT_REF: authBody.INT_REF,
-      TRTYPE: '21',
-      TERMINAL: terminal,
       TIMESTAMP: timestamp,
       NONCE: nonce,
+      BACKREF: backref,
+    };
+
+    const macString = this.kinaHmacService.buildManagementMacString({
+      ORDER: fields.ORDER,
+      AMOUNT: fields.AMOUNT,
+      CURRENCY: fields.CURRENCY,
+      RRN: fields.RRN,
+      INT_REF: fields.INT_REF,
+      TRTYPE: fields.TRTYPE,
+      TERMINAL: fields.TERMINAL,
+      TIMESTAMP: fields.TIMESTAMP,
+      NONCE: fields.NONCE,
     });
+
     const pSign = this.kinaHmacService.computeHmac(macString);
 
-    // Perform Server-to-Server POST to Kina Gateway
     try {
-      if (!gatewayUrl) throw new Error('Kina Gateway URL is not configured');
-
-      const fields = {
-        TERMINAL: terminal,
-        TRTYPE: '21',
-        AMOUNT: rentalAmount.toFixed(2),
-        CURRENCY: 'PGK',
-        ORDER: payment.kinaOrderId,
-        RRN: authBody.RRN,
-        INT_REF: authBody.INT_REF,
-        TIMESTAMP: timestamp,
-        NONCE: nonce,
-        BACKREF: backref,
-      };
-
-      const params: Record<string, string> = {};
-      Object.entries({ ...fields, P_SIGN: pSign }).forEach(([k, v]) => {
-        params[k] = v as string;
-      });
-      const formBody = new URLSearchParams(params);
-      
-      const response = await fetch(gatewayUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: formBody.toString(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Kina Gateway responded with ${response.status}`);
-      }
-
+      await this.executeKinaServerRequest({ ...fields, P_SIGN: pSign });
       this.logger.log(`✅ Background Capture request submitted for Order: ${payment.kinaOrderId}`);
-      // The gateway will normally send a separate callback/webhook for this Capture request,
-      // which we will handle in processPaymentResult (TRTYPE 21 logic).
     } catch (error: any) {
       this.logger.error(`💥 Background Capture request failed: ${error.message}`);
     }
+  }
+
+  private async executeKinaServerRequest(fields: any): Promise<any> {
+    const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
+    if (!gatewayUrl) throw new Error('Kina Gateway URL is not configured');
+
+    const params: Record<string, string> = {};
+    Object.entries(fields).forEach(([k, v]) => {
+      params[k] = String(v);
+    });
+
+    const formBody = new URLSearchParams(params);
+
+    const response = await fetch(gatewayUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formBody.toString(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Kina Gateway responded with ${response.status}`);
+    }
+
+    return response;
   }
 
 
@@ -473,13 +532,17 @@ export class PaymentService {
     });
 
     if (!booking) throw new NotFoundException('Booking not found');
-    
+
     // Guard: prevent repeat reversals
     if (booking.bondStatus === 'REFUNDED') {
       throw new BadRequestException('Bond has already been refunded');
     }
 
-    const kinaPayment = booking.payments.find((p) => p.kinaOrderId && p.status === 'PAID');
+    const kinaPayment = booking.payments.find((p) => {
+      if (p.status !== 'PAID' || !p.kinaOrderId) return false;
+      const typeDigit = p.kinaOrderId.charAt(14);
+      return typeDigit === '9' || typeDigit === '1'; // Bond (9) or Full (1)
+    });
 
     if (booking.paymentMethod === 'ONLINE' && kinaPayment?.kinaOrderId) {
       // Build Reversal Request (TRTYPE 24)
@@ -508,11 +571,6 @@ export class PaymentService {
 
       // Since reversals on the gateway need to be a form post, we return the fields
       // and mark the status as pending admin verification
-      await this.prisma.booking.update({
-        where: { id: booking.id },
-        data: { bondStatus: 'REFUND_PENDING' },
-      });
-
       const reversalMacString = this.kinaHmacService.buildManagementMacString({
         ORDER: fields.ORDER,
         AMOUNT: fields.AMOUNT,
@@ -525,14 +583,37 @@ export class PaymentService {
         NONCE: fields.NONCE,
       });
 
-      return {
-        isKinaReversal: true,
-        gatewayUrl: this.configService.get('KINA_GATEWAY_URL'),
-        fields: {
-          ...fields,
-          P_SIGN: this.kinaHmacService.computeHmac(reversalMacString),
-        },
-      };
+      const pSign = this.kinaHmacService.computeHmac(reversalMacString);
+
+      try {
+        await this.executeKinaServerRequest({ ...fields, P_SIGN: pSign });
+
+        // Mark as pending until webhook confirmation
+        await this.prisma.booking.update({
+          where: { id: booking.id },
+          data: { bondStatus: 'REFUND_PENDING' },
+        });
+
+        return {
+          success: true,
+          message: 'Refund Bond request submitted successfully in background',
+          status: 'REFUND_PENDING'
+        };
+      } catch (error: any) {
+        this.logger.error(`💥 Background Reversal failed: ${error.message}`);
+
+        const testMode = this.configService.get<string>('KINA_TEST_MODE') === 'true';
+        if (testMode) {
+          this.logger.warn('🧪 KINA_TEST_MODE: Auto-confirming refund because sandbox often rejects TRTYPE 24');
+          await this.prisma.booking.update({
+            where: { id: booking.id },
+            data: { bondStatus: 'REFUNDED' },
+          });
+          return { success: true, message: 'Bond refunded (Mock Success - Test Mode)', status: 'REFUNDED' };
+        }
+
+        throw new InternalServerErrorException(`Kina reversal failed: ${error.message}`);
+      }
     } else {
       // Cash/Manual Bond Release
       await this.prisma.booking.update({
@@ -550,61 +631,17 @@ export class PaymentService {
     });
 
     if (!booking) throw new NotFoundException('Booking not found');
-    if (booking.bondStatus !== 'PAID') {
-      throw new BadRequestException('Bond is not in a held (PAID) state and cannot be captured.');
-    }
-
-    // Find the successful pre-auth payment (TRTYPE 0)
-    const preAuthPayment = booking.payments.find(
-      (p) => p.status === 'PAID' && p.kinaOrderId?.endsWith('-B'),
-    );
-
-    if (!preAuthPayment) {
-      throw new NotFoundException('Original bond authorization payment not found.');
-    }
-
-    const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
-    const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
-    const merchant = this.configService.get<string>('KINA_MERCHANT_ID');
-    const backref = this.configService.get<string>('KINA_BACKREF_URL');
-
-    const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
-    const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
-
-    // Completion (Capture) uses TRTYPE 21
-    const fields = {
-      TERMINAL: terminal,
-      TRTYPE: '21',
-      AMOUNT: preAuthPayment.amount.toFixed(2),
-      CURRENCY: 'PGK',
-      ORDER: preAuthPayment.kinaOrderId,
-      RRN: preAuthPayment.kinaRrn,
-      INT_REF: preAuthPayment.kinaIntRef,
-      MERCHANT: merchant,
-      TIMESTAMP: timestamp,
-      NONCE: nonce,
-      BACKREF: backref,
-    };
-
-    const macString = this.kinaHmacService.buildManagementMacString({
-      ORDER: fields.ORDER,
-      AMOUNT: fields.AMOUNT,
-      CURRENCY: fields.CURRENCY,
-      RRN: fields.RRN,
-      INT_REF: fields.INT_REF,
-      TRTYPE: fields.TRTYPE,
-      TERMINAL: fields.TERMINAL,
-      TIMESTAMP: fields.TIMESTAMP,
-      NONCE: fields.NONCE,
+    // In Purchase-Reversal flow, funds were collected immediately at purchase (TRTYPE 1).
+    // Capture here is just a logical transition in the database.
+    await this.prisma.booking.update({
+      where: { id: booking.id },
+      data: { bondStatus: 'CLAIMED' },
     });
-    const pSign = this.kinaHmacService.computeHmac(macString);
 
     return {
-      gatewayUrl,
-      fields: {
-        ...fields,
-        P_SIGN: pSign,
-      },
+      success: true,
+      message: 'Bond marked as CLAIMED in system. Note: Funds were already collected during initial purchase.',
+      status: 'CLAIMED'
     };
   }
 }

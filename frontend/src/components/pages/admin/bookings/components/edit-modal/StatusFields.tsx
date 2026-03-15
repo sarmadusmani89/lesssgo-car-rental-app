@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Loader2 } from 'lucide-react';
-import { UpdateBookingDto, BookingStatus, PaymentStatus } from '@/types/booking';
+import { UpdateBookingDto, BookingStatus, PaymentStatus, BondStatus } from '@/types/booking';
 import CustomSelect from '@/components/ui/CustomSelect';
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
 export default function StatusFields({ formData, onChange }: Props) {
     const statusOptions = Object.values(BookingStatus).map(s => ({ label: s, value: s }));
     const paymentOptions = Object.values(PaymentStatus).map(s => ({ label: s, value: s }));
+    const bondOptions = Object.values(BondStatus).map(s => ({ label: s, value: s }));
 
     return (
         <div className="space-y-4">
@@ -35,6 +36,15 @@ export default function StatusFields({ formData, onChange }: Props) {
                         options={paymentOptions}
                         value={formData.paymentStatus || ''}
                         onChange={(val) => onChange('paymentStatus', val)}
+                        className="w-full"
+                    />
+                </div>
+                <div className="space-y-1.5">
+                    <label className="text-sm font-bold text-slate-700 uppercase tracking-tight italic">Bond Status</label>
+                    <CustomSelect
+                        options={bondOptions}
+                        value={formData.bondStatus || ''}
+                        onChange={(val) => onChange('bondStatus', val)}
                         className="w-full"
                     />
                 </div>
