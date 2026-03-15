@@ -57,13 +57,14 @@ export class PaymentService {
     }
 
     // ── 2. Robust Order ID Generation ───────────────────────────────────────
+    // Always generate a FRESH numeric Order ID to avoid signature/duplicate conflicts.
+    // Format: YYYYMMDDHHMMSS (14) + Type (1) + Random (5) = 20 Digits
     const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
-    const baseOrderId = `${timestamp}${nodeCrypto.randomInt(100000, 999999)}`.substring(0, 14);
-    const orderId = existingPending?.kinaOrderId || 
-      (isBond ? `${baseOrderId}-B` : baseOrderId);
+    const typeDigit = isBond ? '9' : '0'; // 9 for Bond, 0 for Rental
+    const randomSuffix = nodeCrypto.randomInt(10000, 99999).toString();
+    const orderId = `${timestamp}${typeDigit}${randomSuffix}`;
     
-    const nonce = existingPending?.kinaNonce || 
-      nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
+    const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
 
     const amount = isBond ? booking.bondAmount : booking.totalAmount;
     const trType = isBond ? '0' : '1'; // 0 = Auth, 1 = Purchase
@@ -91,15 +92,10 @@ export class PaymentService {
     const macString = this.kinaHmacService.buildRequestMacString(fields);
     const pSign = this.kinaHmacService.computeHmac(macString);
 
-    // ── 3. Upsert Payment State ─────────────────────────────────────────────
-    await this.prisma.payment.upsert({
-      where: { kinaOrderId: orderId },
-      update: {
-        status: 'PENDING',
-        amount: amount,
-        kinaNonce: nonce,
-      },
-      create: {
+    // ── 3. Record Payment State ─────────────────────────────────────────────
+    // We create a NEW record for each attempt to keep a clear audit trail
+    await this.prisma.payment.create({
+      data: {
         bookingId: booking.id,
         amount: amount,
         currency: 'PGK',
