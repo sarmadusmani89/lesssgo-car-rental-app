@@ -476,7 +476,7 @@ export class PaymentService {
       BACKREF: backref,
     };
 
-    const macString = this.kinaHmacService.buildRequestMacString(fields);
+    const macString = this.kinaHmacService.buildManagementMacString(fields as any);
     const pSign = this.kinaHmacService.computeHmac(macString);
 
     return {

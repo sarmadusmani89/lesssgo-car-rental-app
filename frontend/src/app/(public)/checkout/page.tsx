@@ -144,8 +144,11 @@ function CheckoutContent() {
       setBookingId(newBookingId);
 
       if (paymentMethod === 'kina') {
-        // 2. Initialize Kina Bank Payment
-        const sessionRes = await api.post('/payment/initialize', { bookingId: newBookingId });
+        // 2. Initialize Kina Bank Payment (RENTAL ONLY)
+        const sessionRes = await api.post('/payment/initialize', { 
+          bookingId: newBookingId,
+          paymentType: 'RENTAL'
+        });
         const { gatewayUrl, fields } = sessionRes.data;
         submitKinaPaymentForm(gatewayUrl, fields);
       } else {

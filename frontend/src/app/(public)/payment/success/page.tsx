@@ -13,20 +13,26 @@ import PaymentStatusHeader from '@/components/pages/payment/PaymentStatusHeader'
 import PaymentSummary from '@/components/pages/payment/PaymentSummary';
 import PaymentActions from '@/components/pages/payment/PaymentActions';
 
+import { submitKinaPaymentForm } from '@/lib/kinaPayment';
+
 function SuccessContent() {
     const searchParams = useSearchParams();
     const { currency, rates } = useSelector((state: RootState) => state.ui);
     const params = Object.fromEntries(searchParams.entries());
 
     const [bookingData, setBookingData] = useState<any>(params);
-    const [loading, setLoading] = useState(!!params.session_id || !!params.bookingId);
+    const [loading, setLoading] = useState(true);
+    const [bondLoading, setBondLoading] = useState(false);
 
     useEffect(() => {
         const fetchBooking = async () => {
             const sessionId = params.session_id;
             const bookingId = params.bookingId;
 
-            if (!sessionId && !bookingId) return;
+            if (!sessionId && !bookingId) {
+                setLoading(false);
+                return;
+            }
 
             try {
                 setLoading(true);
@@ -38,13 +44,15 @@ function SuccessContent() {
                 const b = res.data;
 
                 setBookingData({
+                    id: b.id,
                     carName: `${b.car.brand} ${b.car.name}`,
                     startDate: b.startDate,
                     endDate: b.endDate,
                     total: b.totalAmount,
                     bond: b.bondAmount || 0,
                     payment: b.paymentMethod,
-                    paymentStatus: b.paymentStatus
+                    paymentStatus: b.paymentStatus,
+                    bondStatus: b.bondStatus
                 });
             } catch (err) {
                 console.error("Failed to fetch booking details:", err);
@@ -57,6 +65,20 @@ function SuccessContent() {
         fetchBooking();
     }, [params.session_id, params.bookingId]);
 
+    const handleAuthorizeBond = async () => {
+        try {
+            setBondLoading(true);
+            const res = await api.post('/payment/initialize', {
+                bookingId: bookingData.id,
+                paymentType: 'BOND'
+            });
+            submitKinaPaymentForm(res.data.gatewayUrl, res.data.fields);
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to initialize bond authorization");
+            setBondLoading(false);
+        }
+    };
+
     if (loading) return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
             <div className="animate-spin text-blue-600">
@@ -66,17 +88,44 @@ function SuccessContent() {
         </div>
     );
 
+    const needsBondAuthorization = bookingData.payment === 'ONLINE' && bookingData.bondStatus === 'PENDING';
+
     return (
         <PaymentStatusLayout maxWidth="max-w-4xl">
             <PaymentStatusHeader
                 icon={CheckCircle2}
-                title="Reservation Confirmed"
-                subtitle="Your legendary journey begins here"
+                title={needsBondAuthorization ? "Rental Fee Paid" : "Reservation Confirmed"}
+                subtitle={needsBondAuthorization ? "Final step: Authorize your security bond" : "Your legendary journey begins here"}
                 variant="success"
                 iconRotate="rotate-12"
             />
 
             <div className="p-8 md:p-12 space-y-12">
+                {needsBondAuthorization && (
+                    <div className="bg-blue-50 border border-blue-100 rounded-[2rem] p-8 space-y-4 animate-in fade-in slide-in-from-top-4 duration-700">
+                        <div className="flex items-start gap-4">
+                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-sm shrink-0">
+                                <Clock size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-black font-outfit uppercase tracking-tight text-blue-900">Final Step Required</h3>
+                                <p className="text-blue-700/80 text-sm font-medium leading-relaxed">
+                                    Your rental fee has been successfully paid. To finalize your booking, please authorize the security bond. 
+                                    This is a <strong>hold only</strong> and will not be deducted unless required.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={handleAuthorizeBond}
+                            disabled={bondLoading}
+                            className="w-full py-4 bg-blue-600 text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-3 disabled:opacity-50"
+                        >
+                            {bondLoading ? <Clock className="animate-spin" size={16} /> : <CheckCircle2 size={16} />}
+                            Secure Bond (PGK {bookingData.bond})
+                        </button>
+                    </div>
+                )}
+
                 <PaymentSummary
                     carName={bookingData.carName}
                     total={Number(bookingData.total || 0)}
