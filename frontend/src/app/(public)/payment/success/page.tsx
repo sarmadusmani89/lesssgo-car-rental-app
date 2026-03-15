@@ -79,6 +79,20 @@ function SuccessContent() {
         }
     };
 
+    const needsBondAuthorization = bookingData.payment === 'ONLINE' && bookingData.bondStatus === 'PENDING';
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (!loading && needsBondAuthorization && !bondLoading) {
+            timer = setTimeout(() => {
+                handleAuthorizeBond();
+            }, 3000);
+        }
+        return () => {
+            if (timer) clearTimeout(timer);
+        };
+    }, [loading, needsBondAuthorization]);
+
     if (loading) return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
             <div className="animate-spin text-blue-600">
@@ -108,11 +122,17 @@ function SuccessContent() {
                                 <Clock size={24} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-black font-outfit uppercase tracking-tight text-blue-900">Final Step Required</h3>
+                                <h3 className="text-lg font-black font-outfit uppercase tracking-tight text-blue-900">Final Step: Bond Authorization</h3>
                                 <p className="text-blue-700/80 text-sm font-medium leading-relaxed">
-                                    Your rental fee has been successfully paid. To finalize your booking, please authorize the security bond. 
-                                    This is a <strong>hold only</strong> and will not be deducted unless required.
+                                    Rental fee paid! We are now redirecting you to authorize the security bond. 
+                                    This is a <strong>hold only</strong>.
                                 </p>
+                                {!bondLoading && (
+                                    <div className="mt-2 flex items-center gap-2 text-[10px] font-bold text-blue-600/60 uppercase tracking-widest">
+                                        <div className="w-4 h-4 rounded-full border-2 border-t-blue-600 border-blue-100 animate-spin" />
+                                        Redirecting in 3 seconds...
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <button

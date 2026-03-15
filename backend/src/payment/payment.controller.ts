@@ -39,9 +39,15 @@ export class PaymentController {
   @Throttle({ default: { limit: 10, ttl: 60000 } })
   async callback(@Body() body: any, @Res() res: Response) {
     const redirectUrl = await this.paymentService.handleKinaCallback(body);
-    // Kina's IPG performs a browser-side POST to this BACKREF URL.
-    // We must use res.redirect() to return the user to our frontend.
     return res.redirect(redirectUrl);
+  }
+
+  @Post('webhook')
+  @UseGuards(KinaCallbackThrottlerGuard)
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
+  async webhook(@Body() body: any) {
+    // Webhooks are server-to-server and don't involve a browser redirect.
+    return this.paymentService.handleKinaWebhook(body);
   }
 
   @Post()
