@@ -117,20 +117,20 @@ export class KinaHmacService {
   }
 
   // ---------------------------------------------------------------------------
-  // REVERSAL MAC  (TRTYPE=24, merchant → IPG)
+  // MANAGEMENT MAC  (TRTYPE=21 Completion, TRTYPE=24 Reversal, etc.)
   // Field order: TERMINAL, TRTYPE, AMOUNT, CURRENCY, ORDER, RRN, INT_REF, TIMESTAMP, NONCE, BACKREF
   // ---------------------------------------------------------------------------
-  buildReversalMacString(fields: {
-    TERMINAL: string;
+  buildManagementMacString(fields: {
+    TERMINAL: string | undefined;
     TRTYPE: string;
     AMOUNT: string;
     CURRENCY: string;
-    ORDER: string;
+    ORDER: string | null;
     RRN: string | null | undefined;
     INT_REF: string | null | undefined;
     TIMESTAMP: string;
     NONCE: string;
-    BACKREF: string;
+    BACKREF: string | undefined;
   }): string {
     const values = [
       fields.TERMINAL,
@@ -146,7 +146,7 @@ export class KinaHmacService {
     ];
 
     const macString = this.buildMacString(values);
-    this.logger.debug(`[REVERSAL MAC] String: ${macString}`);
+    this.logger.debug(`[MANAGEMENT MAC] String: ${macString}`);
     return macString;
   }
 

@@ -19,7 +19,7 @@ export class PaymentService {
     private readonly bookingEmailService: BookingEmailService,
   ) { }
 
-  async initializeKinaPayment(bookingId: string) {
+  async initializeKinaPayment(bookingId: string, paymentType: 'RENTAL' | 'BOND' = 'RENTAL') {
     const booking = await this.prisma.booking.findUnique({
       where: { id: bookingId },
       include: { car: true, user: true, payments: true },
@@ -28,12 +28,22 @@ export class PaymentService {
     if (!booking) throw new NotFoundException('Booking not found');
 
     // ── 1. Production Guard: Prevent Double Charges ─────────────────────────
-    const existingPaid = booking.payments.find(p => p.status === 'PAID');
+    // Check for existing PAID payments of the same type
+    const isBond = paymentType === 'BOND';
+    const existingPaid = booking.payments.find(p => 
+      p.status === 'PAID' && 
+      (isBond ? p.kinaOrderId?.endsWith('-B') : !p.kinaOrderId?.endsWith('-B'))
+    );
+
     if (existingPaid) {
-      throw new BadRequestException('This booking has already been paid.');
+      throw new BadRequestException(`This ${paymentType.toLowerCase()} has already been paid/authorized.`);
     }
 
-    const existingPending = booking.payments.find(p => p.status === 'PENDING' && p.kinaOrderId);
+    const existingPending = booking.payments.find(p => 
+      p.status === 'PENDING' && 
+      p.kinaOrderId &&
+      (isBond ? p.kinaOrderId.endsWith('-B') : !p.kinaOrderId.endsWith('-B'))
+    );
     
     const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
     const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
@@ -47,24 +57,26 @@ export class PaymentService {
     }
 
     // ── 2. Robust Order ID Generation ───────────────────────────────────────
-    // If we have a pending payment, REUSE its Order ID to prevent gateway-side duplicates
-    // Otherwise, generate a fresh one: Timestamp (14) + Random (4-6)
     const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
+    const baseOrderId = `${timestamp}${nodeCrypto.randomInt(100000, 999999)}`.substring(0, 14);
     const orderId = existingPending?.kinaOrderId || 
-      `${timestamp}${nodeCrypto.randomInt(100000, 999999)}`.substring(0, 20);
+      (isBond ? `${baseOrderId}-B` : baseOrderId);
     
     const nonce = existingPending?.kinaNonce || 
       nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
 
-    this.logger.log(`[INIT] Booking: ${bookingId} | OrderID: ${orderId} | Amount: ${booking.totalAmount + booking.bondAmount}`);
+    const amount = isBond ? booking.bondAmount : booking.totalAmount;
+    const trType = isBond ? '0' : '1'; // 0 = Auth, 1 = Purchase
+
+    this.logger.log(`[INIT ${paymentType}] Booking: ${bookingId} | OrderID: ${orderId} | Amount: ${amount}`);
 
     const fields = {
       TERMINAL: terminal,
-      TRTYPE: '1',
-      AMOUNT: (booking.totalAmount + booking.bondAmount).toFixed(2),
+      TRTYPE: trType,
+      AMOUNT: amount.toFixed(2),
       CURRENCY: 'PGK',
       ORDER: orderId,
-      DESC: `Car Rental - ${booking.car.name}`,
+      DESC: isBond ? `Security Bond - ${booking.car.name}` : `Rental Fee - ${booking.car.name}`,
       MERCH_NAME: merchName,
       MERCH_URL: merchUrl,
       MERCHANT: merchant,
@@ -84,12 +96,12 @@ export class PaymentService {
       where: { kinaOrderId: orderId },
       update: {
         status: 'PENDING',
-        amount: booking.totalAmount + booking.bondAmount,
+        amount: amount,
         kinaNonce: nonce,
       },
       create: {
         bookingId: booking.id,
-        amount: booking.totalAmount + booking.bondAmount,
+        amount: amount,
         currency: 'PGK',
         status: 'PENDING',
         kinaOrderId: orderId,
@@ -184,8 +196,7 @@ export class PaymentService {
           const updatedPayment = await tx.payment.update({
             where: { id: payment.id },
             data: {
-              // Only mark as PAID if it's a standard payment (TRTYPE 1 or missing)
-              status: (TRTYPE === '24') ? payment.status : 'PAID',
+              status: 'PAID', // Both Pre-auth and Purchase are marked as PAID on the payment record
               kinaIntRef: INT_REF,
               kinaRrn: RRN,
               kinaActionCode: ACTION,
@@ -199,11 +210,13 @@ export class PaymentService {
           if (TRTYPE === '24') {
             // Reversal (Refund) confirmed
             bookingData.bondStatus = 'REFUNDED';
+          } else if (TRTYPE === '0') {
+            // Pre-authorization (Bond Hold) confirmed
+            bookingData.bondStatus = 'PAID';
           } else {
-            // Standard Payment confirmed
+            // Standard Payment (Rental) confirmed
             bookingData.paymentStatus = 'PAID';
             bookingData.status = 'CONFIRMED';
-            bookingData.bondStatus = 'PAID';
             bookingData.paidAt = new Date();
             bookingData.confirmedAt = new Date();
           }
@@ -389,7 +402,7 @@ export class PaymentService {
         data: { bondStatus: 'REFUND_PENDING' },
       });
 
-      const reversalMacString = this.kinaHmacService.buildReversalMacString({
+      const reversalMacString = this.kinaHmacService.buildManagementMacString({
         TERMINAL: fields.TERMINAL,
         TRTYPE: fields.TRTYPE,
         AMOUNT: fields.AMOUNT,
@@ -418,5 +431,60 @@ export class PaymentService {
       });
       return { message: 'Bond marked as refunded (Manual/Cash)' };
     }
+  }
+
+  async captureBond(bookingId: string) {
+    const booking = await this.prisma.booking.findUnique({
+      where: { id: bookingId },
+      include: { car: true, user: true, payments: true },
+    });
+
+    if (!booking) throw new NotFoundException('Booking not found');
+    if (booking.bondStatus !== 'PAID') {
+      throw new BadRequestException('Bond is not in a held (PAID) state and cannot be captured.');
+    }
+
+    // Find the successful pre-auth payment (TRTYPE 0)
+    const preAuthPayment = booking.payments.find(
+      (p) => p.status === 'PAID' && p.kinaOrderId?.endsWith('-B'),
+    );
+
+    if (!preAuthPayment) {
+      throw new NotFoundException('Original bond authorization payment not found.');
+    }
+
+    const gatewayUrl = this.configService.get<string>('KINA_GATEWAY_URL');
+    const terminal = this.configService.get<string>('KINA_TERMINAL_ID');
+    const merchant = this.configService.get<string>('KINA_MERCHANT_ID');
+    const backref = this.configService.get<string>('KINA_BACKREF_URL');
+
+    const timestamp = new Date().toISOString().replace(/[-:T.Z]/g, '').substring(0, 14);
+    const nonce = nodeCrypto.randomBytes(16).toString('hex').toUpperCase();
+
+    // Completion (Capture) uses TRTYPE 21
+    const fields = {
+      TERMINAL: terminal,
+      TRTYPE: '21',
+      AMOUNT: preAuthPayment.amount.toFixed(2),
+      CURRENCY: 'PGK',
+      ORDER: preAuthPayment.kinaOrderId,
+      RRN: preAuthPayment.kinaRrn,
+      INT_REF: preAuthPayment.kinaIntRef,
+      MERCHANT: merchant,
+      TIMESTAMP: timestamp,
+      NONCE: nonce,
+      BACKREF: backref,
+    };
+
+    const macString = this.kinaHmacService.buildRequestMacString(fields);
+    const pSign = this.kinaHmacService.computeHmac(macString);
+
+    return {
+      gatewayUrl,
+      fields: {
+        ...fields,
+        P_SIGN: pSign,
+      },
+    };
   }
 }

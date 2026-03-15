@@ -16,8 +16,11 @@ export class PaymentController {
 
   @Post('initialize')
   @UseGuards(AuthGuard)
-  initialize(@Body('bookingId') bookingId: string) {
-    return this.paymentService.initializeKinaPayment(bookingId);
+  initialize(
+    @Body('bookingId') bookingId: string,
+    @Body('paymentType') paymentType?: 'RENTAL' | 'BOND'
+  ) {
+    return this.paymentService.initializeKinaPayment(bookingId, paymentType);
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -86,5 +89,12 @@ export class PaymentController {
   @Roles(Role.ADMIN)
   releaseBond(@Param('bookingId') bookingId: string) {
     return this.paymentService.releaseBond(bookingId);
+  }
+
+  @Post('capture-bond/:bookingId')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  captureBond(@Param('bookingId') bookingId: string) {
+    return this.paymentService.captureBond(bookingId);
   }
 }
