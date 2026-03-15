@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { AlertCircle, ArrowLeft, Home, BookOpen, Calculator, CreditCard } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Home, BookOpen, Calculator, CreditCard, Calendar } from 'lucide-react';
 
 import PaymentStatusLayout from '@/components/pages/payment/PaymentStatusLayout';
 import PaymentStatusHeader from '@/components/pages/payment/PaymentStatusHeader';
@@ -47,11 +47,11 @@ function PaymentDeclinedContent() {
                 <PaymentActions
                     actions={[
                         {
-                            label: 'View My Bookings',
+                            label: 'View Your Bookings',
                             onClick: () => window.location.href = '/dashboard/bookings',
                             variant: 'primary',
                             colorClass: 'bg-gray-900',
-                            icon: ArrowLeft
+                            icon: Calendar
                         },
                         {
                             label: 'Home',

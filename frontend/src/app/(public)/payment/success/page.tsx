@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { CheckCircle2, Home, LayoutDashboard, Clock } from 'lucide-react';
+import { CheckCircle2, Home, LayoutDashboard, Clock, Calendar } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import api from '@/lib/api';
@@ -19,15 +19,22 @@ function SuccessContent() {
     const params = Object.fromEntries(searchParams.entries());
 
     const [bookingData, setBookingData] = useState<any>(params);
-    const [loading, setLoading] = useState(!!params.session_id);
+    const [loading, setLoading] = useState(!!params.session_id || !!params.bookingId);
 
     useEffect(() => {
-        const fetchSessionBooking = async () => {
-            if (!params.session_id) return;
+        const fetchBooking = async () => {
+            const sessionId = params.session_id;
+            const bookingId = params.bookingId;
+
+            if (!sessionId && !bookingId) return;
 
             try {
                 setLoading(true);
-                const res = await api.get(`/booking/session/${params.session_id}`);
+                const endpoint = sessionId
+                    ? `/booking/session/${sessionId}`
+                    : `/booking/${bookingId}`;
+
+                const res = await api.get(endpoint);
                 const b = res.data;
 
                 setBookingData({
@@ -40,15 +47,15 @@ function SuccessContent() {
                     paymentStatus: b.paymentStatus
                 });
             } catch (err) {
-                console.error("Failed to fetch booking from session:", err);
+                console.error("Failed to fetch booking details:", err);
                 toast.error("Could not load latest booking details automatically.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchSessionBooking();
-    }, [params.session_id]);
+        fetchBooking();
+    }, [params.session_id, params.bookingId]);
 
     if (loading) return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
@@ -89,7 +96,7 @@ function SuccessContent() {
                             onClick: () => window.location.href = '/dashboard/bookings',
                             variant: 'primary',
                             colorClass: 'bg-gray-900',
-                            icon: LayoutDashboard
+                            icon: Calendar
                         },
                         {
                             label: 'Home',
