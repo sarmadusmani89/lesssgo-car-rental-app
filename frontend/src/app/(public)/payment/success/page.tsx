@@ -83,11 +83,9 @@ function SuccessContent() {
                 />
 
                 <PaymentActions
-                    footerTitle="Next Destination?"
-                    footerSubtitle="Check your email for full details"
                     actions={[
                         {
-                            label: 'See My Bookings',
+                            label: 'View Your Bookings',
                             onClick: () => window.location.href = '/dashboard/bookings',
                             variant: 'primary',
                             colorClass: 'bg-gray-900',
