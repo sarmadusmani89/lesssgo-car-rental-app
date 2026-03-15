@@ -180,10 +180,12 @@ export class PaymentService {
       // ── 5. Atomic State Transition (Prisma Transaction) ──────────────────
       if (ACTION === '0') {
         const result = await this.prisma.$transaction(async (tx) => {
+          // 1. Update Payment record with gateway identifiers
           const updatedPayment = await tx.payment.update({
             where: { id: payment.id },
             data: {
-              status: 'PAID',
+              // Only mark as PAID if it's a standard payment (TRTYPE 1 or missing)
+              status: (TRTYPE === '24') ? payment.status : 'PAID',
               kinaIntRef: INT_REF,
               kinaRrn: RRN,
               kinaActionCode: ACTION,
@@ -192,15 +194,23 @@ export class PaymentService {
             },
           });
 
+          // 2. Update Booking based on Transaction Type
+          const bookingData: any = {};
+          if (TRTYPE === '24') {
+            // Reversal (Refund) confirmed
+            bookingData.bondStatus = 'REFUNDED';
+          } else {
+            // Standard Payment confirmed
+            bookingData.paymentStatus = 'PAID';
+            bookingData.status = 'CONFIRMED';
+            bookingData.bondStatus = 'PAID';
+            bookingData.paidAt = new Date();
+            bookingData.confirmedAt = new Date();
+          }
+
           const updatedBooking = await tx.booking.update({
             where: { id: payment.bookingId },
-            data: {
-              paymentStatus: 'PAID',
-              status: 'CONFIRMED',
-              bondStatus: 'PAID',
-              paidAt: new Date(),
-              confirmedAt: new Date(),
-            },
+            data: bookingData,
             include: { car: true, user: true },
           });
 
