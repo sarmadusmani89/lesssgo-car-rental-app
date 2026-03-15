@@ -210,6 +210,9 @@ export class PaymentService {
           if (TRTYPE === '24') {
             // Reversal (Refund) confirmed
             bookingData.bondStatus = 'REFUNDED';
+          } else if (TRTYPE === '21') {
+            // Completion (Capture) confirmed
+            bookingData.bondStatus = 'CLAIMED';
           } else if (TRTYPE === '0') {
             // Pre-authorization (Bond Hold) confirmed
             bookingData.bondStatus = 'PAID';

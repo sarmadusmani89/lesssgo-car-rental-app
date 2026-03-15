@@ -48,6 +48,26 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
     }
   };
 
+  const handleCaptureBond = async () => {
+    if (!confirm('Are you sure you want to CAPTURE (claim) this bond? This will take the money from the customer.')) return;
+    try {
+      setLoading(true);
+      const res = await api.post(`/payment/capture-bond/${booking.id}`);
+      
+      if (res.data.gatewayUrl) {
+        toast.success('Redirecting to Payment Gateway to capture bond...');
+        submitKinaPaymentForm(res.data.gatewayUrl, res.data.fields);
+      } else {
+        setBondStatus('CLAIMED');
+        toast.success('Bond captured successfully');
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Failed to capture bond');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="p-8 bg-white shadow-xl shadow-gray-100 rounded-[2rem] border border-gray-100">
       <div className="flex justify-between items-center mb-6">
@@ -96,22 +116,32 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
 
         <div className="space-y-4 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 relative overflow-hidden">
           <div className="flex items-center gap-3 relative z-10">
-            <div className={`w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm ${bondStatus === 'PAID' ? 'text-blue-600' : bondStatus === 'REFUNDED' ? 'text-green-500' : 'text-gray-400'}`}>
+            <div className={`w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm ${bondStatus === 'PAID' ? 'text-blue-600' : bondStatus === 'REFUNDED' ? 'text-green-500' : bondStatus === 'CLAIMED' ? 'text-red-500' : 'text-gray-400'}`}>
               <Receipt size={20} />
             </div>
             <div className="flex-1">
               <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-0.5 block">Security Bond</span>
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-col gap-2">
                 <p className="font-bold text-gray-900 text-sm uppercase tracking-tight">{bondStatus}</p>
                 {isAdmin && bondStatus === 'PAID' && (
-                  <button
-                    onClick={handleReleaseBond}
-                    disabled={loading}
-                    className="flex items-center gap-1.5 px-3 py-1 bg-white text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
-                  >
-                    <RefreshCw size={10} className={loading ? 'animate-spin' : ''} />
-                    {booking.paymentMethod === 'ONLINE' ? 'Refund Bond' : 'Mark Bond Refunded'}
-                  </button>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={handleReleaseBond}
+                      disabled={loading}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-white text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                    >
+                      <RefreshCw size={10} className={loading ? 'animate-spin' : ''} />
+                      {booking.paymentMethod === 'ONLINE' ? 'Refund Hold' : 'Mark Refunded'}
+                    </button>
+                    <button
+                      onClick={handleCaptureBond}
+                      disabled={loading}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-white text-red-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-red-100 hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                    >
+                      <Sparkles size={10} className={loading ? 'animate-spin' : ''} />
+                      Capture Bond
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
