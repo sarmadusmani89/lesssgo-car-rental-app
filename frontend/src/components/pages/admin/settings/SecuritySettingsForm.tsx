@@ -44,8 +44,8 @@ export default function SecuritySettingsForm({ onSaved, initialData }: SecurityS
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Minimum Password Length
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Minimum Password Length <span className="text-rose-500">*</span>
                 </label>
                 <input
                     type="number"

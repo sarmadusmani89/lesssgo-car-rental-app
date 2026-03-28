@@ -111,8 +111,8 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
     return (
         <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto px-1 pt-8">
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Site Name
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Site Name <span className="text-rose-500">*</span>
                 </label>
                 <input
                     type="text"
@@ -126,8 +126,8 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Admin Notification Email
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Admin Notification Email <span className="text-rose-500">*</span>
                     </label>
                     <input
                         type="email"
