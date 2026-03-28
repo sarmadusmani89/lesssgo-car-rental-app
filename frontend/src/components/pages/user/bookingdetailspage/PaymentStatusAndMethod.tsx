@@ -42,17 +42,19 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
   };
 
   return (
-    <div className="p-8 bg-white shadow-xl shadow-gray-100 rounded-[2rem] border border-gray-100">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-black font-outfit uppercase tracking-tight text-gray-900">Payment & Settlement</h2>
+    <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+      <div className="flex justify-between items-center mb-8 pb-6 border-b border-slate-50">
+        <div>
+          <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase">Payment & Settlement</h2>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Transaction Status & Method</p>
+        </div>
         <div className="flex gap-2">
           {isAdmin && paymentStatus !== 'PAID' && booking.status !== 'CANCELLED' && (
             <Button
               variant="accent"
-              size="sm"
               onClick={handleMarkAsPaid}
               isLoading={loading}
-              className="bg-green-600 hover:bg-green-700 text-[10px] font-black uppercase tracking-widest gap-2 h-auto py-2"
+              className="bg-emerald-600 hover:bg-emerald-700 text-[10px] font-black uppercase tracking-widest gap-2 h-auto py-2.5 px-4 rounded-xl border-none shadow-lg shadow-emerald-100"
             >
               <Banknote size={14} />
               Payment Received
@@ -61,59 +63,52 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Payment Logic */}
-        <div className="space-y-4 p-6 bg-gray-50 rounded-3xl border border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm">
-              <CreditCard size={20} />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100/50">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm border border-slate-100">
+              <CreditCard size={24} />
             </div>
             <div>
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5 block">Method</span>
-              <p className="font-bold text-gray-900 text-sm">
-                {booking.paymentMethod === 'ONLINE' ? 'Pay via Stripe' : booking.paymentMethod === 'CARD' ? 'Pay via Card' : 'Cash on Collection'}
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 block">Method</span>
+              <p className="font-black text-slate-900 text-sm tracking-tight uppercase">
+                {booking.paymentMethod === 'ONLINE' ? 'Stripe Secure' : booking.paymentMethod === 'CARD' ? 'Terminal Card' : 'Cash on Pickup'}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="space-y-4 p-6 bg-gray-50 rounded-3xl border border-gray-100">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm ${paymentStatus === 'PAID' ? 'text-green-500' : 'text-yellow-500'}`}>
-              <Sparkles size={20} />
+        <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100/50">
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 ${paymentStatus === 'PAID' ? 'text-emerald-600' : 'text-primary'}`}>
+              <Sparkles size={24} />
             </div>
             <div>
-              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-0.5 block">Payment Status</span>
-              <p className="font-bold text-gray-900 text-sm uppercase tracking-tight">{paymentStatus}</p>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 block">Payment Status</span>
+              <p className={`font-black text-sm uppercase tracking-tight ${paymentStatus === 'PAID' ? 'text-emerald-600' : 'text-primary'}`}>{paymentStatus}</p>
             </div>
           </div>
         </div>
 
-        <div className="space-y-4 p-6 bg-blue-50/50 rounded-3xl border border-blue-100 relative overflow-hidden">
-          <div className="flex items-center gap-3 relative z-10">
-            <div className={`w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm ${bondStatus === 'PAID' ? 'text-blue-600' : bondStatus === 'REFUNDED' ? 'text-green-500' : bondStatus === 'REFUND_PENDING' ? 'text-yellow-500' : 'text-gray-400'}`}>
-              <Receipt size={20} className={bondStatus === 'REFUND_PENDING' ? 'animate-pulse' : ''} />
+        <div className="p-6 bg-primary/[0.02] rounded-2xl border border-primary/10 relative overflow-hidden group">
+          <div className="flex items-center gap-4 relative z-10">
+            <div className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 ${bondStatus === 'PAID' ? 'text-primary' : bondStatus === 'REFUNDED' ? 'text-emerald-600' : bondStatus === 'REFUND_PENDING' ? 'text-amber-500' : 'text-slate-400'}`}>
+              <Receipt size={24} className={bondStatus === 'REFUND_PENDING' ? 'animate-pulse' : ''} />
             </div>
             <div className="flex-1">
-              <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-0.5 block">Security Bond</span>
+              <span className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mb-0.5 block">Security Bond</span>
               <div className="flex items-center justify-between gap-2">
-                <p className="font-bold text-gray-900 text-sm uppercase tracking-tight">{bondStatus}</p>
+                <p className="font-black text-slate-900 text-sm uppercase tracking-tight">{bondStatus}</p>
                 {isAdmin && bondStatus === 'PAID' && (
                   <Button
                     variant="outline"
                     onClick={handleReleaseBond}
                     isLoading={loading}
-                    className="flex items-center gap-1.5 px-3 py-1 bg-white text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100 hover:bg-blue-600 hover:text-white transition-all shadow-sm h-auto min-h-0"
+                    className="px-3 py-1.5 bg-white text-primary text-[9px] font-black uppercase tracking-widest rounded-lg border-primary/20 hover:bg-primary hover:text-white transition-all shadow-sm h-auto min-h-0"
                   >
                     {!loading && <RefreshCw size={10} />}
-                    {booking.paymentMethod === 'ONLINE' ? 'Refund Bond' : 'Mark Bond Refunded'}
+                    {booking.paymentMethod === 'ONLINE' ? 'Refund' : 'Complete'}
                   </Button>
-                )}
-                {isAdmin && bondStatus === 'REFUND_PENDING' && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-yellow-50 text-yellow-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-yellow-100   transition-all shadow-sm">
-                    <RefreshCw size={10} className="animate-spin" />
-                    Refund Pending...
-                  </div>
                 )}
               </div>
             </div>
