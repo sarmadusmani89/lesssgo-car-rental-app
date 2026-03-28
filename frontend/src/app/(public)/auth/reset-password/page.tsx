@@ -9,6 +9,7 @@ import { Lock, Loader2, AlertCircle, Sparkles, CheckCircle } from 'lucide-react'
 import AuthSuccess from '@/components/pages/auth/AuthSuccess';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
+import { Button } from '@/components/ui/Button';
 import { toast } from 'sonner';
 
 type ResetFormInputs = {
@@ -132,9 +133,15 @@ function ResetPasswordContent() {
                     error={errors.confirmPassword?.message}
                 />
 
-                <button type="submit" className="btn btn-accent btn-lg w-full mt-8" disabled={loading}>
-                    {loading ? <Loader2 className="animate-spin" /> : 'Reset Password'}
-                </button>
+                <Button
+                    type="submit"
+                    variant="accent"
+                    size="lg"
+                    className="w-full mt-8"
+                    isLoading={loading}
+                >
+                    Reset Password
+                </Button>
             </form>
 
             <p className="mt-8 text-center text-sm text-muted-foreground">

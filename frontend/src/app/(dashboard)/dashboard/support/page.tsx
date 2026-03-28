@@ -16,6 +16,7 @@ import {
     FileText,
     MapPin
 } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 export default function SupportPage() {
     const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -34,7 +35,6 @@ export default function SupportPage() {
     }, []);
 
     const faqs = [
-        // ... (existing faqs)
         {
             q: "How do I cancel my booking?",
             a: "You can cancel your booking directly from the 'My Bookings' section. Cancellations made more than 48 hours before the pickup time are eligible for a full refund."
@@ -120,13 +120,14 @@ export default function SupportPage() {
                     <div className="space-y-4">
                         {faqs.map((faq, index) => (
                             <div key={index} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
-                                <button
+                                <Button
+                                    variant="ghost"
                                     onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50/50 transition"
+                                    className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50/50 transition h-auto rounded-none"
                                 >
                                     <span className="font-bold text-gray-900">{faq.q}</span>
                                     <ChevronDown size={20} className={`text-gray-400 transition-transform ${openFaq === index ? 'rotate-180' : ''}`} />
-                                </button>
+                                </Button>
                                 {openFaq === index && (
                                     <div className="px-6 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-50 pt-4">
                                         {faq.a}

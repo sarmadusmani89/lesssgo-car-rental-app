@@ -5,6 +5,7 @@ import { User, UserRole } from '../../../../types/user';
 import { StatusBadge } from '../../../ui/StatusBadge';
 import { Mail, MoreHorizontal, Edit, Trash2, Shield, User as UserIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '../../../ui/Button';
 
 interface UserTableProps {
     users: User[];
@@ -79,21 +80,25 @@ const UserTable: React.FC<UserTableProps> = ({ users, currentUserId, onEdit, onD
                                         <div className="relative flex items-center justify-end h-10">
                                             {/* Action Buttons - Shown on Hover */}
                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-200">
-                                                <button
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
                                                     onClick={() => onEdit(user)}
-                                                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                    className="text-slate-400 hover:text-accent hover:bg-accent/5 rounded-xl"
                                                     title="Edit User"
                                                 >
                                                     <Edit size={18} />
-                                                </button>
+                                                </Button>
                                                 {user.id !== currentUserId && (
-                                                    <button
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
                                                         onClick={() => onDelete(user.id)}
-                                                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
+                                                        className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl"
                                                         title="Delete User"
                                                     >
                                                         <Trash2 size={18} />
-                                                    </button>
+                                                    </Button>
                                                 )}
                                             </div>
 

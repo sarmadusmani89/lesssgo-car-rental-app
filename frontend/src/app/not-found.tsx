@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowLeft, Home, Search, Car } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 export default function NotFound() {
     return (
@@ -31,20 +32,24 @@ export default function NotFound() {
 
                 {/* Actions */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                    <Link
+                    <Button
                         href="/"
-                        className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all transform hover:-translate-y-1 shadow-lg hover:shadow-blue-200"
+                        variant="primary"
+                        size="lg"
+                        className="flex items-center justify-center gap-2 px-6 py-3 shadow-lg hover:shadow-blue-200 h-auto"
                     >
                         <Home size={18} />
                         Return Home
-                    </Link>
-                    <button
+                    </Button>
+                    <Button
                         onClick={() => window.history.back()}
-                        className="flex items-center justify-center gap-2 px-6 py-3 bg-white border-2 border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-all"
+                        variant="outline"
+                        size="lg"
+                        className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 h-auto"
                     >
                         <ArrowLeft size={18} />
                         Go Back
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Helpful Links */}

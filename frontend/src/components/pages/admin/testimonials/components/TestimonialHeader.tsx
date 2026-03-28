@@ -1,6 +1,7 @@
 'use client';
 
 import { Plus } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 interface TestimonialHeaderProps {
     onAddClick: () => void;
@@ -13,13 +14,14 @@ export default function TestimonialHeader({ onAddClick }: TestimonialHeaderProps
                 <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Testimonials</h1>
                 <p className="text-gray-500">Manage client reviews and testimonials displayed on the homepage.</p>
             </div>
-            <button
+            <Button
                 onClick={onAddClick}
-                className="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+                variant="primary"
+                className="flex items-center justify-center gap-2 px-6 py-3 shadow-lg h-auto"
             >
                 <Plus size={20} />
                 <span>New Testimonial</span>
-            </button>
+            </Button>
         </div>
     );
 }

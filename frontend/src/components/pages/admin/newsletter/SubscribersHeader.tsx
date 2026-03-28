@@ -1,4 +1,5 @@
 import { Download, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 interface SubscribersHeaderProps {
     onExport: () => void;
@@ -19,20 +20,23 @@ export default function SubscribersHeader({ onExport, onRefresh, isRefreshing }:
             </div>
 
             <div className="flex items-center gap-3">
-                <button
+                <Button
                     onClick={onRefresh}
-                    disabled={isRefreshing}
-                    className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all shadow-sm disabled:opacity-50 group"
+                    variant="outline"
+                    size="icon"
+                    isLoading={isRefreshing}
+                    className="bg-white border-slate-200 text-slate-600 hover:text-accent shadow-sm group h-auto w-auto p-2.5"
                 >
-                    <RefreshCw size={20} className={isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'} />
-                </button>
-                <button
+                    {!isRefreshing && <RefreshCw size={20} className="group-hover:rotate-180 transition-transform duration-500" />}
+                </Button>
+                <Button
                     onClick={onExport}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
+                    variant="primary"
+                    className="flex items-center gap-2 px-6 py-2.5 shadow-lg h-auto"
                 >
                     <Download size={20} />
                     Export
-                </button>
+                </Button>
             </div>
         </div>
     );

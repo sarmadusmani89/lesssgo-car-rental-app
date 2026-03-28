@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import { Loader2, Save } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 interface SecuritySettingsFormProps {
     onSaved: () => void;
@@ -61,14 +62,14 @@ export default function SecuritySettingsForm({ onSaved, initialData }: SecurityS
             </div>
 
             <div className="pt-4 flex justify-end">
-                <button
+                <Button
                     type="submit"
-                    disabled={loading}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                    isLoading={loading}
+                    className="px-6 py-2"
                 >
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    {!loading && <Save className="w-4 h-4 mr-2" />}
                     Save Changes
-                </button>
+                </Button>
             </div>
         </form>
     );

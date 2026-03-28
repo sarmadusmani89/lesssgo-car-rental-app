@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import api from '@/lib/api';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/Button';
 
 function ThankYouContent() {
     const searchParams = useSearchParams();
@@ -71,12 +72,14 @@ function ThankYouContent() {
                 </div>
                 <h1 className="text-2xl font-black font-outfit uppercase tracking-tight text-gray-900 mb-4">Something went wrong</h1>
                 <p className="text-gray-500 text-sm mb-8 leading-relaxed font-medium">{error}</p>
-                <button
-                    onClick={() => window.location.href = '/dashboard/bookings'}
-                    className="w-full py-5 bg-gray-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-600 transition-all shadow-xl"
+                <Button
+                    href="/dashboard/bookings"
+                    variant="primary"
+                    size="lg"
+                    className="w-full text-[10px] tracking-widest font-black uppercase py-5"
                 >
                     Review My Bookings
-                </button>
+                </Button>
             </div>
         </div>
     );
@@ -182,18 +185,21 @@ function ThankYouContent() {
                                     </div>
                                 </div>
                                 <div className="flex gap-4 w-full md:w-auto">
-                                    <button
-                                        onClick={() => window.location.href = '/dashboard/bookings'}
-                                        className="flex-1 md:flex-none px-8 py-5 bg-gray-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-gray-200"
+                                    <Button
+                                        href="/dashboard/bookings"
+                                        variant="primary"
+                                        className="flex-1 md:flex-none px-8 py-5 text-[10px] tracking-widest font-black uppercase shadow-xl h-auto"
                                     >
                                         Manage Bookings
-                                    </button>
-                                    <button
-                                        onClick={() => window.location.href = '/'}
-                                        className="p-5 bg-white text-gray-900 rounded-2xl font-black border border-gray-100 hover:bg-gray-50 transition-all shadow-xl shadow-gray-50"
+                                    </Button>
+                                    <Button
+                                        href="/"
+                                        variant="outline"
+                                        size="icon"
+                                        className="p-5 border border-gray-100 shadow-xl shadow-gray-50 h-auto w-auto"
                                     >
                                         <Home size={20} />
-                                    </button>
+                                    </Button>
                                 </div>
                             </div>
                         </div>

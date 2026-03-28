@@ -3,6 +3,7 @@
 import { Testimonial } from '@/types/testimonial';
 import { Edit2, Trash2, Star } from 'lucide-react';
 import TestimonialAuthorInfo from './TestimonialAuthorInfo';
+import { Button } from '@/components/ui/Button';
 
 interface TestimonialTableRowProps {
     testimonial: Testimonial;
@@ -39,20 +40,24 @@ export default function TestimonialTableRow({
             </td>
             <td className="px-6 py-4 text-right">
                 <div className="flex items-center justify-end gap-2">
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => onEdit(testimonial)}
-                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="text-gray-400 hover:text-accent hover:bg-accent/5 rounded-lg h-auto w-auto p-2"
                         title="Edit"
                     >
                         <Edit2 size={18} />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => onDelete(testimonial.id)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg h-auto w-auto p-2"
                         title="Delete"
                     >
                         <Trash2 size={18} />
-                    </button>
+                    </Button>
                 </div>
             </td>
         </tr>

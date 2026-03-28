@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import { Loader2, Save, Upload, X } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import Image from 'next/image';
 import { formatPNGPhone, mapToPNGPrefix } from '@/lib/utils';
 import { useTheme } from '@/components/common/Providers/ThemeProvider';
@@ -210,13 +211,14 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                         { id: 'theme-premium-green', name: 'Premium Green', primary: '#047857', secondary: '#1f2937' },
                         { id: 'theme-premium-orange', name: 'Premium Orange', primary: '#ea580c', secondary: '#374151' },
                     ].map((theme) => (
-                        <button
+                        <Button
                             key={theme.id}
                             type="button"
+                            variant={formData.theme === theme.id ? 'accent' : 'outline'}
                             onClick={() => setFormData({ ...formData, theme: theme.id })}
-                            className={`relative flex flex-col p-3 border-2 rounded-xl transition-all ${formData.theme === theme.id
+                            className={`relative flex flex-col p-3 border-2 h-auto text-left items-start ${formData.theme === theme.id
                                 ? 'border-blue-600 bg-blue-50/50 ring-2 ring-blue-100'
-                                : 'border-gray-100 hover:border-gray-200 bg-white'
+                                : 'border-gray-100'
                                 }`}
                         >
                             <div className="flex gap-1.5 mb-2">
@@ -236,7 +238,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                             {formData.theme === theme.id && (
                                 <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-600" />
                             )}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>
@@ -258,13 +260,15 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                             <Upload className="w-6 h-6 text-gray-400" />
                         )}
                         {favicon && (
-                            <button
+                            <Button
                                 type="button"
+                                variant="ghost"
+                                size="icon"
                                 onClick={removeFavicon}
-                                className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl-lg hover:bg-red-600 transition-colors"
+                                className="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-none rounded-bl-lg hover:bg-red-600 h-5 w-5"
                             >
                                 <X size={12} />
-                            </button>
+                            </Button>
                         )}
                     </div>
                     <div>
@@ -275,27 +279,28 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                             accept="image/*"
                             className="hidden"
                         />
-                        <button
+                        <Button
                             type="button"
+                            variant="outline"
                             onClick={() => fileInputRef.current?.click()}
-                            className="text-sm bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2"
+                            className="text-sm bg-gray-100 text-gray-700 px-4 py-2 hover:bg-gray-200 h-auto"
                         >
-                            <Upload className="w-4 h-4" />
+                            <Upload className="w-4 h-4 mr-2" />
                             {faviconPreview ? 'Change Favicon' : 'Upload Favicon'}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>
 
             <div className="pt-4 flex justify-end sticky bottom-0 bg-white">
-                <button
+                <Button
                     type="submit"
-                    disabled={loading}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                    isLoading={loading}
+                    className="px-6 py-2"
                 >
-                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    {!loading && <Save className="w-4 h-4 mr-2" />}
                     Save Changes
-                </button>
+                </Button>
             </div>
         </form>
     );

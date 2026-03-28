@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { Booking, BookingStatus } from '../../../../types/booking';
 import { StatusBadge } from '../../../ui/StatusBadge';
@@ -16,6 +14,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../../../lib/utils';
+import { Button } from '../../../ui/Button';
 
 interface BookingTableProps {
   bookings: Booking[];
@@ -100,38 +99,45 @@ const BookingTable: React.FC<BookingTableProps> = ({ bookings, onStatusUpdate, o
                     <div className="flex items-center justify-end gap-1">
                       {booking.status === 'PENDING' && (
                         <>
-                          <button
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => onStatusUpdate(booking.id, BookingStatus.CONFIRMED)}
-                            className="p-2 text-emerald-500 hover:bg-emerald-50 rounded-lg transition-all"
+                            className="text-emerald-500 hover:bg-emerald-50 h-auto w-auto p-2"
                             title="Confirm Booking"
                           >
                             <CheckCircle size={18} />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             onClick={() => onStatusUpdate(booking.id, BookingStatus.CANCELLED)}
-                            className="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                            className="text-rose-500 hover:bg-rose-50 h-auto w-auto p-2"
                             title="Cancel Booking"
                           >
                             <XCircle size={18} />
-                          </button>
+                          </Button>
                         </>
                       )}
                       {(booking.status === 'PENDING' || booking.status === 'CONFIRMED') && booking.paymentStatus !== 'PAID' && (
-                        <button
+                        <Button
+                          variant="primary"
+                          size="sm"
                           onClick={() => onConfirmPayment(booking.id)}
-                          className="px-3 py-1.5 bg-slate-900 text-white hover:bg-slate-800 hover:shadow-lg rounded-lg transition-all text-xs font-bold border border-slate-900"
-                          title="Confirm Payment Received"
+                          className="h-auto py-1.5 px-3 uppercase text-[10px] font-black tracking-widest"
                         >
                           Payment Received
-                        </button>
+                        </Button>
                       )}
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => onViewDetails(booking)}
-                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                        className="text-slate-400 hover:text-accent hover:bg-accent/5 h-auto w-auto p-2"
                         title="View Details"
                       >
                         <ExternalLink size={18} />
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </motion.tr>

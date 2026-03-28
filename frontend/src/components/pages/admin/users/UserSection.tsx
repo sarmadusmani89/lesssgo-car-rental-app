@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { Filter, RefreshCw } from 'lucide-react';
+import { Button } from '../../../ui/Button';
 import { useUsers } from '../../../../hooks/useUsers';
 import UserTable from './UserTable';
 import UserFormModal from './UserFormModal';
@@ -127,13 +128,15 @@ export default function UserSection() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button
+                    <Button
+                        variant="outline"
+                        size="icon"
                         onClick={handleRefresh}
-                        disabled={isRefreshing}
-                        className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-all shadow-sm disabled:opacity-50 group"
+                        isLoading={isRefreshing}
+                        className="bg-white border-slate-200 text-slate-600 hover:text-accent shadow-sm group"
                     >
-                        <RefreshCw size={20} className={isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'} />
-                    </button>
+                        {!isRefreshing && <RefreshCw size={20} className="group-hover:rotate-180 transition-transform duration-500" />}
+                    </Button>
                 </div>
             </div>
 
@@ -171,12 +174,13 @@ export default function UserSection() {
                     <p className="text-slate-500 mt-2 max-w-xs">
                         We couldn't find any users matching your current search or filter criteria.
                     </p>
-                    <button
+                    <Button
+                        variant="link"
                         onClick={() => { setSearch(''); setRoleFilter('ALL'); }}
-                        className="mt-6 text-blue-600 font-bold hover:underline"
+                        className="mt-6 font-bold"
                     >
                         Clear all filters
-                    </button>
+                    </Button>
                 </div>
             )}
 
