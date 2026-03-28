@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Heart, Fuel, Gauge, Snowflake, Users, ArrowRight } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 import { useSelector, useDispatch } from 'react-redux';
+import { Button } from './Button';
 import { RootState } from '@/lib/store';
 import { toggleWishlist } from '@/lib/store/slices/wishlistSlice';
 
@@ -56,13 +57,15 @@ export default function CarCard({
                 <div className={`absolute top-4 left-4 py-[0.4rem] px-[0.8rem] rounded-md text-[10px] font-black uppercase tracking-wider text-accent-foreground z-[5] ${isAvailable ? 'bg-accent' : 'bg-muted-foreground'}`}>
                     {badgeText}
                 </div>
-                <button
-                    className={`absolute top-4 right-4 w-[38px] h-[38px] bg-card rounded-full flex items-center justify-center shadow-sm transition-all duration-300 z-[5] hover:bg-accent hover:text-accent-foreground hover:scale-110 ${isWishlisted ? 'text-red-500' : 'text-muted-foreground'}`}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`absolute top-4 right-4 bg-card rounded-full shadow-sm hover:scale-110 z-[5] ${isWishlisted ? 'text-red-500' : 'text-muted-foreground'}`}
                     onClick={handleToggleWishlist}
                     aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
                 >
                     <Heart size={20} fill={isWishlisted ? "#ef4444" : "none"} color={isWishlisted ? "#ef4444" : "currentColor"} />
-                </button>
+                </Button>
                 <div className="relative w-full h-full min-h-[200px]">
                     <Image
                         src={image || '/images/cars/placeholder.jpg'}
@@ -119,9 +122,9 @@ export default function CarCard({
                             <span className="text-[14px] font-bold text-accent mt-2">{formatPrice(monthlyPrice, currency, rates)} / month</span>
                         )}
                     </div>
-                    <div className="bg-primary text-primary-foreground px-6 py-[14px] rounded-[10px] font-extrabold text-[14px] flex items-center gap-2 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_10px_25px_rgba(0,0,0,0.2)]">
+                    <Button variant="primary" size="md" className="rounded-[10px] group-hover:shadow-[0_10px_25px_rgba(0,0,0,0.2)]">
                         Details <ArrowRight size={18} />
-                    </div>
+                    </Button>
                 </div>
 
                 {freeCancellation && (

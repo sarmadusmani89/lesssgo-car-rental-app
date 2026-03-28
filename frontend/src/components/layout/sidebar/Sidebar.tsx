@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LogOut, X } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 interface SidebarLink {
     name: string;
@@ -52,12 +53,14 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
 
             <aside className={`fixed top-0 left-0 h-screen w-64 bg-card/95 backdrop-blur-xl border-r border-border/50 flex flex-col justify-between shadow-2xl md:shadow-sm z-[60] transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${className}`}>
                 {/* Mobile Close Button */}
-                <button
+                <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={onClose}
-                    className="absolute top-5 right-5 p-2 rounded-xl bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground md:hidden transition-all duration-200"
+                    className="absolute top-5 right-5 md:hidden"
                 >
                     <X size={20} />
-                </button>
+                </Button>
                 {/* Top section */}
                 <div>
                     <div className="p-6">
@@ -92,16 +95,17 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
 
                 {/* Logout */}
                 <div className="px-4 py-4 border-t border-border/50">
-                    <button
+                    <Button
+                        variant="ghost"
                         onClick={handleLogout}
-                        className="group flex items-center gap-3 w-full px-4 py-3 rounded-xl text-muted-foreground hover:bg-muted hover:text-red-500 transition-all duration-200"
+                        className="w-full justify-start text-muted-foreground hover:text-red-500 hover:bg-red-50"
                     >
                         <LogOut
                             size={20}
-                            className="text-muted-foreground/50 group-hover:text-red-500 transition-colors"
+                            className="mr-3 transition-colors"
                         />
                         <span className="text-[14px] tracking-wide">Logout</span>
-                    </button>
+                    </Button>
                 </div>
             </aside>
         </>

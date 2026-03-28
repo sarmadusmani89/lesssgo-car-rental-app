@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from '@/components/ui/Button';
 import { Plus, Minus } from 'lucide-react';
 import { FAQItem } from '@/data/faqs';
 
@@ -36,9 +37,10 @@ export default function FAQ({ items, allowMultiple = false }: FAQProps) {
                                 : 'border-border hover:border-border/50'
                             }`}
                     >
-                        <button
+                        <Button
+                            variant="ghost"
                             onClick={() => toggleIndex(index)}
-                            className="w-full px-6 py-5 flex items-center justify-between text-left"
+                            className="w-full px-6 py-5 flex items-center justify-between text-left rounded-none h-auto"
                         >
                             <span
                                 className={`text-lg font-semibold transition-colors duration-300 ${isOpen ? 'text-primary' : 'text-[#020617] hover:text-primary'
@@ -54,7 +56,7 @@ export default function FAQ({ items, allowMultiple = false }: FAQProps) {
                             >
                                 {isOpen ? <Minus size={18} /> : <Plus size={18} />}
                             </div>
-                        </button>
+                        </Button>
                         <div
                             className="overflow-hidden transition-all duration-300 ease-in-out"
                             style={{

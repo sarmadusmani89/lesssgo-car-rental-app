@@ -1,9 +1,9 @@
 "use client";
 
-import Link from 'next/link';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import CarCard from '@/components/ui/CarCard';
 import { useFeaturedCars } from '@/hooks/useFeaturedCars';
+import { Button } from '@/components/ui/Button';
 
 export default function FeaturedCars() {
     const { cars, loading } = useFeaturedCars(6);
@@ -56,9 +56,9 @@ export default function FeaturedCars() {
                 )}
 
                 <div className="text-center mt-20">
-                    <Link href="/cars" className="inline-flex items-center gap-2 px-8 py-4 border-2 border-primary text-primary rounded-xl font-bold transition-all hover:bg-primary hover:text-primary-foreground">
+                    <Button href="/cars" variant="outline" size="lg" className="hover:-translate-y-1">
                         View All Cars <ArrowRight size={20} />
-                    </Link>
+                    </Button>
                 </div>
             </div>
         </section>

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronDown, Search, Loader2, MapPin } from 'lucide-react';
 import api from '@/lib/api';
+import { Button } from '@/components/ui/Button';
 import { PREDEFINED_LOCATIONS } from '@/constants/locations';
 import { VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS } from '@/constants/car';
 
@@ -174,18 +175,16 @@ export default function HeroFilter() {
                     </div>
                 </div>
 
-                <button
+                <Button
                     onClick={handleSearch}
-                    className="mt-3 bg-accent text-white flex items-center justify-center gap-2 p-[14px] rounded-xl font-extrabold uppercase tracking-wider text-[13px] transition-all duration-300 shadow-glow hover:translate-y-[-2px] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={isLoading}
+                    variant="accent"
+                    size="lg"
+                    className="mt-3 w-full uppercase tracking-wider text-[13px]"
+                    isLoading={isLoading}
                 >
-                    {isLoading ? (
-                        <Loader2 size={20} className="animate-spin" />
-                    ) : (
-                        <Search size={20} />
-                    )}
-                    <span>{isLoading ? 'Searching...' : 'Search Fleet'}</span>
-                </button>
+                    {!isLoading && <Search size={20} />}
+                    {isLoading ? 'Searching...' : 'Search Fleet'}
+                </Button>
             </div>
         </div>
     );

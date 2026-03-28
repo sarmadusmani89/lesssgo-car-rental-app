@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 export default function CTA() {
     return (
@@ -24,9 +24,9 @@ export default function CTA() {
                     </div>
 
                     <div className="flex gap-4 shrink-0">
-                        <Link href="/contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-xl font-bold transition-all hover:-translate-y-1 hover:shadow-glow hover:shadow-primary/20">
+                        <Button href="/contact" size="lg" className="hover:-translate-y-1">
                             Contact Us <ArrowRight size={20} />
-                        </Link>
+                        </Button>
                     </div>
                 </div>
             </div>
