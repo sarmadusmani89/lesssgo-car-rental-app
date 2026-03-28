@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import { PrismaService } from '../lib/prisma.service';
 import { generateVerificationEmail } from '../lib/emailTemplates/verificationEmail';
 import { generatePasswordResetEmail } from '../lib/emailTemplates/passwordReset';
 
@@ -7,7 +8,7 @@ import { generatePasswordResetEmail } from '../lib/emailTemplates/passwordReset'
 export class EmailService {
   private transporter: nodemailer.Transporter;
 
-  constructor() {
+  constructor(private prisma: PrismaService) {
     const port = Number(process.env.SMTP_PORT) || 587;
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
@@ -30,8 +31,10 @@ export class EmailService {
   }
 
   async sendVerificationEmail(email: string, token: string) {
+    const settings = await this.prisma.systemSettings.findFirst();
+    const theme = settings?.theme || 'theme-corporate-blue';
     const verificationLink = `${process.env.FRONTEND_URL}/auth/login?verifyToken=${token}`;
-    const htmlContent = generateVerificationEmail(verificationLink);
+    const htmlContent = generateVerificationEmail(verificationLink, theme);
 
     try {
       const from = process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`;
@@ -48,8 +51,10 @@ export class EmailService {
   }
 
   async sendPasswordResetEmail(email: string, token: string) {
+    const settings = await this.prisma.systemSettings.findFirst();
+    const theme = settings?.theme || 'theme-corporate-blue';
     const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}`;
-    const htmlContent = generatePasswordResetEmail(resetLink);
+    const htmlContent = generatePasswordResetEmail(resetLink, theme);
 
     try {
       const from = process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`;

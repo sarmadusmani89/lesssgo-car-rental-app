@@ -1,5 +1,32 @@
-export const generateBaseTemplate = (title: string, content: string) => {
+export const generateBaseTemplate = (title: string, content: string, theme: string = 'theme-corporate-blue') => {
   const currentYear = new Date().getFullYear();
+
+  // Theme Color Mapping for Email (Must use hex codes)
+  const colors = {
+    'theme-corporate-blue': {
+      primary: '#1e3a8a',
+      secondary: '#dbeafe',
+      accent: '#3b82f6',
+      textMuted: '#94a3b8'
+    },
+    'theme-premium-green': {
+      primary: '#047857',
+      secondary: '#1f2937',
+      accent: '#10b981',
+      textMuted: '#94a3b8'
+    },
+    'theme-premium-orange': {
+      primary: '#ea580c',
+      secondary: '#374151',
+      accent: '#fb923c',
+      textMuted: '#94a3b8'
+    }
+  }[theme] || {
+    primary: '#1e3a8a',
+    secondary: '#dbeafe',
+    accent: '#3b82f6',
+    textMuted: '#94a3b8'
+  };
 
   return `
 <!DOCTYPE html>
@@ -17,18 +44,18 @@ export const generateBaseTemplate = (title: string, content: string) => {
         <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);">
           <!-- Header -->
           <tr>
-            <td style="background: #0f172a; padding: 40px 30px; text-align: center;">
+            <td style="background: ${colors.primary}; padding: 40px 30px; text-align: center;">
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 800; tracking: -0.025em; font-style: italic;">
-                LES<span style="color: #3b82f6;">SS</span>GO
+                LES<span style="color: ${colors.accent};">SS</span>GO
               </h1>
-              <p style="margin: 8px 0 0; color: #94a3b8; font-size: 14px; font-weight: 500;">Premium Vehicle Rentals</p>
+              <p style="margin: 8px 0 0; color: ${colors.textMuted}; font-size: 14px; font-weight: 500;">Premium Vehicle Rentals</p>
             </td>
           </tr>
           
           <!-- Content Title -->
           <tr>
             <td style="padding: 40px 40px 0; text-align: center;">
-              <h2 style="margin: 0; color: #0f172a; font-size: 24px; font-weight: 700; tracking: -0.01em;">${title}</h2>
+              <h2 style="margin: 0; color: ${colors.primary}; font-size: 24px; font-weight: 700; tracking: -0.01em;">${title}</h2>
             </td>
           </tr>
 
@@ -41,13 +68,13 @@ export const generateBaseTemplate = (title: string, content: string) => {
           
           <!-- Footer -->
           <tr>
-            <td style="background-color: #f1f5f9; padding: 30px 40px; text-align: center;">
+            <td style="background-color: #f8fafc; padding: 30px 40px; text-align: center; border-top: 1px solid rgba(0,0,0,0.05);">
               <p style="margin: 0 0 12px; font-size: 14px; color: #64748b; font-weight: 600;">
                 &copy; ${currentYear} LesssGo. All rights reserved.
               </p>
               <div style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
                 <p style="margin: 0;">Port Moresby, Papua New Guinea</p>
-                <p style="margin: 4px 0 0;">Need help? <a href="mailto:support@lesssgo.com" style="color: #3b82f6; text-decoration: none; font-weight: 700;">support@lesssgo.com</a></p>
+                <p style="margin: 4px 0 0;">Need help? <a href="mailto:support@lesssgo.com" style="color: ${colors.accent}; text-decoration: none; font-weight: 700;">support@lesssgo.com</a></p>
               </div>
             </td>
           </tr>

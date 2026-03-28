@@ -19,6 +19,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
         contactPhone: '',
         contactWhatsApp: '',
         contactAddress: '',
+        theme: 'theme-corporate-blue',
     });
     const [favicon, setFavicon] = useState<File | null>(null);
     const [faviconPreview, setFaviconPreview] = useState<string>('');
@@ -39,6 +40,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                 contactPhone: formatPNGPhone(displayPhone(initialData.contactPhone)),
                 contactWhatsApp: formatPNGPhone(displayPhone(initialData.contactWhatsApp)),
                 contactAddress: initialData.contactAddress || '',
+                theme: initialData.theme || 'theme-corporate-blue',
             });
             if (initialData.faviconUrl) {
                 setFaviconPreview(initialData.faviconUrl);
@@ -86,6 +88,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
             data.append('contactPhone', mapToPNGPrefix(formData.contactPhone));
             data.append('contactWhatsApp', mapToPNGPrefix(formData.contactWhatsApp));
             data.append('contactAddress', formData.contactAddress);
+            data.append('theme', formData.theme);
             if (favicon) {
                 data.append('favicon', favicon);
             }
@@ -192,6 +195,47 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                     className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px]"
                     placeholder="Physical location..."
                 />
+            </div>
+
+            <div className="space-y-3">
+                <label className="block text-sm font-medium text-gray-700">
+                    System Theme
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {[
+                        { id: 'theme-corporate-blue', name: 'Corporate Blue', primary: '#1e3a8a', secondary: '#dbeafe' },
+                        { id: 'theme-premium-green', name: 'Premium Green', primary: '#047857', secondary: '#1f2937' },
+                        { id: 'theme-premium-orange', name: 'Premium Orange', primary: '#ea580c', secondary: '#374151' },
+                    ].map((theme) => (
+                        <button
+                            key={theme.id}
+                            type="button"
+                            onClick={() => setFormData({ ...formData, theme: theme.id })}
+                            className={`relative flex flex-col p-3 border-2 rounded-xl transition-all ${formData.theme === theme.id
+                                ? 'border-blue-600 bg-blue-50/50 ring-2 ring-blue-100'
+                                : 'border-gray-100 hover:border-gray-200 bg-white'
+                                }`}
+                        >
+                            <div className="flex gap-1.5 mb-2">
+                                <div
+                                    className="w-6 h-6 rounded-full border border-black/5"
+                                    style={{ backgroundColor: theme.primary }}
+                                />
+                                <div
+                                    className="w-6 h-6 rounded-full border border-black/5"
+                                    style={{ backgroundColor: theme.secondary }}
+                                />
+                            </div>
+                            <span className={`text-xs font-semibold ${formData.theme === theme.id ? 'text-blue-700' : 'text-gray-600'
+                                }`}>
+                                {theme.name}
+                            </span>
+                            {formData.theme === theme.id && (
+                                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-600" />
+                            )}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             <div>

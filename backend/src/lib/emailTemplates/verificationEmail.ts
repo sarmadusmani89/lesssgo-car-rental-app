@@ -1,6 +1,12 @@
 import { generateBaseTemplate } from './baseTemplate';
 
-export const generateVerificationEmail = (verificationLink: string) => {
+export const generateVerificationEmail = (verificationLink: string, theme: string = 'theme-corporate-blue') => {
+  const colors = {
+    'theme-corporate-blue': { primary: '#1e3a8a' },
+    'theme-premium-green': { primary: '#047857' },
+    'theme-premium-orange': { primary: '#ea580c' }
+  }[theme] || { primary: '#1e3a8a' };
+
   const content = `
     <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #334155;">
       Thank you for signing up with <strong>LesssGo</strong>! We're excited to have you on board.
@@ -12,7 +18,7 @@ export const generateVerificationEmail = (verificationLink: string) => {
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td align="center" style="padding: 10px 0 30px;">
-          <a href=${verificationLink} style="display: inline-block; padding: 16px 40px; background: #0f172a; color: #ffffff; text-decoration: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);">
+          <a href=${verificationLink} style="display: inline-block; padding: 16px 40px; background: ${colors.primary}; color: #ffffff; text-decoration: none; border-radius: 12px; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.3);">
             Verify Email Address
           </a>
         </td>
@@ -23,7 +29,7 @@ export const generateVerificationEmail = (verificationLink: string) => {
       <p style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">
         Or copy this link:
       </p>
-      <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #3b82f6; word-break: break-all; font-family: monospace;">
+      <p style="margin: 0; font-size: 13px; line-height: 1.5; color: ${colors.primary}; word-break: break-all; font-family: monospace;">
         ${verificationLink}
       </p>
     </div>
@@ -33,5 +39,5 @@ export const generateVerificationEmail = (verificationLink: string) => {
     </p>
   `;
 
-  return generateBaseTemplate('Verify Your Email', content);
+  return generateBaseTemplate('Verify Your Email', content, theme);
 };

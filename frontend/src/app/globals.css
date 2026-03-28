@@ -45,6 +45,37 @@
   --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.15);
 }
 
+/* Theme Presets */
+.theme-corporate-blue {
+  --primary: #1e3a8a;
+  --primary-foreground: #f8fafc;
+  --secondary: #dbeafe;
+  --secondary-foreground: #1e3a8a;
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
+  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.theme-premium-green {
+  --primary: #047857;
+  --primary-foreground: #ffffff;
+  --secondary: #1f2937;
+  --secondary-foreground: #f9fafb;
+  --accent: #10b981;
+  --accent-foreground: #ffffff;
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+.theme-premium-orange {
+  --primary: #ea580c;
+  --primary-foreground: #ffffff;
+  --secondary: #374151;
+  --secondary-foreground: #f9fafb;
+  --accent: #fb923c;
+  --accent-foreground: #ffffff;
+  --shadow-glow: 0 0 20px rgba(249, 115, 22, 0.2);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -58,6 +89,19 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  /* Smooth theme transitions */
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+/* Smooth transitions for interactive elements using theme variables */
+button, 
+a, 
+input, 
+select, 
+textarea, 
+div,
+section {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 h1,
@@ -110,7 +154,7 @@ button {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

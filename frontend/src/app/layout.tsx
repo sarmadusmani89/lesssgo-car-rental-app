@@ -21,7 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
         icon: settings.faviconUrl || '/favicon.ico',
         shortcut: settings.faviconUrl || '/favicon.ico',
         apple: settings.faviconUrl || '/favicon.ico',
-      }
+      },
+      theme: settings.theme || 'theme-corporate-blue'
     };
   } catch (error) {
     return {
@@ -29,19 +30,23 @@ export async function generateMetadata(): Promise<Metadata> {
       description: "Rent the best cars with Lesssgo. Simple, fast, and professional.",
       icons: {
         icon: '/favicon.ico',
-      }
-    };
+      },
+      theme: 'theme-corporate-blue'
+    } as any;
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const metadata: any = await generateMetadata();
+  const theme = metadata.theme || 'theme-corporate-blue';
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={`${inter.className} ${theme}`} suppressHydrationWarning>
         <Providers>
           <MaintenanceGuard>
             {children}
