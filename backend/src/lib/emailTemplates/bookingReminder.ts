@@ -1,4 +1,4 @@
-import { generateBaseTemplate } from './baseTemplate';
+import { generateBaseTemplate, EmailConfig } from './baseTemplate';
 
 export function bookingReminderTemplate(data: {
   userName: string;
@@ -7,13 +7,13 @@ export function bookingReminderTemplate(data: {
   startDate: string;
   pickupLocation: string;
   bookingId: string;
-}) {
+}, config: EmailConfig) {
   const content = `
     <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #334155;">
       Hi ${data.userName},
     </p>
     <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #334155;">
-      This is a friendly reminder that your booking with <strong>LesssGo</strong> is scheduled for tomorrow!
+      This is a friendly reminder that your booking with <strong>${config.siteName}</strong> is scheduled for tomorrow!
     </p>
     
     <div style="background-color: #f8fafc; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
@@ -52,5 +52,5 @@ export function bookingReminderTemplate(data: {
     </p>
   `;
 
-  return generateBaseTemplate('Booking Reminder', content);
+  return generateBaseTemplate('Booking Reminder', content, config);
 }

@@ -1,4 +1,4 @@
-import { generateBaseTemplate } from './baseTemplate';
+import { generateBaseTemplate, EmailConfig } from './baseTemplate';
 
 export function adminBookingNotificationTemplate(data: {
   customerName: string;
@@ -22,7 +22,7 @@ export function adminBookingNotificationTemplate(data: {
   customTitle?: string;
   customDescription?: string;
   isPaid?: boolean;
-}) {
+}, config: EmailConfig) {
   const isPaid = data.isPaid ?? (data.paymentStatus.toLowerCase().includes('paid') || data.paymentStatus.toLowerCase().includes('verified') || data.paymentStatus.toLowerCase().includes('online') || data.paymentStatus.toLowerCase().includes('stripe'));
   const totalLabel = isPaid ? 'Total Received' : 'Total to be Received';
   const totalColor = isPaid ? '#10b981' : '#3b82f6';
@@ -123,5 +123,5 @@ export function adminBookingNotificationTemplate(data: {
     </div>
   `;
 
-  return generateBaseTemplate(data.customTitle || 'New Booking Alert', content);
+  return generateBaseTemplate(data.customTitle || 'New Booking Alert', content, config);
 }
