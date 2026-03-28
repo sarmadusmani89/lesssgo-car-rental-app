@@ -77,7 +77,9 @@ export default function PaymentsPage() {
                                             </div>
                                             <div>
                                                 <div className="text-sm font-bold text-slate-900 tracking-tight">#TRX-{payment.id.slice(-8).toUpperCase()}</div>
-                                                <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{payment.paymentMethod || 'Stripe'}</div>
+                                                <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+                                                    {payment.paymentMethod === 'ONLINE' ? 'Pay Online (Stripe)' : payment.paymentMethod === 'CARD' ? 'Card on Collection' : 'Cash on Collection'}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>

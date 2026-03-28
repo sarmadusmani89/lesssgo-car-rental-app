@@ -26,10 +26,10 @@ export default function ConfirmBookingButton({
   const grandTotal = (total || 0) + bondAmount;
 
   const label = paymentMethod === 'ONLINE'
-    ? `Pay via Stripe (${formatPrice(grandTotal, currency, rates)})`
+    ? `Pay Online (Stripe) — ${formatPrice(grandTotal, currency, rates)}`
     : paymentMethod === 'CARD'
-      ? `Pay via Card (${formatPrice(grandTotal, currency, rates)})`
-      : 'Confirm Reservation';
+      ? `Pay via Card on Collection`
+      : `Confirm Reservation (Cash on Collection)`;
 
   return (
     <Button

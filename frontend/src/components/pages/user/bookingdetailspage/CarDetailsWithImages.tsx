@@ -11,9 +11,9 @@ export default function CarDetailsWithImages({ car }: { car: any }) {
 
   return (
     <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden flex flex-col">
-      <div className="mb-4">
-        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Selected Vehicle</label>
-        <h2 className="text-xl font-bold text-slate-900 tracking-tight leading-tight">{car.brand} {car.name}</h2>
+      <div className="mb-6">
+        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Asset Detail</label>
+        <h2 className="text-xl font-extrabold text-slate-900 tracking-tight leading-tight">{car.brand} {car.name}</h2>
       </div>
 
       <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 mb-4">

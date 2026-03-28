@@ -31,7 +31,7 @@ export default function Topbar({ user, title, onMenuClick }: TopbarProps) {
     };
 
     return (
-        <header className="h-20 w-full sticky top-0 z-10 bg-white border-b border-gray-200/50 flex items-center justify-between px-4 md:px-8 shadow-sm overflow-hidden">
+        <header className="h-20 w-full sticky top-0 z-10 bg-white border-b border-gray-200/50 flex items-center justify-between px-4 md:px-8 shadow-sm overflow-hidden z-50">
             {/* Left */}
             <div className="flex items-center gap-4 min-w-0">
                 <button

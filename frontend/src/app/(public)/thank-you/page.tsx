@@ -165,7 +165,7 @@ function ThankYouContent() {
                                     <div>
                                         <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Settlement Method</span>
                                         <p className="text-xl font-black text-gray-900 font-outfit uppercase tracking-tight">
-                                            {payment === 'CASH' ? 'Pay on Collection' : payment === 'ONLINE' ? 'Pay via Stripe' : 'Pay via Card'}
+                                            {payment === 'ONLINE' ? 'Pay Online (Stripe)' : payment === 'CARD' ? 'Card on Collection' : 'Cash on Collection'}
                                         </p>
                                     </div>
                                 </div>

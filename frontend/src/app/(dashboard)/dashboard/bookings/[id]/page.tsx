@@ -34,21 +34,28 @@ export default function BookingDetailsPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in duration-500">
-        <Loader2 className="animate-spin text-primary mb-4" size={40} />
-        <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest">Loading booking details...</p>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] animate-in fade-in duration-500">
+        <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 border border-slate-100/50">
+          <Loader2 className="animate-spin text-primary" size={28} />
+        </div>
+        <p className="text-slate-400 font-bold uppercase text-[10px] tracking-widest">Fetching Reservation</p>
       </div>
     );
   }
 
   if (!booking) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4">
-          <Loader2 size={40} />
+      <div className="flex flex-col items-center justify-center min-h-[50vh] text-center animate-in zoom-in-95 duration-500">
+        <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-200 mb-6 border border-slate-100/50">
+          <Loader2 size={32} />
         </div>
-        <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase">Booking not found</h2>
-        <Button href="/dashboard/bookings" variant="secondary" className="mt-4">
+        <h2 className="text-xl font-bold text-slate-900 tracking-tight uppercase">Booking not found</h2>
+        <p className="text-slate-500 mt-2 font-medium text-sm">The reservation identifier provided is invalid or has been removed.</p>
+        <Button 
+          href="/dashboard/bookings" 
+          variant="secondary" 
+          className="mt-8 px-8 py-2.5 h-auto rounded-xl text-[11px] font-bold uppercase tracking-widest bg-slate-100 text-slate-900 hover:bg-slate-200"
+        >
           Back to Bookings
         </Button>
       </div>
@@ -76,8 +83,8 @@ export default function BookingDetailsPage() {
   const isCancellable = booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED' && isFreeCancellation && isTimeValid;
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Booking <span className="text-primary">Details</span></h1>
           <p className="text-slate-500 mt-1 font-medium">Manage your vehicle reservation <span className="text-slate-900 font-bold">#{booking.id.toString().slice(-8).toUpperCase()}</span>.</p>
@@ -87,8 +94,8 @@ export default function BookingDetailsPage() {
           <Button
             onClick={handleCancel}
             disabled={!isCancellable}
-            variant="danger"
-            className={`px-6 py-3 rounded-2xl text-sm ${!isCancellable ? 'opacity-40 grayscale pointer-events-none' : ''}`}
+            variant="outline"
+            className={`px-6 py-2.5 h-auto text-[11px] font-bold uppercase tracking-widest rounded-xl border-slate-100 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-100 ${!isCancellable ? 'opacity-30 grayscale pointer-events-none' : ''}`}
           >
             {!isFreeCancellation
               ? 'Non-Cancellable'
@@ -99,7 +106,7 @@ export default function BookingDetailsPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8 space-y-6">
           <CompleteBookingInformation booking={booking} />
           <PaymentStatusAndMethod booking={booking} />

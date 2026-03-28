@@ -101,7 +101,7 @@ export default function AdminBookingDetailsPage() {
                     </Link>
                     <div>
                         <h1 className="text-2xl font-black text-slate-900 tracking-tight   uppercase">
-                            Booking <span className="text-blue-600">Details</span>
+                            Booking <span className="text-primary">Details</span>
                         </h1>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
                             Manage individual reservation records
@@ -185,6 +185,6 @@ export default function AdminBookingDetailsPage() {
                 onUpdate={handleEditUpdate}
                 booking={booking}
             />
-        </div>
+        </div >
     );
 }

@@ -21,9 +21,12 @@ export default function CompleteBookingInformation({ booking }: { booking: any }
 
   return (
     <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-50">
-        <h2 className="text-lg font-bold text-slate-900 tracking-tight uppercase">Booking Information</h2>
-        <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${getStatusStyle(booking.status)}`}>
+      <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-50">
+        <div>
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Reference Data</label>
+          <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Booking Info</h2>
+        </div>
+        <div className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${getStatusStyle(booking.status)}`}>
           {booking.status}
         </div>
       </div>

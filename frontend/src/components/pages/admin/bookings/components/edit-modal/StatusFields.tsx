@@ -38,6 +38,18 @@ export default function StatusFields({ formData, onChange }: Props) {
                         className="w-full"
                     />
                 </div>
+                <div className="space-y-1.5">
+                    <label className="text-sm font-bold text-slate-700 uppercase tracking-tight  ">Payment Method</label>
+                    <CustomSelect
+                        options={[
+                            { label: 'Pay Online (Stripe)', value: 'ONLINE' },
+                            { label: 'Cash on Collection', value: 'CASH' }
+                        ]}
+                        value={formData.paymentMethod || ''}
+                        onChange={(val) => onChange('paymentMethod', val)}
+                        className="w-full"
+                    />
+                </div>
             </div>
         </div>
     );

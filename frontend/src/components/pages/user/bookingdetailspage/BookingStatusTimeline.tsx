@@ -56,9 +56,9 @@ export default function BookingStatusTimeline({ booking }: { booking: any }) {
 
   return (
     <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden">
-      <div className="mb-6">
-        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Activity Log</label>
-        <h2 className="text-lg font-bold text-slate-900 tracking-tight uppercase">Timeline</h2>
+      <div className="mb-8 pb-4 border-b border-slate-50">
+        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Rental Progress</label>
+        <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Timeline</h2>
       </div>
 
       <div className="space-y-6 relative">
