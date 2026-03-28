@@ -2,14 +2,10 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { toast } from 'sonner'; // Changed from react-hot-toast to sonner
-import api from '@/lib/api'; // New import for API utility
-import styles from './Footer.module.css';
-import { Instagram, Twitter, Facebook, Linkedin, Mail, MapPin, Phone, ArrowRight, Car } from 'lucide-react'; // Updated lucide-react imports
+import api from '@/lib/api';
+import { Instagram, Twitter, Facebook, Linkedin, Mail, MapPin, Phone, ArrowRight, Car } from 'lucide-react';
 
 export default function Footer() {
-    const [email, setEmail] = useState('');
-    const [loading, setLoading] = useState(false);
     const [settings, setSettings] = useState<any>(null);
 
     useEffect(() => {
@@ -24,89 +20,88 @@ export default function Footer() {
         fetchSettings();
     }, []);
 
-    const handleSubscribe = async (e: React.FormEvent) => {
-        // ... (existing handleSubscribe logic)
-        e.preventDefault();
-        setLoading(true);
-
-        try {
-            const response = await fetch('/api/subscribe-newsletter', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                toast.success(data.message || 'Subscribed successfully!');
-                setEmail('');
-            } else {
-                toast.error(data.message || 'Failed to subscribe. Please try again.');
-            }
-        } catch (error) {
-            console.error('Subscription error:', error);
-            toast.error('An unexpected error occurred. Please try again later.');
-        } finally {
-            setLoading(false);
-        }
-    };
+    const siteName = settings?.siteName || 'Lesssgo';
 
     return (
-        <footer className={styles.footer}>
-            <div className={`container ${styles.grid}`}>
-                <div className={styles.brand}>
-                    <Link href="/" className={styles.logo}>
-                        <img src="/web-logo-dark.png" alt="Lesssgo Logo" className={styles.logoImage} />
+        <footer className="bg-primary text-white pt-24 mt-0 relative overflow-hidden before:content-[''] before:absolute before:top-0 before:left-0 before:right-0 before:h-[1px] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent">
+            <div className="container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1.5fr] gap-12 lg:gap-24 pb-24">
+                <div className="flex flex-col gap-8">
+                    <Link href="/" className="flex items-center gap-3 text-3xl font-extrabold text-white tracking-tight lowercase">
+                        <img src="/web-logo-dark.png" alt="Lesssgo Logo" className="h-20 w-auto object-contain" />
                     </Link>
-                    <p>Experience the ultimate freedom on the road with {settings?.siteName || 'Lesssgo'}. We provide premium car rental services at competitive prices.</p>
+                    <p className="text-slate-400 text-lg leading-relaxed max-w-[320px]">
+                        Experience the ultimate freedom on the road with {siteName}. We provide premium car rental services at competitive prices.
+                    </p>
+                    <div className="flex gap-4">
+                        {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
+                            <a 
+                                key={i} 
+                                href="#" 
+                                className="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 text-slate-400 border border-white/5 transition-all duration-300 hover:bg-accent hover:text-white hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(var(--accent),0.2)]"
+                            >
+                                <Icon size={20} />
+                            </a>
+                        ))}
+                    </div>
                 </div>
 
-
                 <div>
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><Link href="/cars">Find Cars</Link></li>
-                        <li><Link href="/how-it-works">How it Works</Link></li>
-                        <li><Link href="/about">About Us</Link></li>
-                        <li><Link href="/contact">Contact</Link></li>
+                    <h3 className="text-xl font-bold mb-8 text-white">Quick Links</h3>
+                    <ul className="flex flex-col gap-4">
+                        {['Find Cars', 'How it Works', 'About Us', 'Contact'].map((item) => (
+                            <li key={item}>
+                                <Link 
+                                    href={`/${item.toLowerCase().replace(/ /g, '-')}`}
+                                    className="text-slate-400 text-base transition-all duration-200 hover:text-accent hover:pl-1"
+                                >
+                                    {item}
+                                </Link>
+                            </li>
+                        ))}
                     </ul>
                 </div>
 
                 <div>
-                    <h3>Support</h3>
-                    <ul>
-                        <li><Link href="/faq">FAQs</Link></li>
-                        <li><Link href="/terms">Terms & Conditions</Link></li>
-                        <li><Link href="/privacy">Privacy Policy</Link></li>
+                    <h3 className="text-xl font-bold mb-8 text-white">Support</h3>
+                    <ul className="flex flex-col gap-4">
+                        {['FAQ', 'Terms & Conditions', 'Privacy Policy'].map((item) => (
+                            <li key={item}>
+                                <Link 
+                                    href={`/${item.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                                    className="text-slate-400 text-base transition-all duration-200 hover:text-accent hover:pl-1"
+                                >
+                                    {item}
+                                </Link>
+                            </li>
+                        ))}
                     </ul>
                 </div>
 
                 <div>
-                    <h3>Contact Us</h3>
-                    <ul>
-                        <li style={{ display: 'flex', gap: '8px', color: '#94a3b8', fontSize: '14px', marginBottom: '12px' }}>
-                            <MapPin size={18} />
+                    <h3 className="text-xl font-bold mb-8 text-white">Contact Us</h3>
+                    <ul className="flex flex-col gap-5">
+                        <li className="flex gap-3 text-slate-400 text-sm">
+                            <MapPin size={18} className="text-accent shrink-0" />
                             <span>{settings?.contactAddress || '1234 Sports Car Blvd, Beverly Hills, CA 90210'}</span>
                         </li>
-                        <li style={{ display: 'flex', gap: '8px', color: '#94a3b8', fontSize: '14px', marginBottom: '12px' }}>
-                            <Phone size={18} />
+                        <li className="flex gap-3 text-slate-400 text-sm">
+                            <Phone size={18} className="text-accent shrink-0" />
                             <span>{settings?.contactPhone || '+675 83054576'}</span>
                         </li>
-                        <li style={{ display: 'flex', gap: '8px', color: '#94a3b8', fontSize: '14px' }}>
-                            <Mail size={18} />
+                        <li className="flex gap-3 text-slate-400 text-sm">
+                            <Mail size={18} className="text-accent shrink-0" />
                             <span>{settings?.contactEmail || 'ride@lessssgopng.com'}</span>
                         </li>
                     </ul>
                 </div>
             </div>
-            <div className={styles.bottom}>
+            
+            <div className="py-10 bg-black/20 text-center text-sm text-slate-500 border-t border-white/5">
                 <div className="container">
-                    <p>&copy; {new Date().getFullYear()} {settings?.siteName || 'Lesssgo'}. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} {siteName}. All rights reserved.</p>
                 </div>
             </div>
         </footer>
     );
 }
+
