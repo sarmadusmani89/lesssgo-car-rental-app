@@ -105,13 +105,13 @@ export default function EditBookingModal({
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
+                        className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden"
                     >
                         {/* Header */}
                         <div className="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
                             <div>
-                                <h3 className="text-2xl font-black text-slate-900 tracking-tight   uppercase">
-                                    Edit <span className="text-blue-600">Booking</span>
+                                <h3 className="text-xl font-black text-slate-900 tracking-tight   uppercase">
+                                    Edit Booking
                                 </h3>
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                                     Reference: #{booking?.id.slice(-8).toUpperCase()}
@@ -161,9 +161,10 @@ export default function EditBookingModal({
                             </div>
                         </form>
                     </motion.div>
-                </div>
-            )}
-        </AnimatePresence>,
+                </div >
+            )
+            }
+        </AnimatePresence >,
         document.body
     );
 }
