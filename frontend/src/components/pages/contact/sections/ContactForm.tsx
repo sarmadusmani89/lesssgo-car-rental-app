@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import styles from '@/app/(public)/contact/contact.module.css';
 import ContactFormFields from '../components/ContactFormFields';
 
 interface ContactFormData {
