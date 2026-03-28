@@ -46,15 +46,15 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
         <>
             {/* Overlay for mobile */}
             <div
-                className={`fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[55] md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+                className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[55] md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 onClick={onClose}
             />
 
-            <aside className={`fixed top-0 left-0 h-screen w-64 bg-white/95 backdrop-blur-xl border-r border-gray-200/50 flex flex-col justify-between shadow-2xl md:shadow-sm z-[60] transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${className}`}>
+            <aside className={`fixed top-0 left-0 h-screen w-64 bg-card/95 backdrop-blur-xl border-r border-border/50 flex flex-col justify-between shadow-2xl md:shadow-sm z-[60] transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} ${className}`}>
                 {/* Mobile Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-5 right-5 p-2 rounded-xl bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-600 md:hidden transition-all duration-200"
+                    className="absolute top-5 right-5 p-2 rounded-xl bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground md:hidden transition-all duration-200"
                 >
                     <X size={20} />
                 </button>
@@ -74,16 +74,16 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                                     href={link.href}
                                     onClick={(e) => handleLinkClick(e, link.href)}
                                     className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive 
-                                        ? 'bg-primary text-white shadow-lg shadow-black/10 translate-x-1' 
-                                        : 'text-gray-600 hover:bg-gray-50 hover:text-accent hover:pl-5'
+                                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 translate-x-1' 
+                                        : 'text-muted-foreground hover:bg-muted hover:text-accent hover:pl-5'
                                     }`}
                                 >
                                     <span
-                                        className={`transition-colors ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-accent'}`}
+                                        className={`transition-colors ${isActive ? 'text-primary-foreground' : 'text-muted-foreground/50 group-hover:text-accent'}`}
                                     >
                                         {link.icon}
                                     </span>
-                                    <span className="font-medium">{link.name}</span>
+                                    <span className="font-bold uppercase text-[11px] tracking-widest">{link.name}</span>
                                 </Link>
                             );
                         })}
@@ -91,16 +91,16 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                 </div>
 
                 {/* Logout */}
-                <div className="px-4 py-4">
+                <div className="px-4 py-4 border-t border-border/50">
                     <button
                         onClick={handleLogout}
-                        className="group flex items-center gap-3 w-full px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-red-600 transition-all duration-200"
+                        className="group flex items-center gap-3 w-full px-4 py-3 rounded-xl text-muted-foreground hover:bg-muted hover:text-red-500 transition-all duration-200"
                     >
                         <LogOut
                             size={20}
-                            className="text-gray-400 group-hover:text-red-600"
+                            className="text-muted-foreground/50 group-hover:text-red-500 transition-colors"
                         />
-                        <span className="font-medium">Logout</span>
+                        <span className="font-bold uppercase text-[11px] tracking-widest">Logout</span>
                     </button>
                 </div>
             </aside>
