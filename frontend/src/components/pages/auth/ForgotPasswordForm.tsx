@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Link from 'next/link';
 import { Mail, Loader2, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { authApi } from '@/lib/api';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSuccess from '@/components/pages/auth/AuthSuccess';
@@ -72,9 +73,9 @@ export default function ForgotPasswordForm() {
                     error={errors.email?.message}
                 />
 
-                <button type="submit" className="btn btn-accent btn-lg w-full mt-8" disabled={loading}>
-                    {loading ? <Loader2 className="animate-spin" /> : 'Send Reset Link'}
-                </button>
+                <Button type="submit" variant="accent" size="lg" className="w-full mt-8" isLoading={loading}>
+                    Send Reset Link
+                </Button>
             </form>
 
             <p className="mt-8 text-center text-sm text-muted-foreground">

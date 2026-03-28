@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/Button';
 
 type LoginFormInputs = {
     email: string;
@@ -164,9 +165,9 @@ function LoginContent() {
                     <Link href="/auth/forgot-password" title="Recover your account" className="text-accent font-bold hover:underline">Forgot Password?</Link>
                 </div>
 
-                <button type="submit" className="btn btn-accent btn-lg w-full mt-8" disabled={loading}>
-                    {loading ? <Loader2 className="animate-spin" /> : 'Continue'}
-                </button>
+                <Button type="submit" variant="accent" size="lg" className="w-full mt-8" isLoading={loading}>
+                    Continue
+                </Button>
             </form>
 
             <p className="mt-8 text-center text-sm text-muted-foreground">

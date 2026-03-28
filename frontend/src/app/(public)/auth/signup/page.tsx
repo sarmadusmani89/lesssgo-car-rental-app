@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Mail, Lock, User, Phone, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/Button';
 import AuthSuccess from '@/components/pages/auth/AuthSuccess';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSplitLayout from '@/components/pages/auth/AuthSplitLayout';
@@ -164,9 +165,9 @@ function SignupContent() {
                         />
 
 
-                        <button type="submit" className="btn btn-accent btn-lg w-full mt-8" disabled={loading}>
-                            {loading ? <Loader2 className="animate-spin" /> : 'Create Account'}
-                        </button>
+                        <Button type="submit" variant="accent" size="lg" className="w-full mt-8" isLoading={loading}>
+                            Create Account
+                        </Button>
                     </form>
                 </>
             )}

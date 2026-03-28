@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { CheckCircle } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 interface AuthSuccessProps {
     title: string;
@@ -44,12 +45,14 @@ export default function AuthSuccess({
             )}
 
             <div className="flex flex-col gap-4 w-full mt-6">
-                <Link
+                <Button
                     href={actionHref}
-                    className="btn btn-primary btn-lg w-full flex items-center justify-center gap-2 py-4 shadow-lg hover:scale-[1.02] transition-transform font-black uppercase text-xs tracking-widest"
+                    variant="primary"
+                    size="lg"
+                    className="w-full flex items-center justify-center gap-2 py-4 shadow-lg hover:scale-[1.02] transition-transform font-black uppercase text-xs tracking-widest"
                 >
                     {actionText}
-                </Link>
+                </Button>
 
                 {showAutoRedirect && (
                     <p className="text-[10px] text-slate-400 font-bold flex items-center justify-center gap-2 uppercase tracking-tighter">

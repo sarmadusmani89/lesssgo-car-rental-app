@@ -1,5 +1,6 @@
 import { LucideIcon, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useState, forwardRef } from 'react';
+import { Button } from '@/components/ui/Button';
 
 interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
@@ -50,14 +51,16 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         {...props}
                     />
                     {isPassword && (
-                        <button
+                        <Button
                             type="button"
+                            variant="ghost"
+                            size="icon"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-accent transition-colors z-20"
+                            className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground z-20 h-auto w-auto p-1 hover:bg-transparent"
                             tabIndex={-1}
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
+                        </Button>
                     )}
                 </div>
                 {error && (
