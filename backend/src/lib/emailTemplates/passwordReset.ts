@@ -1,6 +1,7 @@
-import { generateBaseTemplate } from './baseTemplate';
+import { generateBaseTemplate, EmailConfig } from './baseTemplate';
 
-export const generatePasswordResetEmail = (resetLink: string, theme: string = 'theme-corporate-blue') => {
+export const generatePasswordResetEmail = (resetLink: string, config: EmailConfig) => {
+  const theme = config.theme || 'theme-corporate-blue';
   const colors = {
     'theme-corporate-blue': { primary: '#1e3a8a' },
     'theme-premium-green': { primary: '#047857' },
@@ -9,7 +10,7 @@ export const generatePasswordResetEmail = (resetLink: string, theme: string = 't
 
   const content = `
     <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #334155;">
-      We received a request to reset the password for your <strong>LesssGo</strong> account.
+      We received a request to reset the password for your <strong>${config.siteName}</strong> account.
     </p>
     <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #334155;">
       Click the button below to create a new password. This link will expire in <strong>1 hour</strong> for security reasons.
@@ -30,7 +31,7 @@ export const generatePasswordResetEmail = (resetLink: string, theme: string = 't
         <strong>⚠️ Security Notice:</strong> If you didn't request a password reset, please ignore this email or contact our support team immediately.
       </p>
     </div>
-
+ 
     <div style="background-color: #f8fafc; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
       <p style="margin: 0 0 10px; font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">
         Direct Link:
@@ -41,5 +42,5 @@ export const generatePasswordResetEmail = (resetLink: string, theme: string = 't
     </div>
   `;
 
-  return generateBaseTemplate('Reset Your Password', content, theme);
+  return generateBaseTemplate('Reset Your Password', content, config);
 };

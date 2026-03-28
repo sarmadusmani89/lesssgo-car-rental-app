@@ -1,4 +1,4 @@
-import { generateBaseTemplate } from './baseTemplate';
+import { generateBaseTemplate, EmailConfig } from './baseTemplate';
 
 export function bookingConfirmationTemplate(data: {
   customerName: string;
@@ -23,7 +23,7 @@ export function bookingConfirmationTemplate(data: {
   customTitle?: string;
   customDescription?: string;
   paymentStatus?: string;
-}) {
+}, config: EmailConfig) {
   const statusColor = data.isConfirmed ? '#10b981' : '#f59e0b';
   const statusText = data.isConfirmed ? 'Confirmed' : 'Pending Confirmation';
   const grandTotal = data.totalAmount + data.bondAmount;
@@ -146,9 +146,9 @@ export function bookingConfirmationTemplate(data: {
     </p>
     
     <p style="margin: 0; font-size: 15px; color: #475569;">
-      Safe travels,<br>The LesssGo Team
+      Safe travels,<br>The ${config.siteName} Team
     </p>
   `;
 
-  return generateBaseTemplate(data.customTitle || (data.isConfirmed ? 'Booking Confirmed' : 'Booking Received'), content);
+  return generateBaseTemplate(data.customTitle || (data.isConfirmed ? 'Booking Confirmed' : 'Booking Received'), content, config);
 }

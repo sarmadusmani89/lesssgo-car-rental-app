@@ -1,6 +1,7 @@
-import { generateBaseTemplate } from './baseTemplate';
-
-export const generateVerificationEmail = (verificationLink: string, theme: string = 'theme-corporate-blue') => {
+import { generateBaseTemplate, EmailConfig } from './baseTemplate';
+ 
+export const generateVerificationEmail = (verificationLink: string, config: EmailConfig) => {
+  const theme = config.theme || 'theme-corporate-blue';
   const colors = {
     'theme-corporate-blue': { primary: '#1e3a8a' },
     'theme-premium-green': { primary: '#047857' },
@@ -9,7 +10,7 @@ export const generateVerificationEmail = (verificationLink: string, theme: strin
 
   const content = `
     <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #334155;">
-      Thank you for signing up with <strong>LesssGo</strong>! We're excited to have you on board.
+      Thank you for signing up with <strong>${config.siteName}</strong>! We're excited to have you on board.
     </p>
     <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #334155;">
       To complete your registration and start booking premium vehicles, please verify your email address by clicking the button below:
@@ -35,9 +36,9 @@ export const generateVerificationEmail = (verificationLink: string, theme: strin
     </div>
     
     <p style="margin: 30px 0 0; font-size: 13px; line-height: 1.6; color: #94a3b8; border-top: 1px solid #f1f5f9; padding-top: 20px;">
-      If you didn't create an account with LesssGo, you can safely ignore this email.
+      If you didn't create an account with ${config.siteName}, you can safely ignore this email.
     </p>
   `;
 
-  return generateBaseTemplate('Verify Your Email', content, theme);
+  return generateBaseTemplate('Verify Your Email', content, config);
 };

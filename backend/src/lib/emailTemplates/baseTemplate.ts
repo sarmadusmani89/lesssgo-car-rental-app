@@ -1,5 +1,13 @@
-export const generateBaseTemplate = (title: string, content: string, theme: string = 'theme-corporate-blue') => {
+export interface EmailConfig {
+  siteName: string;
+  address: string;
+  contactEmail: string;
+  theme: string;
+}
+
+export const generateBaseTemplate = (title: string, content: string, config: EmailConfig) => {
   const currentYear = new Date().getFullYear();
+  const theme = config.theme || 'theme-corporate-blue';
 
   // Theme Color Mapping for Email (Must use hex codes)
   const colors = {
@@ -46,7 +54,7 @@ export const generateBaseTemplate = (title: string, content: string, theme: stri
           <tr>
             <td style="background: ${colors.primary}; padding: 40px 30px; text-align: center;">
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 800; tracking: -0.025em; font-style: italic;">
-                LES<span style="color: ${colors.accent};">SS</span>GO
+                ${config.siteName.toUpperCase()}
               </h1>
               <p style="margin: 8px 0 0; color: ${colors.textMuted}; font-size: 14px; font-weight: 500;">Premium Vehicle Rentals</p>
             </td>
@@ -70,11 +78,11 @@ export const generateBaseTemplate = (title: string, content: string, theme: stri
           <tr>
             <td style="background-color: #f8fafc; padding: 30px 40px; text-align: center; border-top: 1px solid rgba(0,0,0,0.05);">
               <p style="margin: 0 0 12px; font-size: 14px; color: #64748b; font-weight: 600;">
-                &copy; ${currentYear} LesssGo. All rights reserved.
+                &copy; ${currentYear} ${config.siteName}. All rights reserved.
               </p>
               <div style="margin: 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
-                <p style="margin: 0;">Port Moresby, Papua New Guinea</p>
-                <p style="margin: 4px 0 0;">Need help? <a href="mailto:support@lesssgo.com" style="color: ${colors.accent}; text-decoration: none; font-weight: 700;">support@lesssgo.com</a></p>
+                <p style="margin: 0;">${config.address}</p>
+                <p style="margin: 4px 0 0;">Need help? <a href="mailto:${config.contactEmail}" style="color: ${colors.accent}; text-decoration: none; font-weight: 700;">${config.contactEmail}</a></p>
               </div>
             </td>
           </tr>
@@ -85,7 +93,7 @@ export const generateBaseTemplate = (title: string, content: string, theme: stri
           <tr>
             <td align="center" style="padding: 0 30px;">
               <p style="margin: 0; font-size: 11px; color: #94a3b8; line-height: 1.6; text-align: center;">
-                This email was sent to you because you have an account or active booking with LesssGo. 
+                This email was sent to you because you have an account or active booking with ${config.siteName}. 
                 If you did not expect this email, please ignore it.
               </p>
             </td>
