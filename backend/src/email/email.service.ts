@@ -30,18 +30,27 @@ export class EmailService {
     });
   }
 
-  async sendVerificationEmail(email: string, token: string) {
+  private async getMailConfig(): Promise<any> {
     const settings = await this.prisma.systemSettings.findFirst();
-    const theme = settings?.theme || 'theme-corporate-blue';
+    return {
+      siteName: settings?.siteName || 'Lesssgo Car Rental',
+      address: settings?.contactAddress || 'Port Moresby, Papua New Guinea',
+      contactEmail: settings?.contactEmail || 'support@lesssgo.com',
+      theme: settings?.theme || 'theme-corporate-blue'
+    };
+  }
+
+  async sendVerificationEmail(email: string, token: string) {
+    const config = await this.getMailConfig();
     const verificationLink = `${process.env.FRONTEND_URL}/auth/login?verifyToken=${token}`;
-    const htmlContent = generateVerificationEmail(verificationLink, theme);
+    const htmlContent = generateVerificationEmail(verificationLink, config);
 
     try {
-      const from = process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`;
+      const from = process.env.SMTP_FROM_EMAIL || `"${config.siteName}" <${process.env.SMTP_USER}>`;
       await this.transporter.sendMail({
         from: from,
         to: email,
-        subject: 'Verify your email - LesssGo',
+        subject: `Verify your email - ${config.siteName}`,
         html: htmlContent,
       });
       console.log(`📧 Verification email sent (From: ${from}) to: ${email}`);
@@ -51,17 +60,16 @@ export class EmailService {
   }
 
   async sendPasswordResetEmail(email: string, token: string) {
-    const settings = await this.prisma.systemSettings.findFirst();
-    const theme = settings?.theme || 'theme-corporate-blue';
+    const config = await this.getMailConfig();
     const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${token}`;
-    const htmlContent = generatePasswordResetEmail(resetLink, theme);
+    const htmlContent = generatePasswordResetEmail(resetLink, config);
 
     try {
-      const from = process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`;
+      const from = process.env.SMTP_FROM_EMAIL || `"${config.siteName}" <${process.env.SMTP_USER}>`;
       await this.transporter.sendMail({
         from: from,
         to: email,
-        subject: 'Reset your password - LesssGo',
+        subject: `Reset your password - ${config.siteName}`,
         html: htmlContent,
       });
       console.log(`📧 Password reset email sent (From: ${from}) to: ${email}`);
@@ -71,8 +79,9 @@ export class EmailService {
   }
 
   async sendEmail(to: string, subject: string, html: string) {
+    const config = await this.getMailConfig();
     try {
-      const from = process.env.SMTP_FROM_EMAIL || `"LesssGo" <${process.env.SMTP_USER}>`;
+      const from = process.env.SMTP_FROM_EMAIL || `"${config.siteName}" <${process.env.SMTP_USER}>`;
       await this.transporter.sendMail({
         from: from,
         to,

@@ -1,4 +1,4 @@
-import { generateBaseTemplate } from './baseTemplate';
+import { generateBaseTemplate, EmailConfig } from './baseTemplate';
 
 export function paymentReceiptTemplate(data: {
   customerName: string;
@@ -8,13 +8,13 @@ export function paymentReceiptTemplate(data: {
   paymentMethod: string;
   transactionId?: string;
   date: string;
-}) {
+}, config: EmailConfig) {
   const content = `
     <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #334155;">
       Hi ${data.customerName},
     </p>
     <p style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #334155;">
-      Thank you for your payment. This email serves as your official receipt for your reservation with <strong>LesssGo</strong>.
+      Thank you for your payment. This email serves as your official receipt for your reservation with <strong>${config.siteName}</strong>.
     </p>
     
     <div style="background-color: #f8fafc; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
@@ -53,10 +53,10 @@ export function paymentReceiptTemplate(data: {
         Need a full VAT invoice for your records? 
       </p>
       <p style="margin: 4px 0 0; font-size: 11px; color: #64748b;">
-        Please contact <a href="mailto:billing@lesssgo.com" style="color: #3b82f6; text-decoration: none; font-weight: 700;">billing@lesssgo.com</a> with your Booking reference.
+        Please contact <a href="mailto:${config.contactEmail}" style="color: #3b82f6; text-decoration: none; font-weight: 700;">${config.contactEmail}</a> with your Booking reference.
       </p>
     </div>
   `;
 
-  return generateBaseTemplate('Payment Receipt', content);
+  return generateBaseTemplate('Payment Receipt', content, config);
 }

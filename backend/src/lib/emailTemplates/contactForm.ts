@@ -1,56 +1,51 @@
+import { generateBaseTemplate, EmailConfig } from './baseTemplate';
+
 export const contactFormTemplate = (data: {
     name: string;
     email: string;
     subject: string;
     message: string;
-}) => {
-    return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <style>
-        body { font-family: 'Outfit', sans-serif; line-height: 1.6; color: #334155; margin: 0; padding: 0; background-color: #f1f5f9; }
-        .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .header { background: #0f172a; padding: 32px; text-align: center; }
-        .header h1 { margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; }
-        .content { padding: 40px 32px; }
-        .message-box { background: #f8fafc; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 4px; margin: 24px 0; }
-        .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 600; margin-bottom: 4px; }
-        .value { color: #1e293b; font-size: 16px; font-weight: 500; margin-bottom: 16px; }
-        .footer { background: #f8fafc; padding: 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <div class="header">
-          <h1>New Contact Message</h1>
-        </div>
-        <div class="content">
-          <p style="margin-top: 0;">You have received a new message from the website contact form.</p>
-          
-          <div class="message-box">
-            <div class="label">Sender Name</div>
-            <div class="value">${data.name}</div>
-            
-            <div class="label">Sender Email</div>
-            <div class="value"><a href="mailto:${data.email}" style="color: #3b82f6; text-decoration: none;">${data.email}</a></div>
-            
-            <div class="label">Subject</div>
-            <div class="value">${data.subject}</div>
-            
-            <div class="label">Message</div>
-            <div class="value" style="white-space: pre-wrap; margin-bottom: 0;">${data.message}</div>
-          </div>
-          
-          <p>Please reply directly to this email to respond to the customer.</p>
-        </div>
-        <div class="footer">
-          &copy; ${new Date().getFullYear()} LesssGo Car Rental. All rights reserved.<br>
-          Admin Notification
-        </div>
+}, config: EmailConfig) => {
+    const content = `
+    <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #334155;">
+      You have received a new message from the website contact form.
+    </p>
+    
+    <div style="background-color: #f8fafc; border-radius: 20px; padding: 30px; border: 1px solid #e2e8f0; margin-bottom: 30px;">
+      <h3 style="margin: 0 0 20px; font-size: 14px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.15em; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+        Sender Details
+      </h3>
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
+        <tr>
+          <td style="padding-bottom: 10px;">
+            <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Name</p>
+            <p style="margin: 2px 0 0; font-size: 14px; font-weight: 700; color: #334155;">${data.name}</p>
+          </td>
+        </tr>
+         <tr>
+          <td>
+            <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Email</p>
+            <p style="margin: 2px 0 0; font-size: 14px; font-weight: 700; color: #334155;"><a href="mailto:${data.email}" style="color: #3b82f6; text-decoration: none;">${data.email}</a></p>
+          </td>
+        </tr>
+      </table>
+
+      <h3 style="margin: 0 0 20px; font-size: 14px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.15em; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        Message Content
+      </h3>
+      <div style="padding: 20px; background: #ffffff; border-radius: 12px; border: 1px solid #f1f5f9;">
+        <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Subject</p>
+        <p style="margin: 0 0 16px; font-size: 16px; font-weight: 700; color: #0f172a;">${data.subject}</p>
+        
+        <p style="margin: 0; font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Message</p>
+        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #334155; white-space: pre-wrap;">${data.message}</p>
       </div>
-    </body>
-    </html>
+    </div>
+    
+    <p style="margin: 0; font-size: 15px; color: #475569; text-align: center;">
+      Please reply directly to <a href="mailto:${data.email}" style="color: #3b82f6; font-weight: 700;">${data.email}</a> to respond to the customer.
+    </p>
   `;
+
+    return generateBaseTemplate('New Contact Message', content, config);
 };

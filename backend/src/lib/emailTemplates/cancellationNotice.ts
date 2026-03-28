@@ -1,11 +1,11 @@
-import { generateBaseTemplate } from './baseTemplate';
+import { generateBaseTemplate, EmailConfig } from './baseTemplate';
 
 export function cancellationNoticeTemplate(data: {
   name: string;
   bookingId: string;
   carName: string;
   brand: string;
-}) {
+}, config: EmailConfig) {
   const content = `
     <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.6; color: #334155;">
       Hi ${data.name},
@@ -25,5 +25,5 @@ export function cancellationNoticeTemplate(data: {
     </p>
   `;
 
-  return generateBaseTemplate('Booking Cancelled', content);
+  return generateBaseTemplate('Booking Cancelled', content, config);
 }
