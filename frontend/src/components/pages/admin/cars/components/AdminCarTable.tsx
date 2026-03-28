@@ -58,7 +58,7 @@ export default function AdminCarTable({
                             <td className="px-6 py-4">
                                 <div className="flex flex-wrap gap-2">
                                     <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] font-bold uppercase">{car.type}</span>
-                                    <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[10px] font-bold uppercase">{car.transmission}</span>
+                                    <span className="px-2 py-0.5 bg-secondary text-secondary-foreground rounded text-[10px] font-bold uppercase">{car.transmission}</span>
                                 </div>
                             </td>
                             <td className="px-6 py-4 font-bold text-gray-900">
@@ -67,13 +67,13 @@ export default function AdminCarTable({
                             <td className="px-6 py-4">
                                 <button
                                     onClick={() => onToggleStatus(car.id, car.status)}
-                                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-sm transition ${car.status === 'AVAILABLE' ? 'bg-green-50 border-green-100 text-green-600' :
-                                        car.status === 'RENTED' ? 'bg-blue-50 border-blue-100 text-blue-600' :
+                                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-sm transition ${car.status === 'AVAILABLE' ? 'bg-accent/10 border-accent/20 text-accent' :
+                                        car.status === 'RENTED' ? 'bg-secondary border-border/50 text-secondary-foreground' :
                                             'bg-red-50 border-red-100 text-red-600'
                                         }`}
                                 >
-                                    <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${car.status === 'AVAILABLE' ? 'bg-green-500' :
-                                        car.status === 'RENTED' ? 'bg-blue-500' : 'bg-red-500'
+                                    <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${car.status === 'AVAILABLE' ? 'bg-accent' :
+                                        car.status === 'RENTED' ? 'bg-primary' : 'bg-red-500'
                                         }`} />
                                     {car.status}
                                 </button>

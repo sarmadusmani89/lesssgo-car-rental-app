@@ -23,7 +23,7 @@ export default function ImageUploadSection({
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Primary Identity</h3>
                 <div className="flex items-center gap-6">
                     {imagePreview ? (
-                        <div className="relative w-full h-48 rounded-2xl overflow-hidden border-2 border-blue-500 group shadow-lg">
+                        <div className="relative w-full h-48 rounded-2xl overflow-hidden border-2 border-primary group shadow-lg">
                             <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                             <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer">
                                 <Upload className="text-white" size={24} />
@@ -31,9 +31,9 @@ export default function ImageUploadSection({
                             </label>
                         </div>
                     ) : (
-                        <label className="w-full h-48 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-2 hover:border-blue-500 hover:bg-blue-50 transition cursor-pointer group">
-                            <div className="p-3 bg-gray-50 rounded-full group-hover:bg-blue-100 transition">
-                                <ImageIcon className="text-gray-400 group-hover:text-blue-600" size={24} />
+                        <label className="w-full h-48 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-secondary/50 transition cursor-pointer group">
+                            <div className="p-3 bg-gray-50 rounded-full group-hover:bg-primary/10 transition">
+                                <ImageIcon className="text-gray-400 group-hover:text-primary" size={24} />
                             </div>
                             <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Select Key Image</span>
                             <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
@@ -57,8 +57,8 @@ export default function ImageUploadSection({
                             </button>
                         </div>
                     ))}
-                    <label className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 hover:border-blue-500 hover:bg-blue-50 transition cursor-pointer group">
-                        <Plus size={20} className="text-gray-400 group-hover:text-blue-600" />
+                    <label className="aspect-square rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-1 hover:border-primary hover:bg-secondary/50 transition cursor-pointer group">
+                        <Plus size={20} className="text-gray-400 group-hover:text-primary" />
                         <span className="text-[10px] font-bold text-gray-400 uppercase">Add photo</span>
                         <input type="file" className="hidden" accept="image/*" multiple onChange={handleGalleryChange} />
                     </label>

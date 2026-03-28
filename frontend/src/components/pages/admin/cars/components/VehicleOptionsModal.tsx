@@ -111,7 +111,7 @@ export default function VehicleOptionsModal({ isOpen, onClose }: Props) {
 
                 {loading ? (
                     <div className="flex-1 flex flex-col items-center justify-center min-h-[400px]">
-                        <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
+                        <Loader2 className="animate-spin text-primary mb-4" size={40} />
                         <p className="text-gray-500 font-medium font-outfit">Loading options...</p>
                     </div>
                 ) : (
@@ -131,7 +131,7 @@ export default function VehicleOptionsModal({ isOpen, onClose }: Props) {
                                 <h3 className="text-lg font-bold text-gray-900 capitalize">
                                     {OPTION_TYPES.find(t => t.key === activeTab)?.label} List
                                 </h3>
-                                <div className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full uppercase tracking-widest">
+                                <div className="text-xs font-bold text-primary bg-secondary/50 px-3 py-1.5 rounded-full uppercase tracking-widest">
                                     {settings[activeTab]?.length || 0} Items
                                 </div>
                             </div>

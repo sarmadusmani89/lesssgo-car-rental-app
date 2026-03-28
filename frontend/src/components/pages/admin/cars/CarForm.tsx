@@ -297,7 +297,7 @@ export default function CarForm({ onSuccess, onCancel, editingCar }: Props) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex-[2] bg-blue-600 text-white px-8 py-4 rounded-xl font-bold uppercase tracking-widest hover:bg-blue-700 transition shadow-xl shadow-blue-100 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            className="flex-[2] bg-primary text-primary-foreground px-8 py-4 rounded-xl font-bold uppercase tracking-widest hover:opacity-90 transition shadow-xl shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
           >
             {isSubmitting ? (
               <>

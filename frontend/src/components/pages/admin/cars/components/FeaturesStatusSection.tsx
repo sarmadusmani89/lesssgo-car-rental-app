@@ -31,21 +31,21 @@ export default function FeaturesStatusSection({
                 <button
                     type="button"
                     onClick={() => setValue("freeCancellation", !freeCancellation)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition font-bold text-xs uppercase ${freeCancellation ? 'bg-green-50 border-green-200 text-green-600' : 'bg-white border-gray-200 text-gray-400'}`}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition font-bold text-xs uppercase ${freeCancellation ? 'bg-accent/10 border-accent/20 text-accent' : 'bg-white border-gray-200 text-gray-400'}`}
                 >
                     <Check size={14} /> Free Cancel (48h)
                 </button>
                 <button
                     type="button"
                     onClick={() => setValue("airConditioner", !airConditioner)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition font-bold text-xs uppercase ${airConditioner ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-white border-gray-200 text-gray-400'}`}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition font-bold text-xs uppercase ${airConditioner ? 'bg-accent/10 border-accent/20 text-accent' : 'bg-white border-gray-200 text-gray-400'}`}
                 >
                     <Snowflake size={14} /> Air Conditioning
                 </button>
                 <button
                     type="button"
                     onClick={() => setValue("gps", !gps)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition font-bold text-xs uppercase ${gps ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-gray-200 text-gray-400'}`}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition font-bold text-xs uppercase ${gps ? 'bg-accent/10 border-accent/20 text-accent' : 'bg-white border-gray-200 text-gray-400'}`}
                 >
                     <MapPin size={14} /> GPS Navigation
                 </button>
@@ -57,10 +57,10 @@ export default function FeaturesStatusSection({
                     <button
                         type="button"
                         onClick={() => setIsStatusOpen(!isStatusOpen)}
-                        className={`w-full px-4 py-2.5 rounded-xl border flex items-center justify-between transition ${isStatusOpen ? 'border-blue-500 ring-2 ring-blue-500/10' : 'border-gray-200 bg-white'}`}
+                        className={`w-full px-4 py-2.5 rounded-xl border flex items-center justify-between transition ${isStatusOpen ? 'border-primary ring-2 ring-primary/10' : 'border-gray-200 bg-white'}`}
                     >
                         <div className="flex items-center gap-2">
-                            <span className={`w-2 h-2 rounded-full ${currentStatus === 'AVAILABLE' ? 'bg-green-500' : currentStatus === 'RENTED' ? 'bg-blue-500' : 'bg-red-500'}`} />
+                            <span className={`w-2 h-2 rounded-full ${currentStatus === 'AVAILABLE' ? 'bg-accent' : currentStatus === 'RENTED' ? 'bg-primary' : 'bg-red-500'}`} />
                             <span className="font-bold text-sm text-gray-700 uppercase">
                                 {statusOptions.find(o => o.value === currentStatus)?.label}
                             </span>
@@ -77,7 +77,7 @@ export default function FeaturesStatusSection({
                                         setValue("status", option.value as any);
                                         setIsStatusOpen(false);
                                     }}
-                                    className={`w-full px-3 py-2 rounded-lg flex items-center justify-between transition ${currentStatus === option.value ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50 text-gray-700'}`}
+                                    className={`w-full px-3 py-2 rounded-lg flex items-center justify-between transition ${currentStatus === option.value ? 'bg-secondary text-secondary-foreground' : 'hover:bg-gray-50 text-gray-700'}`}
                                 >
                                     <span className="font-bold text-xs uppercase py-1">{option.label}</span>
                                     {currentStatus === option.value && <Check size={14} />}

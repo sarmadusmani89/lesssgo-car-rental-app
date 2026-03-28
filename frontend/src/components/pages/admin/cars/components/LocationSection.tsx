@@ -18,7 +18,7 @@ export default function LocationSection({ control, errors, locations = PREDEFINE
             <div className="grid grid-cols-1 space-y-4">
                 <div>
                     <label className="flex items-center gap-2 text-xs font-bold text-gray-700 mb-1.5 uppercase">
-                        <MapPin size={14} className="text-blue-500" /> Pickup Locations <span className="text-red-500">*</span>
+                        <MapPin size={14} className="text-accent" /> Pickup Locations <span className="text-red-500">*</span>
                     </label>
                     <Controller
                         name="pickupLocation"

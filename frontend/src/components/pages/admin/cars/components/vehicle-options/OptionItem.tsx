@@ -10,7 +10,7 @@ interface Props {
 export default function OptionItem({ item, onDelete }: Props) {
     return (
         <div
-            className="group h-[52px] flex items-center justify-between px-5 py-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-blue-200 hover:shadow-md transition-all duration-300"
+            className="group h-[52px] flex items-center justify-between px-5 py-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-primary/30 hover:shadow-md transition-all duration-300"
         >
             <span className="font-semibold text-gray-700 text-sm truncate max-w-[80%]">{item}</span>
             <button

@@ -94,7 +94,7 @@ export default function AdminCars() {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px]">
-                <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
+                <Loader2 className="animate-spin text-primary mb-4" size={40} />
                 <p className="text-gray-500 font-medium font-outfit">Loading fleet inventory...</p>
             </div>
         );

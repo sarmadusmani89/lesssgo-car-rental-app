@@ -24,8 +24,8 @@ export default function OptionSidebar({ options, activeTab, onTabChange }: Props
                         key={type.key}
                         onClick={() => onTabChange(type.key)}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === type.key
-                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-100'
-                                : 'text-gray-500 hover:bg-white hover:text-blue-600'
+                                ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                                : 'text-gray-500 hover:bg-white hover:text-primary'
                             }`}
                     >
                         <Icon size={18} />

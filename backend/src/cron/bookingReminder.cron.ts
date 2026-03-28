@@ -32,12 +32,20 @@ export class BookingReminderCron {
       },
     });
 
+    const settings = await this.prisma.systemSettings.findFirst();
+    const config = {
+      siteName: settings?.siteName || 'Lesssgo Car Rental',
+      address: settings?.contactAddress || 'Port Moresby, Papua New Guinea',
+      contactEmail: settings?.contactEmail || 'support@lesssgo.com',
+      theme: settings?.theme || 'theme-corporate-blue'
+    };
+
     for (const booking of bookings) {
       if (!booking.user || !booking.car) continue;
 
       await this.emailService.sendEmail(
         booking.user.email,
-        "Booking Reminder",
+        `Booking Reminder - ${config.siteName}`,
         bookingReminderTemplate({
           userName: booking.user.name ?? "User",
           carName: booking.car.name ?? "Car",
@@ -54,7 +62,7 @@ export class BookingReminderCron {
           }),
           pickupLocation: booking.pickupLocation || 'Not specified',
           bookingId: booking.id
-        })
+        }, config)
       );
     }
   }

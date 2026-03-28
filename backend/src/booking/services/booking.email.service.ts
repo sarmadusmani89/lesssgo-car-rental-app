@@ -31,15 +31,26 @@ export class BookingEmailService {
         };
     }
 
+    private async getMailConfig() {
+        const settings = await this.settingsService.getSettings();
+        return {
+            siteName: settings?.siteName || 'Lesssgo Car Rental',
+            address: settings?.contactAddress || 'Port Moresby, Papua New Guinea',
+            contactEmail: settings?.contactEmail || 'support@lesssgo.com',
+            theme: settings?.theme || 'theme-corporate-blue'
+        };
+    }
+
     async sendBookingReceived(booking: any) {
         try {
+            const config = await this.getMailConfig();
             const { car, startDate, endDate, totalAmount, customerName, customerEmail, paymentMethod } = booking;
             const { start, end } = this.formatDates(startDate, endDate);
 
             const { bookingConfirmationTemplate } = await import('../../lib/emailTemplates/bookingConfirmation');
 
             const isCash = paymentMethod === 'CASH';
-            const emailSubject = isCash ? 'Booking Confirmed - LesssGo' : 'Booking Received - Awaiting Payment - LesssGo';
+            const emailSubject = isCash ? `Booking Confirmed - ${config.siteName}` : `Booking Received - Awaiting Payment - ${config.siteName}`;
 
             const html = bookingConfirmationTemplate({
                 customerName: customerName || 'Valued Customer',
@@ -66,7 +77,7 @@ export class BookingEmailService {
                     ? 'Great news! Your booking is officially confirmed and your vehicle is reserved.'
                     : 'We have received your booking request. Please complete the payment to secure your reservation.',
                 paymentStatus: isCash ? 'To be Paid' : 'Awaiting Payment'
-            });
+            }, config);
 
             await this.emailService.sendEmail(customerEmail, emailSubject, html);
 
@@ -80,6 +91,7 @@ export class BookingEmailService {
 
     async sendAdminNotification(booking: any, title: string) {
         try {
+            const config = await this.getMailConfig();
             const settings = await this.settingsService.getSettings();
             const { car, startDate, endDate, totalAmount, customerName, customerEmail, customerPhone, paymentMethod } = booking;
             const { start, end } = this.formatDates(startDate, endDate);
@@ -108,7 +120,7 @@ export class BookingEmailService {
                 customTitle: title,
                 customDescription: `A new booking has been placed. Payment method: ${paymentMethod}.`,
                 isPaid: false
-            });
+            }, config);
 
             await this.emailService.sendEmail(settings.adminEmail, `Admin Alert: ${title}`, html);
         } catch (err) {
@@ -118,6 +130,7 @@ export class BookingEmailService {
 
     async sendConfirmationEmail(booking: any) {
         try {
+            const config = await this.getMailConfig();
             const { car, startDate, endDate, totalAmount, paymentMethod, customerName, customerEmail } = booking;
             const { start, end } = this.formatDates(startDate, endDate);
 
@@ -146,9 +159,9 @@ export class BookingEmailService {
                 customTitle: 'Booking Confirmed',
                 customDescription: 'Great news! Your booking has been officially confirmed by our team.',
                 paymentStatus: paymentMethod === 'CASH' ? 'To be Paid (Cash on Pickup)' : 'Awaiting Payment'
-            });
+            }, config);
 
-            await this.emailService.sendEmail(customerEmail, 'Booking Confirmed - LesssGo', html);
+            await this.emailService.sendEmail(customerEmail, `Booking Confirmed - ${config.siteName}`, html);
         } catch (err) {
             console.error('Failed to send confirmation email:', err);
         }
@@ -156,6 +169,7 @@ export class BookingEmailService {
 
     async sendStripePaymentConfirmation(booking: any, transactionId: string) {
         try {
+            const config = await this.getMailConfig();
             const { user, car, startDate, endDate, totalAmount, customerName: snapName, customerEmail: snapEmail } = booking;
             const customerName = snapName || user?.name || 'Valued Customer';
             const customerEmail = snapEmail || user?.email;
@@ -189,7 +203,7 @@ export class BookingEmailService {
                 customTitle: 'Booking Confirmed',
                 customDescription: 'Great news! Your online payment was successful and your booking is officially confirmed.',
                 paymentStatus: 'Paid'
-            });
+            }, config);
 
             const receiptHtml = paymentReceiptTemplate({
                 customerName,
@@ -199,7 +213,7 @@ export class BookingEmailService {
                 paymentMethod: 'Stripe Online',
                 transactionId,
                 date: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }),
-            });
+            }, config);
 
             const settings = await this.settingsService.getSettings();
 
@@ -225,11 +239,11 @@ export class BookingEmailService {
                 customTitle: 'Booking Paid - Stripe',
                 customDescription: `Online payment received via Stripe for booking #${booking.id.slice(-8).toUpperCase()}. Booking is now fully confirmed.`,
                 isPaid: true
-            });
+            }, config);
 
             await Promise.all([
-                this.emailService.sendEmail(customerEmail, 'Booking & Payment Confirmed - LesssGo', confirmHtml),
-                this.emailService.sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml),
+                this.emailService.sendEmail(customerEmail, `Booking & Payment Confirmed - ${config.siteName}`, confirmHtml),
+                this.emailService.sendEmail(customerEmail, `Payment Receipt - ${config.siteName}`, receiptHtml),
                 this.emailService.sendEmail(settings.adminEmail, 'Booking Paid: Stripe Payment Received', adminHtml)
             ]);
         } catch (err) {
@@ -239,6 +253,7 @@ export class BookingEmailService {
 
     async sendCancellationEmail(booking: any) {
         try {
+            const config = await this.getMailConfig();
             const { user, car, customerEmail } = booking;
             const { cancellationNoticeTemplate } = await import('../../lib/emailTemplates/cancellationNotice');
 
@@ -247,9 +262,9 @@ export class BookingEmailService {
                 bookingId: booking.id,
                 carName: car.name,
                 brand: car.brand
-            });
+            }, config);
 
-            await this.emailService.sendEmail(customerEmail || user?.email, 'Booking Cancelled - LesssGo', html);
+            await this.emailService.sendEmail(customerEmail || user?.email, `Booking Cancelled - ${config.siteName}`, html);
         } catch (err) {
             console.error('Failed to send cancellation email:', err);
         }
@@ -257,6 +272,7 @@ export class BookingEmailService {
 
     async sendPaymentConfirmation(booking: any) {
         try {
+            const config = await this.getMailConfig();
             const { car, startDate, endDate, totalAmount, paymentMethod, customerName, customerEmail } = booking;
             const { start, end } = this.formatDates(startDate, endDate);
 
@@ -288,7 +304,7 @@ export class BookingEmailService {
                 customTitle: 'Booking & Payment Confirmed',
                 customDescription: 'Your payment has been successfully received and verified by our team.',
                 paymentStatus: descriptiveStatus
-            });
+            }, config);
 
             const receiptHtml = paymentReceiptTemplate({
                 customerName: customerName || 'Valued Customer',
@@ -298,11 +314,11 @@ export class BookingEmailService {
                 paymentMethod: paymentMethod === 'CASH' ? 'Cash/Manual' : paymentMethod === 'ONLINE' ? 'Stripe Payment' : 'Card Payment',
                 transactionId: 'MANUAL-CONFIRM',
                 date: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }),
-            });
+            }, config);
 
             await Promise.all([
-                this.emailService.sendEmail(customerEmail, 'Booking & Payment Confirmed - LesssGo', confirmationHtml),
-                this.emailService.sendEmail(customerEmail, 'Payment Receipt - LesssGo', receiptHtml)
+                this.emailService.sendEmail(customerEmail, `Booking & Payment Confirmed - ${config.siteName}`, confirmationHtml),
+                this.emailService.sendEmail(customerEmail, `Payment Receipt - ${config.siteName}`, receiptHtml)
             ]);
         } catch (err) {
             console.error('Failed to send payment confirmation emails:', err);

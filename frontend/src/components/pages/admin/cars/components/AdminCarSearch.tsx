@@ -15,7 +15,7 @@ export default function AdminCarSearch({ search, onSearchChange }: Props) {
                 <input
                     type="text"
                     placeholder="Search by name or brand..."
-                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition"
+                    className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition"
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
                 />
