@@ -68,7 +68,7 @@ export default function CompleteBookingInformation({ booking }: { booking: any }
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Security Bond</label>
               <p className="text-sm font-bold text-slate-700">K{booking.bondAmount}</p>
               <p className={`text-[9px] font-bold uppercase mt-0.5 ${booking.bondStatus === 'PAID' ? 'text-emerald-600' : 'text-slate-400'}`}>
-                {booking.bondStatus === 'PAID' ? 'Settled' : booking.paymentMethod === 'ONLINE' ? 'Pay Online (Stripe)' : booking.paymentMethod === 'CARD' ? 'Card on Collection' : 'Cash on Collection'}
+                {booking.bondStatus === 'PAID' ? 'Settled' : booking.paymentMethod === 'ONLINE' ? 'Pay Online (Stripe)' : 'Cash on Collection'}
               </p>
             </div>
           </div>

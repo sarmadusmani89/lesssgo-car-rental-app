@@ -27,9 +27,7 @@ export default function ConfirmBookingButton({
 
   const label = paymentMethod === 'ONLINE'
     ? `Pay Online (Stripe) — ${formatPrice(grandTotal, currency, rates)}`
-    : paymentMethod === 'CARD'
-      ? `Pay via Card on Collection`
-      : `Confirm Reservation (Cash on Collection)`;
+    : `Confirm Reservation (Cash on Collection)`;
 
   return (
     <Button
