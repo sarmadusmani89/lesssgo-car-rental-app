@@ -21,7 +21,7 @@ export default function AboutHero() {
     const siteName = settings?.siteName || 'Lesssgo';
 
     return (
-        <section className="pt-24 pb-16 text-center bg-gradient-to-br from-slate-50 [background:linear-gradient(135deg,_#f8fafc_0%,_#e0e7ff_100%)]">
+        <section className="pt-44 pb-32 text-center bg-gradient-to-br from-slate-50 [background:linear-gradient(135deg,_#f8fafc_0%,_#e0e7ff_100%)]">
             <div className="container mx-auto px-4">
                 <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-primary tracking-tight">
                     About {siteName}
