@@ -50,7 +50,7 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
                 {car?.name || 'Selection'}
               </p>
               {car?.vehicleClass && (
-                <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-100 uppercase tracking-widest">
+                <span className="text-[10px] font-black text-primary bg-secondary px-2 py-0.5 rounded-lg border border-primary/20 uppercase tracking-widest">
                   {car.vehicleClass}
                 </span>
               )}
@@ -112,10 +112,10 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block mb-3">Included Extras</span>
           <div className="flex flex-wrap gap-2">
             {car?.airConditioner && (
-              <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100">A/C</span>
+              <span className="px-3 py-1 bg-secondary text-primary text-[9px] font-black uppercase tracking-widest rounded-lg border border-primary/20">A/C</span>
             )}
             {car?.gps && (
-              <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100">GPS</span>
+              <span className="px-3 py-1 bg-secondary text-primary text-[9px] font-black uppercase tracking-widest rounded-lg border border-primary/20">GPS</span>
             )}
             {car?.freeCancellation && (
               <span className="px-3 py-1 bg-green-50 text-green-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-green-100">Free Cancel</span>
@@ -132,7 +132,7 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
       <div className="pt-8 mt-4 border-t border-gray-100 flex justify-between items-end">
         <div>
           <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2 leading-none">Total Investment</p>
-          <p className="text-4xl font-black text-blue-600 font-outfit tracking-tighter">
+          <p className="text-4xl font-black text-primary font-outfit tracking-tighter">
             {formatPrice(grandTotal, currency, rates)}
           </p>
         </div>

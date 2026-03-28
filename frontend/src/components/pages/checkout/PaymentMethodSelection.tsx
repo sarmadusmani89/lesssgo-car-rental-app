@@ -20,7 +20,7 @@ export default function PaymentMethodSelection({
           type="button"
           onClick={() => onChange('ONLINE')}
           className={`flex items-center gap-4 p-6 rounded-3xl border-2 transition-all duration-300 ${selected === 'ONLINE'
-            ? 'border-blue-600 bg-blue-600 shadow-xl shadow-blue-600/20 scale-[1.02] text-white'
+            ? 'border-primary bg-primary shadow-xl shadow-primary/20 scale-[1.02] text-primary-foreground'
             : 'border-gray-50 hover:border-gray-200 bg-gray-50/30'
             }`}
         >
@@ -38,7 +38,7 @@ export default function PaymentMethodSelection({
           type="button"
           onClick={() => onChange('CASH')}
           className={`flex items-center gap-4 p-6 rounded-3xl border-2 transition-all duration-300 ${selected === 'CASH'
-            ? 'border-blue-600 bg-blue-600 shadow-xl shadow-blue-600/20 scale-[1.02] text-white'
+            ? 'border-primary bg-primary shadow-xl shadow-primary/20 scale-[1.02] text-primary-foreground'
             : 'border-gray-50 hover:border-gray-200 bg-gray-50/30'
             }`}
         >

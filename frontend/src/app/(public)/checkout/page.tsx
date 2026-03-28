@@ -182,7 +182,7 @@ function CheckoutContent() {
 
   if (pageLoading) return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 bg-gray-50">
-      <Loader2 className="animate-spin text-blue-600" size={48} />
+      <Loader2 className="animate-spin text-primary" size={48} />
       <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Preparing your experience...</p>
     </div>
   );
@@ -205,7 +205,7 @@ function CheckoutContent() {
                   onChange={setPaymentMethod}
                 />
               </div>
-              <div className="mt-10 bg-white rounded-[2.5rem] p-4 border border-gray-100 shadow-xl shadow-gray-100/50">
+              <div className="mt-10 bg-white rounded-[2.5rem] p-4 border border-gray-100 shadow-xl shadow-primary/10">
                 <TermsAndConditionsCheckbox
                   checked={acceptedTerms}
                   onChange={setAcceptedTerms}
@@ -230,7 +230,7 @@ function CheckoutContent() {
 
           <div className="xl:col-span-4 space-y-8">
             <div className="xl:sticky xl:top-28 space-y-8">
-              <div className="bg-white p-2 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 border border-white overflow-hidden">
+              <div className="bg-white p-2 rounded-[2.5rem] shadow-2xl shadow-primary/10 border border-white overflow-hidden">
                 <BookingSummary
                   car={car}
                   startDate={startDate}
@@ -254,7 +254,7 @@ export default function CheckoutPage() {
     <Suspense fallback={
       <div className="flex h-screen w-full items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-600 mx-auto" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto" />
           <p className="mt-2 text-sm text-gray-500">Loading checkout...</p>
         </div>
       </div>
