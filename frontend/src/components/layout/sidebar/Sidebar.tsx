@@ -73,17 +73,17 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                                     key={link.href}
                                     href={link.href}
                                     onClick={(e) => handleLinkClick(e, link.href)}
-                                    className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive 
-                                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 translate-x-1' 
+                                    className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
+                                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 translate-x-1'
                                         : 'text-muted-foreground hover:bg-muted hover:text-accent hover:pl-5'
-                                    }`}
+                                        }`}
                                 >
                                     <span
                                         className={`transition-colors ${isActive ? 'text-primary-foreground' : 'text-muted-foreground/50 group-hover:text-accent'}`}
                                     >
                                         {link.icon}
                                     </span>
-                                    <span className="font-bold uppercase text-[11px] tracking-widest">{link.name}</span>
+                                    <span className="text-[14px] tracking-wide">{link.name}</span>
                                 </Link>
                             );
                         })}
@@ -100,7 +100,7 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                             size={20}
                             className="text-muted-foreground/50 group-hover:text-red-500 transition-colors"
                         />
-                        <span className="font-bold uppercase text-[11px] tracking-widest">Logout</span>
+                        <span className="text-[14px] tracking-wide">Logout</span>
                     </button>
                 </div>
             </aside>

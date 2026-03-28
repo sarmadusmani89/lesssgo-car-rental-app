@@ -115,7 +115,7 @@ export default function Header() {
     };
 
     return (
-        <header className="flex items-center fixed top-4 lg:top-6 left-1/2 -translate-x-1/2 w-[92%] lg:w-[95%] max-w-[1400px] z-[1000] bg-background/80 backdrop-blur-3xl saturate-[180%] border border-border rounded-[100px] py-3 lg:py-4 px-4 lg:px-8 shadow-sm transition-all duration-400 hover:bg-background/95 hover:shadow-md">
+        <header className="flex items-center fixed top-4 lg:top-6 left-1/2 -translate-x-1/2 w-[92%] lg:w-[95%] max-w-[1400px] z-[1000] bg-white border border-border rounded-[100px] py-3 lg:py-4 px-4 lg:px-8 shadow-sm transition-all duration-400 hover:shadow-md">
             <div className="flex justify-between items-center w-full">
                 <Link href="/" className="flex items-center gap-3 text-xl font-black text-primary tracking-[-1.5px] lowercase">
                     <img src="/web-logo-light.png" alt="Lesssgo Logo" className="h-10 lg:h-12 w-auto object-contain" />

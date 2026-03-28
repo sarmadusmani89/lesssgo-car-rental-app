@@ -34,9 +34,9 @@ export default function Footer() {
                     </p>
                     <div className="flex gap-4">
                         {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
-                            <a 
-                                key={i} 
-                                href="#" 
+                            <a
+                                key={i}
+                                href="#"
                                 className="w-11 h-11 flex items-center justify-center rounded-full bg-white/5 text-primary-foreground/60 border border-white/5 transition-all duration-300 hover:bg-accent hover:text-white hover:-translate-y-1 hover:shadow-lg"
                             >
                                 <Icon size={20} />
@@ -50,7 +50,7 @@ export default function Footer() {
                     <ul className="flex flex-col gap-4">
                         {['Find Cars', 'How it Works', 'About Us', 'Contact'].map((item) => (
                             <li key={item}>
-                                <Link 
+                                <Link
                                     href={`/${item.toLowerCase().replace(/ /g, '-')}`}
                                     className="text-primary-foreground/60 text-base transition-all duration-200 hover:text-accent hover:pl-1 font-medium"
                                 >
@@ -66,7 +66,7 @@ export default function Footer() {
                     <ul className="flex flex-col gap-4">
                         {['FAQ', 'Terms & Conditions', 'Privacy Policy'].map((item) => (
                             <li key={item}>
-                                <Link 
+                                <Link
                                     href={`/${item.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
                                     className="text-primary-foreground/60 text-base transition-all duration-200 hover:text-accent hover:pl-1 font-medium"
                                 >
@@ -95,8 +95,8 @@ export default function Footer() {
                     </ul>
                 </div>
             </div>
-            
-            <div className="py-10 bg-black/20 text-center text-sm text-primary-foreground/40 border-t border-white/5">
+
+            <div className="py-10 bg-black/20 text-center mt-24 text-sm text-primary-foreground/40 border-t border-white/5">
                 <div className="container">
                     <p className="font-medium">&copy; {new Date().getFullYear()} {siteName}. All rights reserved.</p>
                 </div>
