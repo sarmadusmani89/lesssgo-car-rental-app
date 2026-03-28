@@ -12,16 +12,26 @@ export default function AdminLayout({
   const [userName, setUserName] = useState('Admin User');
 
   useEffect(() => {
-    // Fetch user data from localStorage
-    const user = localStorage.getItem('user');
-    if (user) {
-      try {
-        const userData = JSON.parse(user);
-        setUserName(userData.name || 'Admin User');
-      } catch (e) {
-        console.error('Failed to parse user data:', e);
+    const updateUserName = () => {
+      // Fetch user data from localStorage
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          // Check for full name first, then build from parts
+          const name = parsedUser.name || `${parsedUser.firstName || ''} ${parsedUser.lastName || ''}`.trim();
+          setUserName(name || 'Admin User');
+        } catch (e) {
+          console.error('Failed to parse user data:', e);
+        }
       }
-    }
+    };
+
+    updateUserName();
+
+    // Support real-time updates if profile is changed in another tab or in this session
+    window.addEventListener('storage', updateUserName);
+    return () => window.removeEventListener('storage', updateUserName);
   }, []);
 
   return (
@@ -44,3 +54,4 @@ export default function AdminLayout({
     </DashboardLayout>
   );
 }
+
