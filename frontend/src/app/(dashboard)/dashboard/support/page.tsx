@@ -64,8 +64,8 @@ export default function SupportPage() {
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
             <div>
-                <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Support <span className="text-primary">Hub</span></h1>
-                <p className="mt-2 text-slate-500 font-medium">We're here to help you 24/7 with your premium rental experience.</p>
+                <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Support <span className="text-primary">Hub</span></h1>
+                <p className="mt-1 text-slate-500 font-medium">We're here to help you 24/7 with your premium rental experience.</p>
             </div>
 
             {/* Contact Grid */}

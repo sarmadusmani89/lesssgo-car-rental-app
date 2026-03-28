@@ -21,7 +21,7 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                 <label className="block text-[13px] font-extrabold uppercase tracking-widest text-muted-foreground mb-2 flex items-center justify-between">
                     <span>
                         {label}
-                        {required && <span className="text-accent ml-1">*</span>}
+                        {required && <span className="text-red-500 ml-1 font-bold">*</span>}
                     </span>
                     {props.readOnly ? (
                         <span className="text-slate-400 font-normal   lowercase">(read-only)</span>

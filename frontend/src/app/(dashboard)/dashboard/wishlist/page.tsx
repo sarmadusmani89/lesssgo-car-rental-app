@@ -9,49 +9,49 @@ import { Loader2, Heart, Car } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WishlistPage() {
-    const wishlistIds = useSelector((state: RootState) => state.wishlist.items);
-    const [cars, setCars] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+  const wishlistIds = useSelector((state: RootState) => state.wishlist.items);
+  const [cars, setCars] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchWishlistedCars = async () => {
-            if (wishlistIds.length === 0) {
-                setCars([]);
-                setLoading(false);
-                return;
-            }
+  useEffect(() => {
+    const fetchWishlistedCars = async () => {
+      if (wishlistIds.length === 0) {
+        setCars([]);
+        setLoading(false);
+        return;
+      }
 
-            try {
-                // In a real app, you might have a dedicated endpoint for this
-                // For now, fetch all and filter client-side, or multiple requests
-                const { data } = await api.get('/car');
-                const wishlisted = data.filter((car: any) => wishlistIds.includes(car.id));
-                setCars(wishlisted);
-            } catch (error) {
-                console.error("Failed to fetch wishlist cars", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+      try {
+        // In a real app, you might have a dedicated endpoint for this
+        // For now, fetch all and filter client-side, or multiple requests
+        const { data } = await api.get('/car');
+        const wishlisted = data.filter((car: any) => wishlistIds.includes(car.id));
+        setCars(wishlisted);
+      } catch (error) {
+        console.error("Failed to fetch wishlist cars", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchWishlistedCars();
-    }, [wishlistIds]);
+    fetchWishlistedCars();
+  }, [wishlistIds]);
 
-    if (loading) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh]">
-                <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
-                <p className="text-gray-500 font-medium font-outfit">Loading your wishlist...</p>
-            </div>
-        );
-    }
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
+        <p className="text-gray-500 font-medium font-outfit">Loading your wishlist...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-            My Wishlist
+            My <span className="text-primary">Wishlist</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium">Your curated selection of premium vehicles for future journeys.</p>
         </div>

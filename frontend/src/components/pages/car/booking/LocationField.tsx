@@ -11,7 +11,7 @@ export default function LocationField({ label, value, onChange, options }: Locat
     return (
         <div className="flex flex-col gap-2">
             <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-1.5 ml-1">
-                <MapPin size={12} className="text-accent" /> {label}
+                <MapPin size={12} className="text-accent" /> {label} <span className="text-red-500">*</span>
             </label>
             <div className="relative">
                 <select

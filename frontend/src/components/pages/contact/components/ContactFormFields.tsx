@@ -23,7 +23,7 @@ export default function ContactFormFields({ register, errors }: ContactFormField
     return (
         <>
             <div className="flex flex-col gap-2">
-                <label htmlFor="name" className="text-[15px] font-bold text-primary">Full Name <span className="text-accent">*</span></label>
+                <label htmlFor="name" className="text-[15px] font-bold text-primary">Full Name <span className="text-red-500">*</span></label>
                 <input
                     id="name"
                     type="text"
@@ -34,7 +34,7 @@ export default function ContactFormFields({ register, errors }: ContactFormField
             </div>
 
             <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-[15px] font-bold text-primary">Email Address <span className="text-accent">*</span></label>
+                <label htmlFor="email" className="text-[15px] font-bold text-primary">Email Address <span className="text-red-500">*</span></label>
                 <input
                     id="email"
                     type="email"
@@ -51,7 +51,7 @@ export default function ContactFormFields({ register, errors }: ContactFormField
             </div>
 
             <div className="flex flex-col gap-2">
-                <label htmlFor="subject" className="text-[15px] font-bold text-primary">Subject <span className="text-accent">*</span></label>
+                <label htmlFor="subject" className="text-[15px] font-bold text-primary">Subject <span className="text-red-500">*</span></label>
                 <input
                     id="subject"
                     type="text"
@@ -62,7 +62,7 @@ export default function ContactFormFields({ register, errors }: ContactFormField
             </div>
 
             <div className="flex flex-col gap-2">
-                <label htmlFor="message" className="text-[15px] font-bold text-primary">Message <span className="text-accent">*</span></label>
+                <label htmlFor="message" className="text-[15px] font-bold text-primary">Message <span className="text-red-500">*</span></label>
                 <textarea
                     id="message"
                     rows={6}
