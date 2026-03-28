@@ -128,9 +128,6 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
       <div className="pt-6 border-t border-gray-100 flex justify-between items-start">
         <div>
           <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block">Security Bond</span>
-          <span className="text-[9px] font-bold text-slate-400 uppercase mt-1 block">
-            {paymentMethod === 'ONLINE' ? 'Pay Online (Stripe)' : 'Cash on Collection'}
-          </span>
         </div>
         <span className="font-black text-gray-900 uppercase text-xs tracking-widest">{formatPrice(bondAmount, currency, rates)}</span>
       </div>
