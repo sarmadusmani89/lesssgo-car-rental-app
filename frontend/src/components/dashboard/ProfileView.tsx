@@ -10,8 +10,11 @@ export default function ProfileView({ user }: ProfileViewProps) {
 
     return (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-8">My <span className="text-primary  ">Profile</span></h2>
-            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm w-full relative overflow-hidden group">
+            <div>
+                <h2 className="text-3xl font-black text-slate-900 tracking-tight">My <span className="text-primary  ">Profile</span></h2>
+                <p className="text-slate-500 mt-1 font-medium  ">Manage your personal information and account security.</p>
+            </div>
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm w-full relative overflow-hidden group mt-8">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full -mr-32 -mt-32 blur-3xl" />
                 <div className="flex items-center gap-6 mb-10 relative z-10">
                     <div className="w-24 h-24 bg-primary/5 rounded-3xl flex items-center justify-center text-primary shadow-inner">

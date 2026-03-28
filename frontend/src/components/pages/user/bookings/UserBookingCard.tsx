@@ -1,5 +1,5 @@
-import { Calendar, AlertCircle, Eye, Loader2 } from 'lucide-react';
-import Link from 'next/link';
+import { Calendar, AlertCircle, Eye } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { formatDashboardDate } from '@/lib/utils';
 
 interface Booking {
@@ -30,15 +30,15 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
             case 'completed':
             case 'active':
             case 'approved':
-                return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
+                return 'bg-emerald-50 text-emerald-600 border border-emerald-100/50';
             case 'pending':
             case 'upcoming':
-                return 'bg-blue-50 text-blue-600 border border-blue-100';
+                return 'bg-primary/5 text-primary border border-primary/10';
             case 'cancelled':
             case 'rejected':
-                return 'bg-rose-50 text-rose-600 border border-rose-100';
+                return 'bg-rose-50 text-rose-600 border border-rose-100/50';
             default:
-                return 'bg-slate-50 text-slate-600 border border-slate-100';
+                return 'bg-slate-50 text-slate-600 border border-slate-100/50';
         }
     };
 
@@ -81,75 +81,66 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
     }
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 p-6 transition-all hover:shadow-xl hover:shadow-slate-200/50 group">
+        <div className="bg-white rounded-3xl border border-slate-100 p-6 transition-all hover:shadow-xl hover:shadow-slate-200/50 group">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="flex-1 space-y-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                         <div className="flex flex-col">
-                            <span className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                                #{booking.id.toString().slice(-8).toUpperCase()}
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                Booking #{booking.id.toString().slice(-8).toUpperCase()}
                             </span>
-                            <div className="flex flex-col mt-1">
-                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-tight">
-                                    {booking.car?.brand || 'Vehicle'}
-                                </span>
-                                <h3 className="text-xl font-black text-slate-900 tracking-tight font-outfit uppercase leading-tight">
-                                    {booking.car?.name || 'Details'}
-                                </h3>
-                            </div>
+                            <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase mt-1">
+                                {booking.car?.brand} {booking.car?.name}
+                            </h3>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusColor(status)}`}>
+                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusColor(status)} shadow-sm`}>
                             {status}
                         </span>
                     </div>
-
-                    <div className="flex flex-wrap items-center gap-6 text-sm">
-                        <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+ 
+                    <div className="flex flex-wrap items-center gap-6">
+                        <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
                                 <Calendar className="w-4 h-4" />
                             </div>
-                            <span className="font-bold text-slate-600  ">
+                            <span className="text-sm font-bold text-slate-600">
                                 {booking.startDate ? formatDate(booking.startDate) : 'TBD'} — {booking.endDate ? formatDate(booking.endDate) : 'TBD'}
                             </span>
                         </div>
-
+ 
                         {booking.totalAmount && (
                             <div className="flex items-center gap-2">
-                                <span className="text-xl font-black text-slate-900 font-outfit tracking-tighter">
-                                    K{booking.totalAmount}
+                                <span className="text-xl font-black text-slate-900">
+                                    <span className="text-primary text-xs mr-0.5">K</span>{booking.totalAmount}
                                 </span>
                             </div>
                         )}
                     </div>
                 </div>
-
+ 
                 <div className="flex items-center gap-3 w-full md:w-auto">
-                    <Link
+                    <Button
                         href={`/dashboard/bookings/${booking.id}`}
-                        className="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm"
+                        variant="secondary"
+                        className="flex-1 md:flex-none bg-slate-900 text-white hover:bg-slate-800 border-none px-6 py-3 rounded-xl text-sm"
                     >
                         <Eye size={18} />
                         Details
-                    </Link>
-
+                    </Button>
+ 
                     {!isCompleted && !isCancelled && (
                         <div className="flex-1 md:flex-none flex flex-col items-center gap-1">
-                            <button
+                            <Button
                                 onClick={() => onCancel(booking.id)}
-                                disabled={cancellingId === booking.id || !canCancel}
-                                className={`w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 font-bold rounded-xl transition-all shadow-sm ${canCancel
-                                    ? 'bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100'
-                                    : 'bg-slate-50 text-slate-400 border border-slate-100 cursor-not-allowed'
-                                    }`}
+                                isLoading={cancellingId === booking.id}
+                                disabled={!canCancel}
+                                variant="danger"
+                                className={`w-full md:w-auto px-6 py-3 rounded-xl text-sm ${!canCancel ? 'opacity-40 grayscale pointer-events-none' : ''}`}
                                 title={restrictionMessage}
                             >
-                                {cancellingId === booking.id ? (
-                                    <Loader2 className="animate-spin" size={18} />
-                                ) : (
-                                    <AlertCircle size={18} />
-                                )}
+                                {!cancellingId && <AlertCircle size={18} />}
                                 Cancel
-                            </button>
+                            </Button>
                             {restrictionMessage && (
                                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
                                     {restrictionMessage}

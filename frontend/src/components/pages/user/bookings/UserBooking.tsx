@@ -114,28 +114,31 @@ export default function UserBookings() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="flex justify-center items-center py-20 animate-in fade-in duration-500">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">My Bookings</h1>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div>
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">My <span className="text-primary  ">Bookings</span></h1>
+        <p className="text-slate-500 mt-1 font-medium  ">Track and manage your vehicle rental history and upcoming journeys.</p>
+      </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
+      <div className="border-b border-slate-100">
+        <nav className="-mb-px flex space-x-8 overflow-x-auto no-scrollbar" aria-label="Tabs">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`
-                                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                                whitespace-nowrap py-4 px-1 border-b-2 font-bold text-xs uppercase tracking-widest transition-all duration-300
                                 ${activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-slate-400 hover:text-slate-600 hover:border-slate-200'
                 }
                             `}
             >
@@ -148,10 +151,12 @@ export default function UserBookings() {
       {/* Bookings List */}
       <div className="space-y-4">
         {paginatedBookings.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-100">
-            <CalendarX className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <h3 className="text-lg font-medium text-gray-900">No {activeTab.toLowerCase()} bookings</h3>
-            <p className="text-gray-500">You don't have any bookings in this category.</p>
+          <div className="text-center py-20 bg-slate-50/50 rounded-[2.5rem] border border-slate-100/50 animate-in zoom-in-95 duration-500">
+            <div className="w-20 h-20 bg-white rounded-3xl shadow-sm border border-slate-50 flex items-center justify-center mx-auto mb-6">
+              <CalendarX className="w-10 h-10 text-slate-200" />
+            </div>
+            <h3 className="text-xl font-black text-slate-900 tracking-tight mb-2 uppercase">No {activeTab} bookings</h3>
+            <p className="text-slate-500 font-medium  ">You don't have any bookings in this category.</p>
           </div>
         ) : (
           <>
