@@ -83,7 +83,7 @@ function ThankYouContent() {
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 py-20 pb-40">
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 py-40 pb-40">
             <div className="max-w-3xl w-full">
                 {/* Main Success Card */}
                 <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-white">
@@ -111,8 +111,8 @@ function ThankYouContent() {
                                         <Car size={20} />
                                     </div>
                                     <div>
-                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5 block">Vehicle Selection</span>
-                                        <p className="text-sm font-black text-slate-900 uppercase tracking-tight">{carName || 'Vehicle record'}</p>
+                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5 block">Vehicle Details</span>
+                                        <p className="text-sm font-black text-slate-900 uppercase tracking-tight">{carName || 'Vehicle Selected'}</p>
                                     </div>
                                 </div>
 
@@ -121,10 +121,15 @@ function ThankYouContent() {
                                         <Receipt size={20} />
                                     </div>
                                     <div>
-                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5 block">Total Settlement</span>
-                                        <p className="text-lg font-black text-primary tracking-tight">
-                                            {formatPrice(Number(total || 0) + Number(bond || 0), currency as any, rates)}
-                                        </p>
+                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5 block">Total Payment (Rental + Bond)</span>
+                                        <div className="flex flex-col">
+                                            <p className="text-lg font-black text-primary tracking-tight">
+                                                {formatPrice(Number(total || 0) + Number(bond || 0), currency as any, rates)}
+                                            </p>
+                                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider">
+                                                (Rental: {formatPrice(Number(total || 0), currency as any, rates)} + Bond: {formatPrice(Number(bond || 0), currency as any, rates)})
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -154,7 +159,7 @@ function ThankYouContent() {
                                         <CreditCard size={20} />
                                     </div>
                                     <div>
-                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5 block">Methodology</span>
+                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5 block">Payment Method</span>
                                         <p className="text-sm font-black text-slate-900 uppercase tracking-tight">
                                             {payment === 'ONLINE' ? 'Pay Online (Stripe)' : 'Cash on Collection'}
                                         </p>
@@ -171,8 +176,8 @@ function ThankYouContent() {
                                         <ArrowRight size={20} />
                                     </div>
                                     <div>
-                                        <h3 className="font-black text-slate-900 uppercase text-[10px] tracking-widest">Next Action Point?</h3>
-                                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">Refer to electronic correspondence</p>
+                                        <h3 className="font-black text-slate-900 uppercase text-[10px] tracking-widest">Next Steps</h3>
+                                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">Check your email for details</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4 w-full md:w-auto">
@@ -205,7 +210,7 @@ export default function ThankYouPage() {
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center bg-white">
                 <div className="w-16 h-16 bg-slate-50 rounded-[2rem] flex items-center justify-center border border-slate-100 animate-pulse">
-                     <Clock size={24} className="text-primary/40 animate-spin" />
+                    <Clock size={24} className="text-primary/40 animate-spin" />
                 </div>
             </div>
         }>
