@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, AlertTriangle, CheckCircle2, Info, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

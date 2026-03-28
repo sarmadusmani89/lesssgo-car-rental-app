@@ -115,7 +115,7 @@ export default function Header() {
     };
 
     return (
-        <header className="flex items-center fixed top-4 lg:top-6 left-1/2 -translate-x-1/2 w-[92%] lg:w-[95%] max-w-[1400px] z-[1000] bg-white/80 backdrop-blur-3xl saturate-[180%] border border-black/5 rounded-[100px] py-3 lg:py-4 px-4 lg:px-8 shadow-sm transition-all duration-400 hover:bg-white/95 hover:shadow-md">
+        <header className="flex items-center fixed top-4 lg:top-6 left-1/2 -translate-x-1/2 w-[92%] lg:w-[95%] max-w-[1400px] z-[1000] bg-background/80 backdrop-blur-3xl saturate-[180%] border border-border rounded-[100px] py-3 lg:py-4 px-4 lg:px-8 shadow-sm transition-all duration-400 hover:bg-background/95 hover:shadow-md">
             <div className="flex justify-between items-center w-full">
                 <Link href="/" className="flex items-center gap-3 text-xl font-black text-primary tracking-[-1.5px] lowercase">
                     <img src="/web-logo-light.png" alt="Lesssgo Logo" className="h-10 lg:h-12 w-auto object-contain" />
@@ -139,7 +139,7 @@ export default function Header() {
                     <div className="hidden lg:block mr-2">
                         <div className="relative currency-wrapper">
                             <button
-                                className="flex items-center gap-2 bg-white/50 border border-black/5 px-4 py-2 rounded-[12px] text-xs font-extrabold text-primary transition-all hover:bg-white hover:border-accent hover:shadow-sm"
+                                className="flex items-center gap-2 bg-background/50 border border-border px-4 py-2 rounded-[12px] text-xs font-extrabold text-foreground transition-all hover:bg-background hover:border-accent hover:shadow-sm"
                                 onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
                             >
                                 <Globe size={16} className="text-accent" />
@@ -147,11 +147,11 @@ export default function Header() {
                             </button>
 
                             {isCurrencyOpen && (
-                                <div className="absolute top-[calc(100%+8px)] right-0 w-[140px] bg-white border border-black/5 rounded-[16px] shadow-lg overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
+                                <div className="absolute top-[calc(100%+8px)] right-0 w-[140px] bg-card border border-border rounded-[16px] shadow-lg overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
                                     {(['AUD', 'USD', 'PGK'] as const).map((curr) => (
                                         <div
                                             key={curr}
-                                            className={`p-3.5 text-sm font-semibold cursor-pointer transition-all hover:bg-slate-50 hover:text-accent hover:pl-6 ${currency === curr ? 'text-primary bg-slate-100 font-extrabold' : 'text-muted-foreground'}`}
+                                            className={`p-3.5 text-sm font-semibold cursor-pointer transition-all hover:bg-muted hover:text-accent hover:pl-6 ${currency === curr ? 'text-foreground bg-muted font-extrabold' : 'text-muted-foreground'}`}
                                             onClick={() => {
                                                 handleCurrencyChange(curr);
                                                 setIsCurrencyOpen(false);
@@ -186,16 +186,16 @@ export default function Header() {
             </div>
 
             {/* Mobile Menu Drawer */}
-            <div className={`fixed top-0 right-[-100%] w-4/5 max-w-[350px] h-screen bg-white z-[1000] transition-all duration-400 ease-in-out pt-24 px-8 pb-8 shadow-2xl ${isMenuOpen ? 'right-0' : ''}`}>
+            <div className={`fixed top-0 right-[-100%] w-4/5 max-w-[350px] h-screen bg-card z-[1000] transition-all duration-400 ease-in-out pt-24 px-8 pb-8 shadow-2xl ${isMenuOpen ? 'right-0' : ''}`}>
                 <nav className="flex flex-col gap-6">
-                    <div className="p-4 border-b border-gray-100 mb-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 block">Currency</label>
+                    <div className="p-4 border-b border-border mb-2">
+                        <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-3 block">Currency</label>
                         <div className="grid grid-cols-3 gap-2">
                             {(['AUD', 'USD', 'PGK'] as const).map((curr) => (
                                 <button
                                     key={curr}
                                     onClick={() => handleCurrencyChange(curr)}
-                                    className={`py-2 rounded-lg text-xs font-bold border transition-all ${currency === curr ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-gray-50 border-gray-100 text-gray-500'}`}
+                                    className={`py-2 rounded-lg text-xs font-bold border transition-all ${currency === curr ? 'bg-accent/10 border-accent/20 text-accent font-black' : 'bg-muted border-border text-muted-foreground'}`}
                                 >
                                     {curr}
                                 </button>
