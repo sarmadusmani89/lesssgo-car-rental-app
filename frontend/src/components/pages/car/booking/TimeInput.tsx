@@ -1,6 +1,5 @@
 import { Clock } from 'lucide-react';
 import CustomSelect from '@/components/ui/CustomSelect';
-import styles from './TimeInput.module.css';
 
 interface TimeInputProps {
     value: string;
@@ -10,14 +9,15 @@ interface TimeInputProps {
 
 export default function TimeInput({ value, onChange, options }: TimeInputProps) {
     return (
-        <div className={styles.container}>
-            <Clock size={16} className={styles.icon} />
+        <div className="w-full relative">
+            <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-accent z-10 pointer-events-none" />
             <CustomSelect
                 options={options}
                 value={value}
                 onChange={onChange}
-                className="w-full !pl-10 h-full border-none"
+                className="w-full !pl-10 h-full border-none bg-gray-50 rounded-xl"
             />
         </div>
     );
 }
+
