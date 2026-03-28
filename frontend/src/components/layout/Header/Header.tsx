@@ -7,6 +7,7 @@ import { Car, User, Menu, X, LayoutDashboard, Globe } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { setCurrency } from '@/lib/store/slices/uiSlice';
+import { Button } from '@/components/ui/Button';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -167,14 +168,14 @@ export default function Header() {
 
                     <div className="hidden lg:flex gap-2">
                         {user ? (
-                            <Link href={dashboardLink} className="btn btn-primary flex items-center gap-2">
+                            <Button href={dashboardLink} variant="primary" className="flex items-center gap-2">
                                 <LayoutDashboard size={18} />
                                 Dashboard
-                            </Link>
+                            </Button>
                         ) : (
                             <>
-                                <Link href="/auth/login" className="btn btn-outline">Log in</Link>
-                                <Link href="/auth/signup" className="btn btn-primary">Sign up</Link>
+                                <Button href="/auth/login" variant="outline" size="sm">Log in</Button>
+                                <Button href="/auth/signup" variant="primary" size="sm">Sign up</Button>
                             </>
                         )}
                     </div>
@@ -216,14 +217,14 @@ export default function Header() {
 
                     <div className="flex flex-col gap-4 mt-8 pt-8 border-t border-secondary">
                         {user ? (
-                            <Link href={dashboardLink} className="btn btn-primary w-full flex items-center justify-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                            <Button href={dashboardLink} variant="primary" className="flex items-center justify-center gap-2" onClick={() => setIsMenuOpen(false)}>
                                 <LayoutDashboard size={18} />
                                 Dashboard
-                            </Link>
+                            </Button>
                         ) : (
                             <>
-                                <Link href="/auth/login" className="btn btn-outline w-full text-center" onClick={() => setIsMenuOpen(false)}>Log in</Link>
-                                <Link href="/auth/signup" className="btn btn-primary w-full text-center" onClick={() => setIsMenuOpen(false)}>Sign up</Link>
+                                <Button href="/auth/login" variant="outline" className="w-full" onClick={() => setIsMenuOpen(false)}>Log in</Button>
+                                <Button href="/auth/signup" variant="primary" className="w-full" onClick={() => setIsMenuOpen(false)}>Sign up</Button>
                             </>
                         )}
                     </div>

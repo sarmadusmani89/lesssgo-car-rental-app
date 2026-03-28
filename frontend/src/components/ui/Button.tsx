@@ -1,38 +1,63 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     isLoading?: boolean;
-    variant?: 'primary' | 'secondary' | 'outline' | 'danger';
-    size?: 'sm' | 'md' | 'lg';
+    variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'accent' | 'ghost' | 'link';
+    size?: 'sm' | 'md' | 'lg' | 'icon';
+    href?: string;
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className = '', children, isLoading, variant = 'primary', size = 'md', disabled, ...props }, ref) => {
+    ({ className = '', children, isLoading, variant = 'primary', size = 'md', disabled, href, ...props }, ref) => {
 
-        const baseStyles = "inline-flex items-center justify-center font-bold rounded-xl transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98]";
+        const baseStyles = "inline-flex items-center justify-center font-extrabold rounded-xl transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed active:scale-[0.98] whitespace-nowrap gap-2";
 
         const variants = {
-            primary: "bg-primary text-primary-foreground hover:opacity-90 shadow-lg shadow-primary/20",
-            secondary: "bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80",
-            outline: "border-2 border-accent text-accent hover:bg-accent/5",
-            danger: "bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-200"
+            primary: "bg-primary text-primary-foreground hover:opacity-90 shadow-lg shadow-primary/20 hover:-translate-y-0.5",
+            accent: "bg-accent text-accent-foreground hover:opacity-90 shadow-lg shadow-accent/20 hover:-translate-y-0.5",
+            secondary: "bg-secondary text-secondary-foreground border border-border/50 hover:bg-secondary/80",
+            outline: "border-2 border-border bg-transparent text-foreground hover:bg-secondary hover:border-primary/20",
+            ghost: "bg-transparent text-foreground hover:bg-secondary/80",
+            danger: "bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-200",
+            link: "bg-transparent text-primary underline-offset-4 hover:underline !p-0 !h-auto"
         };
 
         const sizes = {
-            sm: "px-4 py-2 text-sm",
-            md: "px-6 py-3",
-            lg: "px-8 py-4 text-lg"
+            sm: "px-4 py-2 text-xs",
+            md: "px-6 py-3 text-sm",
+            lg: "px-8 py-4 text-base",
+            icon: "h-10 w-10 p-0"
         };
+
+        const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
+
+        if (href) {
+            return (
+                <Link
+                    href={href}
+                    className={combinedClassName}
+                    onClick={(e) => {
+                        if (disabled || isLoading) {
+                            e.preventDefault();
+                        }
+                    }}
+                >
+                    {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+                    {children}
+                </Link>
+            );
+        }
 
         return (
             <button
                 ref={ref}
-                className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+                className={combinedClassName}
                 disabled={isLoading || disabled}
                 {...props}
             >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
                 {children}
             </button>
         );
