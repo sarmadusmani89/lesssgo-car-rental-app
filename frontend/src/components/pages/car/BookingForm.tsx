@@ -186,7 +186,7 @@ export default function BookingForm({ car }: Props) {
     };
 
     return (
-        <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-2xl shadow-blue-100/30 border border-gray-100 relative overflow-visible">
+        <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-2xl shadow-primary/10 border border-gray-100 relative overflow-visible">
             <BookingHeader
                 pricePerDay={car.pricePerDay}
                 currency={currency}
@@ -275,7 +275,7 @@ export default function BookingForm({ car }: Props) {
             </div>
 
             {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -mr-32 -mt-32 blur-[64px] opacity-50 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-secondary rounded-full -mr-32 -mt-32 blur-[64px] opacity-50 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-50 rounded-full -ml-32 -mb-32 blur-[64px] opacity-50 pointer-events-none" />
 
             <style jsx global>{`

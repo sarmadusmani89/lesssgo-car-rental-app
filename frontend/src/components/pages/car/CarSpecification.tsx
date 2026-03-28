@@ -29,9 +29,9 @@ export default function VehicleSpecifications({ specs }: Props) {
       {specList.map((s, i) => (
         <div
           key={i}
-          className="bg-white p-6 rounded-[2rem] border border-gray-100 flex flex-col items-center text-center group hover:bg-blue-600 hover:border-blue-600 hover:shadow-2xl hover:shadow-blue-200 transition-all duration-500 cursor-default"
+          className="bg-white p-6 rounded-[2rem] border border-gray-100 flex flex-col items-center text-center group hover:bg-primary hover:border-primary hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 cursor-default"
         >
-          <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white/20 group-hover:text-white transition-all duration-500 transform group-hover:rotate-12">
+          <div className="w-12 h-12 bg-secondary text-primary rounded-2xl flex items-center justify-center mb-4 group-hover:bg-white/20 group-hover:text-white transition-all duration-500 transform group-hover:rotate-12">
             {s.icon}
           </div>
           <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] group-hover:text-white/60 transition-colors duration-500">{s.label}</p>

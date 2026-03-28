@@ -62,7 +62,7 @@ function CarContent() {
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <Loader2 className="animate-spin text-blue-600" size={40} />
+            <Loader2 className="animate-spin text-primary" size={40} />
         </div>
     );
 
@@ -91,17 +91,17 @@ function CarContent() {
             <div className="bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
                     <nav className="flex mb-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-                        <span className="hover:text-blue-600 cursor-pointer transition-colors" onClick={() => window.location.href = '/cars'}>Vehicles</span>
+                        <span className="hover:text-primary cursor-pointer transition-colors" onClick={() => window.location.href = '/cars'}>Vehicles</span>
                         <span className="mx-3 text-gray-200">/</span>
-                        <span className="hover:text-blue-600 cursor-pointer transition-colors">{car.brand}</span>
+                        <span className="hover:text-primary cursor-pointer transition-colors">{car.brand}</span>
                         <span className="mx-3 text-gray-200">/</span>
-                        <span className="text-blue-600">{car.name}</span>
+                        <span className="text-primary">{car.name}</span>
                     </nav>
 
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                         <div className="space-y-4">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
-                                <Zap size={12} className="fill-blue-600" />
+                            <div className="inline-flex items-center gap-2 px-3 py-1 bg-secondary text-primary rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+                                <Zap size={12} className="fill-primary" />
                                 Advance Booking Required
                             </div>
                             <div className="flex flex-col">
@@ -109,17 +109,17 @@ function CarContent() {
                                     {car.brand}
                                 </span>
                                 <h1 className="text-4xl md:text-7xl font-black text-slate-900 font-outfit uppercase tracking-tighter leading-none">
-                                    <span className="text-blue-600">{car.name}</span>
+                                    <span className="text-primary">{car.name}</span>
                                 </h1>
                             </div>
                             <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.5em] pt-4">
-                                Exquisite <span className="text-blue-600/50">{car.type}</span> Experience
+                                Exquisite <span className="text-primary/50">{car.type}</span> Experience
                             </p>
                         </div>
                         <div className="flex flex-col items-start md:items-end">
                             <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Elite Fleet rate</span>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-5xl font-black text-blue-600 font-outfit tracking-tighter">
+                                <span className="text-5xl font-black text-primary font-outfit tracking-tighter">
                                     {formatPrice(car.pricePerDay, currency, rates)}
                                 </span>
                                 <span className="text-gray-400 font-black text-sm uppercase tracking-widest">/ day</span>
@@ -157,7 +157,7 @@ function CarContent() {
                             <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50/50 rounded-full -mr-24 -mt-24 transition-transform duration-700 group-hover:scale-150" />
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-6 md:mb-8">
-                                    <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center">
+                                    <div className="w-10 h-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20">
                                         <Info size={20} />
                                     </div>
                                     <h3 className="text-xl md:text-2xl font-black font-outfit tracking-tight uppercase">Vehicle Description</h3>
@@ -172,8 +172,8 @@ function CarContent() {
                                 <div className="mt-8 pt-8 border-t border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {car.pickupLocation?.length ? (
                                         <div>
-                                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-3 flex items-center gap-2">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-600" /> Pickup Points
+                                            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-3 flex items-center gap-2">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-primary" /> Pickup Points
                                             </h4>
                                             <div className="flex flex-wrap gap-2">
                                                 {car.pickupLocation.map(loc => (
@@ -220,12 +220,12 @@ function CarContent() {
                         <div className="p-10 bg-gray-900 rounded-[3rem] text-white shadow-2xl shadow-gray-200 overflow-hidden relative group">
                             <div className="absolute bottom-0 right-0 w-48 h-48 bg-blue-600/20 rounded-full -mr-24 -mb-24 transition-transform duration-700 group-hover:scale-150" />
                             <div className="relative z-10">
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-400 mb-3">Concierge Service</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary-foreground/60 mb-3">Concierge Service</p>
                                 <h4 className="text-2xl font-black font-outfit mb-4 uppercase tracking-tight">Need Support?</h4>
                                 <p className="text-gray-400 text-sm font-medium leading-relaxed mb-8">
                                     Our dedicated specialist team is available 24/7 to personalize your legendary driving experience.
                                 </p>
-                                <Link href="/contact" className="w-full py-5 px-4 bg-white text-gray-900 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all duration-300">
+                                <Link href="/contact" className="w-full py-5 px-4 bg-white text-gray-900 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] hover:bg-primary hover:text-white transition-all duration-300 shadow-md">
                                     Contact Support
                                 </Link>
                             </div>
@@ -241,7 +241,7 @@ export default function CarPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="animate-spin text-blue-600" size={48} />
+                <Loader2 className="animate-spin text-primary" size={48} />
             </div>
         }>
             <CarContent />

@@ -208,15 +208,15 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
                         { id: 'theme-corporate-blue', name: 'Corporate Blue', primary: '#1e3a8a', secondary: '#dbeafe' },
-                        { id: 'theme-premium-green', name: 'Premium Green', primary: '#047857', secondary: '#1f2937' },
-                        { id: 'theme-premium-orange', name: 'Premium Orange', primary: '#ea580c', secondary: '#374151' },
+                        { id: 'theme-premium-green', name: 'Premium Green', primary: '#047857', secondary: '#d1fae5' },
+                        { id: 'theme-premium-orange', name: 'Premium Orange', primary: '#ea580c', secondary: '#ffedd5' },
                     ].map((theme) => (
                         <Button
                             key={theme.id}
                             type="button"
                             variant={formData.theme === theme.id ? 'primary' : 'outline'}
                             onClick={() => setFormData({ ...formData, theme: theme.id })}
-                            className={`relative flex flex-col p-3 border-2 h-auto text-left items-start transition-all hover:bg-gray-20 ${formData.theme === theme.id
+                            className={`relative flex flex-col p-3 border-2 h-auto text-left items-start transition-all hover:bg-gray-50 ${formData.theme === theme.id
                                 ? 'border-primary bg-white ring-2 ring-primary/10'
                                 : 'border-gray-100 bg-white'
                                 }`}

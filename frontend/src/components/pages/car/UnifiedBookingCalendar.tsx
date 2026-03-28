@@ -95,7 +95,7 @@ export default function UnifiedBookingCalendar({ carId, carName }: Props) {
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center p-20 gap-4">
-            <Loader2 className="animate-spin text-blue-600" size={32} />
+            <Loader2 className="animate-spin text-primary" size={32} />
             <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Syncing Availability...</p>
         </div>
     );
@@ -105,18 +105,18 @@ export default function UnifiedBookingCalendar({ carId, carName }: Props) {
             <div className="mb-8 flex justify-between items-center">
                 <div>
                     <h2 className="text-2xl font-black text-gray-900 font-outfit tracking-tighter uppercase leading-none">
-                        {monthNames[currentMonth]} <span className="text-blue-600">{currentYear}</span>
+                        {monthNames[currentMonth]} <span className="text-primary">{currentYear}</span>
                     </h2>
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-2 flex items-center gap-2">
-                        <CalendarIcon size={12} className="text-blue-600" />
+                        <CalendarIcon size={12} className="text-primary" />
                         Availability Reference
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <button onClick={prevMonth} className="p-3 rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all text-gray-400 hover:text-blue-600">
+                    <button onClick={prevMonth} className="p-3 rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all text-gray-400 hover:text-primary">
                         <ChevronLeft size={20} />
                     </button>
-                    <button onClick={nextMonth} className="p-3 rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all text-gray-400 hover:text-blue-600">
+                    <button onClick={nextMonth} className="p-3 rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all text-gray-400 hover:text-primary">
                         <ChevronRight size={20} />
                     </button>
                 </div>
@@ -161,7 +161,7 @@ export default function UnifiedBookingCalendar({ carId, carName }: Props) {
                     <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Unavailable</span>
                 </div>
             </div>
-            <p className="mt-4 text-[9px] font-bold text-blue-600 uppercase tracking-widest text-center italic">
+            <p className="mt-4 text-[9px] font-bold text-primary uppercase tracking-widest text-center italic">
                 * Please use the booking form to the right to select your dates
             </p>
         </div>

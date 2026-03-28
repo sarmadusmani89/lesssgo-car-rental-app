@@ -59,8 +59,8 @@
 .theme-premium-green {
   --primary: #047857;
   --primary-foreground: #ffffff;
-  --secondary: #1f2937;
-  --secondary-foreground: #f8fafc;
+  --secondary: #d1fae5;
+  --secondary-foreground: #047857;
   --accent: #10b981;
   --accent-foreground: #ffffff;
   --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
@@ -69,8 +69,8 @@
 .theme-premium-orange {
   --primary: #ea580c;
   --primary-foreground: #ffffff;
-  --secondary: #374151;
-  --secondary-foreground: #f8fafc;
+  --secondary: #ffedd5;
+  --secondary-foreground: #ea580c;
   --accent: #fb923c;
   --accent-foreground: #ffffff;
   --shadow-glow: 0 0 20px rgba(249, 115, 22, 0.2);
