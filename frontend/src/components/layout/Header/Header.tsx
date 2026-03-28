@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import styles from './Header.module.css';
 import { Car, User, Menu, X, LayoutDashboard, Globe } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
@@ -50,7 +49,7 @@ export default function Header() {
         // Handle click outside for currency dropdown
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as HTMLElement;
-            if (isCurrencyOpen && !target.closest(`.${styles.currencyWrapper}`)) {
+            if (isCurrencyOpen && !target.closest('.currency-wrapper')) {
                 setIsCurrencyOpen(false);
             }
         };
@@ -91,7 +90,7 @@ export default function Header() {
             window.removeEventListener('storage', checkUser);
             window.removeEventListener('auth-logout', checkUser);
         };
-    }, [pathname]); // Re-check on path change (e.g. after login redirect)
+    }, [pathname]);
 
     // Close menu when resizing to desktop
     useEffect(() => {
@@ -116,36 +115,43 @@ export default function Header() {
     };
 
     return (
-        <header className={styles.header}>
-            <div className={`container ${styles.nav}`}>
-                <Link href="/" className={styles.logo}>
-                    <img src="/web-logo-light.png" alt="Lesssgo Logo" className={styles.logoImage} />
+        <header className="flex items-center fixed top-4 lg:top-6 left-1/2 -translate-x-1/2 w-[92%] lg:w-[95%] max-w-[1400px] z-[1000] bg-white/80 backdrop-blur-3xl saturate-[180%] border border-black/5 rounded-[100px] py-3 lg:py-4 px-4 lg:px-8 shadow-sm transition-all duration-400 hover:bg-white/95 hover:shadow-md">
+            <div className="flex justify-between items-center w-full">
+                <Link href="/" className="flex items-center gap-3 text-xl font-black text-primary tracking-[-1.5px] lowercase">
+                    <img src="/web-logo-light.png" alt="Lesssgo Logo" className="h-10 lg:h-12 w-auto object-contain" />
                 </Link>
 
-                <nav className={styles.desktopNav}>
-                    <Link href="/cars">Find Cars</Link>
-                    <Link href="/how-it-works">How it Works</Link>
-                    <Link href="/about">About Us</Link>
+                <nav className="hidden lg:flex gap-8">
+                    {['Find Cars', 'How it Works', 'About Us'].map((item) => (
+                        <Link 
+                            key={item}
+                            href={item === 'Find Cars' ? '/cars' : item === 'How it Works' ? '/how-it-works' : '/about'} 
+                            className="font-semibold text-muted-foreground text-sm relative py-2 group transition-colors hover:text-primary"
+                        >
+                            {item}
+                            <span className="absolute bottom-0 left-1/2 w-0 h-[3px] bg-accent rounded-full transition-all duration-300 -translate-x-1/2 group-hover:w-3" />
+                        </Link>
+                    ))}
                 </nav>
 
-                <div className={styles.actions}>
+                <div className="flex items-center gap-2">
                     {/* Premium Currency Selector */}
-                    <div className="hidden lg:block mr-4">
-                        <div className={styles.currencyWrapper}>
+                    <div className="hidden lg:block mr-2">
+                        <div className="relative currency-wrapper">
                             <button
-                                className={styles.currencyTrigger}
+                                className="flex items-center gap-2 bg-white/50 border border-black/5 px-4 py-2 rounded-[12px] text-xs font-extrabold text-primary transition-all hover:bg-white hover:border-accent hover:shadow-sm"
                                 onClick={() => setIsCurrencyOpen(!isCurrencyOpen)}
                             >
-                                <Globe size={16} />
+                                <Globe size={16} className="text-accent" />
                                 <span>{getCurrencyLabel(currency)}</span>
                             </button>
 
                             {isCurrencyOpen && (
-                                <div className={styles.currencyDropdown}>
+                                <div className="absolute top-[calc(100%+8px)] right-0 w-[140px] bg-white border border-black/5 rounded-[16px] shadow-lg overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-300">
                                     {(['AUD', 'USD', 'PGK'] as const).map((curr) => (
                                         <div
                                             key={curr}
-                                            className={`${styles.currencyItem} ${currency === curr ? styles.active : ''}`}
+                                            className={`p-3.5 text-sm font-semibold cursor-pointer transition-all hover:bg-slate-50 hover:text-accent hover:pl-6 ${currency === curr ? 'text-primary bg-slate-100 font-extrabold' : 'text-muted-foreground'}`}
                                             onClick={() => {
                                                 handleCurrencyChange(curr);
                                                 setIsCurrencyOpen(false);
@@ -159,7 +165,7 @@ export default function Header() {
                         </div>
                     </div>
 
-                    <div className={styles.desktopOnly}>
+                    <div className="hidden lg:flex gap-2">
                         {user ? (
                             <Link href={dashboardLink} className="btn btn-primary flex items-center gap-2">
                                 <LayoutDashboard size={18} />
@@ -172,17 +178,18 @@ export default function Header() {
                             </>
                         )}
                     </div>
-                    <button className={styles.mobileMenu} onClick={toggleMenu}>
+                    
+                    <button className="lg:hidden p-2 text-primary" onClick={toggleMenu}>
                         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
                 </div>
             </div>
 
             {/* Mobile Menu Drawer */}
-            <div className={`${styles.mobileDrawer} ${isMenuOpen ? styles.mobileDrawerOpen : ''}`}>
-                <nav className={styles.mobileNav}>
-                    <div className="px-4 py-4 border-b border-gray-100 mb-2">
-                        <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Currency</label>
+            <div className={`fixed top-0 right-[-100%] w-4/5 max-w-[350px] h-screen bg-white z-[1000] transition-all duration-400 ease-in-out pt-24 px-8 pb-8 shadow-2xl ${isMenuOpen ? 'right-0' : ''}`}>
+                <nav className="flex flex-col gap-6">
+                    <div className="p-4 border-b border-gray-100 mb-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 block">Currency</label>
                         <div className="grid grid-cols-3 gap-2">
                             {(['AUD', 'USD', 'PGK'] as const).map((curr) => (
                                 <button
@@ -196,10 +203,18 @@ export default function Header() {
                         </div>
                     </div>
 
-                    <Link href="/cars" onClick={() => setIsMenuOpen(false)}>Find Cars</Link>
-                    <Link href="/how-it-works" onClick={() => setIsMenuOpen(false)}>How it Works</Link>
-                    <Link href="/about" onClick={() => setIsMenuOpen(false)}>About Us</Link>
-                    <div className={styles.mobileAuth}>
+                    {['Find Cars', 'How it Works', 'About Us'].map((item) => (
+                        <Link 
+                            key={item}
+                            href={item === 'Find Cars' ? '/cars' : item === 'How it Works' ? '/how-it-works' : '/about'} 
+                            className="text-xl font-bold text-primary tracking-tight"
+                            onClick={() => setIsMenuOpen(false)}
+                        >
+                            {item}
+                        </Link>
+                    ))}
+
+                    <div className="flex flex-col gap-4 mt-8 pt-8 border-t border-secondary">
                         {user ? (
                             <Link href={dashboardLink} className="btn btn-primary w-full flex items-center justify-center gap-2" onClick={() => setIsMenuOpen(false)}>
                                 <LayoutDashboard size={18} />
@@ -207,8 +222,8 @@ export default function Header() {
                             </Link>
                         ) : (
                             <>
-                                <Link href="/auth/login" className="btn btn-outline w-full" onClick={() => setIsMenuOpen(false)}>Log in</Link>
-                                <Link href="/auth/signup" className="btn btn-primary w-full" onClick={() => setIsMenuOpen(false)}>Sign up</Link>
+                                <Link href="/auth/login" className="btn btn-outline w-full text-center" onClick={() => setIsMenuOpen(false)}>Log in</Link>
+                                <Link href="/auth/signup" className="btn btn-primary w-full text-center" onClick={() => setIsMenuOpen(false)}>Sign up</Link>
                             </>
                         )}
                     </div>
@@ -216,7 +231,8 @@ export default function Header() {
             </div>
 
             {/* Overlay */}
-            {isMenuOpen && <div className={styles.overlay} onClick={() => setIsMenuOpen(false)} />}
+            {isMenuOpen && <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[999] animate-in fade-in duration-300" onClick={() => setIsMenuOpen(false)} />}
         </header>
     );
 }
+
