@@ -118,7 +118,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                     type="text"
                     value={formData.siteName}
                     onChange={(e) => setFormData({ ...formData, siteName: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                     placeholder="e.g. Lesssgo Car Rental"
                     required
                 />
@@ -133,7 +133,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                         type="email"
                         value={formData.adminEmail}
                         onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                         placeholder="admin@example.com"
                         required
                     />
@@ -146,7 +146,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                         type="email"
                         value={formData.contactEmail}
                         onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                         placeholder="info@example.com"
                     />
                 </div>
@@ -165,7 +165,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                             type="text"
                             value={formData.contactPhone}
                             onChange={(e) => handlePhoneChange('contactPhone', e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 bg-white border border-slate-200 rounded-r-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                             placeholder="7XXX XXXX"
                         />
                     </div>
@@ -182,7 +182,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                             type="text"
                             value={formData.contactWhatsApp}
                             onChange={(e) => handlePhoneChange('contactWhatsApp', e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 bg-white border border-slate-200 rounded-r-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                             placeholder="7XXX XXXX"
                         />
                     </div>
@@ -196,7 +196,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                 <textarea
                     value={formData.contactAddress}
                     onChange={(e) => setFormData({ ...formData, contactAddress: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px]"
+                    className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all min-h-[100px]"
                     placeholder="Physical location..."
                 />
             </div>
@@ -217,26 +217,26 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                             variant={formData.theme === theme.id ? 'primary' : 'outline'}
                             onClick={() => setFormData({ ...formData, theme: theme.id })}
                             className={`relative flex flex-col p-3 border-2 h-auto text-left items-start transition-all hover:bg-gray-50 ${formData.theme === theme.id
-                                ? 'border-primary bg-white ring-2 ring-primary/10'
-                                : 'border-gray-100 bg-white'
-                                }`}
+                                ? 'border-primary bg-primary/[0.02] ring-4 ring-primary/10'
+                                : 'border-slate-100 bg-white hover:border-slate-200'
+                                } shadow-sm`}
                         >
                             <div className="flex gap-1.5 mb-2">
                                 <div
-                                    className="w-6 h-6 rounded-full border border-black/5"
+                                    className="w-7 h-7 rounded-full border border-black/5 shadow-inner"
                                     style={{ backgroundColor: theme.primary }}
                                 />
                                 <div
-                                    className="w-6 h-6 rounded-full border border-black/5"
+                                    className="w-7 h-7 rounded-full border border-black/5 shadow-inner"
                                     style={{ backgroundColor: theme.secondary }}
                                 />
                             </div>
-                            <span className={`text-xs font-semibold ${formData.theme === theme.id ? 'text-blue-700' : 'text-gray-600'
+                            <span className={`text-[11px] font-bold uppercase tracking-wider ${formData.theme === theme.id ? 'text-primary' : 'text-slate-500'
                                 }`}>
                                 {theme.name}
                             </span>
                             {formData.theme === theme.id && (
-                                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-600" />
+                                <div className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-primary shadow-sm shadow-primary/50" />
                             )}
                         </Button>
                     ))}
@@ -292,14 +292,14 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                 </div>
             </div>
 
-            <div className="pt-4 flex justify-end sticky bottom-0 bg-white">
+            <div className="pt-6 flex justify-end sticky bottom-0 bg-white/80 backdrop-blur-md border-t border-slate-50 mt-4 pb-2">
                 <Button
                     type="submit"
                     isLoading={loading}
-                    className="px-6 py-2"
+                    className="px-8 py-3 rounded-xl shadow-lg shadow-primary/20 font-bold"
                 >
-                    {!loading && <Save className="w-4 h-4 mr-2" />}
-                    Save Changes
+                    {!loading && <Save className="w-5 h-5 mr-2" />}
+                    Save Platform Settings
                 </Button>
             </div>
         </form>
