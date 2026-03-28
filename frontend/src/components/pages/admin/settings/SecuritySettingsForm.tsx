@@ -53,22 +53,22 @@ export default function SecuritySettingsForm({ onSaved, initialData }: SecurityS
                     max="32"
                     value={formData.passwordMinLength}
                     onChange={(e) => setFormData({ ...formData, passwordMinLength: parseInt(e.target.value) })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all"
                     required
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-slate-500 mt-1 font-medium">
                     Enforces a minimum character count for new user passwords.
                 </p>
             </div>
 
-            <div className="pt-4 flex justify-end">
+            <div className="pt-6 flex justify-end">
                 <Button
                     type="submit"
                     isLoading={loading}
-                    className="px-6 py-2"
+                    className="px-8 py-3 rounded-xl shadow-lg shadow-primary/20 font-bold"
                 >
-                    {!loading && <Save className="w-4 h-4 mr-2" />}
-                    Save Changes
+                    {!loading && <Save className="w-5 h-5 mr-2" />}
+                    Save Security Settings
                 </Button>
             </div>
         </form>
