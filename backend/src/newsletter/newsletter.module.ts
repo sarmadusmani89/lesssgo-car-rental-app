@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { NewsletterController } from './newsletter.controller';
 import { NewsletterService } from './newsletter.service';
-import { PrismaService } from '../lib/prisma.service';
-
 @Module({
     controllers: [NewsletterController],
-    providers: [NewsletterService, PrismaService],
+    providers: [NewsletterService],
 })
 export class NewsletterModule { }
