@@ -12,10 +12,10 @@ export default function Rating({ rating, maxRating = 5, className = '' }: Rating
             {[...Array(maxRating)].map((_, i) => (
                 <Star
                     key={i}
-                    size={20}
+                    size={16}
                     fill={i < rating ? "currentColor" : "none"}
                     strokeWidth={i < rating ? 0 : 1.5}
-                    className={i < rating ? "text-yellow-400" : "text-gray-300"}
+                    className={i < rating ? "text-amber-400" : "text-border"}
                 />
             ))}
         </div>

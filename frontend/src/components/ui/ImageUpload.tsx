@@ -33,10 +33,10 @@ export default function ImageUpload({
 
     return (
         <div className={`space-y-1.5 ${className}`}>
-            {label && <label className="text-sm font-semibold text-gray-700">{label}</label>}
+            {label && <label className="text-[13px] font-bold text-muted-foreground uppercase tracking-wider">{label}</label>}
             <div
                 onClick={() => fileInputRef.current?.click()}
-                className="relative group cursor-pointer border-2 border-dashed border-gray-200 rounded-2xl p-4 transition-all hover:border-blue-400 hover:bg-blue-50/50"
+                className="relative group cursor-pointer border-2 border-dashed border-border rounded-2xl p-4 transition-all hover:border-accent hover:bg-accent/5"
             >
                 <input
                     type="file"
@@ -47,23 +47,23 @@ export default function ImageUpload({
                 />
 
                 <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-100">
+                    <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center overflow-hidden border border-border">
                         {imagePreview ? (
                             <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                         ) : (
-                            <ImageIcon size={24} className="text-gray-400" />
+                            <ImageIcon size={24} className="text-muted-foreground/50" />
                         )}
                     </div>
 
                     <div className="flex-1">
-                        <p className="font-semibold text-gray-700 group-hover:text-blue-600 transition-colors">
+                        <p className="font-bold text-foreground group-hover:text-accent transition-colors">
                             {imageFile ? imageFile.name : 'Click to upload'}
                         </p>
-                        <p className="text-sm text-gray-500">{helperText}</p>
+                        <p className="text-sm text-muted-foreground">{helperText}</p>
                     </div>
 
-                    <div className="p-2 rounded-lg bg-gray-50 text-gray-400 group-hover:bg-blue-100 group-hover:text-blue-600 transition-all">
-                        <Upload size={20} />
+                    <div className="p-2.5 rounded-xl bg-muted text-muted-foreground group-hover:bg-accent group-hover:text-accent-foreground transition-all">
+                        <Upload size={18} />
                     </div>
                 </div>
 

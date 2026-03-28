@@ -22,17 +22,17 @@ export const Pagination: React.FC<PaginationProps> = ({
 
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 mt-2">
-            <p className="text-sm text-slate-500 font-medium italic">
-                Showing <span className="text-slate-900 font-bold">{startItem}</span> to{' '}
-                <span className="text-slate-900 font-bold">{endItem}</span> of{' '}
-                <span className="text-slate-900 font-bold">{totalItems}</span> items
+            <p className="text-sm text-muted-foreground font-medium italic">
+                Showing <span className="text-foreground font-bold">{startItem}</span> to{' '}
+                <span className="text-foreground font-bold">{endItem}</span> of{' '}
+                <span className="text-foreground font-bold">{totalItems}</span> items
             </p>
 
             <div className="flex items-center gap-2">
                 <button
                     onClick={() => onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="p-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="p-2 bg-card border border-border rounded-xl text-muted-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
                 >
                     <ChevronLeft size={20} />
                 </button>
@@ -45,8 +45,8 @@ export const Pagination: React.FC<PaginationProps> = ({
                                 key={pageNum}
                                 onClick={() => onPageChange(pageNum)}
                                 className={`w-10 h-10 rounded-xl text-sm font-bold transition-all shadow-sm ${currentPage === pageNum
-                                        ? 'bg-blue-600 text-white shadow-blue-200'
-                                        : 'bg-white border border-slate-200 text-slate-600 hover:border-blue-500 hover:text-blue-600'
+                                        ? 'bg-accent text-accent-foreground shadow-accent/20'
+                                        : 'bg-card border border-border text-muted-foreground hover:border-accent hover:text-accent'
                                     }`}
                             >
                                 {pageNum}
@@ -58,7 +58,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 <button
                     onClick={() => onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="p-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="p-2 bg-card border border-border rounded-xl text-muted-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
                 >
                     <ChevronRight size={20} />
                 </button>
