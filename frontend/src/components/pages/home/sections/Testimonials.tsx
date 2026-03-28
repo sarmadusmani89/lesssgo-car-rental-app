@@ -46,8 +46,8 @@ export default function Testimonials() {
 
     if (loading) {
         return (
-            <div className="py-32 bg-slate-50 flex items-center justify-center">
-                <Loader2 className="animate-spin text-blue-600" size={40} />
+            <div className="py-32 bg-secondary/40 flex items-center justify-center">
+                <Loader2 className="animate-spin text-accent" size={40} />
             </div>
         );
     }
@@ -76,13 +76,13 @@ export default function Testimonials() {
     };
 
     return (
-        <section className="py-32 bg-slate-50 relative overflow-hidden">
+        <section className="py-32 bg-secondary/40 relative overflow-hidden">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="text-center max-w-[800px] mx-auto mb-20">
-                    <h2 className="text-5xl font-extrabold text-[#0f172a] mb-6 tracking-tight">
-                        Trusted by <span className="text-blue-600">Excellence.</span>
+                    <h2 className="text-5xl font-extrabold text-[#020617] mb-6 tracking-tight">
+                        Trusted by <span className="text-primary">Excellence.</span>
                     </h2>
-                    <p className="text-[#64748b] text-lg lg:text-[1.125rem] leading-relaxed">
+                    <p className="text-muted-foreground text-lg lg:text-[1.125rem] leading-relaxed">
                         Don&apos;t just take our word for it. Here&apos;s what our premium clients have to say about their experience.
                     </p>
                 </div>
@@ -126,13 +126,13 @@ export default function Testimonials() {
                         {/* Navigation Arrows */}
                         <button
                             onClick={prevSlide}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-10"
+                            className="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-gray-600 hover:text-accent hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-10"
                         >
                             <ChevronLeft size={24} />
                         </button>
                         <button
                             onClick={nextSlide}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-10"
+                            className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg border border-gray-100 flex items-center justify-center text-gray-600 hover:text-accent hover:scale-110 transition-all opacity-0 group-hover:opacity-100 z-10"
                         >
                             <ChevronRight size={24} />
                         </button>
@@ -147,7 +147,7 @@ export default function Testimonials() {
                                         setCurrentIndex(idx);
                                     }}
                                     className={`w-2 h-2 rounded-full transition-all ${idx === currentIndex
-                                            ? "w-8 bg-blue-600"
+                                            ? "w-8 bg-accent"
                                             : "bg-gray-300 hover:bg-gray-400"
                                         }`}
                                 />
