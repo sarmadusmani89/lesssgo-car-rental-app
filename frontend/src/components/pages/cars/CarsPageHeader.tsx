@@ -18,7 +18,7 @@ export default function CarsPageHeader({ totalCars, searchQuery, onSearchChange 
                         <span className="mx-3 text-border">/</span>
                         <span className="text-primary">Our Fleet</span>
                     </nav>
-                    <h1 className="text-5xl md:text-6xl font-extrabold text-[#020617] uppercase tracking-tighter leading-none">
+                    <h1 className="text-5xl md:text-6xl font-extrabold text-foreground uppercase tracking-tighter leading-none">
                         Our <span className="text-primary">Elite Fleet</span>
                     </h1>
                     <p className="text-muted-foreground mt-4 text-lg font-medium max-w-xl">

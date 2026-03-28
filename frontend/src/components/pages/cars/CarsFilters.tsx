@@ -77,7 +77,7 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
                             variant={isActive ? 'accent' : 'outline'}
                             size="sm"
                             onClick={() => onSelect(value)}
-                            className="bg-card h-auto py-2"
+                            className={`h-auto py-2 ${isActive ? 'shadow-lg shadow-accent/20' : 'bg-card'}`}
                         >
                             {label}
                         </Button>
@@ -96,7 +96,7 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
                         variant="ghost"
                         size="sm"
                         onClick={clearFilters}
-                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80 flex items-center gap-1 h-auto py-1"
+                        className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary flex items-center gap-1 h-auto py-1 transition-colors"
                     >
                         <X size={12} /> Clear
                     </Button>
@@ -158,7 +158,7 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 transition-transform duration-700 group-hover:scale-150" />
                 <div className="relative z-10">
                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary-foreground/60 mb-2">Member Perk</p>
-                    <h4 className="text-lg font-extrabold mb-3 leading-tight uppercase">Save with Multi-Day Bookings</h4>
+                    <h4 className="text-lg font-extrabold mb-3 leading-tight uppercase text-primary-foreground">Save with Multi-Day Bookings</h4>
                     <p className="text-primary-foreground/80 text-xs font-medium leading-relaxed mb-6">
                         Unlock up to 20% discount when you reserve for 3 days or more.
                     </p>

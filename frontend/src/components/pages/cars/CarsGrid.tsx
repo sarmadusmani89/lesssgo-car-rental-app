@@ -44,7 +44,7 @@ export default function CarsGrid({ cars, loading }: CarsGridProps) {
                 <div className="w-24 h-24 bg-secondary rounded-full flex items-center justify-center mx-auto mb-8">
                     <Frown size={48} className="text-muted-foreground/40" />
                 </div>
-                <h3 className="text-3xl font-extrabold text-[#020617] uppercase tracking-tight">No Matching Vehicles</h3>
+                <h3 className="text-3xl font-extrabold text-foreground uppercase tracking-tight">No Matching Vehicles</h3>
                 <p className="text-muted-foreground mt-4 max-w-md mx-auto font-medium">
                     Our curators couldn&apos;t find a vehicle matching your exquisite taste. Try adjusting your filters or search query.
                 </p>
