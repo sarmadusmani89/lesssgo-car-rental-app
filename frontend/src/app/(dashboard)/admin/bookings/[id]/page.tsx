@@ -100,7 +100,7 @@ export default function AdminBookingDetailsPage() {
                         <ArrowLeft size={20} />
                     </Link>
                     <div>
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight italic uppercase">
+                        <h1 className="text-2xl font-black text-slate-900 tracking-tight   uppercase">
                             Booking <span className="text-blue-600">Details</span>
                         </h1>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">

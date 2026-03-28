@@ -101,15 +101,15 @@ export default function AdminCars() {
     }
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <AdminCarsHeader
                 onAddClick={() => router.push('/admin/cars/add')}
                 onOptionsClick={() => setShowOptions(true)}
             />
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <AdminCarSearch search={search} onSearchChange={setSearch} />
+            <AdminCarSearch search={search} onSearchChange={setSearch} />
 
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden transition-all duration-300">
                 <AdminCarTable
                     cars={filteredCars}
                     onToggleStatus={toggleStatus}

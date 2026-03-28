@@ -41,7 +41,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, currentUserId, onEdit, onD
                                 >
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-sm shadow-blue-100 group-hover:scale-110 transition-transform">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-bold shadow-sm shadow-primary/20 group-hover:scale-110 transition-transform">
                                                 {user.name?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
                                             </div>
                                             <div>
@@ -59,16 +59,16 @@ const UserTable: React.FC<UserTableProps> = ({ users, currentUserId, onEdit, onD
                                     <td className="px-6 py-4 text-center">
                                         <div className="flex justify-center">
                                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${user.isVerified
-                                                ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                                                ? 'bg-accent/10 text-accent border-accent/20'
                                                 : 'bg-slate-50 text-slate-500 border-slate-200'
                                                 }`}>
-                                                <div className={`w-1.5 h-1.5 rounded-full ${user.isVerified ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`}></div>
+                                                <div className={`w-1.5 h-1.5 rounded-full ${user.isVerified ? 'bg-accent animate-pulse' : 'bg-slate-400'}`}></div>
                                                 {user.isVerified ? 'Verified' : 'Pending'}
                                             </span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <p className="text-sm text-slate-500 font-medium italic">
+                                        <p className="text-sm text-slate-500 font-medium  ">
                                             {new Date(user.createdAt).toLocaleDateString('en-AU', {
                                                 month: 'short',
                                                 day: 'numeric',

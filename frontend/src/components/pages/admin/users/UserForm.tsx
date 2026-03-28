@@ -79,11 +79,11 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                             type="button"
                             onClick={() => setFormData({ ...formData, role: UserRole.USER })}
                             className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${formData.role === UserRole.USER
-                                ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm'
+                                ? 'border-primary bg-secondary/50 text-primary shadow-sm'
                                 : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
                                 }`}
                         >
-                            <UserIcon size={24} className={formData.role === UserRole.USER ? 'text-blue-600' : 'text-slate-300'} />
+                            <UserIcon size={24} className={formData.role === UserRole.USER ? 'text-primary' : 'text-slate-300'} />
                             <span className="mt-2 font-bold text-sm tracking-tight">Standard User</span>
                             <span className="text-[10px] opacity-60 font-medium">Limited access</span>
                         </button>
@@ -92,11 +92,11 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                             type="button"
                             onClick={() => setFormData({ ...formData, role: UserRole.ADMIN })}
                             className={`flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all ${formData.role === UserRole.ADMIN
-                                ? 'border-blue-600 bg-blue-50/50 text-blue-700 shadow-sm'
+                                ? 'border-primary bg-secondary/50 text-primary shadow-sm'
                                 : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
                                 }`}
                         >
-                            <Shield size={24} className={formData.role === UserRole.ADMIN ? 'text-blue-600' : 'text-slate-300'} />
+                            <Shield size={24} className={formData.role === UserRole.ADMIN ? 'text-primary' : 'text-slate-300'} />
                             <span className="mt-2 font-bold text-sm tracking-tight">System Admin</span>
                             <span className="text-[10px] opacity-60 font-medium">Full access</span>
                         </button>
@@ -107,12 +107,12 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                             type="button"
                             onClick={() => setFormData({ ...formData, isVerified: !formData.isVerified })}
                             className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${formData.isVerified
-                                ? 'border-emerald-500 bg-emerald-50/50 text-emerald-700 shadow-sm'
+                                ? 'border-accent bg-accent/5 text-accent shadow-sm'
                                 : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
                                 }`}
                         >
                             <div className="flex items-center gap-3">
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.isVerified ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${formData.isVerified ? 'bg-accent text-white' : 'bg-slate-100 text-slate-400'}`}>
                                     <Shield size={20} />
                                 </div>
                                 <div className="text-left">
@@ -120,7 +120,7 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                                     <p className="text-[10px] opacity-60 font-medium">{formData.isVerified ? 'Verified Account' : 'Pending Verification'}</p>
                                 </div>
                             </div>
-                            <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${formData.isVerified ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                            <div className={`w-12 h-6 rounded-full p-1 transition-colors duration-300 ${formData.isVerified ? 'bg-accent' : 'bg-slate-200'}`}>
                                 <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${formData.isVerified ? 'translate-x-6' : 'translate-x-0'}`} />
                             </div>
                         </button>
@@ -139,7 +139,7 @@ export default function UserForm({ user, onSubmit, onCancel, isSubmitting }: Use
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 px-4 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                     {isSubmitting && <Loader2 size={18} className="animate-spin" />}
                     Save Changes

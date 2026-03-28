@@ -95,7 +95,7 @@ export default function ConfirmationModal({
                                 <Icon className={style.iconClass} size={40} />
                             </div>
 
-                            <h3 className="text-2xl font-black text-foreground tracking-tight italic mb-2 uppercase">
+                            <h3 className="text-2xl font-black text-foreground tracking-tight   mb-2 uppercase">
                                 {title}
                             </h3>
 

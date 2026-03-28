@@ -7,7 +7,7 @@ export default function UserUsers() {
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div>
-                <h1 className="text-3xl font-bold text-slate-900 italic">User Directory</h1>
+                <h1 className="text-3xl font-bold text-slate-900  ">User Directory</h1>
                 <p className="text-slate-500 mt-1">Connect with other members of the Lesssgo community.</p>
             </div>
 

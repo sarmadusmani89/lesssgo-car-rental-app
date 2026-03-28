@@ -21,7 +21,7 @@ export const BookingFilters: React.FC<BookingFiltersProps> = ({
     onPaymentFilterChange,
 }) => {
     return (
-        <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-4 md:space-y-0 md:flex gap-4 items-center">
+        <div className="bg-white/60 backdrop-blur-xl border border-white/40 shadow-xl shadow-slate-200/40 p-4 rounded-2xl space-y-4 md:space-y-0 md:flex gap-4 items-center transition-all duration-300">
             <SearchBar
                 value={search}
                 onChange={onSearchChange}

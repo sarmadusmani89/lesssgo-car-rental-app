@@ -24,16 +24,16 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         {required && <span className="text-accent ml-1">*</span>}
                     </span>
                     {props.readOnly ? (
-                        <span className="text-slate-400 font-normal italic lowercase">(read-only)</span>
+                        <span className="text-slate-400 font-normal   lowercase">(read-only)</span>
                     ) : !required && (
-                        <span className="text-slate-400 font-normal italic lowercase">(optional)</span>
+                        <span className="text-slate-400 font-normal   lowercase">(optional)</span>
                     )}
                 </label>
                 <div className={`relative group ${wrapperClassName || ''}`}>
-                    <Icon 
-                        size={18} 
+                    <Icon
+                        size={18}
                         className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors pointer-events-none z-10 
-                            ${error ? 'text-red-500' : 'text-muted-foreground group-focus-within:text-accent'}`} 
+                            ${error ? 'text-red-500' : 'text-muted-foreground group-focus-within:text-accent'}`}
                     />
                     {prefix && (
                         <span className="absolute left-14 top-1/2 -translate-y-1/2 font-bold text-[15px] text-slate-600 z-10 pointer-events-none">
@@ -45,8 +45,8 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
                         type={isPassword ? (showPassword ? 'text' : 'password') : type}
                         className={`w-full py-4 pr-12 bg-slate-50 border-2 rounded-[1.25rem] text-base font-medium transition-all outline-none 
                             ${prefix ? 'pl-[6.5rem]' : 'pl-14'} 
-                            ${error 
-                                ? 'border-red-500 bg-red-50/30 focus:ring-red-500/10' 
+                            ${error
+                                ? 'border-red-500 bg-red-50/30 focus:ring-red-500/10'
                                 : 'border-slate-100 focus:bg-white focus:border-accent focus:ring-accent/10'}`}
                         {...props}
                     />

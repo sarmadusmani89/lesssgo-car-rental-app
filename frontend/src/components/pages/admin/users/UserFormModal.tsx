@@ -40,13 +40,13 @@ export default function UserFormModal({ isOpen, onClose, user, onSubmit, isSubmi
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl shadow-slate-900/20 overflow-hidden"
+                        className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl shadow-slate-900/20 overflow-hidden"
                     >
                         {/* Header */}
                         <div className="px-8 py-4 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
                             <div>
-                                <h3 className="text-2xl font-black text-slate-900 tracking-tight italic">
-                                    Edit <span className="text-blue-600">User</span>
+                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">
+                                    Edit <span className="text-primary">User</span>
                                 </h3>
                                 <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-0.5">Update profile information and access role.</p>
                             </div>

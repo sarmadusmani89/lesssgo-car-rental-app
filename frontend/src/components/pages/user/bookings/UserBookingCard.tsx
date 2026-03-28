@@ -108,7 +108,7 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
                             <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
                                 <Calendar className="w-4 h-4" />
                             </div>
-                            <span className="font-bold text-slate-600 italic">
+                            <span className="font-bold text-slate-600  ">
                                 {booking.startDate ? formatDate(booking.startDate) : 'TBD'} — {booking.endDate ? formatDate(booking.endDate) : 'TBD'}
                             </span>
                         </div>

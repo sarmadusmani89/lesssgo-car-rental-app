@@ -25,7 +25,7 @@ export default function PrivacyContent() {
             <div className="container mx-auto px-4">
                 <div className="max-w-3xl mx-auto">
                     <div className="mb-12 p-8 bg-slate-50 rounded-2xl border-l-4 border-accent shadow-sm">
-                        <p className="text-lg text-foreground leading-relaxed italic">
+                        <p className="text-lg text-foreground leading-relaxed  ">
                             At {siteName}, we are committed to protecting your privacy and ensuring the security of your personal information.
                             This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our car rental services.
                         </p>

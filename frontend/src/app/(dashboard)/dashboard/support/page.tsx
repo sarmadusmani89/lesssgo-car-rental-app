@@ -163,7 +163,7 @@ export default function SupportPage() {
                         </Link>
 
                         <div className="pt-6 mt-6 border-t border-gray-200">
-                            <p className="text-xs text-gray-500 italic">
+                            <p className="text-xs text-gray-500  ">
                                 Lesssgo Car Rental operates in compliance with PNG Transport Authority regulations.
                             </p>
                         </div>

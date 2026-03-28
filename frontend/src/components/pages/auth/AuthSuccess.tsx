@@ -30,7 +30,7 @@ export default function AuthSuccess({
                 <CheckCircle className="text-emerald-500" size={56} />
             </div>
 
-            <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight italic font-outfit uppercase">
+            <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight   font-outfit uppercase">
                 {title}
             </h2>
 
@@ -39,7 +39,7 @@ export default function AuthSuccess({
             </p>
 
             {description && (
-                <p className="text-slate-500 font-medium max-w-sm mx-auto mb-10 leading-relaxed italic">
+                <p className="text-slate-500 font-medium max-w-sm mx-auto mb-10 leading-relaxed  ">
                     {description}
                 </p>
             )}

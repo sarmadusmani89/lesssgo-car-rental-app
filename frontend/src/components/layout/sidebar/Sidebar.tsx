@@ -64,7 +64,7 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                 {/* Top section */}
                 <div>
                     <div className="p-6">
-                        <h2 className="text-2xl font-bold italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{title}</h2>
+                        <h2 className="text-2xl font-bold   bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{title}</h2>
                     </div>
 
                     <nav className="px-4 py-2 space-y-1">

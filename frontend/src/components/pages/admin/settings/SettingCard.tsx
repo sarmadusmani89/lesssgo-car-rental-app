@@ -22,7 +22,7 @@ export default function SettingCard({ title, desc, icon: Icon, onClick }: Settin
 
                 <div>
                     <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-                    <p className="text-sm text-slate-500 font-medium italic">
+                    <p className="text-sm text-slate-500 font-medium  ">
                         {desc}
                     </p>
                 </div>

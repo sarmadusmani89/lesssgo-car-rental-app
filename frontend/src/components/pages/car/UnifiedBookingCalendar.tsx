@@ -161,7 +161,7 @@ export default function UnifiedBookingCalendar({ carId, carName }: Props) {
                     <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Unavailable</span>
                 </div>
             </div>
-            <p className="mt-4 text-[9px] font-bold text-primary uppercase tracking-widest text-center italic">
+            <p className="mt-4 text-[9px] font-bold text-primary uppercase tracking-widest text-center  ">
                 * Please use the booking form to the right to select your dates
             </p>
         </div>

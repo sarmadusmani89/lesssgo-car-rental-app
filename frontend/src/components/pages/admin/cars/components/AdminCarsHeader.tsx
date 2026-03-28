@@ -12,8 +12,10 @@ export default function AdminCarsHeader({ onAddClick, onOptionsClick }: Props) {
     return (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 className="text-2xl font-bold text-gray-900 font-outfit">Fleet Management</h1>
-                <p className="text-gray-500 text-sm mt-1">Add, update, and manage your vehicle inventory</p>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                    Fleet <span className="text-primary">Management</span>
+                </h1>
+                <p className="text-slate-500 mt-1 font-medium">Add, update, and manage your vehicle inventory comprehensively.</p>
             </div>
             <div className="flex items-center gap-3">
                 <Button
@@ -25,7 +27,7 @@ export default function AdminCarsHeader({ onAddClick, onOptionsClick }: Props) {
                     Manage Options
                 </Button>
                 <Button
-                    variant="accent"
+                    variant="primary"
                     onClick={onAddClick}
                     className="gap-2"
                 >

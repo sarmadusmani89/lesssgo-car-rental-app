@@ -110,7 +110,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
                   </Button>
                 )}
                 {isAdmin && bondStatus === 'REFUND_PENDING' && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-yellow-50 text-yellow-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-yellow-100 italic transition-all shadow-sm">
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-yellow-50 text-yellow-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-yellow-100   transition-all shadow-sm">
                     <RefreshCw size={10} className="animate-spin" />
                     Refund Pending...
                   </div>

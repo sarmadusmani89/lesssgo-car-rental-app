@@ -110,7 +110,7 @@ export default function EditBookingModal({
                         {/* Header */}
                         <div className="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
                             <div>
-                                <h3 className="text-2xl font-black text-slate-900 tracking-tight italic uppercase">
+                                <h3 className="text-2xl font-black text-slate-900 tracking-tight   uppercase">
                                     Edit <span className="text-blue-600">Booking</span>
                                 </h3>
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">

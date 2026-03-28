@@ -55,7 +55,7 @@ const BookingTable: React.FC<BookingTableProps> = ({ bookings, onStatusUpdate, o
                       <span className="font-mono text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
                         #{booking.id.slice(-8).toUpperCase()}
                       </span>
-                      <div className="flex items-center gap-1.5 text-xs text-slate-600 mt-1 font-bold italic">
+                      <div className="flex items-center gap-1.5 text-xs text-slate-600 mt-1 font-bold  ">
                         <Calendar size={12} className="text-blue-500" />
                         {new Date(booking.startDate).toLocaleDateString('en-AU', { month: 'short', day: 'numeric', timeZone: 'UTC' })} -
                         {new Date(booking.endDate).toLocaleDateString('en-AU', { month: 'short', day: 'numeric', timeZone: 'UTC' })}

@@ -53,7 +53,7 @@ export const generateBaseTemplate = (title: string, content: string, config: Ema
           <!-- Header -->
           <tr>
             <td style="background: ${colors.primary}; padding: 40px 30px; text-align: center;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 800; tracking: -0.025em; font-style: italic;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 800; tracking: -0.025em; font-style:  ;">
                 ${config.siteName.toUpperCase()}
               </h1>
               <p style="margin: 8px 0 0; color: ${colors.textMuted}; font-size: 14px; font-weight: 500;">Premium Vehicle Rentals</p>

@@ -52,7 +52,7 @@ export default function DeleteTestimonialModal({
                                 <AlertTriangle className="text-rose-600" size={40} />
                             </div>
 
-                            <h3 className="text-2xl font-black text-slate-900 tracking-tight italic mb-2 uppercase">
+                            <h3 className="text-2xl font-black text-slate-900 tracking-tight   mb-2 uppercase">
                                 Delete <span className="text-rose-600">Testimonial</span>?
                             </h3>
 

@@ -11,8 +11,8 @@ export default function UserCard({ index }: UserCardProps) {
     return (
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all group">
             <div className="flex items-center gap-4 mb-4">
-                <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden group-hover:border-blue-200 transition-colors">
-                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl uppercase">
+                <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden group-hover:border-primary/20 transition-colors">
+                    <div className="w-full h-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-bold text-xl uppercase">
                         {String.fromCharCode(64 + index)}
                     </div>
                 </div>
@@ -27,16 +27,16 @@ export default function UserCard({ index }: UserCardProps) {
                     </div>
                 </div>
 
-                <Sparkles size={18} className="text-emerald-500" />
+                <Sparkles size={18} className="text-accent" />
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t border-slate-50">
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 text-xs font-bold rounded-lg uppercase tracking-wider">
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-secondary text-secondary-foreground text-xs font-bold rounded-lg uppercase tracking-wider">
                     <Shield size={12} />
                     {index === 1 ? 'Admin' : 'User'}
                 </div>
 
-                <button className="text-sm font-medium text-slate-400 hover:text-blue-600 transition-colors">
+                <button className="text-sm font-medium text-slate-400 hover:text-primary transition-colors">
                     Edit Profile
                 </button>
             </div>

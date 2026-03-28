@@ -131,8 +131,8 @@ export default function AdminBookings() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight italic">
-                        Booking Records
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight  ">
+                        Booking <span className="text-primary  ">Records</span>
                     </h1>
                     <p className="text-slate-500 mt-1 font-medium">
                         Monitor active rentals, process confirmations, and manage customer reservations.
@@ -145,7 +145,7 @@ export default function AdminBookings() {
                         size="icon"
                         onClick={handleRefresh}
                         isLoading={isRefreshing}
-                        className="bg-white border-slate-200 text-slate-600 hover:text-accent shadow-sm group"
+                        className="bg-white border-slate-200 text-slate-600 hover:text-primary shadow-sm group h-auto w-auto p-2.5"
                     >
                         {!isRefreshing && <RefreshCw size={20} className="group-hover:rotate-180 transition-transform duration-500" />}
                     </Button>

@@ -21,7 +21,7 @@ export default function StatusFields({ formData, onChange }: Props) {
             </h4>
             <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-1.5">
-                    <label className="text-sm font-bold text-slate-700 uppercase tracking-tight italic">Booking Status</label>
+                    <label className="text-sm font-bold text-slate-700 uppercase tracking-tight  ">Booking Status</label>
                     <CustomSelect
                         options={statusOptions}
                         value={formData.status || ''}
@@ -30,7 +30,7 @@ export default function StatusFields({ formData, onChange }: Props) {
                     />
                 </div>
                 <div className="space-y-1.5">
-                    <label className="text-sm font-bold text-slate-700 uppercase tracking-tight italic">Payment Status</label>
+                    <label className="text-sm font-bold text-slate-700 uppercase tracking-tight  ">Payment Status</label>
                     <CustomSelect
                         options={paymentOptions}
                         value={formData.paymentStatus || ''}

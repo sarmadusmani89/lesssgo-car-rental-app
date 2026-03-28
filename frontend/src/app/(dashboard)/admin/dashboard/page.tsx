@@ -30,14 +30,23 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold font-outfit">Admin Dashboard</h1>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight  ">
+            Dashboard <span className="text-primary  ">Overview</span>
+          </h1>
+          <p className="text-slate-500 mt-1 font-medium">
+            Analyze platform performance, track key metrics, and monitor recent customer activity.
+          </p>
+        </div>
+      </div>
 
       <MetricsCards stats={stats} />
 

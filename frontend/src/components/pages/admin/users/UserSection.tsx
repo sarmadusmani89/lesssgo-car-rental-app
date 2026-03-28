@@ -119,7 +119,7 @@ export default function UserSection() {
             {/* Header Area */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight italic">
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight  ">
                         User Management
                     </h1>
                     <p className="text-slate-500 mt-1 font-medium">
@@ -133,7 +133,7 @@ export default function UserSection() {
                         size="icon"
                         onClick={handleRefresh}
                         isLoading={isRefreshing}
-                        className="bg-white border-slate-200 text-slate-600 hover:text-accent shadow-sm group"
+                        className="bg-white border-slate-200 text-slate-600 hover:text-primary shadow-sm group"
                     >
                         {!isRefreshing && <RefreshCw size={20} className="group-hover:rotate-180 transition-transform duration-500" />}
                     </Button>
@@ -177,7 +177,7 @@ export default function UserSection() {
                     <Button
                         variant="link"
                         onClick={() => { setSearch(''); setRoleFilter('ALL'); }}
-                        className="mt-6 font-bold"
+                        className="mt-6 font-bold text-primary"
                     >
                         Clear all filters
                     </Button>

@@ -252,7 +252,7 @@ export default function BookingForm({ car }: Props) {
                             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-200 text-amber-600 text-[10px]">!</span>
                             Minimum 48 Hours Required
                         </p>
-                        <p className="text-amber-600 text-[10px] mt-1 font-medium italic">
+                        <p className="text-amber-600 text-[10px] mt-1 font-medium  ">
                             The minimum booking duration for any vehicle is 2 days. Please adjust your return time.
                         </p>
                     </div>

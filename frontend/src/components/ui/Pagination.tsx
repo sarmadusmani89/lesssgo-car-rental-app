@@ -23,7 +23,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
     return (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 mt-2">
-            <p className="text-sm text-muted-foreground font-medium italic">
+            <p className="text-sm text-muted-foreground font-medium  ">
                 Showing <span className="text-foreground font-bold">{startItem}</span> to{' '}
                 <span className="text-foreground font-bold">{endItem}</span> of{' '}
                 <span className="text-foreground font-bold">{totalItems}</span> items

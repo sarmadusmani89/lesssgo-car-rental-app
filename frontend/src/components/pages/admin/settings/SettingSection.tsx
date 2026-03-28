@@ -22,13 +22,13 @@ export default function SettingSection({
     items,
 }: SettingSectionProps) {
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold text-slate-900 italic">
+                <h1 className="text-3xl font-black text-slate-900 tracking-tight  ">
                     {heading}
                 </h1>
-                <p className="text-slate-500 mt-1">{subHeading}</p>
+                <p className="text-slate-500 mt-1 font-medium">{subHeading}</p>
             </div>
 
             {/* Cards */}

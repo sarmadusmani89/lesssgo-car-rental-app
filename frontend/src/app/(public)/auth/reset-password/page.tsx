@@ -95,7 +95,7 @@ function ResetPasswordContent() {
 
     return (
         <>
-            <h2 className="text-4xl lg:text-5xl font-black mb-2 tracking-tighter text-slate-900 font-outfit uppercase italic">Set New Password</h2>
+            <h2 className="text-4xl lg:text-5xl font-black mb-2 tracking-tighter text-slate-900 font-outfit uppercase  ">Set New Password</h2>
             <p className="text-muted-foreground mb-10 text-[15px]">Enter your new secure password below.</p>
 
             <form onSubmit={handleSubmit(onSubmit)}>

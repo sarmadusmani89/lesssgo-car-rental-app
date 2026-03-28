@@ -15,7 +15,7 @@ export default function ValueCard({ icon: Icon, title, description }: ValueCardP
                 <Icon size={40} />
             </div>
             <h3 className="text-2xl font-bold text-primary mb-4">{title}</h3>
-            <p className="text-muted-foreground leading-relaxed italic">{description}</p>
+            <p className="text-muted-foreground leading-relaxed  ">{description}</p>
         </div>
     );
 }

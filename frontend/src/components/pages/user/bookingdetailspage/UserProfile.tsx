@@ -8,7 +8,7 @@ export default function UserProfile() {
     return (
         <div className="space-y-8 animate-in fade-in duration-500 max-w-4xl">
             <div>
-                <h1 className="text-3xl font-bold text-slate-900 italic">Your Profile</h1>
+                <h1 className="text-3xl font-bold text-slate-900  ">Your Profile</h1>
                 <p className="text-slate-500 mt-1">Manage your personal information and contact details.</p>
             </div>
 
@@ -19,7 +19,7 @@ export default function UserProfile() {
                     </div>
                     <div>
                         <h2 className="text-24 font-bold text-slate-900">John Doe</h2>
-                        <p className="text-slate-500 font-medium italic">Platinum Member</p>
+                        <p className="text-slate-500 font-medium  ">Platinum Member</p>
                     </div>
                 </div>
 
