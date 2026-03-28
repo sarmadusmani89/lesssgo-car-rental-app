@@ -123,8 +123,8 @@ export default function UserBookings() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">My <span className="text-primary  ">Bookings</span></h1>
-        <p className="text-slate-500 mt-1 font-medium  ">Track and manage your vehicle rental history and upcoming journeys.</p>
+        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">My <span className="text-primary  ">Bookings</span></h1>
+        <p className="text-slate-500 mt-1 font-medium">Track and manage your upcoming journeys and rental history.</p>
       </div>
 
       {/* Tabs */}
@@ -135,7 +135,7 @@ export default function UserBookings() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`
-                                whitespace-nowrap py-4 px-1 border-b-2 font-bold text-xs uppercase tracking-widest transition-all duration-300
+                                whitespace-nowrap py-4 px-1 border-b-2 font-bold text-xs uppercase tracking-widest transition-all duration-200
                                 ${activeTab === tab
                   ? 'border-primary text-primary'
                   : 'border-transparent text-slate-400 hover:text-slate-600 hover:border-slate-200'
@@ -151,12 +151,12 @@ export default function UserBookings() {
       {/* Bookings List */}
       <div className="space-y-4">
         {paginatedBookings.length === 0 ? (
-          <div className="text-center py-20 bg-slate-50/50 rounded-[2.5rem] border border-slate-100/50 animate-in zoom-in-95 duration-500">
-            <div className="w-20 h-20 bg-white rounded-3xl shadow-sm border border-slate-50 flex items-center justify-center mx-auto mb-6">
-              <CalendarX className="w-10 h-10 text-slate-200" />
+          <div className="text-center py-20 bg-slate-50/50 rounded-3xl border border-slate-100/50 animate-in zoom-in-95 duration-500">
+            <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-slate-50 flex items-center justify-center mx-auto mb-6">
+              <CalendarX className="w-8 h-8 text-slate-200" />
             </div>
-            <h3 className="text-xl font-black text-slate-900 tracking-tight mb-2 uppercase">No {activeTab} bookings</h3>
-            <p className="text-slate-500 font-medium  ">You don't have any bookings in this category.</p>
+            <h3 className="text-xl font-bold text-slate-900 tracking-tight mb-2 uppercase">No {activeTab} bookings</h3>
+            <p className="text-slate-500 font-medium">You don't have any reservations in this category yet.</p>
           </div>
         ) : (
           <>

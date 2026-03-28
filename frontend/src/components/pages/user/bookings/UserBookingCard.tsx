@@ -81,7 +81,7 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
     }
 
     return (
-        <div className="bg-white rounded-3xl border border-slate-100 p-6 transition-all hover:shadow-xl hover:shadow-slate-200/50 group">
+        <div className="bg-white rounded-3xl border border-slate-100 p-6 transition-all hover:shadow-lg hover:shadow-slate-100 group">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="flex-1 space-y-4">
                     <div className="flex items-center gap-4">
@@ -89,28 +89,29 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                 Booking #{booking.id.toString().slice(-8).toUpperCase()}
                             </span>
-                            <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase mt-1">
+                            <h3 className="text-xl font-extrabold text-slate-900 tracking-tight mt-1">
                                 {booking.car?.brand} {booking.car?.name}
                             </h3>
                         </div>
-                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusColor(status)} shadow-sm`}>
+                        <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${getStatusColor(status)}`}>
                             {status}
                         </span>
                     </div>
  
                     <div className="flex flex-wrap items-center gap-6">
                         <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
+                            <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400">
                                 <Calendar className="w-4 h-4" />
                             </div>
-                            <span className="text-sm font-bold text-slate-600">
+                            <span className="text-xs font-bold text-slate-600">
                                 {booking.startDate ? formatDate(booking.startDate) : 'TBD'} — {booking.endDate ? formatDate(booking.endDate) : 'TBD'}
                             </span>
                         </div>
  
                         {booking.totalAmount && (
-                            <div className="flex items-center gap-2">
-                                <span className="text-xl font-black text-slate-900">
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
+                                <span className="text-lg font-extrabold text-slate-900 tracking-tight">
                                     <span className="text-primary text-xs mr-0.5">K</span>{booking.totalAmount}
                                 </span>
                             </div>
@@ -122,10 +123,9 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
                     <Button
                         href={`/dashboard/bookings/${booking.id}`}
                         variant="secondary"
-                        className="flex-1 md:flex-none bg-slate-900 text-white hover:bg-slate-800 border-none px-6 py-3 rounded-xl text-sm"
+                        className="flex-1 md:flex-none bg-slate-100 text-slate-900 hover:bg-slate-200 border-none px-6 py-2 h-auto text-[11px] font-bold uppercase tracking-widest rounded-xl"
                     >
-                        <Eye size={18} />
-                        Details
+                        View Details
                     </Button>
  
                     {!isCompleted && !isCancelled && (
@@ -134,11 +134,10 @@ export default function UserBookingCard({ booking, onCancel, cancellingId }: Use
                                 onClick={() => onCancel(booking.id)}
                                 isLoading={cancellingId === booking.id}
                                 disabled={!canCancel}
-                                variant="danger"
-                                className={`w-full md:w-auto px-6 py-3 rounded-xl text-sm ${!canCancel ? 'opacity-40 grayscale pointer-events-none' : ''}`}
+                                variant="outline"
+                                className={`w-full md:w-auto px-6 py-2 h-auto text-[11px] font-bold uppercase tracking-widest rounded-xl border-slate-100 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-100 ${!canCancel ? 'opacity-30 grayscale pointer-events-none' : ''}`}
                                 title={restrictionMessage}
                             >
-                                {!cancellingId && <AlertCircle size={18} />}
                                 Cancel
                             </Button>
                             {restrictionMessage && (

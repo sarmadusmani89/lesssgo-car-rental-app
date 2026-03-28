@@ -58,8 +58,8 @@ export default function UpdateProfileForm() {
   if (!user) return null;
 
   return (
-    <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 group hover:border-primary/20 transition-all duration-300">
-      <h2 className="text-xl font-extrabold text-slate-900 mb-8 tracking-tight">Update <span className="text-primary">Information</span></h2>
+    <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+      <h2 className="text-xl font-bold text-slate-900 mb-6 tracking-tight uppercase">Update Information</h2>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <AuthInput
           label="Full Name"
@@ -97,12 +97,12 @@ export default function UpdateProfileForm() {
           maxLength={9}
         />
 
-        <div className="flex justify-end mt-4">
+        <div className="flex justify-end pt-2">
           <Button
             type="submit"
             isLoading={loading}
             disabled={loading}
-            className="px-10 py-3 rounded-xl shadow-lg shadow-primary/20 font-bold"
+            className="px-8 py-2.5 h-auto rounded-xl text-[11px] font-bold uppercase tracking-widest"
           >
             Save Changes
           </Button>
