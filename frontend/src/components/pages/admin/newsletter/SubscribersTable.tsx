@@ -3,7 +3,7 @@
 import { Mail } from 'lucide-react';
 import SubscribersTableRow from './SubscribersTableRow';
 
-interface Subscriber {
+export interface Subscriber {
     id: string;
     email: string;
     subscribedAt: string;
