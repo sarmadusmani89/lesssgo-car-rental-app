@@ -1,7 +1,6 @@
 import { Calendar } from 'lucide-react';
 import DateInput from './DateInput';
 import TimeInput from './TimeInput';
-import styles from './DateTimeField.module.css';
 
 interface DateTimeFieldProps {
     label: string;
@@ -37,11 +36,11 @@ export default function DateTimeField({
     required = true
 }: DateTimeFieldProps) {
     return (
-        <div className={styles.container}>
-            <label className={styles.label}>
-                <Calendar size={12} /> {label} {required && <span className={styles.required}>*</span>}
+        <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 flex items-center gap-1.5 ml-1">
+                <Calendar size={12} className="text-accent" /> {label} {required && <span className="text-red-500">*</span>}
             </label>
-            <div className={styles.grid}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <DateInput
                     value={dateValue}
                     onChange={onDateChange}
@@ -62,3 +61,4 @@ export default function DateTimeField({
         </div>
     );
 }
+

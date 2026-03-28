@@ -1,5 +1,4 @@
 import { ArrowRight } from 'lucide-react';
-import styles from './BookingButton.module.css';
 
 interface BookingButtonProps {
     onClick: () => void;
@@ -12,10 +11,11 @@ export default function BookingButton({ onClick, label, disabled }: BookingButto
         <button
             onClick={onClick}
             disabled={disabled}
-            className={styles.button}
+            className="w-full p-4 bg-accent hover:bg-accent/90 text-white rounded-xl font-black uppercase text-xs tracking-widest transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400 disabled:shadow-none flex items-center justify-center gap-2 group border-none outline-none"
         >
             {label}
-            <ArrowRight size={16} className={styles.icon} />
+            <ArrowRight size={18} className="transition-transform duration-200 group-hover:translate-x-1" />
         </button>
     );
 }
+

@@ -1,6 +1,5 @@
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import styles from './DateInput.module.css';
 
 interface DateInputProps {
     value: Date | null;
@@ -28,7 +27,7 @@ export default function DateInput({
     placeholder = "Select Date"
 }: DateInputProps) {
     return (
-        <div className={styles.container}>
+        <div className="w-full relative">
             <DatePicker
                 selected={value}
                 onChange={onChange}
@@ -40,10 +39,11 @@ export default function DateInput({
                 maxDate={maxDate}
                 excludeDates={excludeDates}
                 placeholderText={placeholder}
-                className={styles.input}
-                wrapperClassName={styles.datePickerWrapper}
+                className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-gray-700 outline-none transition-all focus:ring-2 focus:ring-accent/20 focus:border-accent"
+                wrapperClassName="w-full"
                 dateFormat="dd/MM/yyyy"
             />
         </div>
     );
 }
+
