@@ -15,11 +15,6 @@ module.exports = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
-      borderRadius: {
-        lg: "var(--radius-lg)",
-        md: "var(--radius)",
-        sm: "var(--radius-sm)",
-      },
     },
   },
   plugins: [],
