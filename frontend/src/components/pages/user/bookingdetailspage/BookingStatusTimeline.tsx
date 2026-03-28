@@ -55,23 +55,26 @@ export default function BookingStatusTimeline({ booking }: { booking: any }) {
   };
 
   return (
-    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-      <div className="mb-6">
-        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Log</label>
-        <h2 className="text-lg font-black text-slate-900 tracking-tight uppercase">Timeline</h2>
+    <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+      <div className="mb-8">
+        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block mb-1">Activity Log</label>
+        <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase">Booking Timeline</h2>
       </div>
 
-      <div className="space-y-4">
+      <div className="relative space-y-8">
+        {/* Vertical Line */}
+        <div className="absolute left-[19px] top-2 bottom-2 w-[2px] bg-slate-50" />
+
         {steps.map((step, index) => (
-          <div key={index} className="flex items-start gap-3">
-            <div className={`mt-1 flex-shrink-0 ${step.status === 'completed' ? 'text-emerald-500' : step.status === 'active' ? 'text-primary' : 'text-slate-300'}`}>
+          <div key={index} className="relative flex items-start gap-6 group">
+            <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center border shadow-sm transition-all duration-300 ${getStatusColor(step.status)}`}>
               {step.icon}
             </div>
-            <div>
-              <p className={`text-xs font-bold uppercase tracking-tight ${step.status === 'active' ? 'text-primary' : 'text-slate-900'}`}>
+            <div className="pt-0.5">
+              <p className={`text-sm font-black tracking-tight uppercase ${step.status === 'active' ? 'text-primary' : 'text-slate-900'}`}>
                 {step.title}
               </p>
-              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                 {step.date}
               </p>
             </div>

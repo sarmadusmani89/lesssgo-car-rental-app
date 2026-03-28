@@ -76,11 +76,11 @@ export default function BookingDetailsPage() {
   const isCancellable = booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED' && isFreeCancellation && isTimeValid;
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Booking <span className="text-primary">Details</span></h1>
-          <p className="text-slate-500 text-sm mt-0.5 font-medium">Reservation <span className="text-slate-900 font-bold">#{booking.id.toString().slice(-8).toUpperCase()}</span></p>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Booking <span className="text-primary">Details</span></h1>
+          <p className="text-slate-500 mt-1 font-medium">Review and manage your vehicle reservation <span className="text-slate-900 font-bold">#{booking.id.toString().slice(-8).toUpperCase()}</span>.</p>
         </div>
         
         {booking.status !== 'CANCELLED' && booking.status !== 'COMPLETED' && (
@@ -88,7 +88,14 @@ export default function BookingDetailsPage() {
             onClick={handleCancel}
             disabled={!isCancellable}
             variant="danger"
-            className={`px-6 py-3 rounded-2xl text-sm ${!isCancellable ? 'opacity-40 grayscale pointer-events-none' : ''}`}
+            className={`px-8 py-4 rounded-2xl ${!isCancellable ? 'opacity-40 grayscale pointer-events-none' : ''}`}
+            title={
+              !isFreeCancellation
+                ? "This car does not offer free cancellation"
+                : !isTimeValid
+                  ? "Cancellations are only allowed 48 hours before pickup"
+                  : "Cancel Booking"
+            }
           >
             {!isFreeCancellation
               ? 'Non-Cancellable'
@@ -99,12 +106,12 @@ export default function BookingDetailsPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
           <CompleteBookingInformation booking={booking} />
           <PaymentStatusAndMethod booking={booking} />
         </div>
-        <div className="lg:col-span-4 space-y-6">
+        <div className="space-y-8">
           <CarDetailsWithImages car={booking.car} />
           <BookingStatusTimeline booking={booking} />
         </div>
