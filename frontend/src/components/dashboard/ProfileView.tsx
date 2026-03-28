@@ -9,48 +9,49 @@ export default function ProfileView({ user }: ProfileViewProps) {
     if (!user) return null;
 
     return (
-        <div className="animate-slide-up">
-            <h2 className="font-outfit text-2xl mb-6">My Profile</h2>
-            <div className="glass p-8 rounded-2xl w-full">
-                <div className="flex items-center gap-6 mb-8">
-                    <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                        <User size={40} />
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-8">My <span className="text-primary  ">Profile</span></h2>
+            <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm w-full relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/[0.02] rounded-full -mr-32 -mt-32 blur-3xl" />
+                <div className="flex items-center gap-6 mb-10 relative z-10">
+                    <div className="w-24 h-24 bg-primary/5 rounded-3xl flex items-center justify-center text-primary shadow-inner">
+                        <User size={48} />
                     </div>
                     <div>
-                        <h3 className="text-xl font-bold font-outfit">{user.name}</h3>
-                        <p className="text-gray-500">{user.email}</p>
-                        <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                            <Shield size={12} />
+                        <h3 className="text-2xl font-black text-slate-900 tracking-tight">{user.name}</h3>
+                        <p className="text-slate-500 font-medium  ">{user.email}</p>
+                        <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                            <Shield size={12} className="fill-emerald-600/20" />
                             {user.role?.toLowerCase() === 'admin' ? 'Administrator' : 'Verified Member'}
                         </div>
                     </div>
                 </div>
 
                 <div className="grid gap-6">
-                    <div className="p-4 border border-gray-100 rounded-xl">
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
-                        <div className="font-medium text-gray-900">{user.name}</div>
+                    <div className="p-5 border border-slate-50 bg-slate-50/30 rounded-2xl transition-all hover:bg-slate-50 hover:border-slate-100">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1.5">Full Name</label>
+                        <div className="font-bold text-slate-900">{user.name}</div>
                     </div>
 
-                    <div className="p-4 border border-gray-100 rounded-xl">
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Email Address</label>
-                        <div className="font-medium text-gray-900 flex items-center gap-2">
-                            <Mail size={16} className="text-gray-400" />
+                    <div className="p-5 border border-slate-50 bg-slate-50/30 rounded-2xl transition-all hover:bg-slate-50 hover:border-slate-100">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1.5">Email Address</label>
+                        <div className="font-bold text-slate-900 flex items-center gap-3">
+                            <Mail size={18} className="text-primary/40" />
                             {user.email}
                         </div>
                     </div>
 
-                    <div className="p-4 border border-gray-100 rounded-xl">
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Phone Number</label>
-                        <div className="font-medium text-gray-900 flex items-center gap-2">
-                            <Phone size={16} className="text-gray-400" />
+                    <div className="p-5 border border-slate-50 bg-slate-50/30 rounded-2xl transition-all hover:bg-slate-50 hover:border-slate-100">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1.5">Phone Number</label>
+                        <div className="font-bold text-slate-900 flex items-center gap-3">
+                            <Phone size={18} className="text-primary/40" />
                             {user.phoneNumber ? `+675 ${displayPhone(user.phoneNumber)}` : 'N/A'}
                         </div>
                     </div>
 
-                    <div className="p-4 border border-gray-100 rounded-xl">
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Member Since</label>
-                        <div className="font-medium text-gray-900">
+                    <div className="p-5 border border-slate-50 bg-slate-50/30 rounded-2xl transition-all hover:bg-slate-50 hover:border-slate-100">
+                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1.5">Member Since</label>
+                        <div className="font-bold text-slate-900">
                             {new Date(user.createdAt).toLocaleDateString('en-AU', {
                                 year: 'numeric',
                                 month: 'long',

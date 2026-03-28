@@ -49,8 +49,8 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-      <h2 className="text-xl font-bold font-outfit mb-6">Change Password</h2>
+    <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 group hover:border-primary/20 transition-all duration-300">
+      <h2 className="text-xl font-extrabold text-slate-900 mb-8 tracking-tight">Change <span className="text-primary">Password</span></h2>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <AuthInput
           label="New Password"
@@ -76,7 +76,7 @@ export default function ChangePassword() {
           <Button
             type="submit"
             isLoading={loading}
-            className="px-8"
+            className="px-10 py-3 rounded-xl shadow-lg shadow-primary/20 font-bold"
           >
             Update Password
           </Button>
