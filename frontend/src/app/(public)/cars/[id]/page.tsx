@@ -70,14 +70,14 @@ function CarContent() {
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
             <div className="max-w-md w-full bg-white p-12 rounded-[3rem] shadow-xl border border-gray-100 text-center">
                 <h1 className="text-4xl font-black text-gray-900 font-outfit uppercase tracking-tight mb-4">
-                    Vehicle <span className="text-blue-600">Not Found</span>
+                    Vehicle <span className="text-primary">Not Found</span>
                 </h1>
                 <p className="text-gray-500 font-medium mb-8">
                     The requested vehicle ID <b>{carId || 'None'}</b> could not be located in our exquisite fleet.
                 </p>
                 <button
                     onClick={() => window.location.href = '/cars'}
-                    className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-blue-700 transition-all"
+                    className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-primary/90 transition-all font-inter"
                 >
                     View Available Fleet
                 </button>
@@ -154,7 +154,7 @@ function CarContent() {
                         </section>
 
                         <section className="bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[3rem] border border-gray-100 shadow-xl shadow-gray-100/30 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50/50 rounded-full -mr-24 -mt-24 transition-transform duration-700 group-hover:scale-150" />
+                            <div className="absolute top-0 right-0 w-48 h-48 bg-secondary/50 rounded-full -mr-24 -mt-24 transition-transform duration-700 group-hover:scale-150" />
                             <div className="relative z-10">
                                 <div className="flex items-center gap-3 mb-6 md:mb-8">
                                     <div className="w-10 h-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/20">
@@ -218,7 +218,7 @@ function CarContent() {
 
 
                         <div className="p-10 bg-gray-900 rounded-[3rem] text-white shadow-2xl shadow-gray-200 overflow-hidden relative group">
-                            <div className="absolute bottom-0 right-0 w-48 h-48 bg-blue-600/20 rounded-full -mr-24 -mb-24 transition-transform duration-700 group-hover:scale-150" />
+                            <div className="absolute bottom-0 right-0 w-48 h-48 bg-primary/20 rounded-full -mr-24 -mb-24 transition-transform duration-700 group-hover:scale-150" />
                             <div className="relative z-10">
                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary-foreground/60 mb-3">Concierge Service</p>
                                 <h4 className="text-2xl font-black font-outfit mb-4 uppercase tracking-tight">Need Support?</h4>
