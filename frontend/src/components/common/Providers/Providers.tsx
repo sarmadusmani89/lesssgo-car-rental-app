@@ -8,6 +8,7 @@ import { SWRConfig } from 'swr';
 import { initializeWishlist } from '@/lib/store/slices/wishlistSlice';
 import { initializeCurrency } from '@/lib/store/slices/uiSlice';
 import api, { userApi } from '@/lib/api';
+import ThemeProvider from './ThemeProvider';
 import styles from './Providers.module.css';
 
 function WishlistInitializer() {
@@ -64,13 +65,15 @@ export default function Providers({ children }: { children: ReactNode }) {
     return (
         <Provider store={store}>
             <SWRConfig value={swrConfig}>
-                <WishlistInitializer />
-                <CurrencyInitializer />
-                <AuthInitializer />
-                <div className={styles.wrapper}>
-                    {children}
-                    <Toaster position="top-right" richColors closeButton />
-                </div>
+                <ThemeProvider>
+                    <WishlistInitializer />
+                    <CurrencyInitializer />
+                    <AuthInitializer />
+                    <div className={styles.wrapper}>
+                        {children}
+                        <Toaster position="top-right" richColors closeButton />
+                    </div>
+                </ThemeProvider>
             </SWRConfig>
         </Provider>
     );

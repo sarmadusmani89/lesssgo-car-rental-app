@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 async function getSettings() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://134.199.169.242'}/settings`, {
-      next: { revalidate: 60 } // Cache for 1 minute
+      cache: 'no-store' // Don't cache setting fetch on server to ensure fresh theme on refresh
     });
     if (!res.ok) throw new Error('Failed to fetch settings');
     return await res.json();

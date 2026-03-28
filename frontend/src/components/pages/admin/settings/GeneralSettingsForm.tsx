@@ -4,6 +4,7 @@ import api from '@/lib/api';
 import { Loader2, Save, Upload, X } from 'lucide-react';
 import Image from 'next/image';
 import { formatPNGPhone, mapToPNGPrefix } from '@/lib/utils';
+import { useTheme } from '@/components/common/Providers/ThemeProvider';
 
 interface GeneralSettingsFormProps {
     onSaved: () => void;
@@ -11,6 +12,7 @@ interface GeneralSettingsFormProps {
 }
 
 export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSettingsFormProps) {
+    const { refreshTheme } = useTheme();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         siteName: '',
@@ -95,6 +97,7 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
 
             await api.put('/settings', data);
             toast.success('Settings updated successfully');
+            refreshTheme(); // Refresh theme immediately
             onSaved();
         } catch (error) {
             console.error('Failed to update settings:', error);
