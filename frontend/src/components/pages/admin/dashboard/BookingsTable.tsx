@@ -22,8 +22,8 @@ export default function RecentBookingsTable({ bookings }: { bookings: any[] }) {
         <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
             <div className="p-6 border-b border-slate-50 flex justify-between items-center">
                 <h2 className="text-lg font-bold text-slate-900">Recent Bookings</h2>
-                <Link 
-                    href="/admin/bookings" 
+                <Link
+                    href="/admin/bookings"
                     className="text-xs font-semibold text-primary hover:underline"
                 >
                     View All
