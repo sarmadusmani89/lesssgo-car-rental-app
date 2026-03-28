@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { User, Mail, Phone, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 export default function UserProfile() {
     return (
@@ -41,7 +42,7 @@ export default function UserProfile() {
                     </div>
                 </div>
 
-                <button className="mt-8 px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all shadow-lg">Edit Profile</button>
+                <Button variant="primary" className="mt-8 px-8 py-3 h-auto">Edit Profile</Button>
             </div>
         </div>
     );

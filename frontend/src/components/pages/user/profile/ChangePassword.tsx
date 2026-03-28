@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Lock, Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import api from '@/lib/api';
 import { toast } from 'sonner';
@@ -72,13 +73,13 @@ export default function ChangePassword() {
         />
 
         <div className="flex justify-end mt-4">
-          <button
+          <Button
             type="submit"
-            disabled={loading}
-            className="btn btn-primary px-8"
+            isLoading={loading}
+            className="px-8"
           >
-            {loading ? <Loader2 className="animate-spin" /> : 'Update Password'}
-          </button>
+            Update Password
+          </Button>
         </div>
       </form>
     </div>
