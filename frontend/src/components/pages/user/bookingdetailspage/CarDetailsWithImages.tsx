@@ -10,44 +10,40 @@ export default function CarDetailsWithImages({ car }: { car: any }) {
   if (!car) return null;
 
   return (
-    <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="flex-1 space-y-6">
-          <div>
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block mb-1">Booked Vehicle</label>
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase leading-tight">{car.brand} {car.name}</h2>
-          </div>
+    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm relative overflow-hidden flex flex-col">
+      <div className="mb-4">
+        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Selected Vehicle</label>
+        <h2 className="text-xl font-bold text-slate-900 tracking-tight leading-tight">{car.brand} {car.name}</h2>
+      </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100/50">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 font-mono">Transmission</p>
-              <p className="text-sm font-black text-slate-900 uppercase">{car.transmission || 'Automatic'}</p>
-            </div>
-            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100/50">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 font-mono">Fuel Capacity</p>
-              <p className="text-sm font-black text-slate-900 uppercase">{car.fuelCapacity ? `${car.fuelCapacity}L` : 'Standard'}</p>
-            </div>
-          </div>
+      <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 mb-4">
+        {car.imageUrl && (
+          <Image
+            src={car.imageUrl}
+            alt={car.name}
+            fill
+            className="object-cover"
+          />
+        )}
+      </div>
 
-          <div className="pt-6 border-t border-slate-50">
-            <p className="text-lg font-black text-primary tracking-tighter">
-              {formatPrice(car.pricePerDay, currency, rates)} <span className="text-xs text-slate-400 font-bold uppercase tracking-widest ml-1">/ Day</span>
-            </p>
+      <div className="flex items-center justify-between pt-4 border-t border-slate-50 mt-auto">
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Gear</span>
+            <span className="text-xs font-semibold text-slate-700 uppercase leading-none mt-1">{car.transmission || 'Auto'}</span>
+          </div>
+          <div className="w-[1px] h-6 bg-slate-100" />
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Fuel</span>
+            <span className="text-xs font-semibold text-slate-700 uppercase leading-none mt-1">{car.fuelCapacity || '50'}L</span>
           </div>
         </div>
-
-        <div className="relative w-full md:w-1/2 aspect-[16/10] rounded-2xl overflow-hidden bg-slate-50 border border-slate-100">
-          {car.imageUrl && (
-            <Image
-              src={car.imageUrl}
-              alt={car.name}
-              fill
-              className="object-cover"
-            />
-          )}
-          <div className="absolute top-4 right-4 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest text-slate-900 shadow-sm border border-white/20">
-            {car.type || 'Premium'}
-          </div>
+        <div className="text-right">
+          <p className="text-lg font-extrabold text-primary tracking-tight">
+            {formatPrice(car.pricePerDay, currency, rates)}
+            <span className="text-[10px] text-slate-400 font-bold ml-0.5 tracking-normal uppercase">/ Day</span>
+          </p>
         </div>
       </div>
     </div>
