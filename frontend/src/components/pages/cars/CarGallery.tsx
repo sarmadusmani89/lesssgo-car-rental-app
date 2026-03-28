@@ -1,11 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-
-interface Props {
-  vehicleId: string;
-}
-
 import Lightbox from './Lightbox';
 
 interface Props {
