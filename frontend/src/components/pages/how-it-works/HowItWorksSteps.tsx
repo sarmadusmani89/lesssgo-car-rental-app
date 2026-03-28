@@ -1,5 +1,4 @@
 import { Search, Calendar, Car, Sparkles } from 'lucide-react';
-import styles from '@/app/(public)/how-it-works/how-it-works.module.css';
 
 export default function HowItWorksSteps() {
     const steps = [
@@ -26,19 +25,21 @@ export default function HowItWorksSteps() {
     ];
 
     return (
-        <section className={styles.steps}>
-            <div className="container">
+        <section className="py-20 md:py-32">
+            <div className="container mx-auto px-4">
                 {steps.map((step, index) => {
                     const Icon = step.icon;
                     return (
-                        <div key={index} className={styles.step}>
-                            <div className={styles.stepNumber}>{index + 1}</div>
-                            <div className={styles.stepIcon}>
+                        <div key={index} className="grid grid-cols-1 md:grid-cols-[auto_auto_1fr] gap-8 items-center p-8 md:p-10 mb-8 bg-white rounded-[2rem] shadow-sm hover:-translate-y-1 hover:shadow-xl transition-all duration-300 border border-slate-50 relative group last:mb-0">
+                            <div className="text-5xl md:text-6xl font-black text-accent opacity-20 leading-none">
+                                {index + 1}
+                            </div>
+                            <div className="w-20 h-20 bg-gradient-to-br from-accent to-[#7c3aed] text-white rounded-full flex items-center justify-center shrink-0 shadow-lg shadow-indigo-100 group-hover:scale-110 transition-transform duration-300">
                                 <Icon size={32} />
                             </div>
-                            <div className={styles.stepContent}>
-                                <h3>{step.title}</h3>
-                                <p>{step.description}</p>
+                            <div>
+                                <h3 className="text-2xl font-bold text-primary mb-3">{step.title}</h3>
+                                <p className="text-muted-foreground leading-relaxed">{step.description}</p>
                             </div>
                         </div>
                     );
