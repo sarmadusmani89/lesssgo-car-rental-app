@@ -42,18 +42,18 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
   };
 
   return (
-    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
       <div className="flex justify-between items-center mb-8 pb-4 border-b border-slate-50">
         <div>
-          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-0.5">Financial Status</label>
-          <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Settlement</h2>
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Financial Status</label>
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Settlement</h2>
         </div>
         {isAdmin && paymentStatus !== 'PAID' && booking.status !== 'CANCELLED' && (
           <Button
             variant="accent"
             onClick={handleMarkAsPaid}
             isLoading={loading}
-            className="bg-emerald-600 hover:bg-emerald-700 text-[10px] font-bold uppercase tracking-widest h-auto py-2 px-4 rounded-xl border-none"
+            className="bg-emerald-600 hover:bg-emerald-700 text-[10px] font-bold uppercase tracking-wider h-auto py-2 px-4 rounded-xl border-none"
           >
             Payment Received
           </Button>
@@ -62,7 +62,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
-          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Method</label>
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Method</label>
           <div className="flex items-center gap-2">
             <CreditCard size={14} className="text-slate-400" />
             <p className="text-xs font-bold text-slate-700 uppercase">
@@ -72,7 +72,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
         </div>
 
         <div>
-          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Status</label>
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Status</label>
           <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase">
             <Sparkles size={14} />
             {paymentStatus}
@@ -80,7 +80,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
         </div>
 
         <div className="relative">
-          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Security Bond</label>
+          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Security Bond</label>
           <div className="flex items-center justify-between">
             <div className={`flex items-center gap-2 text-xs font-bold uppercase ${bondStatus === 'PAID' ? 'text-primary' : 'text-slate-400'}`}>
               <Receipt size={14} />
@@ -91,7 +91,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
                 variant="outline"
                 onClick={handleReleaseBond}
                 isLoading={loading}
-                className="px-2 py-1 bg-white text-[9px] font-bold uppercase tracking-widest rounded-lg border-slate-200 h-auto min-h-0"
+                className="px-2 py-1 bg-white text-[9px] font-bold uppercase tracking-wider rounded-lg border-slate-200 h-auto min-h-0"
               >
                 Refund
               </Button>
