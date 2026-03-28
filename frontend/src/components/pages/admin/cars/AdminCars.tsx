@@ -19,8 +19,8 @@ import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import AvailabilityCalendar from "@/components/pages/admin/dashboard/AvailabilityCalendar";
-import Image from 'next/image';
 import { Car } from './type';
+import { toast } from 'sonner';
 
 import AdminCarsHeader from './components/AdminCarsHeader';
 import AdminCarSearch from './components/AdminCarSearch';

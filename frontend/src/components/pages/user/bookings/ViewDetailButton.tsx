@@ -1,5 +1,7 @@
 'use client';
 
+import { Button } from '@/components/ui/Button';
+
 interface Props {
   bookingId: number;
 }
@@ -10,11 +12,13 @@ export default function ViewDetailButton({ bookingId }: Props) {
   };
 
   return (
-    <button
+    <Button
+      variant="outline"
+      size="sm"
       onClick={handleClick}
-      className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+      className="px-3 hover:bg-muted"
     >
       View Details
-    </button>
+    </Button>
   );
 }
