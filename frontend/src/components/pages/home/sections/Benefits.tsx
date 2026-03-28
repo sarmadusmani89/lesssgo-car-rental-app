@@ -1,3 +1,4 @@
+'use client';
 import { Shield, Star, Zap, MapPin, Calendar, Headphones } from 'lucide-react';
 import BenefitCard from '../components/BenefitCard';
 import { useTheme } from '@/components/common/Providers/ThemeProvider';
