@@ -47,33 +47,33 @@
 
 /* Theme Presets */
 .theme-corporate-blue {
-  --primary: #1e3a8a;
-  --primary-foreground: #f8fafc;
-  --secondary: #dbeafe;
-  --secondary-foreground: #1e3a8a;
-  --accent: #3b82f6;
-  --accent-foreground: #ffffff;
-  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.2);
+  --primary: #1e3a8a; /* Deep Blue (Dark) */
+  --primary-foreground: #ffffff;
+  --secondary: #0f172a; /* Navy Blue (Darker) */
+  --secondary-foreground: #f8fafc;
+  --accent: #f1f5f9; /* Soft Grey (Light) */
+  --accent-foreground: #1e3a8a;
+  --shadow-glow: 0 0 20px rgba(30, 58, 138, 0.25);
 }
 
 .theme-premium-green {
-  --primary: #047857;
+  --primary: #065f46; /* Emerald Green (Dark) */
   --primary-foreground: #ffffff;
-  --secondary: #1f2937;
-  --secondary-foreground: #f9fafb;
-  --accent: #10b981;
-  --accent-foreground: #ffffff;
-  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
+  --secondary: #111827; /* Dark Grey */
+  --secondary-foreground: #f8fafc;
+  --accent: #f0fdf4; /* Very Light Green */
+  --accent-foreground: #065f46;
+  --shadow-glow: 0 0 20px rgba(6, 95, 70, 0.25);
 }
 
 .theme-premium-orange {
-  --primary: #ea580c;
+  --primary: #c2410c; /* Orange (Dark) */
   --primary-foreground: #ffffff;
-  --secondary: #374151;
-  --secondary-foreground: #f9fafb;
-  --accent: #fb923c;
-  --accent-foreground: #ffffff;
-  --shadow-glow: 0 0 20px rgba(249, 115, 22, 0.2);
+  --secondary: #111827; /* Charcoal Grey */
+  --secondary-foreground: #f8fafc;
+  --accent: #fff7ed; /* Very Light Orange */
+  --accent-foreground: #c2410c;
+  --shadow-glow: 0 0 20px rgba(194, 65, 12, 0.25);
 }
 
 * {

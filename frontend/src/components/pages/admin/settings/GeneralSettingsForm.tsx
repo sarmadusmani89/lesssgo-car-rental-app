@@ -207,9 +207,9 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
-                        { id: 'theme-corporate-blue', name: 'Corporate Blue', primary: '#1e3a8a', secondary: '#dbeafe' },
-                        { id: 'theme-premium-green', name: 'Premium Green', primary: '#047857', secondary: '#1f2937' },
-                        { id: 'theme-premium-orange', name: 'Premium Orange', primary: '#ea580c', secondary: '#374151' },
+                        { id: 'theme-corporate-blue', name: 'Corporate Blue', primary: '#1e3a8a', secondary: '#0f172a' },
+                        { id: 'theme-premium-green', name: 'Premium Green', primary: '#065f46', secondary: '#111827' },
+                        { id: 'theme-premium-orange', name: 'Premium Orange', primary: '#c2410c', secondary: '#111827' },
                     ].map((theme) => (
                         <Button
                             key={theme.id}
