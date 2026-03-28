@@ -181,8 +181,11 @@ function LoginContent() {
 export default function LoginPage() {
     return (
         <Suspense fallback={
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <Loader2 className="animate-spin text-blue-600" size={48} />
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+                <div className="bg-white p-12 rounded-[3.5rem] shadow-2xl border border-white text-center flex flex-col items-center gap-6">
+                    <Loader size="lg" />
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Accessing your profile...</p>
+                </div>
             </div>
         }>
             <LoginContent />
