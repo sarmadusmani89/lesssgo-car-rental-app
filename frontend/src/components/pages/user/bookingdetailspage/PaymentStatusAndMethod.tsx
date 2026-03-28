@@ -2,6 +2,7 @@ import { CreditCard, Sparkles, Receipt, RefreshCw, Banknote } from 'lucide-react
 import { useState } from 'react';
 import api from '@/lib/api';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/Button';
 
 export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { booking: any; isAdmin?: boolean }) {
   const [loading, setLoading] = useState(false);
@@ -46,14 +47,16 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
         <h2 className="text-xl font-black font-outfit uppercase tracking-tight text-gray-900">Payment & Settlement</h2>
         <div className="flex gap-2">
           {isAdmin && paymentStatus !== 'PAID' && booking.status !== 'CANCELLED' && (
-            <button
+            <Button
+              variant="accent"
+              size="sm"
               onClick={handleMarkAsPaid}
-              disabled={loading}
-              className="px-4 py-2 bg-green-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-green-700 transition-all flex items-center gap-2"
+              isLoading={loading}
+              className="bg-green-600 hover:bg-green-700 text-[10px] font-black uppercase tracking-widest gap-2 h-auto py-2"
             >
               <Banknote size={14} />
               Payment Received
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -96,14 +99,15 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
               <div className="flex items-center justify-between gap-2">
                 <p className="font-bold text-gray-900 text-sm uppercase tracking-tight">{bondStatus}</p>
                 {isAdmin && bondStatus === 'PAID' && (
-                  <button
+                  <Button
+                    variant="outline"
                     onClick={handleReleaseBond}
-                    disabled={loading}
-                    className="flex items-center gap-1.5 px-3 py-1 bg-white text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100 hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                    isLoading={loading}
+                    className="flex items-center gap-1.5 px-3 py-1 bg-white text-blue-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100 hover:bg-blue-600 hover:text-white transition-all shadow-sm h-auto min-h-0"
                   >
-                    <RefreshCw size={10} className={loading ? 'animate-spin' : ''} />
+                    {!loading && <RefreshCw size={10} />}
                     {booking.paymentMethod === 'ONLINE' ? 'Refund Bond' : 'Mark Bond Refunded'}
-                  </button>
+                  </Button>
                 )}
                 {isAdmin && bondStatus === 'REFUND_PENDING' && (
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-yellow-50 text-yellow-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-yellow-100 italic transition-all shadow-sm">

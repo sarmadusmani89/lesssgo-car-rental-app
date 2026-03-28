@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Check, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import api from '@/lib/api';
 import { PREDEFINED_LOCATIONS } from '@/constants/locations';
 import { VEHICLE_BRANDS, VEHICLE_CATEGORIES, VEHICLE_TRANSMISSIONS, VEHICLE_CLASSES, VEHICLE_FUEL_TYPES } from '@/constants/car';
@@ -71,16 +72,15 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
                     const value = valueKey(opt);
                     const isActive = activeValue === value;
                     return (
-                        <button
+                        <Button
                             key={value}
+                            variant={isActive ? 'accent' : 'outline'}
+                            size="sm"
                             onClick={() => onSelect(value)}
-                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${isActive
-                                ? 'bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20'
-                                : 'bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-primary'
-                                }`}
+                            className="bg-card h-auto py-2"
                         >
                             {label}
-                        </button>
+                        </Button>
                     );
                 })}
             </div>
@@ -92,12 +92,14 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
             <div className="flex items-center justify-between">
                 <h3 className="text-xl font-extrabold uppercase tracking-tight">Filters</h3>
                 {isFiltered && (
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={clearFilters}
-                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80 flex items-center gap-1"
+                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80 flex items-center gap-1 h-auto py-1"
                     >
                         <X size={12} /> Clear
-                    </button>
+                    </Button>
                 )}
             </div>
 
