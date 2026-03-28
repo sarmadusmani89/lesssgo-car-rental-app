@@ -14,9 +14,6 @@ import BookingHeader from './booking/BookingHeader';
 import BookingButton from './booking/BookingButton';
 import BookingFooter from './booking/BookingFooter';
 
-// Styles
-import styles from './BookingForm.module.css';
-
 interface Props {
     car: {
         id: string;
@@ -189,16 +186,16 @@ export default function BookingForm({ car }: Props) {
     };
 
     return (
-        <div className={styles.formContainer}>
+        <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-2xl shadow-blue-100/30 border border-gray-100 relative overflow-visible">
             <BookingHeader
                 pricePerDay={car.pricePerDay}
                 currency={currency}
                 rates={rates}
             />
 
-            <div className={styles.content}>
+            <div className="flex flex-col gap-6 relative z-10">
                 {/* Locations */}
-                <div className={styles.locationGrid}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <LocationField
                         label="Pick Up Location"
                         value={pickupLocation}
@@ -250,7 +247,7 @@ export default function BookingForm({ car }: Props) {
                 />
 
                 {!isDurationValid && pickupDate && returnDate && (
-                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl mb-6 animate-in fade-in slide-in-from-top-2">
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl animate-in fade-in slide-in-from-top-2">
                         <p className="text-amber-800 text-xs font-bold flex items-center gap-2">
                             <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-200 text-amber-600 text-[10px]">!</span>
                             Minimum 48 Hours Required
@@ -278,8 +275,8 @@ export default function BookingForm({ car }: Props) {
             </div>
 
             {/* Background Decorations */}
-            <div className={styles.decorationTop} />
-            <div className={styles.decorationBottom} />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full -mr-32 -mt-32 blur-[64px] opacity-50 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-50 rounded-full -ml-32 -mb-32 blur-[64px] opacity-50 pointer-events-none" />
 
             <style jsx global>{`
                 .react-datepicker-wrapper {
