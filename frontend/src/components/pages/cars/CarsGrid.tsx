@@ -31,26 +31,26 @@ interface CarsGridProps {
 export default function CarsGrid({ cars, loading }: CarsGridProps) {
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center py-32 bg-white rounded-[3rem] border border-slate-100 shadow-sm">
-                <Loader2 className="animate-spin text-blue-600 mb-6" size={48} />
-                <p className="text-slate-500 font-bold font-outfit uppercase tracking-widest text-xs">Scanning our elite fleet...</p>
+            <div className="flex flex-col items-center justify-center py-32 bg-card rounded-[3rem] border border-border shadow-sm">
+                <Loader2 className="animate-spin text-primary mb-6" size={48} />
+                <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs">Scanning our elite fleet...</p>
             </div>
         );
     }
 
     if (cars.length === 0) {
         return (
-            <div className="bg-white rounded-[3rem] p-16 md:p-24 text-center border border-slate-100 shadow-sm">
-                <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8">
-                    <Frown size={48} className="text-slate-300" />
+            <div className="bg-card rounded-[3rem] p-16 md:p-24 text-center border border-border shadow-sm">
+                <div className="w-24 h-24 bg-secondary rounded-full flex items-center justify-center mx-auto mb-8">
+                    <Frown size={48} className="text-muted-foreground/40" />
                 </div>
-                <h3 className="text-3xl font-black text-slate-900 font-outfit uppercase tracking-tight">No Matching Vehicles</h3>
-                <p className="text-slate-500 mt-4 max-w-md mx-auto font-medium">
-                    Our curators couldn't find a vehicle matching your exquisite taste. Try adjusting your filters or search query.
+                <h3 className="text-3xl font-extrabold text-[#020617] uppercase tracking-tight">No Matching Vehicles</h3>
+                <p className="text-muted-foreground mt-4 max-w-md mx-auto font-medium">
+                    Our curators couldn&apos;t find a vehicle matching your exquisite taste. Try adjusting your filters or search query.
                 </p>
                 <button
                     onClick={() => window.location.reload()}
-                    className="mt-10 px-8 py-4 bg-slate-900 text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-blue-600 transition-all"
+                    className="mt-10 px-8 py-4 bg-primary text-primary-foreground rounded-2xl font-extrabold uppercase text-xs tracking-widest hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
                 >
                     Reset All Filters
                 </button>

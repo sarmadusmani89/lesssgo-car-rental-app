@@ -64,7 +64,7 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
 
     const FilterGroup = ({ title, options, activeValue, onSelect, valueKey = (opt: string) => opt }: any) => (
         <div className="space-y-4">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{title}</h4>
+            <h4 className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-muted-foreground/60">{title}</h4>
             <div className="flex flex-wrap gap-2">
                 {options.map((opt: any) => {
                     const label = typeof opt === 'string' ? opt : opt.label;
@@ -75,8 +75,8 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
                             key={value}
                             onClick={() => onSelect(value)}
                             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${isActive
-                                ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100'
-                                : 'bg-white border-slate-100 text-slate-600 hover:border-blue-200 hover:text-blue-600'
+                                ? 'bg-primary border-primary text-primary-foreground shadow-lg shadow-primary/20'
+                                : 'bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-primary'
                                 }`}
                         >
                             {label}
@@ -90,11 +90,11 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
     return (
         <aside className="space-y-10 lg:sticky lg:top-28 h-fit">
             <div className="flex items-center justify-between">
-                <h3 className="text-xl font-black font-outfit uppercase tracking-tight">Filters</h3>
+                <h3 className="text-xl font-extrabold uppercase tracking-tight">Filters</h3>
                 {isFiltered && (
                     <button
                         onClick={clearFilters}
-                        className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80 flex items-center gap-1"
                     >
                         <X size={12} /> Clear
                     </button>
@@ -152,12 +152,12 @@ export default function CarsFilters({ filters, onChange }: CarsFiltersProps) {
                 onSelect={(val: string) => updateFilter('return', val)}
             />
 
-            <div className="p-8 bg-slate-900 rounded-[2rem] text-white relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/20 rounded-full -mr-16 -mt-16 transition-transform duration-700 group-hover:scale-150" />
+            <div className="p-8 bg-primary rounded-[2rem] text-primary-foreground relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 transition-transform duration-700 group-hover:scale-150" />
                 <div className="relative z-10">
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-400 mb-2">Member Perk</p>
-                    <h4 className="text-lg font-black font-outfit mb-3 leading-tight uppercase">Save with Multi-Day Bookings</h4>
-                    <p className="text-slate-400 text-xs font-medium leading-relaxed mb-6">
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary-foreground/60 mb-2">Member Perk</p>
+                    <h4 className="text-lg font-extrabold mb-3 leading-tight uppercase">Save with Multi-Day Bookings</h4>
+                    <p className="text-primary-foreground/80 text-xs font-medium leading-relaxed mb-6">
                         Unlock up to 20% discount when you reserve for 3 days or more.
                     </p>
                 </div>

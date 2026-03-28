@@ -16,7 +16,7 @@ export default function CarsPagination({ currentPage, totalPages, onPageChange }
             <button
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="w-12 h-12 rounded-2xl border border-slate-200 flex items-center justify-center text-slate-400 hover:border-blue-600 hover:text-blue-600 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:text-slate-400 transition-all font-bold"
+                className="w-12 h-12 rounded-2xl border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-30 disabled:hover:border-border disabled:hover:text-muted-foreground transition-all font-bold"
             >
                 <ChevronLeft size={20} />
             </button>
@@ -27,8 +27,8 @@ export default function CarsPagination({ currentPage, totalPages, onPageChange }
                         key={page}
                         onClick={() => onPageChange(page)}
                         className={`w-12 h-12 rounded-2xl text-sm font-black transition-all ${currentPage === page
-                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-100 scale-110'
-                            : 'bg-white border border-slate-100 text-slate-600 hover:border-blue-200 hover:text-blue-600'
+                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-110'
+                            : 'bg-card border border-border text-muted-foreground hover:border-primary/50 hover:text-primary'
                             }`}
                     >
                         {page.toString().padStart(2, '0')}
@@ -39,7 +39,7 @@ export default function CarsPagination({ currentPage, totalPages, onPageChange }
             <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="w-12 h-12 rounded-2xl border border-slate-200 flex items-center justify-center text-slate-400 hover:border-blue-600 hover:text-blue-600 disabled:opacity-30 disabled:hover:border-slate-200 disabled:hover:text-slate-400 transition-all font-bold"
+                className="w-12 h-12 rounded-2xl border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-30 disabled:hover:border-border disabled:hover:text-muted-foreground transition-all font-bold"
             >
                 <ChevronRight size={20} />
             </button>
