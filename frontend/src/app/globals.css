@@ -15,12 +15,7 @@
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
 
-  /* Global Accent - Blue for Professional Feel */
-  --accent: #2563eb;
-  --accent-foreground: #ffffff;
-  /* Dark text on amber background */
-
-  --primary-dark: #0f172a;
+    --primary-dark: #0f172a;
 
   --muted: #f8fafc;
   --muted-foreground: #64748b;
@@ -42,7 +37,6 @@
   --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-  --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.15);
 }
 
 /* Theme Presets */

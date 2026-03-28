@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Mail, Lock, User, Phone, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Phone } from 'lucide-react';
+import Loader from '@/components/ui/Loader';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 import AuthSuccess from '@/components/pages/auth/AuthSuccess';
@@ -182,8 +183,11 @@ function SignupContent() {
 export default function SignupPage() {
     return (
         <Suspense fallback={
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                <Loader2 className="animate-spin text-blue-600" size={48} />
+            <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+                <div className="bg-white p-12 rounded-[3.5rem] shadow-2xl border border-white text-center flex flex-col items-center gap-6">
+                    <Loader size="lg" />
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Initializing your account...</p>
+                </div>
             </div>
         }>
             <SignupContent />

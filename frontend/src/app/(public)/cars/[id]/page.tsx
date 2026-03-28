@@ -8,8 +8,10 @@ import UnifiedBookingCalendar from '@/components/pages/car/UnifiedBookingCalenda
 import BookingForm from '@/components/pages/car/BookingForm';
 import api from '@/lib/api';
 import { toast } from "sonner";
-import { Loader2, Zap, Info } from 'lucide-react';
+import { Zap, Info } from 'lucide-react';
 import Link from 'next/link';
+import Loader from '@/components/ui/Loader';
+import SupportCard from '@/components/ui/SupportCard';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { formatPrice } from '@/lib/utils';
@@ -62,7 +64,7 @@ function CarContent() {
 
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-            <Loader2 className="animate-spin text-primary" size={40} />
+            <Loader size="lg" />
         </div>
     );
 
@@ -217,23 +219,11 @@ function CarContent() {
                         />
 
 
-                        <div className="p-10 bg-gray-900 rounded-[3rem] text-white shadow-2xl shadow-gray-200 overflow-hidden relative group">
-                            <div className="absolute bottom-0 right-0 w-48 h-48 bg-primary/20 rounded-full -mr-24 -mb-24 transition-transform duration-700 group-hover:scale-150" />
-                            <div className="relative z-10">
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary-foreground/60 mb-3">Concierge Service</p>
-                                <h4 className="text-2xl font-black font-outfit mb-4 uppercase tracking-tight">Need Support?</h4>
-                                <p className="text-gray-400 text-sm font-medium leading-relaxed mb-8">
-                                    Our dedicated specialist team is available 24/7 to personalize your legendary driving experience.
-                                </p>
-                                <Link href="/contact" className="w-full py-5 px-4 bg-white text-gray-900 rounded-[1.5rem] font-black uppercase text-xs tracking-[0.2em] hover:bg-primary hover:text-white transition-all duration-300 shadow-md">
-                                    Contact Support
-                                </Link>
-                            </div>
-                        </div>
+                        <SupportCard />
                     </div>
                 </div>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 }
 
@@ -241,7 +231,7 @@ export default function CarPage() {
     return (
         <Suspense fallback={
             <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="animate-spin text-primary" size={48} />
+                <Loader size="lg" />
             </div>
         }>
             <CarContent />
