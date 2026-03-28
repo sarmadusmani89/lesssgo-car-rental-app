@@ -1,6 +1,5 @@
 "use client";
 
-import styles from '@/app/(public)/about/about.module.css';
 import { Target, Heart, Shield, Users } from 'lucide-react';
 import ValueCard from '../components/ValueCard';
 
@@ -29,10 +28,10 @@ const values = [
 
 export default function AboutValues() {
     return (
-        <section className={styles.values}>
-            <div className="container">
-                <h2 className={styles.sectionTitle}>Our Values</h2>
-                <div className={styles.valuesGrid}>
+        <section className="py-24 md:py-32 bg-slate-50/50">
+            <div className="container mx-auto px-4">
+                <h2 className="text-4xl md:text-5xl font-extrabold text-center text-primary mb-16 tracking-tight">Our Values</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     {values.map((value, index) => (
                         <ValueCard key={index} {...value} />
                     ))}
