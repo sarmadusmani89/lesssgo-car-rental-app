@@ -25,6 +25,7 @@ export class SettingsService {
                     contactAddress: 'Port Moresby, Papua New Guinea',
                     maintenanceMode: false,
                     currency: 'PGK',
+                    theme: 'theme-corporate-blue',
                 },
             });
         }
