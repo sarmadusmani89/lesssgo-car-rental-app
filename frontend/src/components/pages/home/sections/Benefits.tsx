@@ -1,5 +1,6 @@
 import { Shield, Star, Zap, MapPin, Calendar, Headphones } from 'lucide-react';
 import BenefitCard from '../components/BenefitCard';
+import { useTheme } from '@/components/common/Providers/ThemeProvider';
 
 const features = [
     {
@@ -35,11 +36,14 @@ const features = [
 ];
 
 export default function Benefits() {
+    const { settings } = useTheme();
+    const siteName = settings?.siteName || 'Lesssgo';
+
     return (
         <section className="py-[100px] bg-background relative">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="text-center max-w-[700px] mx-auto mb-16">
-                    <h2 className="text-5xl font-extrabold tracking-tight mb-5 text-[#020617]">Why Choose <span className="text-primary">Lesssgo</span></h2>
+                    <h2 className="text-5xl font-extrabold tracking-tight mb-5 text-[#020617]">Why Choose <span className="text-primary">{siteName}</span></h2>
                     <p className="text-[1.125rem] text-muted-foreground leading-relaxed">Experience automotive excellence with our uncompromising standards and world-class service.</p>
                 </div>
 

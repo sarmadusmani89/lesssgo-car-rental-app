@@ -6,6 +6,7 @@ import api from '@/lib/api';
 
 interface ThemeContextType {
   theme: string;
+  settings: any;
   refreshTheme: () => void;
 }
 
@@ -19,17 +20,17 @@ export const useTheme = () => {
   return context;
 };
 
-export default function ThemeProvider({ 
+export default function ThemeProvider({
   children,
-  initialTheme 
-}: { 
+  initialTheme
+}: {
   children: React.ReactNode;
   initialTheme?: string;
 }) {
   const [theme, setTheme] = useState(initialTheme || 'theme-corporate-blue');
 
   // Use SWR for automatic revalidation and caching
-  const { data: settings, mutate } = useSWR('/settings', (url) => 
+  const { data: settings, mutate } = useSWR('/settings', (url) =>
     api.get(url).then(res => res.data),
     {
       revalidateOnFocus: false,
@@ -47,11 +48,11 @@ export default function ThemeProvider({
   useEffect(() => {
     // Apply theme to body
     const body = document.body;
-    
+
     // Remove old theme classes
     const themeClasses = ['theme-corporate-blue', 'theme-premium-green', 'theme-premium-orange'];
     themeClasses.forEach(cls => body.classList.remove(cls));
-    
+
     // Add new theme class
     if (theme) {
       body.classList.add(theme);
@@ -63,7 +64,7 @@ export default function ThemeProvider({
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, refreshTheme }}>
+    <ThemeContext.Provider value={{ theme, settings, refreshTheme }}>
       {children}
     </ThemeContext.Provider>
   );
