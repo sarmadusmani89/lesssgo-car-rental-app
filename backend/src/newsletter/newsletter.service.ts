@@ -18,9 +18,22 @@ export class NewsletterService {
         }
     }
 
-    async getAllSubscribers() {
-        return this.prisma.newsletterSubscriber.findMany({
-            orderBy: { subscribedAt: 'desc' },
-        });
+    async getAllSubscribers(page: number = 1, limit: number = 10) {
+        const skip = (page - 1) * limit;
+        const [subscribers, totalCount] = await Promise.all([
+            this.prisma.newsletterSubscriber.findMany({
+                skip,
+                take: limit,
+                orderBy: { subscribedAt: 'desc' },
+            }),
+            this.prisma.newsletterSubscriber.count(),
+        ]);
+
+        return {
+            subscribers,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            currentPage: page
+        };
     }
 }

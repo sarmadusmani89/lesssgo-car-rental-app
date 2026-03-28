@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from 'sonner';
 import Providers from "@/components/common/Providers/Providers";
 import MaintenanceGuard from "@/components/auth/MaintenanceGuard";
+import SessionProvider from "@/components/providers/SessionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,9 +56,11 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} ${theme}`} suppressHydrationWarning>
         <Providers>
-          <MaintenanceGuard>
-            {children}
-          </MaintenanceGuard>
+          <SessionProvider>
+            <MaintenanceGuard>
+              {children}
+            </MaintenanceGuard>
+          </SessionProvider>
         </Providers>
       </body>
     </html>
