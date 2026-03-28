@@ -13,12 +13,12 @@ export default function ForgotPasswordPage() {
             heading={<>Reset your <br /> <span className="gradient-text">Password.</span></>}
             subheading="Enter your email to receive instructions to reset your password."
         >
-            <h2>Forgot Password?</h2>
-            <p className="mb-6">No worries, we'll send you reset instructions.</p>
+            <h2 className="text-4xl lg:text-5xl font-black mb-2 tracking-tighter text-slate-900 font-outfit uppercase italic">Forgot Password?</h2>
+            <p className="text-muted-foreground mb-10 text-[15px]">No worries, we'll send you reset instructions.</p>
 
             <Suspense fallback={
-                <div className="flex justify-center p-8">
-                    <Loader2 className="animate-spin text-blue-600" size={32} />
+                <div className="flex justify-center p-12">
+                    <Loader2 className="animate-spin text-accent" size={40} />
                 </div>
             }>
                 <ForgotPasswordForm />

@@ -4,9 +4,8 @@ import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
-import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Mail, Lock, User, Phone, Loader2, CheckCircle } from 'lucide-react';
+import { Mail, Lock, User, Phone, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import AuthSuccess from '@/components/pages/auth/AuthSuccess';
 import AuthInput from '@/components/pages/auth/AuthInput';
@@ -95,8 +94,8 @@ function SignupContent() {
                 />
             ) : (
                 <>
-                    <h2>Create Account</h2>
-                    <p>Sign up to get started.</p>
+                    <h2 className="text-4xl lg:text-5xl font-black mb-2 tracking-tighter text-slate-900">Create Account</h2>
+                    <p className="text-muted-foreground mb-10 text-[15px]">Sign up to get started.</p>
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <AuthInput
@@ -165,15 +164,15 @@ function SignupContent() {
                         />
 
 
-                        <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
-                            {loading ? <Loader2 className={styles.spin} /> : 'Create Account'}
+                        <button type="submit" className="btn btn-accent btn-lg w-full mt-8" disabled={loading}>
+                            {loading ? <Loader2 className="animate-spin" /> : 'Create Account'}
                         </button>
                     </form>
                 </>
             )}
 
-            <p className={styles.footerText}>
-                Already a member? <Link href="/auth/login">Sign in</Link>
+            <p className="mt-8 text-center text-sm text-muted-foreground">
+                Already a member? <Link href="/auth/login" className="text-accent font-extrabold hover:underline">Sign in</Link>
             </p>
         </AuthSplitLayout>
     );

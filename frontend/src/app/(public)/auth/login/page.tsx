@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
-import styles from '../auth.module.css';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -118,11 +117,11 @@ function LoginContent() {
             heading={<>The Key to <br /> <span className="gradient-text">Excellence.</span></>}
             subheading="Unlock your personalized experience and manage your premium fleet reservations."
         >
-            <h2>Welcome</h2>
-            <p>Sign in to your Lesssgo account.</p>
+            <h2 className="text-4xl lg:text-5xl font-black mb-2 tracking-tighter text-slate-900">Welcome</h2>
+            <p className="text-muted-foreground mb-10 text-[15px]">Sign in to your Lesssgo account.</p>
 
             {error && (
-                <div className={styles.error}>
+                <div className="bg-red-50 text-red-700 border border-red-100 p-4 rounded-[1.25rem] text-sm font-semibold mb-6 flex items-center gap-3">
                     <AlertCircle size={18} />
                     {error}
                 </div>
@@ -157,21 +156,21 @@ function LoginContent() {
                     error={errors.password?.message}
                 />
 
-                <div className={styles.rememberRow}>
-                    <label className={styles.rememberMe}>
-                        <input type="checkbox" {...register('rememberMe')} />
-                        <span>Remember me</span>
+                <div className="flex justify-between items-center mt-4 text-sm font-medium">
+                    <label className="flex items-center gap-2 cursor-pointer text-slate-500 select-none group">
+                        <input type="checkbox" {...register('rememberMe')} className="accent-accent w-4 h-4" />
+                        <span className="group-hover:text-slate-700 transition-colors">Remember me</span>
                     </label>
-                    <Link href="/auth/forgot-password">Forgot Password?</Link>
+                    <Link href="/auth/forgot-password" title="Recover your account" className="text-accent font-bold hover:underline">Forgot Password?</Link>
                 </div>
 
-                <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
-                    {loading ? <Loader2 className={styles.spin} /> : 'Continue'}
+                <button type="submit" className="btn btn-accent btn-lg w-full mt-8" disabled={loading}>
+                    {loading ? <Loader2 className="animate-spin" /> : 'Continue'}
                 </button>
             </form>
 
-            <p className={styles.footerText}>
-                New here? <Link href="/auth/signup">Create account</Link>
+            <p className="mt-8 text-center text-sm text-muted-foreground">
+                New here? <Link href="/auth/signup" className="text-accent font-extrabold hover:underline">Create account</Link>
             </p>
         </AuthSplitLayout>
     );
