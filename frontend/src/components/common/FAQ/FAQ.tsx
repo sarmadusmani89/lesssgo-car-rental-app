@@ -51,7 +51,7 @@ export default function FAQ({ items, allowMultiple = false }: FAQProps) {
                             <div
                                 className={`flex-shrink-0 ml-4 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen
                                         ? 'bg-primary text-primary-foreground'
-                                        : 'bg-secondary text-muted-foreground hover:bg-secondary/80'
+                                        : 'bg-accent/50 text-accent-foreground hover:bg-accent'
                                     }`}
                             >
                                 {isOpen ? <Minus size={18} /> : <Plus size={18} />}

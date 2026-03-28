@@ -216,9 +216,9 @@ export default function GeneralSettingsForm({ onSaved, initialData }: GeneralSet
                             type="button"
                             variant={formData.theme === theme.id ? 'accent' : 'outline'}
                             onClick={() => setFormData({ ...formData, theme: theme.id })}
-                            className={`relative flex flex-col p-3 border-2 h-auto text-left items-start ${formData.theme === theme.id
-                                ? 'border-blue-600 bg-blue-50/50 ring-2 ring-blue-100'
-                                : 'border-gray-100'
+                            className={`relative flex flex-col p-3 border-2 h-auto text-left items-start transition-all hover:bg-accent/30 ${formData.theme === theme.id
+                                ? 'border-primary bg-accent ring-2 ring-primary/10'
+                                : 'border-gray-100 bg-white'
                                 }`}
                         >
                             <div className="flex gap-1.5 mb-2">
