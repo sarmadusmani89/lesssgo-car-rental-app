@@ -7,33 +7,40 @@ import MaintenanceGuard from "@/components/auth/MaintenanceGuard";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export async function generateMetadata(): Promise<Metadata> {
+async function getSettings() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://134.199.169.242'}/settings`, {
       next: { revalidate: 60 } // Cache for 1 minute
     });
-    const settings = await res.json();
-
-    return {
-      title: settings.siteName ? `${settings.siteName} | Premium Car Rental Marketplace` : "Lesssgo | Premium Car Rental Marketplace",
-      description: "Rent the best cars with Lesssgo. Simple, fast, and professional.",
-      icons: {
-        icon: settings.faviconUrl || '/favicon.ico',
-        shortcut: settings.faviconUrl || '/favicon.ico',
-        apple: settings.faviconUrl || '/favicon.ico',
-      },
-      theme: settings.theme || 'theme-corporate-blue'
-    };
+    if (!res.ok) throw new Error('Failed to fetch settings');
+    return await res.json();
   } catch (error) {
+    return null;
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+
+  if (!settings) {
     return {
       title: "Lesssgo | Premium Car Rental Marketplace",
       description: "Rent the best cars with Lesssgo. Simple, fast, and professional.",
       icons: {
         icon: '/favicon.ico',
       },
-      theme: 'theme-corporate-blue'
-    } as any;
+    };
   }
+
+  return {
+    title: settings.siteName ? `${settings.siteName} | Premium Car Rental Marketplace` : "Lesssgo | Premium Car Rental Marketplace",
+    description: "Rent the best cars with Lesssgo. Simple, fast, and professional.",
+    icons: {
+      icon: settings.faviconUrl || '/favicon.ico',
+      shortcut: settings.faviconUrl || '/favicon.ico',
+      apple: settings.faviconUrl || '/favicon.ico',
+    },
+  };
 }
 
 export default async function RootLayout({
@@ -41,8 +48,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const metadata: any = await generateMetadata();
-  const theme = metadata.theme || 'theme-corporate-blue';
+  const settings = await getSettings();
+  const theme = settings?.theme || 'theme-corporate-blue';
 
   return (
     <html lang="en" suppressHydrationWarning>
