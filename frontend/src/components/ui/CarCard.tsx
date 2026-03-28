@@ -125,7 +125,7 @@ export default function CarCard({
                 </div>
 
                 {freeCancellation && (
-                    <div className="mt-3 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full inline-block uppercase tracking-wider">
+                    <div className="mt-3 text-[10px] font-bold text-accent bg-accent/10 px-2 py-0.5 rounded-full inline-block uppercase tracking-wider border border-accent/10">
                         Free cancellation Upto 48h before Pickup time
                     </div>
                 )}

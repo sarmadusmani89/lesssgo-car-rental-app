@@ -31,17 +31,17 @@ export default function FeaturedCars() {
     };
 
     return (
-        <section className="py-[100px] bg-slate-50">
+        <section className="py-[100px] bg-secondary/40">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="text-center mb-16">
-                    <h2 className="text-5xl md:text-[4rem] font-extrabold mb-4 text-[#0f172a] tracking-tight">Featured Cars</h2>
-                    <p className="text-slate-500 text-lg max-w-[700px] mx-auto">Discover our hand-picked selection of high-performance cars from our real-time fleet.</p>
+                    <h2 className="text-5xl md:text-[4rem] font-extrabold mb-4 text-[#020617] tracking-tight">Featured <span className="text-primary">Cars</span></h2>
+                    <p className="text-muted-foreground text-lg max-w-[700px] mx-auto">Discover our hand-picked selection of high-performance cars from our real-time fleet.</p>
                 </div>
 
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-blue-600 mb-4" size={40} />
-                        <p className="text-gray-500 font-medium font-outfit">Loading fleet...</p>
+                        <Loader2 className="animate-spin text-accent mb-4" size={40} />
+                        <p className="text-muted-foreground font-medium">Loading fleet...</p>
                     </div>
                 ) : cars.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -51,12 +51,12 @@ export default function FeaturedCars() {
                     </div>
                 ) : (
                     <div className="text-center py-16">
-                        <p className="text-gray-500 font-medium">No cars currently available. Please check back later.</p>
+                        <p className="text-muted-foreground font-medium">No cars currently available. Please check back later.</p>
                     </div>
                 )}
 
                 <div className="text-center mt-20">
-                    <Link href="/cars" className="inline-flex items-center gap-2 px-8 py-4 border-2 border-[#0f172a] text-[#0f172a] rounded-xl font-bold transition-all hover:bg-[#0f172a] hover:text-white">
+                    <Link href="/cars" className="inline-flex items-center gap-2 px-8 py-4 border-2 border-primary text-primary rounded-xl font-bold transition-all hover:bg-primary hover:text-primary-foreground">
                         View All Cars <ArrowRight size={20} />
                     </Link>
                 </div>

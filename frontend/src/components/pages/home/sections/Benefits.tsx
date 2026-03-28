@@ -36,11 +36,11 @@ const features = [
 
 export default function Benefits() {
     return (
-        <section className="py-[100px] bg-white relative">
+        <section className="py-[100px] bg-background relative">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="text-center max-w-[700px] mx-auto mb-16">
-                    <h2 className="text-5xl font-extrabold tracking-tight mb-5 text-[#0f172a]">Why Choose LessGo</h2>
-                    <p className="text-[1.125rem] text-slate-500 leading-relaxed">Experience automotive excellence with our uncompromising standards and world-class service.</p>
+                    <h2 className="text-5xl font-extrabold tracking-tight mb-5 text-[#020617]">Why Choose <span className="text-primary">Lesssgo</span></h2>
+                    <p className="text-[1.125rem] text-muted-foreground leading-relaxed">Experience automotive excellence with our uncompromising standards and world-class service.</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
