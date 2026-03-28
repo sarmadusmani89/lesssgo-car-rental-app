@@ -40,9 +40,9 @@ export default function DashboardLayout({
     };
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-background">
             {/* Sidebar */}
-            <div className="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between bg-white shadow z-20">
+            <div className="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between bg-card border-r border-border z-20 shadow-sm">
                 <Sidebar
                     title={sidebarTitle}
                     links={links}
@@ -50,13 +50,13 @@ export default function DashboardLayout({
                 />
 
                 {/* Logout */}
-                <div className="px-4 py-4">
+                <div className="px-4 py-4 border-t border-border">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition"
+                        className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-muted-foreground hover:bg-muted hover:text-accent transition group"
                     >
-                        <LogOut size={20} className="text-gray-400 group-hover:text-blue-500" />
-                        <span className="font-medium">Logout</span>
+                        <LogOut size={20} className="text-muted-foreground group-hover:text-accent transition-colors" />
+                        <span className="font-bold uppercase text-xs tracking-widest">Logout</span>
                     </button>
                 </div>
             </div>
