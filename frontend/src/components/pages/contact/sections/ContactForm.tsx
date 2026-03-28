@@ -42,8 +42,8 @@ export default function ContactForm() {
     };
 
     return (
-        <div className={styles.formSection}>
-            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <div className="p-8 lg:p-12 bg-white rounded-[2rem] shadow-xl border border-slate-100">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <ContactFormFields register={register} errors={errors} />
 
                 <Button
@@ -51,7 +51,7 @@ export default function ContactForm() {
                     isLoading={isSubmitting}
                     disabled={isSubmitting}
                     size="lg"
-                    className={styles.submitBtn}
+                    className="w-full mt-4 btn-accent"
                 >
                     Send Message
                     <Send size={20} className="ml-2" />

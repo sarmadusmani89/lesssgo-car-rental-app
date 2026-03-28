@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styles from '@/app/(public)/contact/contact.module.css';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import ContactInfoItem from '../components/ContactInfoItem';
 import api from '@/lib/api';
@@ -40,13 +39,13 @@ export default function ContactInfo() {
     ];
 
     return (
-        <div className={styles.infoSection}>
-            <h2>Contact Information</h2>
-            <p className={styles.infoText}>
+        <div className="space-y-6">
+            <h2 className="text-3xl font-bold text-primary mb-4">Contact Information</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed mb-12">
                 Fill out the form and our team will get back to you within 24 hours.
             </p>
 
-            <div className={styles.contactList}>
+            <div className="flex flex-col gap-8">
                 {contactInfo.map((item, index) => (
                     <ContactInfoItem key={index} {...item} />
                 ))}

@@ -3,11 +3,10 @@
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Link from 'next/link';
-import { Mail, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Mail, Loader2, AlertCircle } from 'lucide-react';
 import { authApi } from '@/lib/api';
 import AuthInput from '@/components/pages/auth/AuthInput';
 import AuthSuccess from '@/components/pages/auth/AuthSuccess';
-import styles from '@/app/(public)/auth/auth.module.css';
 
 type ForgotPasswordInputs = {
     email: string;
@@ -51,7 +50,7 @@ export default function ForgotPasswordForm() {
     return (
         <>
             {error && (
-                <div className={styles.error}>
+                <div className="bg-red-50 text-red-700 border border-red-100 p-4 rounded-[1.25rem] text-sm font-semibold mb-6 flex items-center gap-3">
                     <AlertCircle size={18} />
                     {error}
                 </div>
@@ -70,17 +69,16 @@ export default function ForgotPasswordForm() {
                         pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
                     })}
                     maxLength={100}
-                    wrapperClassName={errors.email ? styles.inputError : ''}
+                    error={errors.email?.message}
                 />
-                {errors.email && <span className={styles.errorText}>{errors.email.message}</span>}
 
-                <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
-                    {loading ? <Loader2 className={styles.spin} /> : 'Send Reset Link'}
+                <button type="submit" className="btn btn-accent btn-lg w-full mt-8" disabled={loading}>
+                    {loading ? <Loader2 className="animate-spin" /> : 'Send Reset Link'}
                 </button>
             </form>
 
-            <p className={styles.footerText}>
-                Remember your password? <Link href="/auth/login">Back to Sign in</Link>
+            <p className="mt-8 text-center text-sm text-muted-foreground">
+                Remember your password? <Link href="/auth/login" className="text-accent font-extrabold hover:underline">Back to Sign in</Link>
             </p>
         </>
     );

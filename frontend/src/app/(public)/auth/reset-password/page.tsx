@@ -3,8 +3,7 @@
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { authApi } from '@/lib/api'; // Using named import as per recent changes/context check
-import styles from '@/app/(public)/auth/auth.module.css';
+import { authApi } from '@/lib/api';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Lock, Loader2, AlertCircle, Sparkles, CheckCircle } from 'lucide-react';
 import AuthSuccess from '@/components/pages/auth/AuthSuccess';
@@ -71,9 +70,9 @@ function ResetPasswordContent() {
 
     if (verifying) {
         return (
-            <div className="flex flex-col items-center justify-center p-8">
-                <Loader2 className="animate-spin text-blue-600 mb-4" size={32} />
-                <p>Verifying link...</p>
+            <div className="flex flex-col items-center justify-center p-12 text-center">
+                <Loader2 className="animate-spin text-accent mb-6" size={48} />
+                <p className="text-slate-600 font-bold uppercase tracking-widest text-xs">Verifying security link...</p>
             </div>
         );
     }
@@ -95,8 +94,8 @@ function ResetPasswordContent() {
 
     return (
         <>
-            <h2>Set New Password</h2>
-            <p className="mb-6">Enter your new secure password below.</p>
+            <h2 className="text-4xl lg:text-5xl font-black mb-2 tracking-tighter text-slate-900 font-outfit uppercase italic">Set New Password</h2>
+            <p className="text-muted-foreground mb-10 text-[15px]">Enter your new secure password below.</p>
 
             <form onSubmit={handleSubmit(onSubmit)}>
                 <AuthInput
@@ -111,9 +110,8 @@ function ResetPasswordContent() {
                         maxLength: { value: 50, message: 'Max 50 characters' }
                     })}
                     maxLength={50}
-                    wrapperClassName={errors.password ? styles.inputError : ''}
+                    error={errors.password?.message}
                 />
-                {errors.password && <span className={styles.errorText}>{errors.password.message}</span>}
 
                 <AuthInput
                     label="Confirm Password"
@@ -131,23 +129,16 @@ function ResetPasswordContent() {
                         },
                     })}
                     maxLength={50}
-                    wrapperClassName={errors.confirmPassword ? styles.inputError : ''}
+                    error={errors.confirmPassword?.message}
                 />
 
-                {errors.confirmPassword && (
-                    <div className={`${styles.error} animate-in fade-in slide-in-from-top-2 duration-300 mt-2`}>
-                        <AlertCircle size={18} />
-                        <span>{errors.confirmPassword.message}</span>
-                    </div>
-                )}
-
-                <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
-                    {loading ? <Loader2 className={styles.spin} /> : 'Reset Password'}
+                <button type="submit" className="btn btn-accent btn-lg w-full mt-8" disabled={loading}>
+                    {loading ? <Loader2 className="animate-spin" /> : 'Reset Password'}
                 </button>
             </form>
 
-            <p className={styles.footerText}>
-                Remember your password? <Link href="/auth/login">Back to Sign in</Link>
+            <p className="mt-8 text-center text-sm text-muted-foreground">
+                Remember your password? <Link href="/auth/login" className="text-accent font-extrabold hover:underline">Back to Sign in</Link>
             </p>
         </>
     );
@@ -162,8 +153,8 @@ export default function ResetPasswordPage() {
             subheading="Manage your access with industry-standard security."
         >
             <Suspense fallback={
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-                    <Loader2 className="animate-spin text-blue-600" size={32} />
+                <div className="flex justify-center p-12">
+                    <Loader2 className="animate-spin text-accent" size={40} />
                 </div>
             }>
                 <ResetPasswordContent />
