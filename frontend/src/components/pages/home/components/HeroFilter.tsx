@@ -73,11 +73,11 @@ export default function HeroFilter() {
                         <ChevronDown size={16} className="text-accent" />
                         {activeDropdown === 'pickup' && (
                             <div className="absolute top-[110%] left-0 w-full bg-card border border-border rounded-2xl shadow-xl max-h-[280px] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
-                                <div className="p-[14px_20px] text-[15px] text-muted-foreground font-medium cursor-pointer transition-all duration-200 hover:bg-muted hover:text-primary hover:pl-5" onClick={() => handleSelect('pickup', '')}>Select Pickup</div>
+                                <div className="p-[14px_20px] text-[15px] text-muted-foreground font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/50 hover:text-secondary-foreground hover:pl-6" onClick={() => handleSelect('pickup', '')}>Select Pickup</div>
                                 {dropdownOptions.locations.map((opt: string) => (
                                     <div
                                         key={opt}
-                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-muted hover:text-primary hover:pl-5 ${selections.pickup === opt ? 'bg-muted text-primary font-bold' : 'text-muted-foreground'}`}
+                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/50 hover:text-secondary-foreground hover:pl-6 ${selections.pickup === opt ? 'bg-secondary text-secondary-foreground font-bold' : 'text-muted-foreground'}`}
                                         onClick={() => handleSelect('pickup', opt)}
                                     >
                                         {opt}
@@ -101,11 +101,11 @@ export default function HeroFilter() {
                         <ChevronDown size={16} className="text-accent" />
                         {activeDropdown === 'return' && (
                             <div className="absolute top-[110%] left-0 w-full bg-card border border-border rounded-2xl shadow-xl max-h-[280px] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
-                                <div className="p-[14px_20px] text-[15px] text-muted-foreground font-medium cursor-pointer transition-all duration-200 hover:bg-muted hover:text-primary hover:pl-5" onClick={() => handleSelect('return', '')}>Select Return</div>
+                                <div className="p-[14px_20px] text-[15px] text-muted-foreground font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/50 hover:text-secondary-foreground hover:pl-6" onClick={() => handleSelect('return', '')}>Select Return</div>
                                 {dropdownOptions.locations.map((opt: string) => (
                                     <div
                                         key={opt}
-                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-muted hover:text-primary hover:pl-5 ${selections.return === opt ? 'bg-muted text-primary font-bold' : 'text-muted-foreground'}`}
+                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/50 hover:text-secondary-foreground hover:pl-6 ${selections.return === opt ? 'bg-secondary text-secondary-foreground font-bold' : 'text-muted-foreground'}`}
                                         onClick={() => handleSelect('return', opt)}
                                     >
                                         {opt}
@@ -129,11 +129,11 @@ export default function HeroFilter() {
                         <ChevronDown size={16} className="text-accent" />
                         {activeDropdown === 'category' && (
                             <div className="absolute top-[110%] left-0 w-full bg-card border border-border rounded-2xl shadow-xl max-h-[280px] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2 duration-200" onClick={(e) => e.stopPropagation()}>
-                                <div className="p-[14px_20px] text-[15px] text-muted-foreground font-medium cursor-pointer transition-all duration-200 hover:bg-muted hover:text-primary hover:pl-5" onClick={() => handleSelect('category', '')}>Any Category</div>
+                                <div className="p-[14px_20px] text-[15px] text-muted-foreground font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/50 hover:text-secondary-foreground hover:pl-6" onClick={() => handleSelect('category', '')}>Any Category</div>
                                 {dropdownOptions.category.map((opt: string) => (
                                     <div
                                         key={opt}
-                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-muted hover:text-primary hover:pl-5 ${selections.category === opt ? 'bg-muted text-primary font-bold' : 'text-muted-foreground'}`}
+                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/50 hover:text-secondary-foreground hover:pl-6 ${selections.category === opt ? 'bg-secondary text-secondary-foreground font-bold' : 'text-muted-foreground'}`}
                                         onClick={() => handleSelect('category', opt)}
                                     >
                                         {opt}
@@ -157,11 +157,11 @@ export default function HeroFilter() {
                         <ChevronDown size={16} className="text-accent" />
                         {activeDropdown === 'transmission' && (
                             <div className="absolute top-[110%] left-0 w-full bg-card border border-border rounded-2xl shadow-xl max-h-[280px] overflow-y-auto z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                                <div className="p-[14px_20px] text-[15px] text-muted-foreground font-medium cursor-pointer transition-all duration-200 hover:bg-muted hover:text-primary hover:pl-5" onClick={() => handleSelect('transmission', '')}>Any</div>
+                                <div className="p-[14px_20px] text-[15px] text-muted-foreground font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/50 hover:text-secondary-foreground hover:pl-6" onClick={() => handleSelect('transmission', '')}>Any</div>
                                 {dropdownOptions.transmission.map((opt: string) => (
                                     <div
                                         key={opt}
-                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-muted hover:text-primary hover:pl-5 ${selections.transmission === opt ? 'bg-muted text-primary font-bold' : 'text-muted-foreground'}`}
+                                        className={`p-[14px_20px] text-[15px] font-medium cursor-pointer transition-all duration-200 hover:bg-secondary/50 hover:text-secondary-foreground hover:pl-6 ${selections.transmission === opt ? 'bg-secondary text-secondary-foreground font-bold' : 'text-muted-foreground'}`}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleSelect('transmission', opt);

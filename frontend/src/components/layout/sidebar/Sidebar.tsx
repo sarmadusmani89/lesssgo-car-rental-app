@@ -64,9 +64,7 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                 {/* Top section */}
                 <div>
                     <div className="p-6">
-                        <h2 className="text-2xl font-black italic bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent uppercase tracking-tight">
-                            {title}
-                        </h2>
+                        <h2 className="text-2xl font-bold italic bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{title}</h2>
                     </div>
 
                     <nav className="px-4 py-2 space-y-1">
@@ -80,15 +78,15 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                                     onClick={(e) => handleLinkClick(e, link.href)}
                                     className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${isActive
                                         ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 translate-x-1'
-                                        : 'text-muted-foreground hover:bg-muted hover:text-primary hover:pl-5'
+                                        : 'text-muted-foreground hover:bg-muted hover:text-accent hover:pl-5'
                                         }`}
                                 >
                                     <span
-                                        className={`transition-colors ${isActive ? 'text-primary-foreground' : 'text-muted-foreground/50 group-hover:text-primary'}`}
+                                        className={`transition-colors ${isActive ? 'text-primary-foreground' : 'text-muted-foreground/50 group-hover:text-accent'}`}
                                     >
                                         {link.icon}
                                     </span>
-                                    <span className="text-[14px] font-bold tracking-wide">{link.name}</span>
+                                    <span className="text-[14px] tracking-wide">{link.name}</span>
                                 </Link>
                             );
                         })}
