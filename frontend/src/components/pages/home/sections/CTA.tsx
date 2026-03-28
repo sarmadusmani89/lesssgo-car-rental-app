@@ -14,17 +14,17 @@ export default function CTA() {
                     className="object-cover object-center"
                 />
             </div>
-            <div className="absolute inset-0 bg-white/85 backdrop-blur-[4px] z-[1]" />
+            <div className="absolute inset-0 bg-background/85 backdrop-blur-[4px] z-[1]" />
 
             <div className="container mx-auto px-4 md:px-6 relative z-[2]">
                 <div className="flex flex-col lg:flex-row justify-between items-center gap-16">
                     <div className="flex-1 text-left max-w-2xl">
-                        <h2 className="text-5xl font-extrabold text-[#0f172a] mb-4 tracking-tighter leading-tight">Can&apos;t Find What You&apos;re Looking For?</h2>
-                        <p className="text-lg text-slate-600 leading-relaxed font-medium">Let our specialists help you find your perfect car. We have access to exclusive inventory and can source any luxury car you desire.</p>
+                        <h2 className="text-5xl font-extrabold text-[#020617] mb-4 tracking-tighter leading-tight">Can&apos;t Find What <span className="text-primary">You&apos;re Looking For?</span></h2>
+                        <p className="text-lg text-muted-foreground leading-relaxed font-medium">Let our specialists help you find your perfect car. We have access to exclusive inventory and can source any luxury car you desire.</p>
                     </div>
 
                     <div className="flex gap-4 shrink-0">
-                        <Link href="/contact" className="inline-flex items-center gap-2 bg-[#000000] text-white px-8 py-4 rounded-xl font-bold transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200">
+                        <Link href="/contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-xl font-bold transition-all hover:-translate-y-1 hover:shadow-glow hover:shadow-primary/20">
                             Contact Us <ArrowRight size={20} />
                         </Link>
                     </div>

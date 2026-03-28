@@ -9,7 +9,7 @@ export default function FAQList() {
             <div className="container mx-auto px-4">
                 {categories.map((category) => (
                     <div key={category} className="mb-16 last:mb-0">
-                        <h2 className="text-3xl font-bold text-primary mb-8 pb-3 border-b-4 border-accent inline-block">
+                        <h2 className="text-3xl font-bold text-[#020617] mb-8 pb-3 border-b-4 border-primary inline-block">
                             {category}
                         </h2>
                         <div className="w-full">
