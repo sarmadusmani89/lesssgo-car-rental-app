@@ -13,10 +13,12 @@ import { SettingsModule } from './settings/settings.module';
 import { NewsletterModule } from './newsletter/newsletter.module';
 import { TestimonialModule } from './testimonial/testimonial.module';
 import { PrismaService } from './lib/prisma.service';
+import { PrismaModule } from './lib/prisma.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule,
     AuthModule,
     UsersModule,
     BookingModule,
@@ -30,7 +32,6 @@ import { PrismaService } from './lib/prisma.service';
     NewsletterModule,
     TestimonialModule,
   ],
-  providers: [PrismaService],
-  exports: [PrismaService],
+  providers: [],
 })
 export class AppModule { }
