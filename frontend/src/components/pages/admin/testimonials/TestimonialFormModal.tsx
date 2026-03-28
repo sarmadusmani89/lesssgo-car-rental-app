@@ -40,16 +40,16 @@ export default function TestimonialFormModal({
             {/* Modal Container */}
             <div className={`relative bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden transition-all duration-300 ${isOpen ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'}`}>
                 {/* Header */}
-                <div className="px-8 py-4 flex items-center justify-between border-b border-gray-100 bg-gray-50/50">
+                <div className="px-8 py-4 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
                     <div>
-                        <h3 className="text-xl font-bold text-gray-900">
+                        <h3 className="text-xl font-bold text-slate-900 tracking-tight">
                             {testimonial ? 'Edit Testimonial' : 'Add New Testimonial'}
                         </h3>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mt-1">Share user experience with others</p>
+                        <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-0.5">Share user experience with others.</p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="w-10 h-10 rounded-full bg-white border border-gray-100 flex items-center justify-center text-gray-400 hover:text-rose-600 hover:border-rose-100 transition-all"
+                        className="w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:border-rose-100 transition-all shadow-sm"
                     >
                         <X size={20} />
                     </button>

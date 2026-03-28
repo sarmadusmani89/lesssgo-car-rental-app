@@ -11,14 +11,10 @@ interface SettingItem {
 }
 
 interface SettingSectionProps {
-    heading: string;
-    subHeading: string;
     items: SettingItem[];
 }
 
 export default function SettingSection({
-    heading,
-    subHeading,
     items,
 }: SettingSectionProps) {
     return (
@@ -26,9 +22,9 @@ export default function SettingSection({
             {/* Header */}
             <div>
                 <h1 className="text-3xl font-black text-slate-900 tracking-tight  ">
-                    {heading}
+                    System <span className="text-primary">Settings</span>
                 </h1>
-                <p className="text-slate-500 mt-1 font-medium">{subHeading}</p>
+                <p className="text-slate-500 mt-1 font-medium">Manage platform configurations, customize appearance, and control system behavior.</p>
             </div>
 
             {/* Cards */}

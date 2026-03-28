@@ -87,8 +87,6 @@ export default function AdminSettings() {
     return (
         <>
             <SettingSection
-                heading="System Settings"
-                subHeading="Configure platform parameters and administrator preferences."
                 items={items}
             />
 

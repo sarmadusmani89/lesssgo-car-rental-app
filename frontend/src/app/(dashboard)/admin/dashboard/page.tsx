@@ -39,8 +39,8 @@ export default function AdminDashboard() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight  ">
-            Dashboard <span className="text-primary  ">Overview</span>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+            Dashboard <span className="text-primary">Overview</span>
           </h1>
           <p className="text-slate-500 mt-1 font-medium">
             Analyze platform performance, track key metrics, and monitor recent customer activity.

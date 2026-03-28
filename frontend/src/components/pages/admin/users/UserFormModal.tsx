@@ -45,8 +45,8 @@ export default function UserFormModal({ isOpen, onClose, user, onSubmit, isSubmi
                         {/* Header */}
                         <div className="px-8 py-4 border-b border-slate-50 bg-slate-50/50 flex items-center justify-between">
                             <div>
-                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                                    Edit <span className="text-primary">User</span>
+                                <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                                    Edit User
                                 </h3>
                                 <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mt-0.5">Update profile information and access role.</p>
                             </div>
@@ -65,9 +65,10 @@ export default function UserFormModal({ isOpen, onClose, user, onSubmit, isSubmi
                             isSubmitting={isSubmitting}
                         />
                     </motion.div>
-                </div>
-            )}
-        </AnimatePresence>,
+                </div >
+            )
+            }
+        </AnimatePresence >,
         document.body
     );
 }

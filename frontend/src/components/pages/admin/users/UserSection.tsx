@@ -120,7 +120,7 @@ export default function UserSection() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight  ">
-                        User Management
+                        User <span className="text-primary">Management</span>
                     </h1>
                     <p className="text-slate-500 mt-1 font-medium">
                         Control access, monitor verify statuses and manage system administrative roles.
