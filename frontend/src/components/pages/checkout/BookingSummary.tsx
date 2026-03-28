@@ -34,6 +34,19 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
 
   const formatDate = (dateStr: string) => formatDashboardDate(dateStr);
 
+  paymentMethod?: string;
+}
+
+export default function BookingSummary({ car, startDate, endDate, pickupLocation, returnLocation, paymentMethod }: Props) {
+  const { currency, rates } = useSelector((state: RootState) => state.ui);
+
+  const days = calculateRentalDays(startDate, endDate);
+  const rentalTotal = car ? car.pricePerDay * days : 0;
+  const bondAmount = car ? car.pricePerDay : 0;
+  const grandTotal = rentalTotal + bondAmount;
+
+  const formatDate = (dateStr: string) => formatDashboardDate(dateStr);
+
   return (
     <div className="bg-white rounded-[2.5rem] p-8 space-y-8">
       <h2 className="text-xl font-black font-outfit text-gray-900 border-b pb-6 border-gray-100 uppercase tracking-tight">Booking Summary</h2>
@@ -124,8 +137,13 @@ export default function BookingSummary({ car, startDate, endDate, pickupLocation
         </div>
       </div>
 
-      <div className="pt-6 border-t border-gray-100 flex justify-between items-center">
-        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Security Bond (Refundable)</span>
+      <div className="pt-6 border-t border-gray-100 flex justify-between items-start">
+        <div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block">Security Bond</span>
+          <span className="text-[9px] font-bold text-slate-400 uppercase mt-1 block">
+            {paymentMethod === 'ONLINE' ? 'Pay Online (Stripe)' : paymentMethod === 'CARD' ? 'Card on Collection' : 'Cash on Collection'}
+          </span>
+        </div>
         <span className="font-black text-gray-900 uppercase text-xs tracking-widest">{formatPrice(bondAmount, currency, rates)}</span>
       </div>
 

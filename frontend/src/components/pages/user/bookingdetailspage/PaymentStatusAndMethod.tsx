@@ -66,7 +66,7 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
           <div className="flex items-center gap-2">
             <CreditCard size={14} className="text-slate-400" />
             <p className="text-xs font-bold text-slate-700 uppercase">
-              {booking.paymentMethod === 'ONLINE' ? 'Pay Online (Stripe)' : booking.paymentMethod === 'CARD' ? 'Card on Collection' : 'Cash on Collection'}
+              {booking.paymentMethod === 'ONLINE' ? 'Pay Online (Stripe)' : 'Cash on Collection'}
             </p>
           </div>
         </div>

@@ -237,6 +237,7 @@ function CheckoutContent() {
                   endDate={endDate}
                   pickupLocation={pickupLocation}
                   returnLocation={returnLocation}
+                  paymentMethod={paymentMethod}
                 />
               </div>
 
