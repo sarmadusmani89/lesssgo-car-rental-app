@@ -42,76 +42,57 @@ export default function PaymentStatusAndMethod({ booking, isAdmin = false }: { b
   };
 
   return (
-    <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-      <div className="flex justify-between items-center mb-8 pb-6 border-b border-slate-50">
-        <div>
-          <h2 className="text-xl font-black text-slate-900 tracking-tight uppercase">Payment & Settlement</h2>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Transaction Status & Method</p>
-        </div>
-        <div className="flex gap-2">
-          {isAdmin && paymentStatus !== 'PAID' && booking.status !== 'CANCELLED' && (
-            <Button
-              variant="accent"
-              onClick={handleMarkAsPaid}
-              isLoading={loading}
-              className="bg-emerald-600 hover:bg-emerald-700 text-[10px] font-black uppercase tracking-widest gap-2 h-auto py-2.5 px-4 rounded-xl border-none shadow-lg shadow-emerald-100"
-            >
-              <Banknote size={14} />
-              Payment Received
-            </Button>
-          )}
-        </div>
+    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
+      <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-50">
+        <h2 className="text-lg font-black text-slate-900 tracking-tight uppercase">Settlement</h2>
+        {isAdmin && paymentStatus !== 'PAID' && booking.status !== 'CANCELLED' && (
+          <Button
+            variant="accent"
+            onClick={handleMarkAsPaid}
+            isLoading={loading}
+            className="bg-emerald-600 hover:bg-emerald-700 text-[10px] font-bold uppercase tracking-widest h-auto py-2 px-4 rounded-xl border-none"
+          >
+            Payment Received
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100/50">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm border border-slate-100">
-              <CreditCard size={24} />
-            </div>
-            <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 block">Method</span>
-              <p className="font-black text-slate-900 text-sm tracking-tight uppercase">
-                {booking.paymentMethod === 'ONLINE' ? 'Stripe Secure' : booking.paymentMethod === 'CARD' ? 'Terminal Card' : 'Cash on Pickup'}
-              </p>
-            </div>
+        <div>
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Method</label>
+          <div className="flex items-center gap-2">
+            <CreditCard size={14} className="text-slate-400" />
+            <p className="text-xs font-bold text-slate-700 uppercase">
+              {booking.paymentMethod === 'ONLINE' ? 'Stripe' : booking.paymentMethod === 'CARD' ? 'Card' : 'Cash'}
+            </p>
           </div>
         </div>
 
-        <div className="p-6 bg-slate-50/50 rounded-2xl border border-slate-100/50">
-          <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 ${paymentStatus === 'PAID' ? 'text-emerald-600' : 'text-primary'}`}>
-              <Sparkles size={24} />
-            </div>
-            <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 block">Payment Status</span>
-              <p className={`font-black text-sm uppercase tracking-tight ${paymentStatus === 'PAID' ? 'text-emerald-600' : 'text-primary'}`}>{paymentStatus}</p>
-            </div>
+        <div>
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Status</label>
+          <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase">
+            <Sparkles size={14} />
+            {paymentStatus}
           </div>
         </div>
 
-        <div className="p-6 bg-primary/[0.02] rounded-2xl border border-primary/10 relative overflow-hidden group">
-          <div className="flex items-center gap-4 relative z-10">
-            <div className={`w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm border border-slate-100 ${bondStatus === 'PAID' ? 'text-primary' : bondStatus === 'REFUNDED' ? 'text-emerald-600' : bondStatus === 'REFUND_PENDING' ? 'text-amber-500' : 'text-slate-400'}`}>
-              <Receipt size={24} className={bondStatus === 'REFUND_PENDING' ? 'animate-pulse' : ''} />
+        <div className="relative">
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Security Bond</label>
+          <div className="flex items-center justify-between">
+            <div className={`flex items-center gap-2 text-xs font-bold uppercase ${bondStatus === 'PAID' ? 'text-primary' : 'text-slate-400'}`}>
+              <Receipt size={14} />
+              {bondStatus}
             </div>
-            <div className="flex-1">
-              <span className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mb-0.5 block">Security Bond</span>
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-black text-slate-900 text-sm uppercase tracking-tight">{bondStatus}</p>
-                {isAdmin && bondStatus === 'PAID' && (
-                  <Button
-                    variant="outline"
-                    onClick={handleReleaseBond}
-                    isLoading={loading}
-                    className="px-3 py-1.5 bg-white text-primary text-[9px] font-black uppercase tracking-widest rounded-lg border-primary/20 hover:bg-primary hover:text-white transition-all shadow-sm h-auto min-h-0"
-                  >
-                    {!loading && <RefreshCw size={10} />}
-                    {booking.paymentMethod === 'ONLINE' ? 'Refund' : 'Complete'}
-                  </Button>
-                )}
-              </div>
-            </div>
+            {isAdmin && bondStatus === 'PAID' && (
+              <Button
+                variant="outline"
+                onClick={handleReleaseBond}
+                isLoading={loading}
+                className="px-2 py-1 bg-white text-[9px] font-bold uppercase tracking-widest rounded-lg border-slate-200 h-auto min-h-0"
+              >
+                Refund
+              </Button>
+            )}
           </div>
         </div>
       </div>
