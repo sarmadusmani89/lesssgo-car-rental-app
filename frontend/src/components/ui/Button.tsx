@@ -18,8 +18,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             primary: "bg-primary text-primary-foreground hover:opacity-90 shadow-lg shadow-primary/20 hover:-translate-y-0.5",
             accent: "bg-accent text-accent-foreground hover:opacity-90 shadow-lg shadow-accent/20 hover:-translate-y-0.5",
             secondary: "bg-secondary text-secondary-foreground border border-border/50 hover:bg-secondary/90 hover:shadow-md",
-            outline: "border-2 border-border bg-transparent text-foreground hover:bg-accent hover:border-accent hover:text-accent-foreground",
-            ghost: "bg-transparent text-foreground hover:bg-accent/50 hover:text-accent-foreground",
+            outline: "border-2 border-border bg-transparent text-foreground hover:bg-muted hover:border-muted-foreground/30 hover:text-foreground",
+            ghost: "bg-transparent text-foreground hover:bg-muted/80 hover:text-foreground",
             danger: "bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-200",
             link: "bg-transparent text-primary underline-offset-4 hover:underline !p-0 !h-auto"
         };
