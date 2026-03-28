@@ -1,7 +1,7 @@
 'use client';
 
-import { ButtonHTMLAttributes, forwardRef } from 'react';
-import { Loader2 } from 'lucide-react';
+import { forwardRef, ButtonHTMLAttributes } from 'react';
+import Loader from './Loader';
 import Link from 'next/link';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -46,7 +46,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                         }
                     }}
                 >
-                    {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+                    {isLoading && <Loader size="xs" variant={variant === 'outline' || variant === 'ghost' ? 'primary' : 'white'} />}
                     {children}
                 </Link>
             );
@@ -59,7 +59,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 disabled={isLoading || disabled}
                 {...props}
             >
-                {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isLoading && <Loader size="xs" variant={variant === 'outline' || variant === 'ghost' ? 'primary' : 'white'} />}
                 {children}
             </button>
         );

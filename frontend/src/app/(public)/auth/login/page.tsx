@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
+import { Mail, Lock, AlertCircle } from 'lucide-react';
+import Loader from '@/components/ui/Loader';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 
