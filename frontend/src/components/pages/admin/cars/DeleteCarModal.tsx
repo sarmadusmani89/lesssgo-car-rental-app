@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X, AlertTriangle, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/Button';
 
 type Props = {
     isOpen: boolean;
@@ -64,36 +65,38 @@ export default function DeleteCarModal({ isOpen, onClose, onConfirm, carBrand, c
                             </div>
 
                             <div className="space-y-3">
-                                <button
+                                <Button
                                     onClick={onConfirm}
-                                    disabled={isDeleting}
-                                    className="w-full py-4 bg-rose-600 text-white rounded-2xl font-black text-sm uppercase tracking-wider hover:bg-rose-700 transition-all shadow-lg shadow-rose-100 disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.98]"
+                                    variant="danger"
+                                    size="lg"
+                                    className="w-full uppercase tracking-wider"
+                                    isLoading={isDeleting}
                                 >
-                                    {isDeleting ? 'Deleting...' : (
-                                        <>
-                                            <Trash2 size={18} />
-                                            Confirm Deletion
-                                        </>
-                                    )}
-                                </button>
+                                    {!isDeleting && <Trash2 size={18} />}
+                                    {isDeleting ? 'Deleting...' : 'Confirm Deletion'}
+                                </Button>
 
-                                <button
+                                <Button
                                     onClick={onClose}
+                                    variant="ghost"
+                                    size="lg"
+                                    className="w-full"
                                     disabled={isDeleting}
-                                    className="w-full py-4 bg-slate-50 text-slate-500 rounded-2xl font-bold text-sm hover:bg-slate-100 transition-all disabled:opacity-50 active:scale-[0.98]"
                                 >
                                     Cancel
-                                </button>
+                                </Button>
                             </div>
                         </div>
 
-                        <button
+                        <Button
                             onClick={onClose}
+                            variant="ghost"
+                            size="icon"
                             disabled={isDeleting}
-                            className="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors"
+                            className="absolute top-6 right-6 text-slate-400 hover:text-slate-600"
                         >
                             <X size={16} />
-                        </button>
+                        </Button>
                     </motion.div>
                 </div>
             )}

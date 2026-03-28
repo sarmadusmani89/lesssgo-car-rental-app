@@ -16,8 +16,8 @@ import {
 } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import api from '@/lib/api';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
 import AvailabilityCalendar from "@/components/pages/admin/dashboard/AvailabilityCalendar";
 import Image from 'next/image';
 import { Car } from './type';
@@ -127,9 +127,9 @@ export default function AdminCars() {
                     <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowAvailability(false)} />
                     <div className="relative bg-white rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl p-2">
                         <div className="float-right p-4 relative z-10">
-                            <button onClick={() => setShowAvailability(false)} className="p-2 hover:bg-gray-100 rounded-full transition text-gray-400 hover:text-gray-900">
+                            <Button variant="ghost" size="icon" onClick={() => setShowAvailability(false)} className="text-gray-400 hover:text-gray-900">
                                 <X size={24} />
-                            </button>
+                            </Button>
                         </div>
                         <AvailabilityCalendar carId={selectedCar.id} />
                     </div>

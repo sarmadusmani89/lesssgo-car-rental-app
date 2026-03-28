@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { Calendar, Edit2, Trash2, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { Car } from '../type';
 import { formatPrice } from '@/lib/utils';
 import { useSelector } from 'react-redux';
@@ -79,27 +80,33 @@ export default function AdminCarTable({
                             </td>
                             <td className="px-6 py-4 text-right">
                                 <div className="flex items-center justify-end gap-2">
-                                    <button
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
                                         onClick={() => onCheckAvailability(car)}
-                                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                        className="text-gray-400 hover:text-accent hover:bg-accent/5"
                                         title="Check Availability"
                                     >
                                         <Calendar size={18} />
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
                                         onClick={() => onEdit(car.id)}
-                                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                        className="text-gray-400 hover:text-accent hover:bg-accent/5"
                                         title="Edit Vehicle"
                                     >
                                         <Edit2 size={18} />
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
                                         onClick={() => onDelete({ id: car.id, name: car.name, brand: car.brand })}
-                                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                        className="text-gray-400 hover:text-red-500 hover:bg-red-50"
                                         title="Delete Vehicle"
                                     >
                                         <Trash2 size={18} />
-                                    </button>
+                                    </Button>
                                 </div>
                             </td>
                         </tr>

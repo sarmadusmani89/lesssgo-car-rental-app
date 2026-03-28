@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus, Settings2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 interface Props {
     onAddClick: () => void;
@@ -15,20 +16,22 @@ export default function AdminCarsHeader({ onAddClick, onOptionsClick }: Props) {
                 <p className="text-gray-500 text-sm mt-1">Add, update, and manage your vehicle inventory</p>
             </div>
             <div className="flex items-center gap-3">
-                <button
+                <Button
+                    variant="outline"
                     onClick={onOptionsClick}
-                    className="flex items-center justify-center gap-2 bg-white text-gray-700 px-5 py-2.5 rounded-xl font-bold border border-gray-200 hover:bg-gray-50 transition shadow-sm whitespace-nowrap"
+                    className="gap-2"
                 >
-                    <Settings2 size={20} className="text-blue-600" />
+                    <Settings2 size={20} className="text-accent" />
                     Manage Options
-                </button>
-                <button
+                </Button>
+                <Button
+                    variant="accent"
                     onClick={onAddClick}
-                    className="flex items-center justify-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-100 whitespace-nowrap"
+                    className="gap-2"
                 >
                     <Plus size={20} />
                     Add New Vehicle
-                </button>
+                </Button>
             </div>
         </div>
     );
