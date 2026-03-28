@@ -1,6 +1,5 @@
 "use client";
 
-import styles from '@/app/(public)/about/about.module.css';
 import StatCard from '../components/StatCard';
 
 const stats = [
@@ -12,9 +11,9 @@ const stats = [
 
 export default function AboutStats() {
     return (
-        <section className={styles.stats}>
-            <div className="container">
-                <div className={styles.statsGrid}>
+        <section className="py-20 bg-primary text-white">
+            <div className="container mx-auto px-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
                     {stats.map((stat, index) => (
                         <StatCard key={index} {...stat} />
                     ))}

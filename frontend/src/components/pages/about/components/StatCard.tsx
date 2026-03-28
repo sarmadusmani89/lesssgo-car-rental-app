@@ -1,7 +1,5 @@
 "use client";
 
-import styles from '@/app/(public)/about/about.module.css';
-
 interface StatCardProps {
     value: string;
     label: string;
@@ -9,9 +7,9 @@ interface StatCardProps {
 
 export default function StatCard({ value, label }: StatCardProps) {
     return (
-        <div className={styles.statCard}>
-            <div className={styles.statValue}>{value}</div>
-            <div className={styles.statLabel}>{label}</div>
+        <div className="text-center">
+            <div className="text-4xl md:text-5xl font-black mb-2 text-accent tracking-tighter">{value}</div>
+            <div className="text-sm md:text-base opacity-90 font-bold uppercase tracking-widest">{label}</div>
         </div>
     );
 }

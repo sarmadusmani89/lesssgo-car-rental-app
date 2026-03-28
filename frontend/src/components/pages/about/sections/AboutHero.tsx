@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
-import styles from '@/app/(public)/about/about.module.css';
 
 export default function AboutHero() {
     const [settings, setSettings] = useState<any>(null);
@@ -22,10 +21,12 @@ export default function AboutHero() {
     const siteName = settings?.siteName || 'Lesssgo';
 
     return (
-        <section className={styles.hero}>
-            <div className="container">
-                <h1 className={styles.title}>About {siteName}</h1>
-                <p className={styles.subtitle}>
+        <section className="pt-24 pb-16 text-center bg-gradient-to-br from-slate-50 [background:linear-gradient(135deg,_#f8fafc_0%,_#e0e7ff_100%)]">
+            <div className="container mx-auto px-4">
+                <h1 className="text-5xl md:text-6xl font-extrabold mb-4 text-primary tracking-tight">
+                    About {siteName}
+                </h1>
+                <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                     Your trusted partner in premium car rentals. We're dedicated to making every journey memorable.
                 </p>
             </div>
