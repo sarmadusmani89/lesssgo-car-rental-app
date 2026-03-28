@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { formatPrice } from '@/lib/utils';
 import { ShieldCheck } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 interface Props {
   disabled: boolean;
@@ -31,16 +32,15 @@ export default function ConfirmBookingButton({
       : 'Confirm Reservation';
 
   return (
-    <button
+    <Button
       disabled={disabled}
       onClick={onConfirm}
-      className={`w-full py-6 rounded-[2rem] font-black uppercase text-xs tracking-[0.3em] flex items-center justify-center gap-3 transition-all duration-300 shadow-xl ${disabled
-        ? 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
-        : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.02] shadow-blue-100'
-        }`}
+      variant="primary"
+      size="lg"
+      className="w-full py-8 rounded-[2rem] font-black uppercase text-xs tracking-[0.3em] shadow-xl hover:scale-[1.02] transition-transform flex items-center justify-center gap-3"
     >
       <ShieldCheck size={18} />
       {label}
-    </button>
+    </Button>
   );
 }

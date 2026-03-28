@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 interface CarsPaginationProps {
     currentPage: number;
@@ -13,36 +14,39 @@ export default function CarsPagination({ currentPage, totalPages, onPageChange }
 
     return (
         <div className="flex items-center justify-center gap-4 mt-16">
-            <button
+            <Button
+                variant="outline"
+                size="icon"
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="w-12 h-12 rounded-2xl border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-30 disabled:hover:border-border disabled:hover:text-muted-foreground transition-all font-bold"
+                className="w-12 h-12 bg-card"
             >
                 <ChevronLeft size={20} />
-            </button>
+            </Button>
 
             <div className="flex items-center gap-2">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
+                    <Button
                         key={page}
+                        variant={currentPage === page ? 'accent' : 'outline'}
+                        size="icon"
                         onClick={() => onPageChange(page)}
-                        className={`w-12 h-12 rounded-2xl text-sm font-black transition-all ${currentPage === page
-                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-110'
-                            : 'bg-card border border-border text-muted-foreground hover:border-primary/50 hover:text-primary'
-                            }`}
+                        className={`w-12 h-12 ${currentPage === page ? 'shadow-accent/20 text-white translate-y-[-2px]' : 'bg-card'}`}
                     >
                         {page.toString().padStart(2, '0')}
-                    </button>
+                    </Button>
                 ))}
             </div>
 
-            <button
+            <Button
+                variant="outline"
+                size="icon"
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="w-12 h-12 rounded-2xl border border-border flex items-center justify-center text-muted-foreground hover:border-primary hover:text-primary disabled:opacity-30 disabled:hover:border-border disabled:hover:text-muted-foreground transition-all font-bold"
+                className="w-12 h-12 bg-card"
             >
                 <ChevronRight size={20} />
-            </button>
+            </Button>
         </div>
     );
 }
