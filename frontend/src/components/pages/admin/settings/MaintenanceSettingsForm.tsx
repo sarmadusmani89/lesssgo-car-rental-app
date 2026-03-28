@@ -39,19 +39,19 @@ export default function MaintenanceSettingsForm({ onSaved, initialData }: Mainte
 
     return (
         <div className="space-y-6">
-            <div className={`p-4 rounded-xl border ${enabled ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-200'}`}>
+            <div className={`p-5 rounded-2xl border transition-all duration-300 ${enabled ? 'bg-amber-50/50 border-amber-200 shadow-sm' : 'bg-slate-50 border-slate-100'}`}>
                 <div className="flex items-start gap-4">
-                    <div className={`p-2 rounded-lg ${enabled ? 'bg-amber-100 text-amber-600' : 'bg-gray-200 text-gray-500'}`}>
+                    <div className={`p-3 rounded-xl transition-colors ${enabled ? 'bg-amber-100 text-amber-600' : 'bg-slate-200 text-slate-500'}`}>
                         <AlertTriangle size={24} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900 mb-1">
-                            {enabled ? 'Maintenance Mode is Active' : 'System is Live'}
+                        <h3 className="font-bold text-slate-900 mb-1 text-lg">
+                            {enabled ? 'Maintenance Mode Active' : 'System Status: Live'}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-slate-600 font-medium   leading-relaxed">
                             {enabled
-                                ? 'Users cannot access the public site. Only admins can log in.'
-                                : 'The application is fully accessible to all users.'}
+                                ? 'The public application is currently restricted. Only administrative staff can access the system.'
+                                : 'The application is fully operational and accessible to all customers and guests.'}
                         </p>
                     </div>
                 </div>
@@ -62,13 +62,14 @@ export default function MaintenanceSettingsForm({ onSaved, initialData }: Mainte
                     onClick={handleToggle}
                     disabled={loading}
                     className={`
-            px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2
-            ${enabled
-                            ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            : 'bg-amber-600 text-white hover:bg-amber-700'}
-          `}
+                        px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg
+                        ${enabled
+                            ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-slate-200/20'
+                            : 'bg-amber-600 text-white hover:bg-amber-700 shadow-amber-600/20'}
+                        disabled:opacity-50 disabled:cursor-not-allowed
+                    `}
                 >
-                    {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+                    {loading && <Loader2 className="w-5 h-5 animate-spin" />}
                     {enabled ? 'Deactivate Maintenance Mode' : 'Activate Maintenance Mode'}
                 </button>
             </div>
