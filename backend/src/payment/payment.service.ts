@@ -173,21 +173,21 @@ export class PaymentService {
 
   async handleWebhook(signature: string, payload: Buffer) {
     console.log('========================================');
-    console.log('📨 STRIPE WEBHOOK RECEIVED');
+    console.log('STRIPE WEBHOOK RECEIVED');
     console.log('========================================');
 
     const webhookSecret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
     if (!webhookSecret) {
-      console.error('❌ Webhook secret not configured');
+      console.error('Webhook secret not configured');
       throw new InternalServerErrorException('Stripe webhook secret not configured');
     }
     let event: Stripe.Event;
 
     try {
       event = this.stripeService.constructEvent(payload, signature, webhookSecret);
-      console.log(`✅ Webhook signature verified for event: ${event.type}`);
+      console.log(`Webhook signature verified for event: ${event.type}`);
     } catch (err: any) {
-      console.error('❌ Webhook signature verification failed!');
+      console.error('Webhook signature verification failed!');
       console.error('Error:', err.message);
       console.log('Received signature:', signature);
       console.log('Using secret:', webhookSecret.substring(0, 10) + '...');
@@ -210,11 +210,11 @@ export class PaymentService {
         await this.handlePaymentFailed(event.data.object as Stripe.PaymentIntent);
         break;
       default:
-        this.logger.log(`ℹ️  Unhandled Stripe event: ${event.type}`);
+        this.logger.log(`Unhandled Stripe event: ${event.type}`);
     }
 
     console.log('========================================');
-    console.log('✅ WEBHOOK PROCESSING COMPLETE');
+    console.log('WEBHOOK PROCESSING COMPLETE');
     console.log('========================================');
     return { received: true };
   }
@@ -222,42 +222,42 @@ export class PaymentService {
   private async handleChargeRefunded(charge: Stripe.Charge) {
     const bookingId = charge.metadata?.bookingId;
     if (!bookingId) {
-      console.warn('⚠️ charge.refunded webhook missing bookingId in metadata');
+      console.warn('charge.refunded webhook missing bookingId in metadata');
       return;
     }
 
     const booking = await this.prisma.booking.findUnique({ where: { id: bookingId } });
     if (!booking) {
-      console.error(`❌ charge.refunded: booking not found for id: ${bookingId}`);
+      console.error(`charge.refunded: booking not found for id: ${bookingId}`);
       return;
     }
 
     // Only update if we're in the expected intermediate state (PAID or REFUND_PENDING)
     if (booking.bondStatus !== 'REFUND_PENDING' && booking.bondStatus !== 'PAID') {
-      console.warn(`⚠️ charge.refunded: booking ${bookingId} bondStatus is '${booking.bondStatus}', expected 'PAID' or 'REFUND_PENDING'. Skipping.`);
+      console.warn(`charge.refunded: booking ${bookingId} bondStatus is '${booking.bondStatus}', expected 'PAID' or 'REFUND_PENDING'. Skipping.`);
       return;
     }
 
     await this.prisma.booking.update({
       where: { id: bookingId },
-      data: { 
+      data: {
         bondStatus: 'REFUNDED' as any // Use as any to bypass potential lingering type sync issues
       }
     });
-    console.log(`✅ Bond status confirmed REFUNDED via Stripe webhook for booking: ${bookingId}`);
+    console.log(`Bond status confirmed REFUNDED via Stripe webhook for booking: ${bookingId}`);
   }
 
   private async handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-    this.logger.log('💳 Processing checkout.session.completed event');
+    this.logger.log('Processing checkout.session.completed event');
     const bookingId = session.metadata?.bookingId;
 
     if (!bookingId) {
-      this.logger.error('❌ No bookingId found in session metadata');
+      this.logger.error('No bookingId found in session metadata');
       return;
     }
 
     try {
-      console.log(`🔄 Updating payment and booking status for booking: ${bookingId}`);
+      console.log(`Updating payment and booking status for booking: ${bookingId}`);
       // Check for existing payment
       const existingPayment = await this.prisma.payment.findFirst({
         where: { bookingId: bookingId as string }
@@ -298,10 +298,10 @@ export class PaymentService {
         include: { car: true, user: true }
       });
 
-      this.logger.log(`✅ Payment and booking status updated successfully`);
+      this.logger.log(`Payment and booking status updated successfully`);
       await this.bookingEmailService.sendStripePaymentConfirmation(updatedBooking, session.payment_intent as string);
     } catch (err) {
-      this.logger.error('❌ Failed to update booking/payment status:', err);
+      this.logger.error('Failed to update booking/payment status:', err);
       throw err;
     }
   }
@@ -320,9 +320,9 @@ export class PaymentService {
         where: { id: bookingId },
         data: { paymentStatus: 'FAILED', status: 'CANCELLED', cancelledAt: new Date() },
       });
-      this.logger.warn(`⏰ Session expired — booking ${bookingId} cancelled`);
+      this.logger.warn(`Session expired — booking ${bookingId} cancelled`);
     } catch (err) {
-      this.logger.error(`❌ handleSessionExpired failed for booking ${bookingId}:`, err);
+      this.logger.error(`handleSessionExpired failed for booking ${bookingId}:`, err);
     }
   }
 
@@ -340,9 +340,9 @@ export class PaymentService {
         where: { id: bookingId },
         data: { paymentStatus: 'FAILED' },
       });
-      this.logger.warn(`💳 Payment failed — booking ${bookingId} marked FAILED. Reason: ${paymentIntent.last_payment_error?.message}`);
+      this.logger.warn(`Payment failed — booking ${bookingId} marked FAILED. Reason: ${paymentIntent.last_payment_error?.message}`);
     } catch (err) {
-      this.logger.error(`❌ handlePaymentFailed failed for booking ${bookingId}:`, err);
+      this.logger.error(`handlePaymentFailed failed for booking ${bookingId}:`, err);
     }
   }
 
@@ -458,7 +458,7 @@ export class PaymentService {
         throw new InternalServerErrorException('Failed to initiate Stripe refund');
       }
 
-      console.log(`🔄 Stripe refund initiated: refundId=${refund.id}, status=${refund.status}`);
+      console.log(`Stripe refund initiated: refundId=${refund.id}, status=${refund.status}`);
 
       // Store refundId for audit trail
       await this.prisma.payment.update({

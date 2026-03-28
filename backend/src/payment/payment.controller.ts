@@ -29,7 +29,7 @@ export class PaymentController {
     @Headers('stripe-signature') signature: string,
     @Req() req: RawBodyRequest<Request>,
   ) {
-    console.log('📡 Webhook request reached PaymentController');
+    console.log('Webhook request reached PaymentController');
     if (!req.rawBody) {
       throw new Error('Raw body not found');
     }
