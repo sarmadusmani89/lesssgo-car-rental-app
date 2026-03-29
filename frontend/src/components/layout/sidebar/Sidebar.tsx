@@ -98,7 +98,7 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                     {/* Home Link - Separated from dashboard pages */}
                     <Link
                         href="/"
-                        className={`group flex items-center justify-center align-center gap-1.5 px-4 py-3 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-muted hover:text-accent text-center`}
+                        className={`group flex items-center justify-center items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-muted hover:text-accent text-center`}
                     >
                         <div className="text-muted-foreground/50 group-hover:text-accent transition-colors">
                             <Home size={18} />
