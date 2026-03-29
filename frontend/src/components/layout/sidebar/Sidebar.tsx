@@ -94,7 +94,7 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                 </div>
 
                 {/* Footer Section: Home & Logout */}
-                <div className="px-4 py-4 flex flex-col gap-2">
+                <div className="px-4 py-4 flex flex-col gap-3">
                     {/* Home Link - Separated from dashboard pages */}
                     <Link
                         href="/"
