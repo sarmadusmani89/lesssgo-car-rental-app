@@ -90,24 +90,23 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                                 </Link>
                             );
                         })}
-
-                        <div className="h-px bg-border/50 my-2 mx-4" />
-
-                        {/* Home Link */}
-                        <Link
-                            href="/"
-                            className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-muted hover:text-accent hover:pl-5`}
-                        >
-                            <span className="text-muted-foreground/50 group-hover:text-accent">
-                                <Home size={20} />
-                            </span>
-                            <span className="text-[14px] tracking-wide">Home</span>
-                        </Link>
                     </nav>
                 </div>
 
-                {/* Logout */}
-                <div className="px-4 py-4 border-t border-border/50">
+                {/* Footer Section: Home & Logout */}
+                <div className="px-4 py-4 border-t border-border/50 space-y-2">
+                    {/* Home Link - Separated from dashboard pages */}
+                    <Link
+                        href="/"
+                        className={`group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-muted hover:text-accent hover:pl-5`}
+                    >
+                        <span className="text-muted-foreground/50 group-hover:text-accent">
+                            <Home size={20} />
+                        </span>
+                        <span className="text-[14px] tracking-wide">Home</span>
+                    </Link>
+
+                    {/* Logout */}
                     <Button
                         variant="ghost"
                         onClick={handleLogout}
