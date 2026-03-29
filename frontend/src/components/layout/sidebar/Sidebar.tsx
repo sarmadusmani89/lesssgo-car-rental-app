@@ -98,7 +98,7 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                     {/* Home Link - Separated from dashboard pages */}
                     <Link
                         href="/"
-                        className={`group flex flex-col items-center justify-center gap-1.5 px-4 py-3 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-muted hover:text-accent text-center`}
+                        className={`group flex items-center gap-1.5 px-4 py-3 rounded-xl transition-all duration-200 text-muted-foreground hover:bg-muted hover:text-accent text-center`}
                     >
                         <div className="text-muted-foreground/50 group-hover:text-accent transition-colors">
                             <Home size={18} />
@@ -106,7 +106,7 @@ export default function Sidebar({ title, links, className = '', activeTab, isOpe
                         <span className="text-[12px] font-semibold tracking-wide uppercase">Go to Home</span>
                     </Link>
 
-                    <div className="h-px bg-border/30 mx-2" />
+                    <div className="h-px bg-border/50 mx-2" />
 
                     {/* Logout */}
                     <Button
