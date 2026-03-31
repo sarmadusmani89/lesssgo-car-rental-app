@@ -48,13 +48,18 @@ export default function Footer() {
                 <div>
                     <h3 className="text-xl font-bold mb-8 text-primary-foreground">Quick Links</h3>
                     <ul className="flex flex-col gap-4">
-                        {['Find Cars', 'How it Works', 'About Us', 'Contact'].map((item) => (
-                            <li key={item}>
+                        {[
+                            { name: 'Find Cars', href: '/cars' },
+                            { name: 'How it Works', href: '/how-it-works' },
+                            { name: 'About Us', href: '/about' },
+                            { name: 'Contact', href: '/contact' }
+                        ].map((link) => (
+                            <li key={link.name}>
                                 <Link
-                                    href={`/${item.toLowerCase().replace(/ /g, '-')}`}
+                                    href={link.href}
                                     className="text-primary-foreground/60 text-base transition-all duration-200 hover:text-accent hover:pl-1 font-medium"
                                 >
-                                    {item}
+                                    {link.name}
                                 </Link>
                             </li>
                         ))}
@@ -64,13 +69,17 @@ export default function Footer() {
                 <div>
                     <h3 className="text-xl font-bold mb-8 text-primary-foreground">Support</h3>
                     <ul className="flex flex-col gap-4">
-                        {['FAQ', 'Terms & Conditions', 'Privacy Policy'].map((item) => (
-                            <li key={item}>
+                        {[
+                            { name: 'FAQ', href: '/faq' },
+                            { name: 'Terms & Conditions', href: '/terms' },
+                            { name: 'Privacy Policy', href: '/privacy' }
+                        ].map((link) => (
+                            <li key={link.name}>
                                 <Link
-                                    href={`/${item.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                                    href={link.href}
                                     className="text-primary-foreground/60 text-base transition-all duration-200 hover:text-accent hover:pl-1 font-medium"
                                 >
-                                    {item}
+                                    {link.name}
                                 </Link>
                             </li>
                         ))}
